@@ -1,7 +1,7 @@
 package org.encalmo.expression
 
 /*
- * Named operations set
+ * Named operations classes set
  */
 
 /**
@@ -9,9 +9,12 @@ package org.encalmo.expression
  */
 case class sqrt(e:Expression) extends Operation1 with NamedOperation {
 	
-  override def doReal(r:Real):Real = r.sqrt
-  override def doCopy(x:Expression) = sqrt(x)
-  override def operator = "sqrt"
+  override def calculate(v:Value):Expression = v match {
+	  case Number(r) => Number(r.sqrt)
+	  case _ => copy(v)
+  }
+  override def copy(x:Expression) = sqrt(x)
+  override val operator = "sqrt"
 }
 
 /**
@@ -19,9 +22,12 @@ case class sqrt(e:Expression) extends Operation1 with NamedOperation {
  */
 case class cbrt(e:Expression) extends Operation1 with NamedOperation {
 	
-  override def doReal(r:Real):Real = r.cbrt
-  override def doCopy(e:Expression) = cbrt(e)
-  override def operator = "cbrt"
+  override def calculate(v:Value):Expression = v match {
+	  case Number(r) => Number(r.cbrt)
+	  case _ => copy(v)
+  }
+  override def copy(e:Expression) = cbrt(e)
+  override val operator = "cbrt"
 }
 
 /**
@@ -29,9 +35,12 @@ case class cbrt(e:Expression) extends Operation1 with NamedOperation {
  */
 case class root(l:Expression,r:Expression) extends Operation2 with NamedOperation {
 	
-  override def doReal(lr:Real,rr:Real):Real = lr.root(rr)
-  override def doCopy(l:Expression,r:Expression) = root(l,r)
-  override def operator = "root"
+  override def calculate(lv:Value,rv:Value):Expression = (lv,rv) match {
+	  case (Number(lr),Number(rr)) => Number(lr.root(rr))
+	  case _ => copy(lv,rv)
+  }
+  override def copy(l:Expression,r:Expression) = root(l,r)
+  override val operator = "root"
 }
 
 /**
@@ -39,9 +48,14 @@ case class root(l:Expression,r:Expression) extends Operation2 with NamedOperatio
  */
 case class min(args:Expression*) extends OperationN with NamedOperation {
 	
-  override def doReal(r:Real*):Real = r.reduceLeft[Real]((b,a) => Real(Math.min(b.d,a.d)))
-  override def doCopy(x:Expression*) = min(x:_*)
-  override def operator = "min"
+  override def calculate(v:Value*):Expression = {
+	  if(v.forall(_.isInstanceOf[Number]))
+	 	  v.map(_.asInstanceOf[Number]).reduceLeft[Number]((b,a) => Number(Math.min(b.r.d,a.r.d)))
+	  else
+	 	  copy(v:_*)
+  }
+  override def copy(x:Expression*):min = min(x:_*)
+  override val operator = "min"
 }
 
 /**
@@ -49,9 +63,14 @@ case class min(args:Expression*) extends OperationN with NamedOperation {
  */
 case class max(args:Expression*) extends OperationN with NamedOperation {
 	
-  override def doReal(r:Real*):Real = r.reduceLeft[Real]((b,a) => Real(Math.max(b.d,a.d)))
-  override def doCopy(x:Expression*) = max(x:_*)
-  override def operator = "max"
+  override def calculate(v:Value*):Expression = {
+	  if(v.forall(_.isInstanceOf[Number]))
+	 	  v.map(_.asInstanceOf[Number]).reduceLeft[Number]((b,a) => Number(Math.max(b.r.d,a.r.d)))
+	  else
+	 	  copy(v:_*)
+  }
+  override def copy(x:Expression*) = max(x:_*)
+  override val operator = "max"
 }
 
 /**
@@ -60,9 +79,12 @@ case class max(args:Expression*) extends OperationN with NamedOperation {
  */
 case class hypot(l:Expression,r:Expression) extends Operation2 with NamedOperation  {
   
-  override def doReal(lr:Real,rr:Real):Real = lr hypot rr
-  override def doCopy(le:Expression,re:Expression) = hypot(le,re)
-  override def operator = "hypot"
+  override def calculate(lv:Value,rv:Value):Expression = (lv,rv) match {
+	  case (Number(lr),Number(rr)) => Number(lr.hypot(rr))
+	  case _ => copy(lv,rv)
+  }
+  override def copy(le:Expression,re:Expression) = hypot(le,re)
+  override val operator = "hypot"
 }
 
 /**
@@ -70,9 +92,12 @@ case class hypot(l:Expression,r:Expression) extends Operation2 with NamedOperati
  */
 case class exp(e:Expression) extends Operation1 with NamedOperation {
 	
-  override def doReal(r:Real):Real = r.exp
-  override def doCopy(e:Expression) = exp(e)
-  override def operator = "exp"
+  override def calculate(v:Value):Expression = v match {
+	  case Number(r) => Number(r.exp)
+	  case _ => copy(v)
+  }
+  override def copy(e:Expression) = exp(e)
+  override val operator = "exp"
 }
 
 /**
@@ -80,9 +105,12 @@ case class exp(e:Expression) extends Operation1 with NamedOperation {
  */
 case class ln(e:Expression) extends Operation1 with NamedOperation {
 	
-  override def doReal(r:Real):Real = r.ln
-  override def doCopy(e:Expression) = ln(e)
-  override def operator = "ln"
+  override def calculate(v:Value):Expression = v match {
+	  case Number(r) => Number(r.ln)
+	  case _ => copy(v)
+  }
+  override def copy(e:Expression) = ln(e)
+  override val operator = "ln"
 }
 
 /**
@@ -90,7 +118,10 @@ case class ln(e:Expression) extends Operation1 with NamedOperation {
  */
 case class log(e:Expression) extends Operation1 with NamedOperation {
 	
-  override def doReal(r:Real):Real = r.log
-  override def doCopy(e:Expression) = log(e)
-  override def operator = "log"
+  override def calculate(v:Value):Expression = v match {
+	  case Number(r) => Number(r.log)
+	  case _ => copy(v)
+  }
+  override def copy(e:Expression) = log(e)
+  override val operator = "log"
 }

@@ -16,7 +16,21 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		case _ => -e
 	}
 	val resolver1:Transformation = e => e match {
-		case s:Symbol => one
+		case s:Symbol => ONE
+		case _ => e
+	}
+	
+	val resolver2:Transformation = e => e match {
+		case _ if e==a => 3
+		case _ if e==b => 5
+		case _ if e==c => 0
+		case _ => e
+	}
+	
+	val resolver3:Transformation = e => e match {
+		case _ if e==a => 7
+		case _ if e==b => 3
+		case _ if e==c => 5
 		case _ => e
 	}
 	
@@ -33,7 +47,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr7 = expr4.select
 		assertEquals(expr1,expr7);
 		val expr8 = expr6.eval
-		assertEquals(one,expr8);
+		assertEquals(ONE,expr8);
 	}
 	
 	@Test def testSelection2() {
@@ -50,7 +64,12 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr7 = expr4.select
 		assertEquals(expr1,expr7);
 		val expr8 = expr6.eval
-		assertEquals(one,expr8);
+		val expr9 = expr4.map(resolver2)
+		assertTrue(expr4 ne expr9)
+		assertEquals(Number(8),expr9.eval)
+		val expr10 = expr4.map(resolver3)
+		assertTrue(expr4 ne expr10)
+		assertEquals(Number(21),expr10.eval)
 	}
 	
 	@Test def testSelection3() {
@@ -68,7 +87,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr7 = expr4.select
 		assertEquals(expr3,expr7);
 		val expr8 = expr6.eval
-		assertEquals(one,expr8);
+		assertEquals(ONE,expr8);
 	}
 	
 	@Test def testSelection4() {
@@ -86,7 +105,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr7 = expr4.select
 		assertEquals(expr1,expr7);
 		val expr8 = expr6.eval
-		assertEquals(one,expr8);
+		assertEquals(ONE,expr8);
 		
 	}
 	

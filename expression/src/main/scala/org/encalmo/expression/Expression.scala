@@ -43,44 +43,44 @@ trait Expression {
   def + (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if zero.eq(e) => this; 
+	  case _ if ZERO.eq(e) => this; 
 	  case _ => Sum(this,e)
   }
   
   def - (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if zero.eq(e) => this; 
+	  case _ if ZERO.eq(e) => this; 
 	  case _ => Diff(this,e)
   }
   
   def * (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if one.eq(e) => this; 
-	  case _ if zero.eq(e) => zero; 
+	  case _ if ONE.eq(e) => this; 
+	  case _ if ZERO.eq(e) => ZERO; 
 	  case _ => Prod(this,e)
   }
   
   def / (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if one.eq(e) => this; 
+	  case _ if ONE.eq(e) => this; 
 	  case _ => Quot(this,e)
   }
   
   def % (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if one.eq(e) => this; 
+	  case _ if ONE.eq(e) => this; 
 	  case _ => Modulo(this,e)
   }
   
   def ^ (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if zero.eq(e) => one; 
-	  case _ if one.eq(e) => this; 
+	  case _ if ZERO.eq(e) => ONE; 
+	  case _ if ONE.eq(e) => this; 
 	  case _ => Power(this,e)
   }
   

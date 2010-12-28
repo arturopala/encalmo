@@ -9,15 +9,15 @@ trait Operation2 extends Operation {
   def l:Expression
   def r:Expression
   
-  def doReal(lr:Real,rr:Real):Real
-  def doCopy(l:Expression,r:Expression):Operation2
+  def calculate(lv:Value,rv:Value):Expression
+  def copy(l:Expression,r:Expression):Operation2
   
   final override def eval():Expression = {
 	  val le = l eval;
 	  val re = r eval;
 	  (le,re) match {
-	 	  case (Number(lr),Number(rr)) => Number(doReal(lr,rr));
-	 	  case _ if (le!=l || re!=r) => doCopy(le,re);
+	 	  case _ if (le.isInstanceOf[Value] && re.isInstanceOf[Value]) => calculate(le.asInstanceOf[Value],re.asInstanceOf[Value]);
+	 	  case _ if (le!=l || re!=r) => copy(le,re);
 	 	  case _ => this;
 	  }
   }
@@ -25,7 +25,7 @@ trait Operation2 extends Operation {
   final override def map(f:Transformation):Expression = {
 	  val vl = l.map(f); 
 	  val vr = r.map(f);
-	  if(vl==l && vr==r) f(this) else f(doCopy(vl,vr))
+	  if(vl==l && vr==r) f(this) else f(copy(vl,vr))
   }
   
   final override def travel(parent:Node = null,t:Traveler, position:Int=0):Unit = {

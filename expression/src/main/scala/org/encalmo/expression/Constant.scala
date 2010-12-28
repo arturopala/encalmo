@@ -4,9 +4,9 @@ package org.encalmo.expression
  * Constant expression
  * @author artur.opala
  */
-case class Constant(s:Symbol,e:Expression) extends Expression {
+case class Constant[t<:Expression](s:Symbol,e:t) extends Expression {
 	
-  override def eval():Expression = e
+  override def eval():t = e
   
 }
 
@@ -14,10 +14,10 @@ case class Constant(s:Symbol,e:Expression) extends Expression {
  * PI number constant
  * @author artur.opala
  */
-object pi extends Constant(Symbol("$pi"),Number(Real.pi))
+object PI extends Constant[Number](BasicSymbols.Pi,Number(Real.pi))
 
 /**
  * E number constant
  * @author artur.opala
  */
-object ee extends Constant(Symbol("$e"),Number(Real.e))
+object EUL extends Constant[Number](BasicSymbols.eul,Number(Real.e))

@@ -131,7 +131,7 @@ object MathMLUtils {
 		else if (s.hasSuperscript) w write "<msup>"
 		else if (s.hasSubscript) w write "<msub>"
 		//core symbol
-		mi(w, s.name)
+		mi(w, BasicSymbols.toMathML(s.name))
 		if (s.hasSubscript) symbol(w, s.subscript)
 		if (s.hasSuperscript) symbol(w, s.superscript)
 		if (s.hasSubAndSupscript) w write "</msubsup>"

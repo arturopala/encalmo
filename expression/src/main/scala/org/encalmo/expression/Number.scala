@@ -3,9 +3,8 @@ package org.encalmo.expression
 import java.io.PrintWriter
 
 /**
- * Number
+ * Real number expression
  * @author artur.opala
- *
  */
 case class Number(r:Real) extends Value {
   
@@ -18,34 +17,28 @@ case class Number(r:Real) extends Value {
   def format(pattern:String,locale:java.util.Locale):String = Real.format(r,pattern,locale)
   
   override def + (e:Expression):Expression = e match {
-	  //case Number(r2) => Number(r+r2)
 	  case _ => super.+(e)
   }
   
   override def - (e:Expression):Expression = e match {
-	  //case Number(r2) => Number(r-r2)
 	  case _ => super.-(e)
   }
   
   override def * (e:Expression):Expression = e match {
-	  //case Number(r2) => Number(r*r2)
 	  case _ => super.*(e)
   }
   
   override def / (e:Expression):Expression = e match {
-	  //case Number(r2) => Number(r/r2)
 	  case _ => super./(e)
   }
   
   override def % (e:Expression):Expression = e match {
-	  //case Number(r2) => Number(r%r2)
 	  case _ => super.%(e)
   }
   
   override def ^ (e:Expression):Expression = e match {
-	  case Number(r2) if r2==Real.zero => one
+	  case Number(r2) if r2==Real.zero => ONE
 	  case Number(r2) if r2==Real.one => this
-	  //case Number(r2) => Number(r^r2)
 	  case _ => super.^(e)
   }
   
@@ -53,20 +46,17 @@ case class Number(r:Real) extends Value {
   
   override def +- (e:Expression):Expression = e match {
 	  case Number(r2) if r2==Real.zero => this
-	  //case Number(r2) => Number(r-r2)
 	  case _ => super.+-(e)
   }
   
   override def *- (e:Expression):Expression = e match {
-	  case Number(r2) if r2==Real.zero => zero
+	  case Number(r2) if r2==Real.zero => ZERO
 	  case Number(r2) if r2==Real.one => Number(-r)
-	  //case Number(r2) => Number(r*(-r2))
 	  case _ => super.*-(e)
   }
   
   override def /- (e:Expression):Expression = e match {
 	  case Number(r2) if r2==Real.one => Number(-r)
-	  //case Number(r2) => Number(r/(-r2))
 	  case _ => super./-(e)
   }
   
@@ -76,9 +66,8 @@ case class Number(r:Real) extends Value {
   }
   
   override def ^- (e:Expression):Expression = e match {
-	  case Number(r2) if r2==Real.zero => one
+	  case Number(r2) if r2==Real.zero => ONE
 	  case Number(r2) if r2==Real.one => this
-	  //case Number(r2) => Number(r^(-r2))
 	  case _ => super.^-(e)
   }
   
@@ -91,8 +80,8 @@ case class Number(r:Real) extends Value {
   def isInt = r.isInt
   
   override def equals(a:Any):Boolean = a match {	
-	  case o:Number if zero.eq(o) => r==Real.zero
-	  case o:Number if one.eq(o) => r==Real.one
+	  case o:Number if ZERO.eq(o) => r==Real.zero
+	  case o:Number if ONE.eq(o) => r==Real.one
 	  case o:Number => o.r.equals(r)
 	  case _ => false
   }
@@ -103,13 +92,13 @@ case class Number(r:Real) extends Value {
  * @author artur.opala
  *
  */
-object zero extends Number(Real.zero){
+object ZERO extends Number(Real.zero){
 	
   override def + (e:Expression):Expression = e
   override def - (e:Expression):Expression = -e
   override def ^ (e:Expression):Expression = e match {
-	  case _ if zero.eq(e) => one; 
-	  case _=> zero
+	  case _ if ZERO.eq(e) => ONE; 
+	  case _=> ZERO
   }
   
   override def unary_-():Expression = this
@@ -127,12 +116,12 @@ object zero extends Number(Real.zero){
  * @author artur.opala
  *
  */
-object one extends Number(Real.one){
+object ONE extends Number(Real.one){
 	
   override def * (e:Expression):Expression = e
-  override def / (e:Expression):Expression = Quot(one,e)
+  override def / (e:Expression):Expression = Quot(ONE,e)
   override def % (e:Expression):Expression = e
-  override def ^ (e:Expression):Expression = one
+  override def ^ (e:Expression):Expression = ONE
   override def isInt = true
   
   override def equals(a:Any):Boolean = a match {	

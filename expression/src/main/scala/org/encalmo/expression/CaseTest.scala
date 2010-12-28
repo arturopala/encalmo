@@ -63,7 +63,7 @@ object Always extends CaseTest {
  */
 case class IsZero(e:Expression) extends CaseTest {
 	
-  override def test:Boolean = zero.eq(e.eval)
+  override def test:Boolean = ZERO.eq(e.eval)
   
   override def map(f:Transformation):Expression = {
 	  val ve = e.map(f);
@@ -78,7 +78,7 @@ case class IsZero(e:Expression) extends CaseTest {
  */
 case class IsNotZero(e:Expression) extends CaseTest {
 	
-  override def test:Boolean = zero.ne(e.eval)
+  override def test:Boolean = ZERO.ne(e.eval)
   
   override def map(f:Transformation):Expression = {
 	  val ve = e.map(f);

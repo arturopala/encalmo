@@ -104,5 +104,55 @@ object BasicSymbols {
 	val Omega:Symbol = Symbol("Ω")
 	val nabla:Symbol = Symbol("nabla")
 	
+	val eul:Symbol = Symbol("e")
+	
+	val BasicSymbols2MathMLMap:Map[Symbol,String] = Map(
+			alpha 	-> "&alpha;",
+			beta 	-> "&beta;",
+			gamma 	-> "&gamma;",
+			delta 	-> "&delta;",
+			epsi 	-> "&epsi;",
+			epsiv 	-> "&epsiv;",
+			zeta 	-> "&zeta;",
+			eta 	-> "&eta;",
+			theta 	-> "&theta;",
+			thetav 	-> "&thetav;",
+			iota 	-> "&iota;",
+			kappa 	-> "&kappa;",
+			lambda 	-> "&lambda;",
+			mu 		-> "&mu;",
+			nu 		-> "&nu;",
+			xi 		-> "&xi;",
+			pi 		-> "&pi;",
+			piv 	-> "&piv;",
+			rho 	-> "&rho;",
+			rhov 	-> "&rhov;",
+			sigma 	-> "&sigma;",
+			sigmav 	-> "&sigmav;",
+			isin 	-> "&isin;",
+			tau 	-> "&tau;",
+			upsi 	-> "&upsi;",
+			phi 	-> "&phi;",
+			phiv 	-> "&phiv;",
+			chi 	-> "&chi;",
+			psi 	-> "&psi;",
+			omega 	-> "&omega;",
+			Gamma 	-> "&Gamma;",
+			Delta 	-> "&Delta;",
+			Theta 	-> "&Theta;",
+			Lambda 	-> "&Lambda;",
+			Xi 		-> "&Xi;",
+			Pi 		-> "&Pi;",
+			Sigma 	-> "&Sigma;",
+			Upsi 	-> "&Upsi;",
+			Phi 	-> "&Phi;",
+			Psi 	-> "&Psi;",
+			Omega 	-> "&Omega;",
+			nabla 	-> "&nabla;"
+	)
+	
+	val String2MathMLMap:Map[String,String] = BasicSymbols2MathMLMap.map(a => (a._1.name,a._2))
+	
+	def toMathML(s:String):String = String2MathMLMap.get(s).getOrElse(s)
 
 }

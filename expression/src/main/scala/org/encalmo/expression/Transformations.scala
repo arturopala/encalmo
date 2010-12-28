@@ -3,9 +3,9 @@ package org.encalmo.expression
 object Transformations {
 	
 	def simplifyProd(e:Expression):Expression = e match {
-	    case Prod(l,r) if (zero.eq(l) || zero.eq(r)) => zero
-	    case Prod(l,r) if (one.eq(l)) => r
-	    case Prod(l,r) if (one.eq(r)) => l
+	    case Prod(l,r) if (ZERO.eq(l) || ZERO.eq(r)) => ZERO
+	    case Prod(l,r) if (ONE.eq(l)) => r
+	    case Prod(l,r) if (ONE.eq(r)) => l
 	    case _ => e
 	}
 	
@@ -20,8 +20,8 @@ object Transformations {
 	}
 	
 	def simplifyQuot(e:Expression):Expression = e match {
-	    case Quot(l,r) if (zero.eq(l)) => zero
-	    case Quot(l,r) if (one.eq(r)) => l
+	    case Quot(l,r) if (ZERO.eq(l)) => ZERO
+	    case Quot(l,r) if (ONE.eq(r)) => l
 	    case _ => e
 	}
 	  
@@ -30,13 +30,13 @@ object Transformations {
 	    case Quot(Neg(e),Number(r)) if r<0 => Quot(e,Number(r.abs))
 	    case Quot(Number(r),Neg(e)) if r<0 => Quot(Number(r.abs),e)
 	    case Quot(Neg(l),Neg(r)) => Quot(l,r)
-	    case Quot(l,n:Number) => Prod(Quot(one,n),l)
+	    case Quot(l,n:Number) => Prod(Quot(ONE,n),l)
 	    case _ => e
 	}
 	
 	def simplifySum(e:Expression):Expression = e match {
-	    case Sum(l,r) if (zero.eq(l)) => r
-	    case Sum(l,r) if (zero.eq(r)) => l
+	    case Sum(l,r) if (ZERO.eq(l)) => r
+	    case Sum(l,r) if (ZERO.eq(r)) => l
 	    case Sum(Number(r1),Sum(Number(r2),e)) => Sum(e,Number(r1+r2))
 	    case Sum(Number(r1),Sum(e,Number(r2))) => Sum(e,Number(r1+r2))
 	    case Sum(Sum(Number(r2),e),Number(r1)) => Sum(e,Number(r1+r2))
@@ -56,8 +56,8 @@ object Transformations {
 	}
 	  
 	def simplifyDiff(e:Expression):Expression = e match {
-	    case Diff(l,r) if (zero.eq(r)) => l
-	    case Diff(l,r) if (zero.eq(l)) => Neg(r)
+	    case Diff(l,r) if (ZERO.eq(r)) => l
+	    case Diff(l,r) if (ZERO.eq(l)) => Neg(r)
 	    case Diff(Number(r1),Diff(Number(r2),e)) => Sum(Number(r1-r2),e)
 	    case Diff(Number(r1),Diff(e,Number(r2))) => Diff(Number(r1+r2),e)
 	    case _ => e
@@ -71,15 +71,15 @@ object Transformations {
 	}
 	  
 	def simplifyModulo(e:Expression):Expression = e match {
-	    case Modulo(l,r) if (zero.eq(l)) => zero
-	    case Modulo(l,r) if (one.eq(r)) => l
+	    case Modulo(l,r) if (ZERO.eq(l)) => ZERO
+	    case Modulo(l,r) if (ONE.eq(r)) => l
 	    case _ => e
 	}
 	  
 	def simplifyPower(e:Expression):Expression = e match {
-	    case Power(l,r) if (zero.eq(r)) => one
-	    case Power(l,r) if (zero.eq(l)) => zero
-	    case Power(l,r) if (one.eq(r)) => l
+	    case Power(l,r) if (ZERO.eq(r)) => ONE
+	    case Power(l,r) if (ZERO.eq(l)) => ZERO
+	    case Power(l,r) if (ONE.eq(r)) => l
 	    case _ => e
 	}
 

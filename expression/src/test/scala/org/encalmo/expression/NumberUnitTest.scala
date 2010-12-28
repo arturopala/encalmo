@@ -25,7 +25,7 @@ class NumberUnitTest extends AssertionsForJUnit {
 		val a:Expression = 2.0
 		val b:Expression = 1.0
 		val c = a-b
-		assertEquals(one,c.eval);
+		assertEquals(ONE,c.eval);
 	}
 	
 	@Test def verifyDiff2() {
@@ -36,21 +36,21 @@ class NumberUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def verifyDiff3() {
-		val a:Expression = zero
-		val b:Expression = zero
+		val a:Expression = ZERO
+		val b:Expression = ZERO
 		val c = a-b
-		assertEquals(zero,c.eval);
+		assertEquals(ZERO,c.eval);
 	}
 	
 	@Test def verifyDiff4() {
-		val a:Expression = one
-		val b:Expression = one
+		val a:Expression = ONE
+		val b:Expression = ONE
 		val c = a-b
-		assertEquals(zero,c.eval);
+		assertEquals(ZERO,c.eval);
 	}
 	
 	@Test def verifyNeg() {
-		val a:Expression = one
+		val a:Expression = ONE
 		val c = -a
 		assertEquals(Number(-1),c.eval);
 	}

@@ -9,19 +9,19 @@ trait OperationN extends Operation {
    * @param r number
    * @return
    */
-  def doReal(r:Real*):Real
+  def calculate(v:Value*):Expression
   
   /**
    * Operation copy with exchanged parameters
    * @param e
    * @return
    */
-  def doCopy(e:Expression*):OperationN
+  def copy(e:Expression*):OperationN
 	
   final override def eval():Expression = {
-	  val r = args.map(_.eval).partition(_.isInstanceOf[Number])
+	  val r = args.map(_.eval).partition(_.isInstanceOf[Value])
 	  if(r._2.isEmpty)
-	 	  Number(doReal(r._1.map(_.asInstanceOf[Number].r):_*))
+	 	  calculate(r._1.map(_.asInstanceOf[Value]):_*)
 	  else
 	 	  this
   }
@@ -31,7 +31,7 @@ trait OperationN extends Operation {
 	  if(args.zip(m).forall(t => t._1 eq t._2)){
 	 	  f(this)
 	  }else{
-	 	  f(doCopy(m:_*))
+	 	  f(copy(m:_*))
 	  }
   }
   
@@ -56,5 +56,5 @@ trait OperationN extends Operation {
 }
 
 object OperationN {
-  def unapply(o:OperationN) = Some((o.args,o.operator))
+	def unapply(o:OperationN) = Some((o.args,o.operator))
 }

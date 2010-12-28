@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE math 
-    PUBLIC "-//W3C//DTD MathML 2.0//EN"
-           "http://www.w3.org/Math/DTD/mathml2/mathml2.dtd"
->
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
   <fo:layout-master-set>
     <fo:simple-page-master margin-right="1.5cm" margin-left="1.5cm" margin-bottom="2cm" margin-top="1cm" page-width="21cm" page-height="29.7cm" master-name="first">
@@ -34,7 +30,7 @@ expressions.
           <fo:instream-foreign-object>
             <math xmlns="http://www.w3.org/1998/Math/MathML" mode="inline">
               <mrow>
-                <mi>I&phi;</mi>
+                <mi>I</mi>
                 <mrow>
                   <mo>(</mo>
                   <mi>x</mi>
@@ -166,10 +162,92 @@ This is s 24pt block. An inline external graphic: <fo:external-graphic src="exam
 This is a 24pt block. An inline internal graphic: 
 <fo:instream-foreign-object><math xmlns="http://www.w3.org/1998/Math/MathML" mode="inline"><msubsup><mi>X</mi><msubsup><mi>a</mi><mn>1</mn><mn>2</mn></msubsup><msubsup><mi>a</mi><mn>1</mn><mn>2</mn></msubsup></msubsup></math></fo:instream-foreign-object>
 with text before and after.
-       <fo:block>
-Formula in ODF format:
       </fo:block>
-      <fo:block><fo:external-graphic src="formula.odf"/></fo:block>
+      <fo:block>
+      <fo:instream-foreign-object>
+      <math xmlns="http://www.w3.org/1998/Math/MathML" mode="inline">
+<mrow mathvariant="bold">
+
+<mrow>
+<mrow>
+<mrow>
+	<mfenced open="(" close=")" separators=";">
+	<mrow>
+<mrow>
+<mrow>
+<mrow>
+<mrow><mi>Ar</mi></mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">+</mo><mspace width="thinmathspace"/>
+<mrow><msub><mi>Ar</mi><mi>a</mi></msub></mrow>
+</mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">+</mo><mspace width="thinmathspace"/>
+<mrow><msubsup><mi>Ar</mi><mi>a</mi><mi>&beta;</mi></msubsup></mrow>
+</mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">+</mo><mspace width="thinmathspace"/>
+<mrow><munder><msubsup><mi>Ar</mi><mi>a</mi><mi>b</mi></msubsup><mi>&gamma;</mi></munder></mrow>
+</mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">+</mo><mspace width="thinmathspace"/>
+<mrow><munderover><mrow><msubsup><mi>Ar</mi><mi>a</mi><mi>b</mi></msubsup></mrow><mi>c</mi><mi>d</mi></munderover></mrow>
+</mrow>
+	</mfenced>
+	</mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">&CenterDot;</mo><mspace width="thinmathspace"/>
+<mrow>
+	<mfenced open="(" close=")" separators=";">
+	<mrow>
+<mrow><munderover><mrow><msubsup><mi>Ar</mi><msup><mi>&alpha;</mi><mi>z</mi></msup><mi>b</mi></msubsup></mrow><mi>c</mi><mi>d</mi></munderover></mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">&minus;</mo><mspace width="thinmathspace"/>
+<mrow><mrow><mn>1,3</mn></mrow></mrow>
+</mrow>
+	</mfenced>
+	</mrow>
+</mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">+</mo><mspace width="thinmathspace"/>
+<mrow><mfrac linethickness="0.5">
+<mrow><msqrt>
+<mrow><msup><mi>c</mi>
+<mrow>
+<mrow><mrow><mn>2</mn></mrow></mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">&minus;</mo><mspace width="thinmathspace"/>
+<mrow><mi>r</mi></mrow>
+</mrow>
+</msup></mrow>
+</msqrt></mrow>
+
+<mrow>
+<mrow>sin
+<mrow><mrow><mn>4,126</mn></mrow></mrow>
+</mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">+</mo><mspace width="thinmathspace"/>
+<mrow><mi>&phiv;</mi></mrow>
+</mrow>
+</mfrac></mrow>
+</mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">+</mo><mspace width="thinmathspace"/>
+<mrow><mfrac linethickness="0.5">
+<mrow><mroot>
+<mrow>
+<mrow><mi>l</mi></mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">&CenterDot;</mo><mspace width="thinmathspace"/>
+<mrow><mi>k</mi></mrow>
+</mrow>
+
+<mrow>
+<mrow><mi>f</mi></mrow>
+<mspace width="thinmathspace"/><mo form="infix" lspace="verythickmathspace" rspace="verythickmathspace">&minus;</mo><mspace width="thinmathspace"/>
+<mrow><mrow><mn>1</mn></mrow></mrow>
+</mrow>
+</mroot></mrow>
+
+<mrow><mroot>
+<mrow><msup><mrow><mn>0,123</mn></mrow>
+<mrow><mi>f</mi></mrow>
+</msup></mrow><mrow><mn>3</mn></mrow></mroot></mrow>
+</mfrac></mrow>
+
+</mrow>
+</math>
+</fo:instream-foreign-object>
       </fo:block>
     </fo:flow>
   </fo:page-sequence>

@@ -57,7 +57,7 @@ the location of this file.
         <!-- <value>ascii-hex</value> -->
       </filterList>
 
-      <fonts>
+      <!--fonts>
 
 <font metrics-url="DejaVuSans-Bold.xml" kerning="yes" embed-url="DejaVuSans-Bold.ttf">
    <font-triplet name="DejaVuSans" style="normal" weight="bold"/>
@@ -199,7 +199,7 @@ the location of this file.
 	    	embed-url="TimesI.ttf">
 	        <font-triplet name="TimesNewRomanPL" style="italic" weight="normal"/>
 	    </font>
-</fonts>
+</fonts-->
 
     </renderer>
 

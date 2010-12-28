@@ -9,11 +9,14 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
@@ -23,6 +26,11 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FormattingResults;
 import org.apache.fop.apps.MimeConstants;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
@@ -87,18 +95,35 @@ public class DocumentBuilder {
            out = new BufferedOutputStream(new FileOutputStream(file));
            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
            // Setup JAXP using identity transformer
+           SAXParserFactory spf = SAXParserFactory.newInstance();
+           spf.setNamespaceAware(true);
+           spf.setValidating(false);
+           SAXParser saxParser = spf.newSAXParser();
+           XMLReader xmlReader = saxParser.getXMLReader();
+           xmlReader.setEntityResolver(new EntityResolver() {
+			public InputSource resolveEntity(String publicId, String systemId)
+					throws SAXException, IOException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			});
            TransformerFactory factory = TransformerFactory.newInstance();
            Transformer transformer = factory.newTransformer(); // identity transformer
+           InputSource inputSource = new InputSource(new StringReader(foString));
+           SAXSource source = new SAXSource(xmlReader, inputSource);
            // Setup input stream
-           Source src = new StreamSource(new StringReader(foString));
+           //Source src = new StreamSource(new StringReader(foString));
            // Resulting SAX events (the generated FO) must be piped through to FOP
-           Result res = new SAXResult(fop.getDefaultHandler());
+           DefaultHandler fopHandler = fop.getDefaultHandler();
+           Result res = new SAXResult(fopHandler);
            // Start XSLT transformation and FOP processing
-           transformer.transform(src, res);
+           //transformer.transform(source, res);
+           xmlReader.setContentHandler(fopHandler);
+           xmlReader.parse(inputSource);
+           //saxParser.parse(inputSource, fopHandler);
            // Result processing
            FormattingResults foResults = fop.getResults();
            System.out.println("Generated " + foResults.getPageCount() + " pages in total to "+file.getAbsolutePath());
-
        } catch (Exception e) {
            throw new RuntimeException(e);
        } finally {
