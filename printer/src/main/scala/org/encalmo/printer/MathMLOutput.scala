@@ -7,8 +7,8 @@ package org.encalmo.printer
 class MathMLOutput extends TextOutput {
 	
 	override def open = {
-		this +\ """<math xmlns="http://www.w3.org/1998/Math/MathML" mode="display">"""
-		this +\ """<mrow mathvariant="bold">"""
+		this +\ """<math xmlns="http://www.w3.org/1998/Math/MathML" mode="inline">"""
+		this +\ """<mrow>"""
 	}
 	
 	override def close = {

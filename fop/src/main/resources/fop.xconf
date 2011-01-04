@@ -57,149 +57,84 @@ the location of this file.
         <!-- <value>ascii-hex</value> -->
       </filterList>
 
-      <!--fonts>
+      <fonts>
 
-<font metrics-url="DejaVuSans-Bold.xml" kerning="yes" embed-url="DejaVuSans-Bold.ttf">
+<font kerning="yes" embed-url="DejaVuSans-Bold.ttf">
    <font-triplet name="DejaVuSans" style="normal" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSans-BoldOblique.xml" kerning="yes" embed-url="DejaVuSans-BoldOblique.ttf">
-   <font-triplet name="DejaVuSans" style="oblique" weight="bold"/>
+<font kerning="yes" embed-url="DejaVuSans-BoldOblique.ttf">
+   <font-triplet name="DejaVuSans" style="italic" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSans-ExtraLight.xml" kerning="yes" embed-url="DejaVuSans-ExtraLight.ttf">
+<font kerning="yes" embed-url="DejaVuSans-ExtraLight.ttf">
    <font-triplet name="DejaVuSans" style="normal" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSans-Oblique.xml" kerning="yes" embed-url="DejaVuSans-Oblique.ttf">
-   <font-triplet name="DejaVuSans" style="oblique" weight="normal"/>
+<font kerning="yes" embed-url="DejaVuSans-Oblique.ttf">
+   <font-triplet name="DejaVuSans" style="italic" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSans.xml" kerning="yes" embed-url="DejaVuSans.ttf">
+<font kerning="yes" embed-url="DejaVuSans.ttf">
    <font-triplet name="DejaVuSans" style="normal" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSansCondensed-Bold.xml" kerning="yes" embed-url="DejaVuSansCondensed-Bold.ttf">
+<font kerning="yes" embed-url="DejaVuSansCondensed-Bold.ttf">
    <font-triplet name="DejaVuSansCondensed" style="normal" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSansCondensed-BoldOblique.xml" kerning="yes" embed-url="DejaVuSansCondensed-BoldOblique.ttf">
-   <font-triplet name="DejaVuSansCondensed" style="oblique" weight="bold"/>
+<font kerning="yes" embed-url="DejaVuSansCondensed-BoldOblique.ttf">
+   <font-triplet name="DejaVuSansCondensed" style="italic" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSansCondensed-Oblique.xml" kerning="yes" embed-url="DejaVuSansCondensed-Oblique.ttf">
-   <font-triplet name="DejaVuSansCondensed" style="oblique" weight="normal"/>
+<font kerning="yes" embed-url="DejaVuSansCondensed-Oblique.ttf">
+   <font-triplet name="DejaVuSansCondensed" style="italic" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSansCondensed.xml" kerning="yes" embed-url="DejaVuSansCondensed.ttf">
+<font kerning="yes" embed-url="DejaVuSansCondensed.ttf">
    <font-triplet name="DejaVuSansCondensed" style="normal" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSansMono-Bold.xml" kerning="yes" embed-url="DejaVuSansMono-Bold.ttf">
+<font kerning="yes" embed-url="DejaVuSansMono-Bold.ttf">
    <font-triplet name="DejaVuSansMono" style="normal" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSansMono-BoldOblique.xml" kerning="yes" embed-url="DejaVuSansMono-BoldOblique.ttf">
-   <font-triplet name="DejaVuSansMono" style="oblique" weight="bold"/>
+<font kerning="yes" embed-url="DejaVuSansMono-BoldOblique.ttf">
+   <font-triplet name="DejaVuSansMono" style="italic" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSansMono-Oblique.xml" kerning="yes" embed-url="DejaVuSansMono-Oblique.ttf">
-   <font-triplet name="DejaVuSansMono" style="oblique" weight="normal"/>
+<font kerning="yes" embed-url="DejaVuSansMono-Oblique.ttf">
+   <font-triplet name="DejaVuSansMono" style="italic" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSansMono.xml" kerning="yes" embed-url="DejaVuSansMono.ttf">
+<font kerning="yes" embed-url="DejaVuSansMono.ttf">
    <font-triplet name="DejaVuSansMono" style="normal" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSerif-Bold.xml" kerning="yes" embed-url="DejaVuSerif-Bold.ttf">
+<font kerning="yes" embed-url="DejaVuSerif-Bold.ttf">
    <font-triplet name="DejaVuSerif" style="normal" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSerif-BoldItalic.xml" kerning="yes" embed-url="DejaVuSerif-BoldItalic.ttf">
+<font kerning="yes" embed-url="DejaVuSerif-BoldItalic.ttf">
    <font-triplet name="DejaVuSerif" style="italic" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSerif-Italic.xml" kerning="yes" embed-url="DejaVuSerif-Italic.ttf">
+<font kerning="yes" embed-url="DejaVuSerif-Italic.ttf">
    <font-triplet name="DejaVuSerif" style="italic" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSerif.xml" kerning="yes" embed-url="DejaVuSerif.ttf">
+<font kerning="yes" embed-url="DejaVuSerif.ttf">
    <font-triplet name="DejaVuSerif" style="normal" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSerifCondensed-Bold.xml" kerning="yes" embed-url="DejaVuSerifCondensed-Bold.ttf">
+<font kerning="yes" embed-url="DejaVuSerifCondensed-Bold.ttf">
    <font-triplet name="DejaVuSerifCondensed" style="normal" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSerifCondensed-BoldItalic.xml" kerning="yes" embed-url="DejaVuSerifCondensed-BoldItalic.ttf">
+<font kerning="yes" embed-url="DejaVuSerifCondensed-BoldItalic.ttf">
    <font-triplet name="DejaVuSerifCondensed" style="italic" weight="bold"/>
 </font>
-<font metrics-url="DejaVuSerifCondensed-Italic.xml" kerning="yes" embed-url="DejaVuSerifCondensed-Italic.ttf">
+<font kerning="yes" embed-url="DejaVuSerifCondensed-Italic.ttf">
    <font-triplet name="DejaVuSerifCondensed" style="italic" weight="normal"/>
 </font>
-<font metrics-url="DejaVuSerifCondensed.xml" kerning="yes" embed-url="DejaVuSerifCondensed.ttf">
+<font kerning="yes" embed-url="DejaVuSerifCondensed.ttf">
    <font-triplet name="DejaVuSerifCondensed" style="normal" weight="normal"/>
 </font>
-<font metrics-url="STIXGeneral.xml" kerning="yes" embed-url="STIXGeneral.ttf">
-   <font-triplet name="stix" style="normal" weight="normal"/>
+<font kerning="yes" embed-url="STIXGeneral.ttf">
+   <font-triplet name="Stix" style="normal" weight="normal"/>
 </font>
-<font
-	        metrics-url="arial.xml"
-	        kerning="yes"
-	        embed-url="arial.ttf">
-	      	<font-triplet name="Arial" style="normal" weight="normal"/>
-	    </font>
-	    <font
-	        metrics-url="arial-i.xml"
-	        kerning="yes"
-	        embed-url="arial-i.ttf">
-	      	<font-triplet name="Arial" style="italic" weight="normal"/>
-	    </font>
-	    <font
-	        metrics-url="arial-b.xml"
-	        kerning="yes"
-	        embed-url="arial-b.ttf">
-	      	<font-triplet name="Arial" style="normal" weight="bold"/>
-	    </font>
-	    <font
-	        metrics-url="arial-bi.xml"
-	        kerning="yes"
-	        embed-url="arial-bi.ttf">
-	      	<font-triplet name="Arial" style="italic" weight="bold"/>
-	    </font>
-
-	    <font
-	        metrics-url="humanist.xml"
-	        kerning="yes"
-	        embed-url="humanist.ttf">
-	      	<font-triplet name="Humanist" style="normal" weight="normal"/>
-	    </font>
-	    <font
-	        metrics-url="humanist-i.xml"
-	        kerning="yes"
-	        embed-url="humanist-i.ttf">
-	      	<font-triplet name="Humanist" style="italic" weight="normal"/>
-	    </font>
-	    <font
-	        metrics-url="humanist-b.xml"
-	        kerning="yes"
-	        embed-url="humanist-b.ttf">
-	      	<font-triplet name="Humanist" style="normal" weight="bold"/>
-	    </font>
-	    <font
-	        metrics-url="humanist-bi.xml"
-	        kerning="yes"
-	        embed-url="humanist-bi.ttf">
-	      	<font-triplet name="Humanist" style="italic" weight="bold"/>
-	    </font>
-	    
-	    <font 
-	    	metrics-url="Times.xml" 
-	    	kerning="yes" 
-	    	embed-url="Times.ttf">
-	        <font-triplet name="TimesNewRomanPL" style="normal" weight="normal"/>
-	    </font>
-	    <font 
-	    	metrics-url="TimesBD.xml" 
-	    	kerning="yes" 
-	    	embed-url="TimesBD.ttf">
-	        <font-triplet name="TimesNewRomanPL" style="normal" weight="bold"/>
-	    </font>
-	    <font 
-	    	metrics-url="TimesBI.xml" 
-	    	kerning="yes" 
-	    	embed-url="TimesBI.ttf">
-	        <font-triplet name="TimesNewRomanPL" style="italic" weight="bold"/>
-	    </font>
-	    <font 
-	    	metrics-url="TimesI.xml" 
-	    	kerning="yes" 
-	    	embed-url="TimesI.ttf">
-	        <font-triplet name="TimesNewRomanPL" style="italic" weight="normal"/>
-	    </font>
-</fonts-->
+<font kerning="yes" embed-url="STIXGeneralBol.ttf">
+   <font-triplet name="Stix" style="normal" weight="bold"/>
+</font>
+<font kerning="yes" embed-url="STIXGeneralBolIta.ttf">
+   <font-triplet name="Stix" style="italic" weight="bold"/>
+</font>
+<font kerning="yes" embed-url="STIXGeneralItalic.ttf">
+   <font-triplet name="Stix" style="italic" weight="normal"/>
+</font>
+</fonts>
 
     </renderer>
 

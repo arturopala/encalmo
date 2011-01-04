@@ -197,7 +197,7 @@ class MathMLExpressionPrinterTraveler(w: java.io.Writer, locale: java.util.Local
 					mo(w,o.operator,"prefix")
 				}
 				case o:Quot => {
-					w write "<mfrac linethickness=\"0.5\">"
+					w write "<mfrac linethickness=\"0.8\">"
 				}
 				case o:Power => {
 					w write "<msup>"
@@ -241,9 +241,7 @@ class MathMLExpressionPrinterTraveler(w: java.io.Writer, locale: java.util.Local
 		case o:cbrt => Unit
 		case o:root => Unit
 		case o: InfixOperation => {
-			thinspace(w)
-			mo(w,o.operator,"infix","verythickmathspace","verythickmathspace")
-			thinspace(w)
+			mo(w,o.operator,"infix","thickmathspace","thickmathspace")
 		}
 		case o: Operation2 => {
 			separator(w)

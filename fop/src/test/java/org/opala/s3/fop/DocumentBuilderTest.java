@@ -12,7 +12,7 @@ public class DocumentBuilderTest{
     public final void testDocumentBuilder(){
         StringBuffer doc = DocumentBuilder.buildFO("mathml.fo", new Properties());
         try {
-			DocumentBuilder.buildPDF(doc, "/target/test-results/test.pdf");
+			DocumentBuilder.buildPDF(doc, "target/test-results/test.pdf");
 		} catch (FOPException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
