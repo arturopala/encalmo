@@ -69,10 +69,10 @@ object MathMLUtils {
 		w write "</mo>"
 	}
 
-	def mn(w: Writer, r: Real):Unit = {
+	def mn(w: Writer, n: Number, locale: java.util.Locale):Unit = {
 		w write "<mrow>"
-		if (r < 0) mo(w, "-", "prefix")
-		val f = r.abs.format
+		if (n.r < 0) mo(w, "-", "prefix")
+		val f = n.r.abs.format(locale)
 		w write "<mn>"
 		w write f
 		w write "</mn>"
@@ -189,7 +189,7 @@ class MathMLExpressionPrinterTraveler(w: java.io.Writer, locale: java.util.Local
 
 	override def onEnter(node: Node): Unit = node.expr match {
 		case s: Symbol => symbol(w,s)
-		case n: Number => mn(w,n.r)
+		case n: Number => mn(w,n,locale)
 		case o: Operation => {
 			writeOpeningBracketIfNeeded(node, o)
 			o match {

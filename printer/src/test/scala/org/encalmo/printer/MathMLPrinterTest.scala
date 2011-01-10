@@ -10,7 +10,7 @@ class MathMLPrinterTest extends AssertionsForJUnit {
 	import BasicSymbols._
 	
 	@Test def testContext1() {
-		val o:MathMLOutput = new MathMLOutput
+		val o:MathMLOutput = new MathMLOutput(java.util.Locale.ENGLISH)
 		val a1 = Symbol1("Ar")
 		val a2 = Symbol2("Ar",BasicSymbols.a)
 		val a3 = Symbol3("Ar",BasicSymbols.a,BasicSymbols.beta)
