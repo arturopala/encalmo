@@ -16,7 +16,7 @@
     </dependency>
     <dependency>
 	    <groupId>org.encalmo</groupId>
-	    <artifactId>encalmo-printer</artifactId>
+	    <artifactId>encalmo-calculation</artifactId>
 	    <version>${project.version}</version>
     </dependency>
   </dependencies>

@@ -104,6 +104,9 @@ object BasicSymbols {
 	val Omega:Symbol = Symbol("Ω")
 	val nabla:Symbol = Symbol("nabla")
 	
+	val mi = mu
+	val ni = nu
+	
 	val eul:Symbol = Symbol("e")
 	
 	val BasicSymbols2MathMLMap:Map[Symbol,String] = Map(

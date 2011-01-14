@@ -24,6 +24,7 @@ trait Symbol extends Expression {
 	def |(int1:Int,int2:Int):Symbol = this | (String.valueOf(int1),String.valueOf(int2))
 	def !(sup:Symbol):Symbol
 	def !(int:Int):Symbol = this ! String.valueOf(int)
+	def +(n:String):Symbol
 	
 	def under(under:Symbol):Symbol
 	def over(over:Symbol):Symbol
@@ -52,6 +53,7 @@ object Symbol {
 
 case class Symbol1(name:String) extends Symbol {
 	override def toString = "Symbol("+name+")"
+	override def +(n:String):Symbol1 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol2 = Symbol2(name, s)
 	override def |(sub:Symbol,sup:Symbol):Symbol3 = Symbol3(name, sub, sup)
 	override def !(sup:Symbol):Symbol3 = Symbol3(name, null, sup)
@@ -61,6 +63,7 @@ case class Symbol1(name:String) extends Symbol {
 
 case class Symbol2(name:String, override val subscript:Symbol) extends Symbol {
 	override def toString = "Symbol("+name+","+subscript+")"
+	override def +(n:String):Symbol2 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol = Symbol2(name, s)
 	override def |(sub:Symbol,sup:Symbol):Symbol3 = Symbol3(name, sub, sup)
 	override def !(sup:Symbol):Symbol3 = Symbol3(name, subscript, sup)
@@ -70,6 +73,7 @@ case class Symbol2(name:String, override val subscript:Symbol) extends Symbol {
 
 case class Symbol3(name:String, override val subscript:Symbol, override val superscript:Symbol) extends Symbol {
 	override def toString = "Symbol("+name+","+subscript+","+superscript+")"
+	override def +(n:String):Symbol3 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol3 = Symbol3(name, s, superscript)
 	override def |(sub:Symbol,sup:Symbol):Symbol3 = Symbol3(name, sub, sup)
 	override def !(sup:Symbol):Symbol3 = Symbol3(name, subscript, sup)
@@ -79,6 +83,7 @@ case class Symbol3(name:String, override val subscript:Symbol, override val supe
 
 case class Symbol4(name:String, override val subscript:Symbol, override val superscript:Symbol, override val underscript:Symbol) extends Symbol {
 	override def toString = "Symbol("+name+","+subscript+","+superscript+","+underscript+")"
+	override def +(n:String):Symbol4 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol4 = Symbol4(name, s, superscript, underscript)
 	override def |(sub:Symbol,sup:Symbol):Symbol4 = Symbol4(name, sub, sup, underscript)
 	override def !(sup:Symbol):Symbol4 = Symbol4(name, subscript, sup, underscript)
@@ -88,6 +93,7 @@ case class Symbol4(name:String, override val subscript:Symbol, override val supe
 
 case class Symbol5(name:String, override val subscript:Symbol, override val superscript:Symbol, override val underscript:Symbol, override val overscript:Symbol) extends Symbol {
 	override def toString = "Symbol("+name+","+subscript+","+superscript+","+underscript+","+overscript+")"
+	override def +(n:String):Symbol5 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol5 = Symbol5(name, s, superscript, underscript, overscript)
 	override def |(sub:Symbol,sup:Symbol):Symbol5 = Symbol5(name, sub, sup, underscript, overscript)
 	override def !(sup:Symbol):Symbol5 = Symbol5(name, subscript, sup, underscript, overscript)

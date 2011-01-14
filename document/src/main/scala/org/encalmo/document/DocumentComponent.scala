@@ -1,7 +1,7 @@
 package org.encalmo.document
 
 /**
- * Content trait
+ * DocumentComponent trait
  * @author artur
  */
 trait DocumentComponent {
@@ -9,8 +9,17 @@ trait DocumentComponent {
     /** Parent component */
     var parent:Option[DocumentComponent] = None
     
-    /** Component's style */
-    var style:Option[Style] = if(parent.isDefined) parent.get.style else None
+    /** Component's custom style if declared */
+    def mystyle:Style = null
+    
+    /** Component's resolved style */
+    final def style:Style = {
+    	if(mystyle!=null){
+    		mystyle
+    	}else{
+    		if(parent.isDefined) parent.get.style else DefaultStyle
+    	}
+    }
 
 }
 
@@ -18,4 +27,4 @@ trait DocumentComponent {
  * Empty content singleton
  * @author artur
  */
-object EmptyDocumentComponent extends DocumentComponent 
+object EmptyDocumentComponent extends DocumentComponent
