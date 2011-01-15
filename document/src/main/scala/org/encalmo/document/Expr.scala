@@ -7,8 +7,11 @@ import org.encalmo.calculation.Calculation
  * Expression component class
  * @author artur.opala
  */
-class Expr(mystyle:Style, text:String, calc:Calculation, expr:Expression*) extends Text(mystyle,text) {
+class Expr(myStyle:Style, text:String, val calc:Calculation, val expr:Expression*) 
+extends Text(myStyle,text) {
 
+	override def toString = "Expr("+myStyle+","+text+","+calc+","+expr.mkString(",")+")"
+	
 }
 
 /**
@@ -28,5 +31,7 @@ object Expr {
 	def apply(calc:Calculation, expr:Expression*) = {
 		new Expr(null,null,calc,expr:_*)
 	}
+	
+	def unapply(e:Expr) = Some(e.myStyle,e.text,e.calc,e.expr)
 	
 }

@@ -1,25 +1,34 @@
 package org.encalmo.document
 
+import org.encalmo.common._
+
 /**
  * DocumentComponent trait
  * @author artur
  */
-trait DocumentComponent {
+abstract class DocumentComponent(val myStyle:Style) extends Travelable[DocumentComponent] {
     
     /** Parent component */
     var parent:Option[DocumentComponent] = None
     
-    /** Component's custom style if declared */
-    def mystyle:Style = null
-    
     /** Component's resolved style */
     final def style:Style = {
-    	if(mystyle!=null){
-    		mystyle
+    	if(myStyle!=null){
+    		myStyle
     	}else{
     		if(parent.isDefined) parent.get.style else DefaultStyle
     	}
     }
+    
+    /**
+     * Travels internal structure of the expression 
+     * @param t traveler
+     */
+  	override def travel(parent:Node[DocumentComponent] = null, traveler:Traveler[DocumentComponent], position:Int=0):Unit = {
+		val n = Node(parent,this,position)
+		traveler.onEnter(n)
+		traveler.onExit(n)
+  	}
 
 }
 
@@ -27,4 +36,8 @@ trait DocumentComponent {
  * Empty content singleton
  * @author artur
  */
-object EmptyDocumentComponent extends DocumentComponent
+object EmptyDocumentComponent extends DocumentComponent(null){
+	
+	override def toString = "EmptyDocumentComponent"
+	
+}

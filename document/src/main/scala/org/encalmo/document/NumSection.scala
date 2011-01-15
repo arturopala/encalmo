@@ -5,7 +5,11 @@ package org.encalmo.document
  * @author artur.opala
  */
 class NumSection(myStyle:Style, flow:DocumentComponent*) 
-extends Section(myStyle,flow:_*)
+extends Section(myStyle,flow:_*){
+	
+	override def toString = "NumSection("+myStyle+","+flow.mkString(",")+")"
+	
+}
 
 /**
  * NumSection class companion object
@@ -20,5 +24,7 @@ object NumSection {
 	def apply(flow:DocumentComponent*) = {
 		new NumSection(null,flow:_*)
 	}
+	
+	def unapply(s:NumSection) = Some(s.myStyle,s.flow)
 	
 }

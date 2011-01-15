@@ -24,6 +24,11 @@
 	    <artifactId>encalmo-calculation</artifactId>
 	    <version>${project.version}</version>
     </dependency>
+    <dependency>
+	    <groupId>org.encalmo</groupId>
+	    <artifactId>encalmo-document</artifactId>
+	    <version>${project.version}</version>
+    </dependency>
   </dependencies>
   
   <build>

@@ -1,10 +1,12 @@
 package org.encalmo.expression
 
+import org.encalmo.common._
+
 /**
  * Simple Traveler printing expression as plain text
  * @author artur.opala
  */
-class PlainTextExpressionPrinterTraveler(w:java.io.Writer, locale:java.util.Locale = java.util.Locale.getDefault) extends Traveler {
+class PlainTextExpressionPrinterTraveler(w:java.io.Writer, locale:java.util.Locale = java.util.Locale.getDefault) extends Traveler[Expression] {
 	
 	def writeOpeningBracket = w.write('(');
 	def writeClosingBracket = w.write(')');
@@ -13,21 +15,21 @@ class PlainTextExpressionPrinterTraveler(w:java.io.Writer, locale:java.util.Loca
 	def writeNumber(n:Number) = w.write(n.format(locale))
 	def writeListSeparator = w.write(';');
 	
-	def writeOpeningBracketIfNeeded(node:Node,o:Operation):Unit = {
+	def writeOpeningBracketIfNeeded(node:Node[Expression],o:Operation):Unit = {
 		if(isBracketNeeded(node,o)){
 			writeOpeningBracket
 		}
 	}
 	
-	def writeClosingBracketIfNeeded(node:Node,o:Operation):Unit = {
+	def writeClosingBracketIfNeeded(node:Node[Expression],o:Operation):Unit = {
 		if(isBracketNeeded(node,o)){
 			writeClosingBracket
 		}
 	}
 	
-	def isBracketNeeded(node:Node,o:Operation):Boolean = {
+	def isBracketNeeded(node:Node[Expression],o:Operation):Boolean = {
 		if(node.parent!=null){
-			node.parent.expr match {
+			node.parent.element match {
 				case po:Operation => po.precedence>o.precedence && (node.position>0 || po.precedence-o.precedence>5)
 				case _ => false
 			}
@@ -36,7 +38,7 @@ class PlainTextExpressionPrinterTraveler(w:java.io.Writer, locale:java.util.Loca
 		}
 	}
 	
-	override def onEnter(node:Node):Unit = node.expr match {
+	override def onEnter(node:Node[Expression]):Unit = node.element match {
 		case s:Symbol => writeSymbol(s)
 		case n:Number => writeNumber(n)
 		case o:Operation => {
@@ -57,11 +59,11 @@ class PlainTextExpressionPrinterTraveler(w:java.io.Writer, locale:java.util.Loca
 		case _ => Unit
 	}
 	
-	override def onBeforeChildEnter(node:Node, position:Int, child:Expression):Unit = node.expr match {
+	override def onBeforeChildEnter(node:Node[Expression], position:Int, child:Expression):Unit = node.element match {
 		case _ => Unit
 	}
 	
-	override def onBetweenChildren(node:Node, leftChild:Expression, rightChild:Expression):Unit = node.expr match {
+	override def onBetweenChildren(node:Node[Expression], leftChild:Expression, rightChild:Expression):Unit = node.element match {
 		case o:InfixOperation => {
 			writeSpace
 			w.write(o.operator)
@@ -73,12 +75,12 @@ class PlainTextExpressionPrinterTraveler(w:java.io.Writer, locale:java.util.Loca
 		case _ => Unit
 	}
 	
-	override def onAfterChildExit(node:Node, position:Int, child:Expression):Unit = node.expr match {
+	override def onAfterChildExit(node:Node[Expression], position:Int, child:Expression):Unit = node.element match {
 		case _ => Unit
 	}
 	
-	override def onExit(node:Node) = {
-		node.expr match {
+	override def onExit(node:Node[Expression]) = {
+		node.element match {
 			case o:Operation => {
 				o match {
 					case o:PostfixOperation => {

@@ -1,5 +1,7 @@
 package org.encalmo.expression
 
+import org.encalmo.common._
+
 trait OperationN extends Operation {
 	
   def args:Seq[Expression]
@@ -35,22 +37,22 @@ trait OperationN extends Operation {
 	  }
   }
   
-  final override def travel(parent:Node = null, t:Traveler, position:Int=0):Unit = {
+  final override def travel(parent:Node[Expression] = null, traveler:Traveler[Expression], position:Int=0):Unit = {
 	  val n = Node(parent,this,position)
-	  t.onEnter(n)
+	  traveler.onEnter(n)
 	  var i=0
 	  var pe:Expression = null
 	  args.foreach(e => {
 	 	  if(i>0){
-	 	 	  t.onBetweenChildren(n,pe,e)
+	 	 	  traveler.onBetweenChildren(n,pe,e)
 	 	  }
-	 	  t.onBeforeChildEnter(n,i,e)
-	 	  e.travel(n,t,i)
-	 	  t.onAfterChildExit(n,i,e)
+	 	  traveler.onBeforeChildEnter(n,i,e)
+	 	  e.travel(n,traveler,i)
+	 	  traveler.onAfterChildExit(n,i,e)
 	 	  i = i+1
 	 	  pe = e
 	  })
-	  t.onExit(n)
+	  traveler.onExit(n)
   }
   
 }

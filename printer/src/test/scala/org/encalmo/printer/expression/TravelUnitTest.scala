@@ -1,5 +1,6 @@
-package org.encalmo.printer
+package org.encalmo.printer.expression
 
+import org.encalmo.printer._
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
 import org.junit.Test

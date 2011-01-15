@@ -3,8 +3,12 @@ package org.encalmo.document
 /**
  * Text component class
  */
-class Text(mystyle:Style, text:String) 
-extends DocumentComponent
+class Text(myStyle:Style, val text:String) 
+extends DocumentComponent(myStyle) {
+	
+	override def toString = "Text("+myStyle+","+text+")"
+	
+}
 
 /**
  * Text class companion object
@@ -19,5 +23,7 @@ object Text {
 	def apply(text:String) = {
 		new Text(null,text)
 	}
+	
+	def unapply(t:Text) = Some((t.myStyle,t.text))
 	
 }

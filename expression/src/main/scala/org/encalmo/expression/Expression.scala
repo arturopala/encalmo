@@ -1,11 +1,13 @@
 package org.encalmo.expression
 
+import org.encalmo.common._
+
 /**
  * Root type of all expressions.
  * @author artur.opala
  * 
  */
-trait Expression {
+trait Expression extends Travelable[Expression] {
   
   /**
    * Evaluates expression. 
@@ -25,10 +27,10 @@ trait Expression {
    * Travels internal structure of the expression 
    * @param t traveler
    */
-  def travel(parent:Node = null, t:Traveler, position:Int=0):Unit = {
+  override def travel(parent:Node[Expression] = null, traveler:Traveler[Expression], position:Int=0):Unit = {
 	  val n = Node(parent,this,position)
-	  t.onEnter(n)
-	  t.onExit(n)
+	  traveler.onEnter(n)
+	  traveler.onExit(n)
   }
   
   /**

@@ -1,5 +1,7 @@
 package org.encalmo.expression
 
+import org.encalmo.common._
+
 /**
  * Two argument operations root type
  * @author artur.opala
@@ -28,17 +30,17 @@ trait Operation2 extends Operation {
 	  if(vl==l && vr==r) f(this) else f(copy(vl,vr))
   }
   
-  final override def travel(parent:Node = null,t:Traveler, position:Int=0):Unit = {
+  final override def travel(parent:Node[Expression] = null,traveler:Traveler[Expression], position:Int=0):Unit = {
 	  val n = Node(parent,this,position)
-	  t.onEnter(n)
-	  t.onBeforeChildEnter(n,0,l)
-	  l.travel(n,t,0)
-	  t.onAfterChildExit(n,0,l)
-	  t.onBetweenChildren(n,l,r);
-	  t.onBeforeChildEnter(n,1,r)
-	  r.travel(n,t,1)
-	  t.onAfterChildExit(n,1,r)
-	  t.onExit(n)
+	  traveler.onEnter(n)
+	  traveler.onBeforeChildEnter(n,0,l)
+	  l.travel(n,traveler,0)
+	  traveler.onAfterChildExit(n,0,l)
+	  traveler.onBetweenChildren(n,l,r);
+	  traveler.onBeforeChildEnter(n,1,r)
+	  r.travel(n,traveler,1)
+	  traveler.onAfterChildExit(n,1,r)
+	  traveler.onExit(n)
   }
 
 }

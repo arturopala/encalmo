@@ -1,5 +1,6 @@
 package org.encalmo.document
 
+import org.encalmo.common._
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
 import org.junit.Test
@@ -9,7 +10,7 @@ import org.encalmo.calculation._
 
 /**
  * Document test
- * @author artur
+ * @author artur.opala
  */
 class DocumentTest extends AssertionsForJUnit {
 	
@@ -27,7 +28,10 @@ class DocumentTest extends AssertionsForJUnit {
 		val expr1 = a*b/c
 		calc1 put (d -> expr1)
 	    
-	    val doc1 = Document("Test",
+	    val doc1 = Document(style1, "Test document",
+    		Chapter(style1,"Test chapter",
+				Section("header"),
+				Section("footer"),
 	    		Section(
 		            Text("test1"),
 		            Text(style1,"test2"),
@@ -55,11 +59,27 @@ class DocumentTest extends AssertionsForJUnit {
 	            		NumSection("Section test 1"),
 	            		NumSection(style1,"Section test 2"),
 	            		NumSection(style2,"Section test 3")
-            		)
+	        		)
 	            ),
 	            EmptyDocumentComponent,
-	            EmptyDocumentComponent)
-	   
+	            EmptyDocumentComponent
+            )
+       )
+        
+       doc1.dumpTreeToConsole
+       
+       val sr1 = doc1.select(0).getOrElse(fail()).asInstanceOf[Document]
+       assertSame(sr1, doc1);
+	   val sr2 = doc1.select(0,0,0,2).getOrElse(fail()).asInstanceOf[Text]
+       assertEquals(sr2.text, "test3");
+	   assertFalse(sr2.text=="test2")
+	   val sr3 = doc1.select(0,0,6,2,3,0).getOrElse(fail()).asInstanceOf[Text]
+       assertEquals(sr3.text, "Section test 3");
+	   assertFalse(sr3.text=="test2")
+	   val sr4 = doc1.select(0,0,6,2,1).getOrElse(fail()).asInstanceOf[NumSection]
+	   assertSame(sr4.style, style2);
+	   val sr5 = doc1.select(0,0,0,2).getOrElse(fail()).asInstanceOf[Text]
+	   assertSame(sr5.style, style2);
 	}
 	
 	@Test def testDocument2() {
@@ -288,8 +308,8 @@ class DocumentTest extends AssertionsForJUnit {
 		         Section("4. Gosowski B., Kubica E. \"Badania laboratoryjne z konstrukcji metalowych\" Wroc³aw 2007")
 		         
 		      )
-      )
-    )
+	      )
+		)
 		
 	}
 	

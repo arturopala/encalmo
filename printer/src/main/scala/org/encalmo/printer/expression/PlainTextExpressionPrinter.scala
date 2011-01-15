@@ -1,5 +1,6 @@
-package org.encalmo.printer
+package org.encalmo.printer.expression
 
+import org.encalmo.printer._
 import org.encalmo.expression._
 import org.encalmo.expression.PlainTextExpressionPrinterTraveler
 
@@ -11,7 +12,7 @@ object PlainTextExpressionPrinter extends TextExpressionPrinter {
 	
 	override def print(e:Expression,output:TextOutput = new TextOutput):TextOutput = {
 		val t = new PlainTextExpressionPrinterTraveler(output.asWriter, output.locale)
-		e.travel(t = t)
+		e.travel(traveler = t)
 		output
 	}
 

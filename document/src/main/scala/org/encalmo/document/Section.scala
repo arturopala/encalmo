@@ -5,7 +5,11 @@ package org.encalmo.document
  * @author artur.opala
  */
 class Section(myStyle:Style, flow:DocumentComponent*) 
-extends DocumentComponentSeq(flow:_*)
+extends DocumentComponentSeq(myStyle,flow:_*) {
+	
+	override def toString = "Section("+myStyle+","+flow.mkString(",")+")"
+	
+}
 
 /**
  * Section class companion object
@@ -29,6 +33,12 @@ object Section {
 		new Section(null)
 	}
 	
+	def unapply(s:Section) = Some(s.myStyle,s.flow)
+	
 }
 
-object EmptySection extends Section(null)
+object EmptySection extends Section(null) {
+	
+	override def toString = "EmptySection"
+		
+}
