@@ -5,9 +5,11 @@ package org.encalmo.document
  * @author artur
  */
 class Document(myStyle:Style, val title:String, flow:DocumentComponent*) 
-extends DocumentComponentSeq(myStyle, flow:_*){
+extends DocumentComponentSeq(myStyle, flow:_*) with TextContent {
 	
 	override def toString = "Document("+myStyle+","+title+","+flow.mkString(",")+")"
+	
+	override def textContent:String = title
 	
 }
 

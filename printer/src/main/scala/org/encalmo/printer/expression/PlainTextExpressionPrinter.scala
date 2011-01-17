@@ -2,7 +2,7 @@ package org.encalmo.printer.expression
 
 import org.encalmo.printer._
 import org.encalmo.expression._
-import org.encalmo.expression.PlainTextExpressionPrinterTraveler
+import org.encalmo.common._
 
 /**
  * Prints expressions as plain text 

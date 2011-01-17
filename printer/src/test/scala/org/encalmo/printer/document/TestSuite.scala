@@ -1,16 +1,15 @@
-package org.encalmo.printer.expression
+package org.encalmo.printer.document
 
 import org.encalmo.printer._
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * Suite of unit test for the org.encalmo.printer.expression package
+ * Suite of unit test for the org.encalmo.printer.document package
  * @author artur.opala
  */
 @RunWith(classOf[Suite])
 @Suite.SuiteClasses(Array(
-	classOf[PlainTextExpressionPrinterTest],
-	classOf[MathMLExpressionPrinterTest]
+	classOf[PlainTextDocumentPrinterTest]
 ))
 class TestSuite

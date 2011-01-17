@@ -6,7 +6,7 @@ import org.junit.Assert._
 import org.junit.Test
 import org.encalmo.expression._
 
-class MathMLPrinterTest extends AssertionsForJUnit {
+class MathMLExpressionPrinterTest extends AssertionsForJUnit {
 	
 	import BasicSymbols._
 	

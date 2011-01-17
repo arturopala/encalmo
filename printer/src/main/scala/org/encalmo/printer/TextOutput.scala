@@ -7,6 +7,8 @@ package org.encalmo.printer
  */
 class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault) extends Output[String] {
 	
+	val CRLF = "\r\n"
+	
 	val buffer:StringBuilder = new StringBuilder
 	val asWriter:java.io.PrintWriter = new java.io.PrintWriter(new TextOutputWriter(buffer))
 	
@@ -16,6 +18,30 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault) exte
 	 * Appends string to the buffer
 	 */
 	def +(content:String):TextOutput = {
+		buffer.append(content)
+		this
+	}
+	
+	/**
+	 * Appends integer to the buffer
+	 */
+	def +(content:Int):TextOutput = {
+		buffer.append(content)
+		this
+	}
+	
+	/**
+	 * Appends float to the buffer
+	 */
+	def +(content:Float):TextOutput = {
+		buffer.append(content)
+		this
+	}
+	
+	/**
+	 * Appends double to the buffer
+	 */
+	def +(content:Double):TextOutput = {
 		buffer.append(content)
 		this
 	}

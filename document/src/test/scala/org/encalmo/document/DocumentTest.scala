@@ -7,7 +7,6 @@ import org.junit.Test
 import org.encalmo.expression._
 import org.encalmo.calculation._
 
-
 /**
  * Document test
  * @author artur.opala

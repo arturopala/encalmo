@@ -1,7 +1,7 @@
 package org.encalmo.printer
 
 /**
- * MathML printer output
+ * MathML text output
  * @author artur.opala
  */
 class MathMLOutput(locale:java.util.Locale = java.util.Locale.getDefault) extends TextOutput(locale) {

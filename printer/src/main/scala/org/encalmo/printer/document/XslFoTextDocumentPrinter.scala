@@ -7,13 +7,13 @@ import org.encalmo.printer.expression._
 import org.encalmo.document._
 
 /**
- * Prints document as plain text 
+ * Prints document as xsl-fo text 
  * @author artur.opala
  */
-object PlainTextDocumentPrinter extends TextDocumentPrinter {
+object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
 	
-	override def print(input:Document,output:TextOutput = new TextOutput):TextOutput = {
-		val t = new PlainTextDocumentPrinterTraveler(output.asWriter, output.locale)
+	override def print(input:Document,output:XslFoOutput = new XslFoOutput):XslFoOutput = {
+		val t = new XslFoTextDocumentPrinterTraveler(output, output.locale)
 		input.travel(traveler = t)
 		output
 	}
@@ -21,42 +21,25 @@ object PlainTextDocumentPrinter extends TextDocumentPrinter {
 }
 
 /**
- * Travels and prints document as plain text 
+ * Travels and prints document as xsl-fo text 
  * @author artur.opala
  */
-class PlainTextDocumentPrinterTraveler(w:java.io.Writer, locale:java.util.Locale = java.util.Locale.getDefault) 
+class XslFoTextDocumentPrinterTraveler(output:XslFoOutput, locale:java.util.Locale = java.util.Locale.getDefault) 
 extends Traveler[DocumentComponent] {
 	
-	val ept = new PlainTextExpressionPrinterTraveler(w, locale)
+	val w = output.asWriter
+	val ept = new MathMLExpressionPrinterTraveler(w, locale)
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
 	
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
-	val SEP = "\r\n"
-	val TAB = "  "
 		
 	def write(ch:Char) = {
 		w.write(ch);
-		canNewLine = true
 	}
 		
 	def write(s:String) = {
 		w.write(s);
-		canNewLine = true
-	}
-	
-	def writeTabs = {
-		for(x <- 1 to tabs){
-			w.write(TAB)
-		}
-	}
-	
-	def writeLineEnd = {
-		if(canNewLine){
-			w.write(SEP);
-			writeTabs
-			canNewLine = false
-		}
 	}
 	
 	def writeExpressionSeq(se:Seq[Expression]){
@@ -75,37 +58,59 @@ extends Traveler[DocumentComponent] {
 		e.travel(traveler = ept)
 	}
 	
-	def plus = {tabs = tabs+1}
-	def minus = {tabs = tabs-1}
+	var isInFlow:Boolean = false
 	
-	var tabs:Int = 0
-	var canNewLine:Boolean = true
+	def tryStartPageSequence(chapter:Chapter) = {
+		if(!isInFlow){
+			output.start("fo:page-sequence")
+			output.attr("master-reference", output.layout.id)
+			output.body
+			if(chapter!=null){
+				if(chapter.header!=null){
+					output.start("fo:static-content")
+					output.attr("flow-name","xsl-region-before")
+					output.body
+					chapter.header.travel(traveler=this)
+					output.end("fo:static-content")
+				}
+				if(chapter.footer!=null){
+					output.start("fo:static-content")
+					output.attr("flow-name","xsl-region-after")
+					output.body
+					chapter.footer.travel(traveler=this)
+					output.end("fo:static-content")
+				}
+			}
+			output.start("fo:flow")
+			output.attr("flow-name","xsl-region-body")
+			output.body
+			isInFlow = true
+		}
+	}
+	
+	def endPageSequence = {
+		if(!isInFlow){
+			output.end("fo:flow")
+			output.end("fo:page-sequence")
+			isInFlow = false
+		}
+	}
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
-			case tc:TextContent => {
-				if(tc.textContent!=null){
-					write(tc.textContent)
-				}
+			case d:Document => {
+				
 			}
-			case _ =>
+			case chapter:Chapter => {
+				tryStartPageSequence(chapter)
+			}
+			case _ => {
+				tryStartPageSequence(null)
+			}
 		}
 		node.element match {
-			case d:Document => {
-				plus
-				writeLineEnd
-				write("")
-				writeLineEnd
-			}
-			case c:Chapter => {
-				plus
-				writeLineEnd
-				write("")
-				writeLineEnd
-			}
 			case s:Section => {
-				plus
-				writeLineEnd
+				
 			}
 			case expr:Expr => {
 				val ess:Seq[Seq[Expression]] = expr.resolve
@@ -140,13 +145,13 @@ extends Traveler[DocumentComponent] {
 	override def onExit(node:Node[DocumentComponent]):Unit = {
 		node.element match {
 			case d:Document => {
-				minus
+				
 			}
 			case c:Chapter => {
-				minus
+				
 			}
 			case s:Section => {
-				minus
+				
 			}
 			case _ =>
 		}
