@@ -3,6 +3,7 @@ package org.encalmo.printer.expression
 import org.encalmo.common._
 import org.encalmo.printer._
 import org.encalmo.expression._
+import MathMLTags._
 
 /**
  * Prints expressions as MathML
@@ -11,7 +12,7 @@ import org.encalmo.expression._
 object MathMLExpressionPrinter extends ExpressionPrinter[MathMLOutput, String] {
 
 	override def print(e: Expression, output: MathMLOutput = new MathMLOutput): MathMLOutput = {
-		val t = new MathMLExpressionPrinterTraveler(output.asWriter, output.locale)
+		val t = new MathMLExpressionPrinterTraveler(output)
 		e.travel(traveler = t)
 		output
 	}
@@ -22,19 +23,19 @@ object MathMLExpressionPrinter extends ExpressionPrinter[MathMLOutput, String] {
  * Simple Traveler printing expression as MathML xml text
  * @author artur.opala
  */
-class MathMLExpressionPrinterTraveler(w: java.io.Writer, locale: java.util.Locale = java.util.Locale.getDefault) extends Traveler[Expression] {
-
-	import MathMLUtils._
+class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Expression] {
+	
+	val locale = output.locale
 
 	def writeOpeningBracketIfNeeded(node: Node[Expression], o: Operation): Unit = {
 		if (isBracketNeeded(node, o)) {
-			leftBracket(w)
+			output.leftBracket
 		}
 	}
 
 	def writeClosingBracketIfNeeded(node: Node[Expression], o: Operation): Unit = {
 		if (isBracketNeeded(node, o)) {
-			rightBracket(w)
+			output.rightBracket
 		}
 	}
 
@@ -57,33 +58,35 @@ class MathMLExpressionPrinterTraveler(w: java.io.Writer, locale: java.util.Local
 	// Traveler interface implementation
 
 	override def onEnter(node: Node[Expression]): Unit = node.element match {
-		case s: Symbol => symbol(w,s)
-		case n: Number => mn(w,n,locale)
+		case s: Symbol => output.symbol(s)
+		case n: Number => output.mn(n,locale)
 		case o: Operation => {
 			writeOpeningBracketIfNeeded(node, o)
 			o match {
 				case o: PrefixOperation => {
-					mo(w,o.operator,"prefix")
+					output.mo(o.operator,"prefix")
 				}
 				case o:Quot => {
-					w write "<mfrac linethickness=\"0.8\">"
+					output.start(MFRAC)
+					//output.attr("linethickness","medium")
+					output.body
 				}
 				case o:Power => {
-					w write "<msup>"
+					output.startb(MSUP)
 				}
 				case o:sqrt => {
-					w write "<msqrt>"
+					output.startb(MSQRT)
 				}
 				case o:cbrt => {
-					w write "<mroot>"
+					output.startb(MROOT)
 				}
 				case o:root => {
-					w write "<mroot>"
+					output.startb(MROOT)
 				}
 				case o: NamedOperation => {
-					w.write(o.operator)
+					output.mi(o.operator)
 					if (!o.isInstanceOf[Operation1]) {
-						leftBracket(w)
+						output.leftBracket
 					}
 				}
 				case _ => Unit
@@ -92,48 +95,69 @@ class MathMLExpressionPrinterTraveler(w: java.io.Writer, locale: java.util.Local
 		case _ => Unit
 	}
 
-	override def onBeforeChildEnter(node: Node[Expression], position: Int, child: Expression): Unit = node.element match {
-		case o:Power => {
-			if (position==1) {
-				mrowstart(w)
+	override def onBeforeChildEnter(node: Node[Expression], position: Int, child: Expression): Unit = {
+		child match {
+			case o: Operation => {
+				node.element match {
+					case o:Power => {
+						if (position==1) {
+							output.startb(MROW)
+						}
+					}
+					case o: Operation => {
+						output.startb(MROW)
+					}
+					case _ => Unit
+				}
 			}
+			case _ => Unit
 		}
-		case o: Operation => {
-			mrowstart(w)
-		}
-		case _ => Unit
 	}
 
-	override def onBetweenChildren(node: Node[Expression], leftChild: Expression, rightChild: Expression): Unit = node.element match {
-		case o:Quot => Unit
-		case o:Power => Unit
-		case o:cbrt => Unit
-		case o:root => Unit
-		case o: InfixOperation => {
-			mo(w,o.operator,"infix","thickmathspace","thickmathspace")
+	override def onBetweenChildren(node: Node[Expression], leftChild: Expression, rightChild: Expression): Unit = {
+		node.element match {
+			case o:Quot => Unit
+			case o:Power => Unit
+			case o:cbrt => Unit
+			case o:root => Unit
+			case o: InfixOperation => {
+				output.mo(o.operator,"infix","thickmathspace","thickmathspace")
+			}
+			case o: Operation2 => {
+				output.separator
+			}
+			case o: OperationN => {
+				output.separator
+			}
+			case _ => Unit
 		}
-		case o: Operation2 => {
-			separator(w)
-		}
-		case o: OperationN => {
-			separator(w)
-		}
-		case _ => Unit
 	}
 
-	override def onAfterChildExit(node: Node[Expression], position: Int, child: Expression): Unit = node.element match {
-		case o:Power => {
-			if (position==1) {
-				mrowend(w)
+	override def onAfterChildExit(node: Node[Expression], position: Int, child: Expression): Unit = {
+		child match {
+			case o: Operation => {
+				node.element match {
+					case o:Power => {
+						if (position==1) {
+							output.end(MROW)
+						}
+					}  
+					case o:cbrt => {
+						output.end(MROW)
+						output.startb(MROW)
+						output.startb(MN)
+						output.append("3")
+						output.end(MN)
+						output.end(MROW)
+					}
+					case o: Operation => {
+						output.end(MROW)
+					}
+					case _ => Unit
+				}
 			}
-		}  
-		case o:cbrt => {
-			w write "</mrow><mrow><mn>3</mn></mrow>"
+			case _ => Unit
 		}
-		case o: Operation => {
-			mrowend(w)
-		}
-		case _ => Unit
 	}
 
 	override def onExit(node: Node[Expression]) = {
@@ -141,26 +165,26 @@ class MathMLExpressionPrinterTraveler(w: java.io.Writer, locale: java.util.Local
 		case o: Operation => {
 			o match {
 				case o: PostfixOperation => {
-					mo(w,o.operator,"postfix")
+					output.mo(o.operator,"postfix")
 				}
 				case o:Quot => {
-					w write "</mfrac>"
+					output.end(MFRAC)
 				}
 				case o:Power => {
-					w write "</msup>"
+					output.end(MSUP)
 				}
 				case o:sqrt => {
-					w write "</msqrt>"
+					output.end(MSQRT)
 				}
 				case o:cbrt => {
-					w write "</mroot>"
+					output.end(MROOT)
 				}
 				case o:root => {
-					w write "</mroot>"
+					output.end(MROOT)
 				}
 				case o: NamedOperation => {
 					if (!o.isInstanceOf[Operation1]) {
-						rightBracket(w)
+						output.rightBracket
 					}
 				}
 				case _ => Unit
@@ -169,142 +193,6 @@ class MathMLExpressionPrinterTraveler(w: java.io.Writer, locale: java.util.Local
 		}
 		case _ => Unit
 		}
-		if (node.parent == null) {
-			w.flush()
-		}
-	}
-
-}
-
-/** 
- * MathML utilities
- * @author artur.opala
- */
-object MathMLUtils {
-
-	import java.io.Writer
-
-	def thickspace(w:Writer):Unit = w write """<mspace width="thickmathspace"/>"""
-
-	def thinspace(w:Writer):Unit = w write """<mspace width="thinmathspace"/>"""
-
-	def leftBracket(w:Writer):Unit = w write """
-	<mfenced open="(" close=")" separators=";">
-	<mrow>"""
-
-	def rightBracket(w:Writer):Unit = w write """</mrow>
-	</mfenced>
-	"""
-	
-	def separator(w:Writer):Unit = w write """</mrow><mrow>"""
-
-	def mo(w: Writer, s: String): Unit = mo(w, s, null)
-
-	def mo(w: Writer, s: String, form: String): Unit = mo(w, s, form, null, null)
-
-	def mo(w: Writer, s: String, form: String, lspace: String, rspace: String): Unit = {
-		w write "<mo"
-		if (form != null) {
-			w write " form=\""
-			w write form
-			w write "\""
-		}
-		if (lspace != null) {
-			w write " lspace=\""
-			w write lspace
-			w write "\""
-		}
-		if (rspace != null) {
-			w write " rspace=\""
-			w write rspace
-			w write "\""
-		}
-		w write ">"
-		w write (s match {
-		case "-" => "&minus;"
-		case "+" => "+"
-		case "*" => "&CenterDot;"
-		case _ => s
-		})
-		w write "</mo>"
-	}
-
-	def mn(w: Writer, n: Number, locale: java.util.Locale):Unit = {
-		w write "<mrow>"
-		if (n.r < 0) mo(w, "-", "prefix")
-		val f = n.r.abs.format(locale)
-		w write "<mn>"
-		w write f
-		w write "</mn>"
-		/*if (f._2 != null) {
-			w write "<mo>"
-			w write "&CenterDot;"
-			w write "</mo>"
-			w write "<msup>"
-			w write "<mn>"
-			w write "10"
-			w write "</mn>"
-			w write "<mrow>"
-			w write "<mn>"
-			w write f._2
-			w write "</mn>"
-			w write "</mrow>"
-			w write "</msup>"
-		}*/
-		w write "</mrow>"
-	}
-
-	def mi(w:Writer,s:String):Unit = {
-		w write "<mi>"
-		w write s
-		w write "</mi>"
-	}
-
-	def mi(w: Writer, s: String, size: Int):Unit = {
-		w write "<mi mathsize=\""
-		w write "" + size
-		w write "%\">"
-		w write s
-		w write "</mi>"
-	}
-
-	def mtext(w: Writer, s: String, size: Int):Unit = {
-		w write "<mtext mathsize=\""
-		w write "" + size
-		w write "%\">"
-		w write s
-		w write "</mtext>"
-	}
-
-	def mrowstart(w: Writer):Unit = w write "\r\n<mrow>"
-
-	def mrowend(w: Writer):Unit = w write "</mrow>\r\n"
-	
-	def symbol(w: Writer, s: Symbol):Unit = {
-		//under-over script start
-		if (s.hasOverAndUnderscript) w write "<munderover>"
-		else if (s.hasOverscript) w write "<mover>"
-		else if (s.hasUnderscript) w write "<munder>"
-		if (s.hasOverAndUnderscript && s.hasSubAndSupscript) w write "<mrow>"
-		//sub-super script start
-		if (s.hasSubAndSupscript) w write "<msubsup>"
-		else if (s.hasSuperscript) w write "<msup>"
-		else if (s.hasSubscript) w write "<msub>"
-		//core symbol
-		mi(w, BasicSymbols.toMathML(s.name))
-		if (s.hasSubscript) symbol(w, s.subscript)
-		if (s.hasSuperscript) symbol(w, s.superscript)
-		if (s.hasSubAndSupscript) w write "</msubsup>"
-		else if (s.hasSuperscript) w write "</msup>"
-		else if (s.hasSubscript) w write "</msub>"
-		//sub-super script end
-		if (s.hasOverAndUnderscript && s.hasSubAndSupscript) w write "</mrow>"
-		if (s.hasUnderscript) symbol(w, s.underscript)
-		if (s.hasOverscript) symbol(w, s.overscript)
-		if (s.hasOverAndUnderscript) w write "</munderover>"
-		else if (s.hasOverscript) w write "</mover>"
-		else if (s.hasUnderscript) w write "</munder>"
-		//under-over script end
 	}
 
 }

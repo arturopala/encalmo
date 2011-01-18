@@ -19,7 +19,7 @@ class MathMLExpressionPrinterTest extends AssertionsForJUnit {
 		val a5 = Symbol5("Ar",BasicSymbols.a,BasicSymbols.b,BasicSymbols.c,BasicSymbols.d)
 		val d = alpha!z
 		val b = a5|d
-		val e = (a1+a2+a3+a4+a5)*(b-1.3)+(sqrt(c^(2-r))/(sin(4.126)+phiv))+root(l*k,f-1)/cbrt(.123^f)
+		val e = (a1+a2+a3+a4+a5)*(b-1.3)+(sqrt(c^(2-r))/(sin(4.126)+phiv))+root(l*k,f-1)/cbrt(.123^f)+max(a1,a2,a3,a4)
 		o.open
 		MathMLExpressionPrinter.print(e,o)
 		o.close

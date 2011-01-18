@@ -20,9 +20,26 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		val style1 = DefaultStyle.withFont(font1)
 		val style2 = DefaultStyle.withFont(font2)
 		
+		val d1 = d|1
+		val d2 = d|2
+		val d3 = d|3
+		
 		val calc1 = Calculation("1")
 		val expr1 = a*b/c
-		calc1 put (d -> expr1)
+		calc1 put (d1 -> expr1)
+		
+		val a1 = Symbol1("Ar")
+		val a2 = Symbol2("Ar",BasicSymbols.a)
+		val a3 = Symbol3("Ar",BasicSymbols.a,BasicSymbols.beta)
+		val a4 = Symbol4("Ar",BasicSymbols.a,BasicSymbols.b,BasicSymbols.gamma)
+		val a5 = Symbol5("Ar",BasicSymbols.a,BasicSymbols.b,BasicSymbols.c,BasicSymbols.d)
+		val dd = alpha!z
+		val bb = a5|dd
+		val expr2 = (a1+a2+a3+a4+a5)*(bb-1.3)+(sqrt(c^(2-r))/(sin(4.126)+phiv))+root(l*k,f-1)/cbrt(.123^f)+max(a1,a2,a3,a4)
+		val expr3 = (a1+a2+a3+a4+a5)*(bb-1.3)
+		
+		calc1 put (d2 -> expr2)
+		calc1 put (d3 -> expr3)
 		
 		val doc1 = Document(style1, "Test document",
     		Chapter(style1,"Test chapter",
@@ -32,13 +49,13 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Text("test1"),
 		            Text(style1,"test2"),
 		            Text(style2,"test3"),
-		            Expr(calc1,d),
-		            Expr("Test expression",calc1,d)
+		            Expr(calc1,d1)
 	            ),
 	            Section(style2,
 		            Text("test1"),
 		            Text(style1,"test2"),
-		            Text(style2,"test3")
+		            Text(style2,"test3"),
+		            Expr("Test expression",calc1,d2)
 	            ),
 	            Section("Section test 1a"),
 	            Section(style1,"Section test 2a"),
@@ -54,7 +71,9 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            NumSection(style2,"Section test 3c",
 	            		NumSection("Section test 1d"),
 	            		NumSection(style1,"Section test 2d"),
-	            		NumSection(style2,"Section test 3d")
+	            		NumSection(style2,"Section test 3d"),
+	            		Expr("Test expression",calc1,d3),
+	            		Expr("Test expression",calc1,expr1)
 	        		)
 	            ),
 	            EmptyDocumentComponent,
@@ -69,7 +88,7 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		o.printConsole
 	}
 	
-	@Test def test2() {
+	def test2() {
 		
 		import BasicSymbols._
 		

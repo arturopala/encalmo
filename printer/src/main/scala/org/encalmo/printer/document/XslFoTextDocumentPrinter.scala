@@ -5,6 +5,7 @@ import org.encalmo.expression._
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
+import XslFoTags._
 
 /**
  * Prints document as xsl-fo text 
@@ -13,7 +14,7 @@ import org.encalmo.document._
 object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
 	
 	override def print(input:Document,output:XslFoOutput = new XslFoOutput):XslFoOutput = {
-		val t = new XslFoTextDocumentPrinterTraveler(output, output.locale)
+		val t = new XslFoTextDocumentPrinterTraveler(output)
 		input.travel(traveler = t)
 		output
 	}
@@ -24,11 +25,13 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
  * Travels and prints document as xsl-fo text 
  * @author artur.opala
  */
-class XslFoTextDocumentPrinterTraveler(output:XslFoOutput, locale:java.util.Locale = java.util.Locale.getDefault) 
+class XslFoTextDocumentPrinterTraveler(output:XslFoOutput) 
 extends Traveler[DocumentComponent] {
 	
 	val w = output.asWriter
-	val ept = new MathMLExpressionPrinterTraveler(w, locale)
+	val locale = output.locale
+	val mathOutput = output.toMathMLOutput
+	val ept = new MathMLExpressionPrinterTraveler(mathOutput)
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
 	
 	val SPACE = " "
@@ -48,40 +51,57 @@ extends Traveler[DocumentComponent] {
 		}
 		if(se.tail!=null && !se.tail.isEmpty){
 			se.tail.foreach(e => {
-				write(" = ")
+				output.append(" = ")
+				writeExpression(e)
+			})
+		}
+		if(se.tail!=null && !se.tail.isEmpty){
+			se.tail.foreach(e => {
+				output.append(" = ")
 				writeExpression(e)
 			})
 		}
 	}
 	
 	def writeExpression(e:Expression){
+		output.startb(INSTREAM_FOREIGN_OBJECT)
+		mathOutput.open
 		e.travel(traveler = ept)
+		mathOutput.close
+		output.end(INSTREAM_FOREIGN_OBJECT)
 	}
 	
 	var isInFlow:Boolean = false
 	
 	def tryStartPageSequence(chapter:Chapter) = {
-		if(!isInFlow){
-			output.start("fo:page-sequence")
+		if(!isInFlow || chapter!=null){
+			if(isInFlow || chapter!=null){
+				endPageSequence
+			}
+			output.start(PAGE_SEQUENCE)
 			output.attr("master-reference", output.layout.id)
 			output.body
 			if(chapter!=null){
 				if(chapter.header!=null){
-					output.start("fo:static-content")
+					output.start(STATIC_CONTENT)
 					output.attr("flow-name","xsl-region-before")
 					output.body
+					isInFlow = true
 					chapter.header.travel(traveler=this)
-					output.end("fo:static-content")
+					isInFlow = false
+					output.end(STATIC_CONTENT)
 				}
 				if(chapter.footer!=null){
-					output.start("fo:static-content")
+					output.start(STATIC_CONTENT)
 					output.attr("flow-name","xsl-region-after")
 					output.body
+					isInFlow = true
 					chapter.footer.travel(traveler=this)
-					output.end("fo:static-content")
+					isInFlow = false
+					output.end(STATIC_CONTENT)
 				}
 			}
-			output.start("fo:flow")
+			output.start(FLOW)
 			output.attr("flow-name","xsl-region-body")
 			output.body
 			isInFlow = true
@@ -89,9 +109,9 @@ extends Traveler[DocumentComponent] {
 	}
 	
 	def endPageSequence = {
-		if(!isInFlow){
-			output.end("fo:flow")
-			output.end("fo:page-sequence")
+		if(isInFlow){
+			output.end(FLOW)
+			output.end(PAGE_SEQUENCE)
 			isInFlow = false
 		}
 	}
@@ -110,7 +130,7 @@ extends Traveler[DocumentComponent] {
 		}
 		node.element match {
 			case s:Section => {
-				
+				output.startb(BLOCK)
 			}
 			case expr:Expr => {
 				val ess:Seq[Seq[Expression]] = expr.resolve
@@ -145,13 +165,13 @@ extends Traveler[DocumentComponent] {
 	override def onExit(node:Node[DocumentComponent]):Unit = {
 		node.element match {
 			case d:Document => {
-				
+				endPageSequence
 			}
 			case c:Chapter => {
-				
+				endPageSequence
 			}
 			case s:Section => {
-				
+				output.end(BLOCK)
 			}
 			case _ =>
 		}

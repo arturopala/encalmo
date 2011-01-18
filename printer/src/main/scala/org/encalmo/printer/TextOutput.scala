@@ -5,11 +5,10 @@ package org.encalmo.printer
  * @param locale - a Locale object representing a specific geographical, political, or cultural region
  * @author artur.opala
  */
-class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault) extends Output[String] {
+class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val buffer:StringBuilder = new StringBuilder) extends Output[String] {
 	
 	val CRLF = "\r\n"
 	
-	val buffer:StringBuilder = new StringBuilder
 	val asWriter:java.io.PrintWriter = new java.io.PrintWriter(new TextOutputWriter(buffer))
 	
 	def getResult:String = buffer.toString
@@ -20,6 +19,13 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault) exte
 	def +(content:String):TextOutput = {
 		buffer.append(content)
 		this
+	}
+	
+	/**
+	 * Appends string to the buffer
+	 */
+	def append(content:String):Unit = {
+		buffer.append(content)
 	}
 	
 	/**
@@ -49,18 +55,18 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault) exte
 	/**
 	 * Shorthand: Appends string and content to the buffer
 	 */
-	def +\(content:String):TextOutput = this + content + "\r\n"
+	def +\(content:String):TextOutput = this + content + CRLF
 	
 	/**
 	 * Shorthand: Appends newline and content to the buffer
 	 */
-	def \+(content:String):TextOutput = this + "\r\n" + content
+	def \+(content:String):TextOutput = this + CRLF + content
 	
 	override def open = Unit
 	
 	override def close = Unit
 	
-	def printConsole = Console.println(buffer.toString)
+	def printConsole = Console.println(getResult)
 
 }
 

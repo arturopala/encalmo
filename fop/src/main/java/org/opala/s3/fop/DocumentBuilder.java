@@ -147,7 +147,7 @@ public class DocumentBuilder {
            throw new RuntimeException(e);
        } finally {
            try {
-			out.close();
+			if(out!=null) out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
