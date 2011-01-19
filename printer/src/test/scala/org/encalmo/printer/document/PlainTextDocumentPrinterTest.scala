@@ -33,7 +33,8 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Text(style1,"test2"),
 		            Text(style2,"test3"),
 		            Expr(calc1,d),
-		            Expr("Test expression",calc1,d)
+		            "Test expression",
+		            Expr(calc1,d)
 	            ),
 	            Section(style2,
 		            Text("test1"),

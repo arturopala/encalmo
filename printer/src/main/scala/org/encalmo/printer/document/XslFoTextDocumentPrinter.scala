@@ -73,13 +73,14 @@ extends Traveler[DocumentComponent] {
 	
 	var isInFlow:Boolean = false
 	
-	def tryStartPageSequence(chapter:Chapter) = {
+	def tryStartPageSequence(chapter:Chapter, style:Style) = {
 		if(!isInFlow || chapter!=null){
 			if(isInFlow || chapter!=null){
 				endPageSequence
 			}
 			output.start(PAGE_SEQUENCE)
 			output.attr("master-reference", output.layout.id)
+			output.appendBlockStyleAttributes(style)
 			output.body
 			if(chapter!=null){
 				if(chapter.header!=null){
@@ -122,17 +123,35 @@ extends Traveler[DocumentComponent] {
 				
 			}
 			case chapter:Chapter => {
-				tryStartPageSequence(chapter)
+				tryStartPageSequence(chapter,chapter.style)
 			}
 			case _ => {
-				tryStartPageSequence(null)
+				tryStartPageSequence(null,node.element.style)
 			}
 		}
 		node.element match {
 			case s:Section => {
-				output.startb(BLOCK)
+				output.start(BLOCK)
+				output.appendBlockStyleAttributes(s.myStyle)
+				output.body
+			}
+			case t:Text => {
+				if(t.myStyle!=null){
+					output.start(INLINE)
+					output.appendInlineStyleAttributes(t.myStyle)
+					output.body
+				}
+				output.append(t.text);
+				if(t.myStyle!=null){
+					output.end(INLINE)
+				}
 			}
 			case expr:Expr => {
+				if(expr.myStyle!=null){
+					output.start(INLINE)
+					output.appendInlineStyleAttributes(expr.myStyle)
+					output.body
+				}
 				val ess:Seq[Seq[Expression]] = expr.resolve
 				if(ess.head!=null){
 					writeExpressionSeq(ess.head)
@@ -143,6 +162,9 @@ extends Traveler[DocumentComponent] {
 						write(SPACE)
 						writeExpressionSeq(es)
 					})
+				}
+				if(expr.myStyle!=null){
+					output.end(INLINE)
 				}
 			}
 			case _ =>

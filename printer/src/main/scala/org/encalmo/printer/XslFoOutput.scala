@@ -56,4 +56,19 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		new MathMLOutput(locale = locale, buffer = buffer, indent = indent)
 	}
 	
+	def appendBlockStyleAttributes(style:Style):Unit = {
+		if(style!=null){
+			appendInlineStyleAttributes(style)
+		}
+	}
+	
+	def appendInlineStyleAttributes(style:Style):Unit = {
+		if(style!=null){
+			attr("font-family",style.font.family)
+			attr("font-size",style.font.size,"pt")
+			attr("font-style",if(style.font.italic){"italic"}else{"normal"})
+			attr("font-weight",if(style.font.italic){"bold"}else{"normal"})
+		}
+	}
+	
 }

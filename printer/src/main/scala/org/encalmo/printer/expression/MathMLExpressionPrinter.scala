@@ -68,7 +68,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 				}
 				case o:Quot => {
 					output.start(MFRAC)
-					//output.attr("linethickness","medium")
+					output.attr("linethickness","0.6")
 					output.body
 				}
 				case o:Power => {

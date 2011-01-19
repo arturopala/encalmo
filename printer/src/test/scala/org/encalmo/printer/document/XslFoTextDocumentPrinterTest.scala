@@ -7,6 +7,7 @@ import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
 import org.encalmo.printer._
+import org.encalmo.fop.FOPHelper
 
 class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	
@@ -44,7 +45,7 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		val doc1 = Document(style1, "Test document",
     		Chapter(style1,"Test chapter",
 				Section("header"),
-				Section("footer"),
+				Section(style2,"footer"),
 	    		Section(
 		            Text("test1"),
 		            Text(style1,"test2"),
@@ -55,7 +56,8 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Text("test1"),
 		            Text(style1,"test2"),
 		            Text(style2,"test3"),
-		            Expr("Test expression",calc1,d2)
+		            "Test expression",
+		            Expr(calc1,d2)
 	            ),
 	            Section("Section test 1a"),
 	            Section(style1,"Section test 2a"),
@@ -72,8 +74,10 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	            		NumSection("Section test 1d"),
 	            		NumSection(style1,"Section test 2d"),
 	            		NumSection(style2,"Section test 3d"),
-	            		Expr("Test expression",calc1,d3),
-	            		Expr("Test expression",calc1,expr1)
+	            		"Test expression 1:",
+	            		Expr(style2,calc1,d3),
+	            		"Test expression 2:",
+	            		Expr(style2,calc1,expr1)
 	        		)
 	            ),
 	            EmptyDocumentComponent,
@@ -81,11 +85,12 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
             )
        )
 		
-		val o:XslFoOutput = new XslFoOutput(Layout(),new java.util.Locale("PL"))
-		o.open
-		XslFoTextDocumentPrinter.print(doc1,o)
-		o.close
-		o.printConsole
+		val output:XslFoOutput = new XslFoOutput(Layout(),new java.util.Locale("PL"))
+		output.open
+		XslFoTextDocumentPrinter.print(doc1,output)
+		output.close
+		output.printConsole
+		FOPHelper.buildPDF(output.getResult, "target/test-results/xslFoTextDocumentPrinterTest1.pdf")
 	}
 	
 	def test2() {
@@ -322,6 +327,7 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		XslFoTextDocumentPrinter.print(doc1,output)
 		output.close
 		output.printConsole
+		FOPHelper.buildPDF(output.getResult, "target/test-results/xslFoTextDocumentPrinterTest2.pdf")
 	}
 
 }

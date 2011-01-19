@@ -24,7 +24,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		start(MSTYLE)
 		attr("scriptminsize","6pt")
 		attr("scriptsizemultiplier","0.63")
-		attr("linethickness","medium")
+		attr("linethickness","0.6")
 		body
 	}
 	

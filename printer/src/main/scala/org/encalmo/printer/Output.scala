@@ -33,5 +33,19 @@ trait Output[A] {
 	 * Returns the resulting data
 	 */
 	def getResult:A
+	
+	def saveToFile(file:java.io.File)
+    
+    def using[T <: { def close() }]
+	    (resource: T)
+	    (block: T => Unit) 
+	{
+	  try {
+	    block(resource)
+	  } finally {
+	    if (resource != null) resource.close()
+	  }
+	}
+
 
 }

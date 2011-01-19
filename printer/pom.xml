@@ -29,6 +29,11 @@
 	    <artifactId>encalmo-document</artifactId>
 	    <version>${project.version}</version>
     </dependency>
+    <dependency>
+	    <groupId>org.encalmo</groupId>
+	    <artifactId>encalmo-fop</artifactId>
+	    <version>${project.version}</version>
+    </dependency>
   </dependencies>
   
   <build>

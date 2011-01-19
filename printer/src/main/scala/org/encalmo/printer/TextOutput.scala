@@ -67,6 +67,13 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	override def close = Unit
 	
 	def printConsole = Console.println(getResult)
+	
+	def saveToFile(file:java.io.File) = {
+		val text = getResult
+		using[java.io.OutputStreamWriter](new java.io.OutputStreamWriter(new java.io.FileOutputStream(file),"utf-8")){
+			os => os.write(text)
+		}
+	}
 
 }
 

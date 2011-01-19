@@ -16,6 +16,7 @@ object XslFoTags {
 	val PAGE_SEQUENCE 		= "page-sequence"
 	val STATIC_CONTENT 		= "static-content"
 	val BLOCK 				= "block"
+	val INLINE 				= "inline"
 	val INSTREAM_FOREIGN_OBJECT = "instream-foreign-object"
 
 }

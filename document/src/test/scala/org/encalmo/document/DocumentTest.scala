@@ -36,7 +36,8 @@ class DocumentTest extends AssertionsForJUnit {
 		            Text(style1,"test2"),
 		            Text(style2,"test3"),
 		            Expr(calc1,d),
-		            Expr("Test expression",calc1,d)
+		            "Text expression",
+		            Expr(calc1,d)
 	            ),
 	            Section(style2,
 		            Text("test1"),
