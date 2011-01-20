@@ -36,6 +36,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		body
 		start(REGION_BODY)
 		attr("margin-top","10","mm")
+		attr("margin-bottom","10","mm")
 		end
 		start(REGION_BEFORE)
 		attr("extent","10","mm")
@@ -59,6 +60,17 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 	def appendBlockStyleAttributes(style:Style):Unit = {
 		if(style!=null){
 			appendInlineStyleAttributes(style)
+			attr("background-color","#",style.hexBackground)
+			attrNoZero("space-before",style.paragraph.spaceBefore,"mm")
+			attrNoZero("space-after",style.paragraph.spaceAfter,"mm")
+			attrNoZero("padding-left",style.paragraph.padding.left,"mm")
+			attrNoZero("padding-right",style.paragraph.padding.right,"mm")
+			attrNoZero("padding-top",style.paragraph.padding.top,"mm")
+			attrNoZero("padding-bottom",style.paragraph.padding.bottom,"mm")
+			attrNoZero("margin-left",style.paragraph.margin.left,"mm")
+			attrNoZero("margin-right",style.paragraph.margin.right,"mm")
+			attrNoZero("margin-top",style.paragraph.margin.top,"mm")
+			attrNoZero("margin-bottom",style.paragraph.margin.bottom,"mm")
 		}
 	}
 	
@@ -67,7 +79,8 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			attr("font-family",style.font.family)
 			attr("font-size",style.font.size,"pt")
 			attr("font-style",if(style.font.italic){"italic"}else{"normal"})
-			attr("font-weight",if(style.font.italic){"bold"}else{"normal"})
+			attr("font-weight",if(style.font.bold){"bold"}else{"normal"})
+			attr("color","#",style.hexColor)
 		}
 	}
 	

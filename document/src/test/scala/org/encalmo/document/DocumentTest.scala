@@ -20,8 +20,8 @@ class DocumentTest extends AssertionsForJUnit {
 		val font1 = DefaultFontStyle.++.makeBold
 		val font2 = DefaultFontStyle.withSize(8).makeItalic
 		
-		val style1 = DefaultStyle.withFont(font1)
-		val style2 = DefaultStyle.withFont(font2)
+		val style1 = DefaultStyle.use(font1)
+		val style2 = DefaultStyle.use(font2)
 		
 		val calc1 = Calculation("1")
 		val expr1 = a*b/c
@@ -141,8 +141,8 @@ class DocumentTest extends AssertionsForJUnit {
 	    c1 put (fi -> ( (1+(lambdad^(2*n)))^(-(1/n)) ))
 	    c1 put (Nmax -> ( fi*NRc ))
 		
-		val BOLD = DefaultStyle.makeFontBold
-		val ITALIC = DefaultStyle.makeFontItalic
+		val BOLD = DefaultStyle.fontBold
+		val ITALIC = DefaultStyle.fontItalic
 		
 		val c2 = c1
 		val c3 = c1

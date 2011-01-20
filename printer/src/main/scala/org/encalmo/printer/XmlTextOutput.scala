@@ -101,6 +101,21 @@ extends TextOutput(locale,buffer) {
 	}
 	
 	/**
+	 * Appends attribute to the buffer
+	 * if first value is not zero or empty or null
+	 */
+	def attrNoZero(name:String,value:Any*):Unit = {
+		if(!value.isEmpty 
+				&& value.first!=null 
+				&& value.first!="0" 
+				&& value.first!=0 
+				&& value.first!=" "
+				&& value.first!=""){
+			attr(name,value:_*)
+		}
+	}
+	
+	/**
 	 * Appends attribute declaring namespace
 	 */
 	def declareNamespace(uri:String):Unit = {

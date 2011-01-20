@@ -16,10 +16,14 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		import BasicSymbols._
 		
 		val font1 = DefaultFontStyle.++.makeBold
-		val font2 = DefaultFontStyle.withSize(8).makeItalic
+		val font2 = DefaultFontStyle.makeItalic
+		val font3 = DefaultFontStyle.withSize(9)
+		val font4 = DefaultFontStyle.withSize(8).makeItalic
 		
-		val style1 = DefaultStyle.withFont(font1)
-		val style2 = DefaultStyle.withFont(font2)
+		val style1 = DefaultStyle.use(font1).setSpaceBefore(3)
+		val style2 = DefaultStyle.use(font2).useColor(java.awt.Color.BLUE)
+		val style3 = DefaultStyle.use(font3).marginLeft(10)
+		val style4 = DefaultStyle.use(font4)
 		
 		val d1 = d|1
 		val d2 = d|2
@@ -43,9 +47,11 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		calc1 put (d3 -> expr3)
 		
 		val doc1 = Document(style1, "Test document",
-    		Chapter(style1,"Test chapter",
+			Enumerator(),
+    		Chapter(style2,"Test chapter",
 				Section("header"),
 				Section(style2,"footer"),
+				StyleList(style1,style2,style3,style4),
 	    		Section(
 		            Text("test1"),
 		            Text(style1,"test2"),
@@ -67,6 +73,48 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Section(style1,"Section test 2b"),
 		            Section(style2,"Section test 3b")
 	            ),
+	            NumSection("NumSection test",
+		            NumSection("NumSection test 1c"),
+		            NumSection(style1,"NumSection test 2c with style1",style1.toString),
+		            NumSection("NumSection test 3c",
+	            		NumSection("NumSection test 1d"),
+	            		NumSection(
+            				"NumSection test 2d", 
+            				Expr(calc1,d3)
+        				),
+	            		NumSection("NumSection test 3d"),
+	            		"Test expression 1:",
+	            		Expr(calc1,d3),
+	            		"Test expression 2:",
+	            		Expr(calc1,expr1),
+			            Section("Section test 1a"),
+			            Section("Section test 2a"),
+			            Section("Section test 3a"),
+			            Section(
+				            Section("Section test 1b"),
+				            Section("Section test 2b"),
+				            Section("Section test 3b")
+			            )
+	        		)
+	            ),
+	            EmptyDocumentComponent,
+	            EmptyDocumentComponent,
+	            """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris id eros mi. Vestibulum id euismod purus. Quisque congue dignissim pretium. Ut tincidunt erat id justo tristique non scelerisque ante convallis. Nulla non arcu non nunc ultricies condimentum id et felis. Curabitur pellentesque faucibus erat, in porta erat consequat in. In sapien ipsum, venenatis eget semper id, eleifend in tortor. Aliquam pretium enim id neque mattis aliquam. Praesent bibendum venenatis venenatis. Cras imperdiet lacinia congue. Suspendisse tincidunt, est at viverra ultricies, ante lacus luctus justo, sit amet tristique erat purus quis lacus.
+Aliquam erat volutpat. Nulla porta purus non tortor consectetur pharetra. Sed vel quam mi, sit amet tincidunt tellus. Quisque a varius elit. Aenean felis velit, consequat sed euismod ut, tempor eget ipsum. Nunc arcu leo, feugiat at congue ut, tristique ac nulla. Donec sed magna nisi, id ultrices mi. Cras ultrices, risus a mattis suscipit, purus mauris sollicitudin velit, id varius ipsum velit vitae tellus. Curabitur porta posuere sem. Curabitur mi urna, ultricies vel faucibus quis, dignissim ac dui. Aenean sed risus tellus, sed sagittis mi. Mauris pharetra dolor lobortis elit vestibulum sodales lacinia orci venenatis.
+Curabitur sagittis volutpat sem, vitae vulputate elit rhoncus ut. Quisque sed elit quis lorem consectetur congue sed vehicula leo. Etiam scelerisque, urna sit amet rhoncus laoreet, neque risus pulvinar mi, non dapibus nibh nibh in ligula. Phasellus quis orci urna. Fusce placerat blandit nibh sit amet pellentesque. Nulla luctus, leo id scelerisque aliquam, est dolor vehicula elit, ac scelerisque sapien velit vitae tellus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin in metus in orci ornare scelerisque. Integer leo nisl, faucibus ut tristique eget, vestibulum et purus. Aliquam eget nunc lorem, quis scelerisque turpis.
+Aenean risus felis, commodo et blandit vel, commodo at ipsum. Donec nisl nunc, facilisis ac aliquet quis, ultrices nec massa. Mauris ligula est, pulvinar eget pretium at, cursus quis mi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Etiam pretium est quis elit aliquet sodales. Nullam et quam ac sapien blandit pulvinar. Quisque feugiat eleifend mauris, nec vestibulum eros posuere ut. Duis aliquet tristique ipsum et sagittis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean erat ante, posuere non sagittis eu, mattis sed dui. Vestibulum felis leo, volutpat ac pulvinar eu, facilisis ut risus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Ut aliquam dui vel sapien blandit fringilla id a sem. Nam iaculis, neque in laoreet congue, leo est dapibus massa, et fringilla odio dui id nibh. Praesent vel lectus ut ligula pellentesque pellentesque vitae sit amet odio. Curabitur in volutpat felis.
+Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus laoreet in congue ligula vehicula. Sed non erat sit amet lorem vehicula dapibus. Ut dapibus facilisis adipiscing. Nam vitae nisl vel diam laoreet rhoncus. Phasellus malesuada neque bibendum felis tincidunt venenatis. Phasellus ultricies aliquet turpis at tempor. Vivamus vel erat. """
+            ),
+            Chapter(style2,"Test chapter",
+				Section("header"),
+				Section("footer"),
+            	Enumerator(),
+	    		Section(
+		            Text("test1"),
+		            Text(style1,"test2"),
+		            Text(style2,"test3"),
+		            Expr(calc1,d1)
+	            ),
 	            NumSection(
 		            NumSection("Section test 1c"),
 		            NumSection(style1,"Section test 2c"),
@@ -80,8 +128,55 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	            		Expr(style2,calc1,expr1)
 	        		)
 	            ),
-	            EmptyDocumentComponent,
-	            EmptyDocumentComponent
+	            NumSection(
+		            NumSection("Section test 1c"),
+		            NumSection(style1,"Section test 2c"),
+		            NumSection(style2,"Section test 3c",
+	            		NumSection("Section test 1d"),
+	            		NumSection(style1,"Section test 2d"),
+	            		NumSection(style2,"Section test 3d"),
+	            		"Test expression 1:",
+	            		Expr(style2,calc1,d3),
+	            		"Test expression 2:",
+	            		Expr(style2,calc1,expr1)
+	        		)
+	            )
+            ),
+            Chapter(style1,"Test chapter",
+				Section("header"),
+				Section("footer"),
+	    		Section(
+		            Text("test1"),
+		            Text(style1,"test2"),
+		            Text(style2,"test3"),
+		            Expr(calc1,d1)
+	            ),
+	            NumSection(
+		            NumSection("Section test 1c"),
+		            NumSection(style1,"Section test 2c"),
+		            NumSection(style2,"Section test 3c",
+	            		NumSection("Section test 1d"),
+	            		NumSection(style1,"Section test 2d"),
+	            		NumSection(style2,"Section test 3d"),
+	            		"Test expression 1:",
+	            		Expr(style2,calc1,d3),
+	            		"Test expression 2:",
+	            		Expr(style2,calc1,expr1)
+	        		)
+	            ),
+	            NumSection(style3,
+		            NumSection("Lorem ipsum dolor sit amet"),
+		            NumSection(style4,"Section test 2c"),
+		            NumSection(style2,"Section test 3c",
+	            		NumSection("Section test 1d"),
+	            		NumSection(style1,"Section test 2d"),
+	            		NumSection(style2,"Section test 3d"),
+	            		"Test expression 1:",
+	            		Expr(style2,calc1,d3),
+	            		"Test expression 2:",
+	            		Expr(style2,calc1,expr1)
+	        		)
+	            )
             )
        )
 		
@@ -152,8 +247,8 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	    c1 put (fi -> ( (1+(lambdad^(2*n)))^(-(1/n)) ))
 	    c1 put (Nmax -> ( fi*NRc ))
 		
-		val BOLD = DefaultStyle.makeFontBold
-		val ITALIC = DefaultStyle.makeFontItalic
+		val BOLD = DefaultStyle.fontBold
+		val ITALIC = DefaultStyle.fontItalic
 		
 		val c2 = c1
 		val c3 = c1

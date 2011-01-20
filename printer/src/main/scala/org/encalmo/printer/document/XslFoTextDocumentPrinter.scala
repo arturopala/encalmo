@@ -6,6 +6,8 @@ import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
 import XslFoTags._
+import scala.collection.mutable.LinkedHashMap
+import scala.collection._
 
 /**
  * Prints document as xsl-fo text 
@@ -36,7 +38,19 @@ extends Traveler[DocumentComponent] {
 	
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
-		
+	
+	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
+	
+	/** Returns counter linked to enumerator */
+	private def counterFor(en:Enumerator):SectionCounter = {
+		var sco = counterMap.get(en)
+		if(!sco.isDefined){
+			sco = Some(SectionCounter(en))
+			counterMap.put(en,sco.get)
+		}
+		sco.get
+	}
+	
 	def write(ch:Char) = {
 		w.write(ch);
 	}
@@ -80,7 +94,6 @@ extends Traveler[DocumentComponent] {
 			}
 			output.start(PAGE_SEQUENCE)
 			output.attr("master-reference", output.layout.id)
-			output.appendBlockStyleAttributes(style)
 			output.body
 			if(chapter!=null){
 				if(chapter.header!=null){
@@ -105,12 +118,16 @@ extends Traveler[DocumentComponent] {
 			output.start(FLOW)
 			output.attr("flow-name","xsl-region-body")
 			output.body
+			output.start(BLOCK)
+			output.appendBlockStyleAttributes(style)
+			output.body
 			isInFlow = true
 		}
 	}
 	
 	def endPageSequence = {
 		if(isInFlow){
+			output.end(BLOCK)
 			output.end(FLOW)
 			output.end(PAGE_SEQUENCE)
 			isInFlow = false
@@ -119,6 +136,7 @@ extends Traveler[DocumentComponent] {
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
+			case nvc:NonVisualDocumentComponent => return
 			case d:Document => {
 				
 			}
@@ -130,6 +148,25 @@ extends Traveler[DocumentComponent] {
 			}
 		}
 		node.element match {
+			case ns:NumSection => {
+				val en:Enumerator = ns.enumerator
+				val sc = counterFor(en)
+				output.start(BLOCK)
+				output.appendBlockStyleAttributes(ns.resolveStyle(sc.currentLevel))
+				output.body
+				val ens = en.style
+				if(ens!=null){
+					output.start(INLINE)
+					output.appendInlineStyleAttributes(en.style)
+					output.body
+				}
+				
+				output.append(sc.current.mkString("",".",". "))
+				sc.in // counter level increment
+				if(ens!=null){
+					output.end(INLINE)
+				}
+			}
 			case s:Section => {
 				output.start(BLOCK)
 				output.appendBlockStyleAttributes(s.myStyle)
@@ -191,6 +228,12 @@ extends Traveler[DocumentComponent] {
 			}
 			case c:Chapter => {
 				endPageSequence
+			}
+			case ns:NumSection => {
+				output.end(BLOCK)
+				val sc = counterFor(ns.enumerator)
+				sc.out //counter level decrement
+				sc.next // counter increment
 			}
 			case s:Section => {
 				output.end(BLOCK)

@@ -11,12 +11,13 @@ E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\document\XslFoTex
 E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\document\XslFoTextDocumentPrinterTest.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\MathMLOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\DocumentPrinter.scala
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XmlTextOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\expression\MathMLExpressionPrinter.scala
-E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\Layout.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoTags.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\Layout.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\XslFoTextDocumentPrinter.scala
 E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\document\TestSuite.scala -> E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\document\PlainTextDocumentPrinterTest.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\PlainTextDocumentPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\document\TextDocumentPrinter.scala
@@ -64,6 +65,7 @@ E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\expression\PlainT
 E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\expression\PlainTextExpressionPrinterTest.scala -> E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\expression\PlainTextExpressionPrinterTest.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\Output.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\expression\MathMLExpressionPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\MathMLTags.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\expression\MathMLExpressionPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\MathMLOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\expression\MathMLExpressionPrinter.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\expression\ExpressionPrinter.scala
@@ -81,8 +83,8 @@ E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XmlTextOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\Layout.scala
-E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoTags.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoTags.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\LayoutFormat.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XmlTextOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XmlTextOutput.scala -> E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XmlTextOutput.scala
@@ -97,6 +99,8 @@ E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala 
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\TextOutput$$anonfun$saveToFile$1.class
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\TextOutput.class
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\TextOutput.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\TextOutputWriter.class
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\XslFoOutput.class
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\XslFoOutput$.class
 E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\document\XslFoTextDocumentPrinterTest.scala -> E:\Projekty\encalmo\printer\target\test-classes\org\encalmo\printer\document\XslFoTextDocumentPrinterTest.class
 E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\document\PlainTextDocumentPrinterTest.scala -> E:\Projekty\encalmo\printer\target\test-classes\org\encalmo\printer\document\PlainTextDocumentPrinterTest.class
 E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\expression\TestSuite.scala -> E:\Projekty\encalmo\printer\target\test-classes\org\encalmo\printer\expression\TestSuite.class
@@ -131,8 +135,12 @@ E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\Output.scala -> E
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\Output.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\Output$class.class
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\Layout.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\Layout.class
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\Layout.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\Layout$.class
-E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\XslFoOutput.class
-E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\XslFoOutput.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\XslFoOutput$.class
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\Counter$.class
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\SectionCounter$.class
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\SectionCounter$$anonfun$current$1.class
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\SectionCounter$$anonfun$out$1.class
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\SectionCounter.class
+E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\SectionCounter.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\Counter.class
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\expression\TextExpressionPrinter.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\expression\TextExpressionPrinter.class
 E:\Projekty\encalmo\printer\src\test\scala\org\encalmo\printer\expression\TravelUnitTest.scala -> E:\Projekty\encalmo\printer\target\test-classes\org\encalmo\printer\expression\TravelUnitTest.class
 E:\Projekty\encalmo\printer\src\main\scala\org\encalmo\printer\PdfOutput.scala -> E:\Projekty\encalmo\printer\target\classes\org\encalmo\printer\PdfOutput$.class

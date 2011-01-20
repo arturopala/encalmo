@@ -14,16 +14,11 @@ extends DocumentComponent(myStyle) {
 	override def toString = "Expr("+myStyle+","+calc+","+expr.mkString(",")+")"
 	
 	def resolve:Seq[Seq[Expression]] = {
-		var result = LinkedList[Seq[Expression]]()
-		for(e <- expr) {
-			result = result :+ resolveExpression(e)
-		}
-		result
+		for(e <- expr) yield resolveExpression(e)
 	}
 	
 	private def resolveExpression(e:Expression):Seq[Expression] = {
-		var se = LinkedList[Expression]()
-		se = se :+ e
+		var se = Seq[Expression](e)
 		val re = calc.resolve(e)
 		if(re!=e){
 			se = se :+ re
