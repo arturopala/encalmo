@@ -54,6 +54,8 @@ public class FOPHelper {
             FOP_FACTORY.setUserConfig(fopcfg);
             FOP_FACTORY.setBaseURL(FOPHelper.class.getResource("/").toExternalForm());
             FOP_FACTORY.setFontBaseURL(FOPHelper.class.getResource("/fonts/").toExternalForm());
+            FOP_FACTORY.setHyphenBaseURL(FOPHelper.class.getResource("/hyph/").toExternalForm());
+            FOP_FACTORY.setBreakIndentInheritanceOnReferenceAreaBoundary(true);
         } 
         catch(RuntimeException re){
             throw re;

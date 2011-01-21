@@ -4,7 +4,7 @@ trait TrigonometricOperation extends Operation1 with NamedOperation
 
 case class sin(e:Expression) extends TrigonometricOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.sin)
+	  case Number(r) => Number(r.rad.sin)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = sin(e)
@@ -13,7 +13,7 @@ case class sin(e:Expression) extends TrigonometricOperation{
 
 case class cos(e:Expression) extends TrigonometricOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.cos)
+	  case Number(r) => Number(r.rad.cos)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = cos(e)
@@ -22,7 +22,7 @@ case class cos(e:Expression) extends TrigonometricOperation{
 
 case class tan(e:Expression) extends TrigonometricOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.tan)
+	  case Number(r) => Number(r.rad.tan)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = tan(e)
@@ -31,7 +31,7 @@ case class tan(e:Expression) extends TrigonometricOperation{
 
 case class cot(e:Expression) extends TrigonometricOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.cot)
+	  case Number(r) => Number(r.rad.cot)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = cot(e)
@@ -42,7 +42,7 @@ trait InverseTrigonometricOperation extends Operation1 with NamedOperation
 
 case class arcsin(e:Expression) extends InverseTrigonometricOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.arcsin)
+	  case Number(r) => Number(r.arcsin.deg)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = arcsin(e)
@@ -51,7 +51,7 @@ case class arcsin(e:Expression) extends InverseTrigonometricOperation{
 
 case class arccos(e:Expression) extends InverseTrigonometricOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.arccos)
+	  case Number(r) => Number(r.arccos.deg)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = arccos(e)
@@ -60,7 +60,7 @@ case class arccos(e:Expression) extends InverseTrigonometricOperation{
 
 case class arctan(e:Expression) extends InverseTrigonometricOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.arctan)
+	  case Number(r) => Number(r.arctan.deg)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = arctan(e)
@@ -69,7 +69,7 @@ case class arctan(e:Expression) extends InverseTrigonometricOperation{
 
 case class arccot(e:Expression) extends InverseTrigonometricOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.arccot)
+	  case Number(r) => Number(r.arccot.deg)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = arccot(e)
@@ -80,7 +80,7 @@ trait HyperbolicOperation extends Operation1 with NamedOperation
 
 case class sinh(e:Expression) extends HyperbolicOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.sinh)
+	  case Number(r) => Number(r.rad.sinh)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = sinh(e)
@@ -89,7 +89,7 @@ case class sinh(e:Expression) extends HyperbolicOperation{
 
 case class cosh(e:Expression) extends HyperbolicOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.cosh)
+	  case Number(r) => Number(r.rad.cosh)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = cosh(e)
@@ -98,7 +98,7 @@ case class cosh(e:Expression) extends HyperbolicOperation{
 
 case class tanh(e:Expression) extends HyperbolicOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.tanh)
+	  case Number(r) => Number(r.rad.tanh)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = tanh(e)
@@ -107,7 +107,7 @@ case class tanh(e:Expression) extends HyperbolicOperation{
 
 case class coth(e:Expression) extends HyperbolicOperation{
   override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.coth)
+	  case Number(r) => Number(r.rad.coth)
 	  case _ => copy(v)
   }
   override def copy(e:Expression) = coth(e)

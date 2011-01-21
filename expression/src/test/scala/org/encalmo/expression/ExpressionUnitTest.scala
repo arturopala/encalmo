@@ -111,6 +111,7 @@ class ExpressionUnitTest extends AssertionsForJUnit {
 		assertTrue(-e14 ne e14.map(tra))
 		val e15:Expression = cbrt(a)
 		assertTrue(-e15 ne e15.map(tra))
+		assertEquals(Number(0.07195006122537703),sin(4.126).eval)
 	}
 	
 	@Test def verify1() {

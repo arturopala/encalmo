@@ -7,61 +7,23 @@ import annotation.tailrec
  * @author artur.opala
  */
 trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
-	
-	/** Parent component */
-    var parent:Option[A] = None
     
     /** Children components */
     def children:Seq[A] = Seq.empty
     
-    for (f <- children) {
-        f.parent = Some(this.asInstanceOf[A])
-    }
-    
-    /** Nearest parent component of the type A */
-    //@tailrec
-    final def parentOfType[B](t:Class[B]):Option[B] = {
-    	if(!parent.isDefined) None else {
-    		val p = parent.get
-    		p match {
-    			case o if (t.isAssignableFrom(o.getClass)) => {
-    				Some(o.asInstanceOf[B])
-    			}
-    			case o => o.parentOfType[B](t)
-    		}
-    	}
-    }
-    
-    /** Nearest parent or sibling component of the type A */
-    //@tailrec
-    final def parentOrSiblingOfType[B](t:Class[B]):Option[B] = {
-    	if(!parent.isDefined) None else {
-    		val p = parent.get
-    		p match {
-    			case o if (t.isAssignableFrom(o.getClass)) => {
-    				Some(o.asInstanceOf[B])
-    			}
-    			case o => {
-    				if(!o.children.isEmpty){
-    					val r = o.children.find(x => t.isAssignableFrom(x.getClass))
-    					if(r.isDefined){
-    						Some(r.get.asInstanceOf[B])
-    					}else{
-    						o.parentOrSiblingOfType[B](t)
-    					}
-    				}else{
-    					o.parentOrSiblingOfType[B](t)
-    				}
-    			}
-    		}
-    	}
-    }
+	/**
+	 * Maps this structure with tranformation function. 
+	 * Subtypes should return own copy with custom arguments after transformation
+	 * @param f transformate
+	 * @return tranformed structure
+	 */
+	def map(f:A=>A):A = f(this.asInstanceOf[A])
     
     /**
      * Travels internal structure of the expression 
      * @param t traveler
      */
-  	final override def travel(parentNode:Node[A] = null, traveler:Traveler[A], position:Int=0):Unit = {
+  	override def travel(parentNode:Node[A] = null, traveler:Traveler[A], position:Int=0):Unit = {
 		val n = Node(parentNode,this.asInstanceOf[A],position)
 		traveler.onEnter(n)
 		if(!children.isEmpty){

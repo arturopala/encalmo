@@ -59,7 +59,7 @@ extends Traveler[DocumentComponent] {
 		}
 	}
 	
-	def writeExpressionSeq(se:Seq[Expression]){
+	def writeExpressionSeq(se:Seq[ExpressionToPrint]){
 		if(se.head!=null){
 			writeExpression(se.head)
 		}
@@ -71,8 +71,8 @@ extends Traveler[DocumentComponent] {
 		}
 	}
 	
-	def writeExpression(e:Expression){
-		e.travel(traveler = ept)
+	def writeExpression(etp:ExpressionToPrint){
+		etp.expression.travel(traveler = ept)
 	}
 	
 	def plus = {tabs = tabs+1}
@@ -108,7 +108,7 @@ extends Traveler[DocumentComponent] {
 				writeLineEnd
 			}
 			case expr:Expr => {
-				val ess:Seq[Seq[Expression]] = expr.resolve
+				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
 				if(ess.head!=null){
 					writeExpressionSeq(ess.head)
 				}

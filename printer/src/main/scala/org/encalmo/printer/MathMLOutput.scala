@@ -15,6 +15,8 @@ class MathMLOutput(
 ) 
 extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
+	var color:String = "#000000"
+	
 	override def open = {
 		start(MATH)
 		declareNamespace("http://www.w3.org/1998/Math/MathML")
@@ -25,6 +27,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		attr("scriptminsize","6pt")
 		attr("scriptsizemultiplier","0.63")
 		attr("linethickness","0.6")
+		attr("color",color)
 		body
 	}
 	

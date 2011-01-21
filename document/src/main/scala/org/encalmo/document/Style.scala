@@ -4,14 +4,24 @@ import java.awt.Color
 
 /**
  * DocumentComponent's style class
- * @author artur
+ * @author artur.opala
  */
 case class Style(
 	font:FontStyle = DefaultFontStyle,
+	text:TextStyle = DefaultTextStyle,
 	paragraph:ParagraphStyle = DefaultParagraphStyle,
 	color:Color = Color.BLACK,
 	background:Color = Color.WHITE
 ){
+	
+	val hexColor:String = {
+		"#"+Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {val h = x.toHexString; if(h.size>1) h else {"0"+h}}).mkString
+	}
+	
+	val hexBackground:String = {
+		"#"+Seq[Int](background.getRed,background.getGreen,background.getBlue).map(x => x.toHexString).mkString
+	}
+	
 	def use(f:FontStyle):Style = copy(font=f)
 	def use(p:ParagraphStyle):Style = copy(paragraph=p)
 	
@@ -23,13 +33,14 @@ case class Style(
 	def fontBigger:Style = copy(font = font++)
 	def fontSmaller:Style = copy(font = font--)
 	
-	def hexColor:String = {
-		Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {val h = x.toHexString; if(h.size>1) h else {"0"+h}}).mkString
-	}
+	def useAlign(d:String) = copy(text = text.useAlign(d))
+	def useDecoration(d:String) = copy(text = text.useDecoration(d))
+	def useTransform(d:String) = copy(text = text.useTransform(d))
 	
-	def hexBackground:String = {
-		Seq[Int](background.getRed,background.getGreen,background.getBlue).map(x => x.toHexString).mkString
-	}
+	def useIndent(d:Int) = copy(text = text.useIndent(d))
+	def useLineHeight(d:Int) = copy(text = text.useLineHeight(d))
+	def useLetterSpacing(d:String) = copy(text = text.useLetterSpacing(d))
+	def useWordSpacing(d:String) = copy(text = text.useWordSpacing(d))
 	
 	def paddingTop(d:Int) = copy(paragraph = paragraph.paddingTop(d))
 	def paddingBottom(d:Int) = copy(paragraph = paragraph.paddingBottom(d))
@@ -41,11 +52,19 @@ case class Style(
 	def marginLeft(d:Int) = copy(paragraph = paragraph.marginLeft(d))
 	def marginRight(d:Int) = copy(paragraph = paragraph.marginRight(d))
 	
-	def setSpaceBefore(d:Int) = copy(paragraph = paragraph.setSpaceBefore(d))
-	def setSpaceAfter(d:Int) = copy(paragraph = paragraph.setSpaceAfter(d))
+	def useSpaceBefore(d:Int) = copy(paragraph = paragraph.useSpaceBefore(d))
+	def useSpaceAfter(d:Int) = copy(paragraph = paragraph.useSpaceAfter(d))
 	
 	def indentStart(d:Int) = copy(paragraph = paragraph.indentStart(d))
 	def indentEnd(d:Int) = copy(paragraph = paragraph.indentEnd(d))
+	
+	def usePaddings(bd:BoxDim) = copy(paragraph = paragraph.usePaddings(bd))
+	def useMargins(bd:BoxDim) = copy(paragraph = paragraph.useMargins(bd))
+	
+	def useUnit(u:String) = copy(paragraph = paragraph.useUnit(u),text = text.useUnit(u))
+
+	def hyphenateOn = copy(text = text.hyphenateOn)
+	def hyphenateOff = copy(text = text.hyphenateOff)
 }
 
 /**

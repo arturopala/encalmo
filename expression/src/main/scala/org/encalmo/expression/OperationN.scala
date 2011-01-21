@@ -5,6 +5,9 @@ import org.encalmo.common._
 trait OperationN extends Operation {
 	
   def args:Seq[Expression]
+  
+  /** Children expressions */
+  override def children:Seq[Expression] = args
 	
   /**
    * Real operation execution
@@ -37,7 +40,7 @@ trait OperationN extends Operation {
 	  }
   }
   
-  final override def travel(parent:Node[Expression] = null, traveler:Traveler[Expression], position:Int=0):Unit = {
+  /*final override def travel(parent:Node[Expression] = null, traveler:Traveler[Expression], position:Int=0):Unit = {
 	  val n = Node(parent,this,position)
 	  traveler.onEnter(n)
 	  var i=0
@@ -53,7 +56,7 @@ trait OperationN extends Operation {
 	 	  pe = e
 	  })
 	  traveler.onExit(n)
-  }
+  }*/
   
 }
 

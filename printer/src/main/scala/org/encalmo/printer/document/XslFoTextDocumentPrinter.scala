@@ -7,6 +7,7 @@ import org.encalmo.printer.expression._
 import org.encalmo.document._
 import XslFoTags._
 import scala.collection.mutable.LinkedHashMap
+import scala.collection.mutable.Stack
 import scala.collection._
 
 /**
@@ -39,9 +40,12 @@ extends Traveler[DocumentComponent] {
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
 	
+	/** Section counters map */
 	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
 	
-	/** Returns counter linked to enumerator */
+	private val styleStack:Stack[Style] = Stack()
+	
+	/** Returns counter linked to the enumerator */
 	private def counterFor(en:Enumerator):SectionCounter = {
 		var sco = counterMap.get(en)
 		if(!sco.isDefined){
@@ -59,30 +63,41 @@ extends Traveler[DocumentComponent] {
 		w.write(s);
 	}
 	
-	def writeExpressionSeq(se:Seq[Expression]){
+	def writeWithSpaceAround(s:String) = {
+		if(s!=null){
+			output.start(INLINE)
+			output.attr("padding-start","0.2em")
+			output.attr("padding-end","0.2em")
+			output.body
+			output.append(s)
+			output.end(INLINE)
+		}
+	}
+	
+	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style){
 		if(se.head!=null){
-			writeExpression(se.head)
+			writeExpression(se.head, style)
 		}
 		if(se.tail!=null && !se.tail.isEmpty){
-			se.tail.foreach(e => {
-				output.append(" = ")
-				writeExpression(e)
-			})
-		}
-		if(se.tail!=null && !se.tail.isEmpty){
-			se.tail.foreach(e => {
-				output.append(" = ")
-				writeExpression(e)
+			se.tail.foreach(etp => {
+				writeExpression(etp, if (etp.style!=null) etp.style else style )
 			})
 		}
 	}
 	
-	def writeExpression(e:Expression){
+	def writeExpression(etp:ExpressionToPrint, style:Style){
+		writeWithSpaceAround(etp.prefix)
 		output.startb(INSTREAM_FOREIGN_OBJECT)
+		val mc = mathOutput.color
+		if(style!=null){
+			mathOutput.color = style.hexColor
+		}
 		mathOutput.open
-		e.travel(traveler = ept)
+		etp.expression.travel(traveler = ept)
 		mathOutput.close
+		mathOutput.color = mc
 		output.end(INSTREAM_FOREIGN_OBJECT)
+		writeWithSpaceAround(etp.suffix)
 	}
 	
 	var isInFlow:Boolean = false
@@ -94,6 +109,7 @@ extends Traveler[DocumentComponent] {
 			}
 			output.start(PAGE_SEQUENCE)
 			output.attr("master-reference", output.layout.id)
+			output.appendBlockStyleAttributes(style, styleStack.top)
 			output.body
 			if(chapter!=null){
 				if(chapter.header!=null){
@@ -118,9 +134,7 @@ extends Traveler[DocumentComponent] {
 			output.start(FLOW)
 			output.attr("flow-name","xsl-region-body")
 			output.body
-			output.start(BLOCK)
-			output.appendBlockStyleAttributes(style)
-			output.body
+			output.startb(BLOCK)
 			isInFlow = true
 		}
 	}
@@ -137,9 +151,7 @@ extends Traveler[DocumentComponent] {
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
 			case nvc:NonVisualDocumentComponent => return
-			case d:Document => {
-				
-			}
+			case d:Document => {}
 			case chapter:Chapter => {
 				tryStartPageSequence(chapter,chapter.style)
 			}
@@ -152,16 +164,16 @@ extends Traveler[DocumentComponent] {
 				val en:Enumerator = ns.enumerator
 				val sc = counterFor(en)
 				output.start(BLOCK)
-				output.appendBlockStyleAttributes(ns.resolveStyle(sc.currentLevel))
+				output.appendBlockStyleAttributes(ns.resolveStyle(sc.currentLevel),styleStack.top)
 				output.body
 				val ens = en.style
 				if(ens!=null){
 					output.start(INLINE)
-					output.appendInlineStyleAttributes(en.style)
+					output.appendInlineStyleAttributes(en.style, styleStack.top)
 					output.body
 				}
 				
-				output.append(sc.current.mkString("",".",". "))
+				output.append(sc.current.mkString("",".","."+SPACE))
 				sc.in // counter level increment
 				if(ens!=null){
 					output.end(INLINE)
@@ -169,13 +181,13 @@ extends Traveler[DocumentComponent] {
 			}
 			case s:Section => {
 				output.start(BLOCK)
-				output.appendBlockStyleAttributes(s.myStyle)
+				output.appendBlockStyleAttributes(s.myStyle, styleStack.top)
 				output.body
 			}
 			case t:Text => {
 				if(t.myStyle!=null){
 					output.start(INLINE)
-					output.appendInlineStyleAttributes(t.myStyle)
+					output.appendInlineStyleAttributes(t.myStyle, styleStack.top)
 					output.body
 				}
 				output.append(t.text);
@@ -186,26 +198,28 @@ extends Traveler[DocumentComponent] {
 			case expr:Expr => {
 				if(expr.myStyle!=null){
 					output.start(INLINE)
-					output.appendInlineStyleAttributes(expr.myStyle)
+					output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
 					output.body
 				}
-				val ess:Seq[Seq[Expression]] = expr.resolve
+				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
 				if(ess.head!=null){
-					writeExpressionSeq(ess.head)
+					writeExpressionSeq(ess.head, expr.myStyle)
 				}
 				if(ess.tail!=null && !ess.tail.isEmpty){
 					ess.tail.foreach(es => {
 						write(COMMA)
 						write(SPACE)
-						writeExpressionSeq(es)
+						writeExpressionSeq(es, expr.myStyle)
 					})
 				}
 				if(expr.myStyle!=null){
 					output.end(INLINE)
 				}
 			}
-			case _ =>
+			case _ => {}
 		}
+		// pushing current style on the stack
+		styleStack.push(node.element.style)
 	}
 	
 	override def onBeforeChildEnter(node:Node[DocumentComponent], position:Int, child:DocumentComponent):Unit = Unit
@@ -213,7 +227,7 @@ extends Traveler[DocumentComponent] {
 	override def onBetweenChildren(node:Node[DocumentComponent], leftChild:DocumentComponent, rightChild:DocumentComponent):Unit = {
 		(leftChild,rightChild) match {
 			case (tl:Text,tr:Text) => {
-				write(" ")
+				write(SPACE)
 			}
 			case _ =>
 		}
@@ -222,6 +236,8 @@ extends Traveler[DocumentComponent] {
 	override def onAfterChildExit(node:Node[DocumentComponent], position:Int, child:DocumentComponent):Unit = Unit
 	
 	override def onExit(node:Node[DocumentComponent]):Unit = {
+		// removing current style from the stack
+		styleStack.push(node.element.style)
 		node.element match {
 			case d:Document => {
 				endPageSequence

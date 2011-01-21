@@ -5,9 +5,8 @@ import org.encalmo.common._
 /**
  * Root type of all expressions.
  * @author artur.opala
- * 
  */
-trait Expression extends Travelable[Expression] {
+trait Expression extends TreeLike[Expression] {
   
   /**
    * Evaluates expression. 
@@ -16,22 +15,14 @@ trait Expression extends Travelable[Expression] {
   def eval():Expression = this
   
   /**
-   * Maps this expression with tranformation function. 
-   * Subtypes should return own copy with custom arguments after transformation
-   * @param f transformate
-   * @return tranformed expression
-   */
-  def map(f:Transformation):Expression = f(this)
-  
-  /**
    * Travels internal structure of the expression 
    * @param t traveler
    */
-  override def travel(parent:Node[Expression] = null, traveler:Traveler[Expression], position:Int=0):Unit = {
+  /*override def travel(parent:Node[Expression] = null, traveler:Traveler[Expression], position:Int=0):Unit = {
 	  val n = Node(parent,this,position)
 	  traveler.onEnter(n)
 	  traveler.onExit(n)
-  }
+  }*/
   
   /**
    * Assigns this expression to the symbol s

@@ -10,7 +10,8 @@ case class ParagraphStyle(
 		val spaceBefore:Int = 0,
 		val spaceAfter:Int = 0,
 		val startIndent:Int = 0,
-		val endIndent:Int = 0
+		val endIndent:Int = 0,
+		val unit:String = "pt"
 	) {
 	
 	def paddingTop(d:Int) = copy(padding = padding.setTop(d))
@@ -23,11 +24,16 @@ case class ParagraphStyle(
 	def marginLeft(d:Int) = copy(margin = margin.setLeft(d))
 	def marginRight(d:Int) = copy(margin = margin.setRight(d))
 	
-	def setSpaceBefore(d:Int) = copy(spaceBefore = d)
-	def setSpaceAfter(d:Int) = copy(spaceAfter = d)
+	def useSpaceBefore(d:Int) = copy(spaceBefore = d)
+	def useSpaceAfter(d:Int) = copy(spaceAfter = d)
 	
 	def indentStart(d:Int) = copy(startIndent = d)
 	def indentEnd(d:Int) = copy(endIndent = d)
+	
+	def usePaddings(bd:BoxDim) = copy(padding = bd)
+	def useMargins(bd:BoxDim) = copy(margin = bd)
+	
+	def useUnit(u:String) = copy(unit = u)
 
 }
 

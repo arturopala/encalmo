@@ -1,6 +1,18 @@
 package org.encalmo.expression
 
+/**
+ * Common tranformations set
+ * @author artur.opala
+ */
 object Transformations {
+	
+	/**
+	 * Evaluates only NamedOperations
+	 */
+	def evalNamedOperations(e:Expression):Expression = e match {
+		case no:NamedOperation => no.eval
+		case _ => e
+	}
 	
 	def simplifyProd(e:Expression):Expression = e match {
 	    case Prod(l,r) if (ZERO.eq(l) || ZERO.eq(r)) => ZERO

@@ -12,6 +12,8 @@ class XmlTextOutput(
 ) 
 extends TextOutput(locale,buffer) {	
 	
+	var attrCounter = 0;
+	
 	override def open = {
 		append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 	}
@@ -56,6 +58,7 @@ extends TextOutput(locale,buffer) {
 	def body:Unit = {
 		buffer.append(">")
 		indent.inBody = true
+		attrCounter = 0
 	}
 	
 	/**
@@ -98,13 +101,18 @@ extends TextOutput(locale,buffer) {
 		buffer.append("=\"")
 		value.foreach(buffer.append(_))
 		buffer.append("\"")
+		attrCounter = attrCounter + 1
+		if(attrCounter>4){
+			attrCounter = 0
+			indent.append(buffer)
+		}
 	}
 	
 	/**
 	 * Appends attribute to the buffer
 	 * if first value is not zero or empty or null
 	 */
-	def attrNoZero(name:String,value:Any*):Unit = {
+	def attrNoZero(name:String,value:Any*):Boolean = {
 		if(!value.isEmpty 
 				&& value.first!=null 
 				&& value.first!="0" 
@@ -112,7 +120,41 @@ extends TextOutput(locale,buffer) {
 				&& value.first!=" "
 				&& value.first!=""){
 			attr(name,value:_*)
-		}
+			true
+		} else false
+	}
+	
+	/**
+	 * Appends attribute to the buffer
+	 * if first value is not zero or empty or null
+	 * and if first value not equals the template
+	 */
+	def attrIfChanged(name:String,template:Any,value:Any*):Boolean = {
+		if(!value.isEmpty 
+				&& value.first!=null 
+				&& value.first!="0" 
+				&& value.first!=0 
+				&& value.first!=" "
+				&& value.first!=""
+				&& value.first!=template){
+			attr(name,value:_*)
+			true
+		} else false
+	}
+	
+	/**
+	 * Appends boolean attribute to the buffer
+	 * if value has changed compared to the template
+	 */
+	def attrIfChanged(name:String,template:Boolean,value:Boolean):Boolean = {
+		if(template!=value){
+			if(value){
+				attr(name,"true")
+			}else{
+				attr(name,"false")
+			}
+			true
+		} else false
 	}
 	
 	/**

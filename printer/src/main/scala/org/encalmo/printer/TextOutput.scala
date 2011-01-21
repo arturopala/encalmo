@@ -24,8 +24,12 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	/**
 	 * Appends string to the buffer
 	 */
-	def append(content:String):Unit = {
-		buffer.append(content)
+	def append(content:String*):Unit = {
+		for(s <- content){
+			if(s!=null){
+				buffer.append(s)
+			}
+		}
 	}
 	
 	/**
@@ -71,7 +75,10 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	def saveToFile(file:java.io.File) = {
 		val text = getResult
 		using[java.io.OutputStreamWriter](new java.io.OutputStreamWriter(new java.io.FileOutputStream(file),"utf-8")){
-			os => os.write(text)
+			os => {
+				os.write(text)
+				os.flush
+			}
 		}
 	}
 

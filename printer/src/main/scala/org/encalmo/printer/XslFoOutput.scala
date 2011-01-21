@@ -57,31 +57,45 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		new MathMLOutput(locale = locale, buffer = buffer, indent = indent)
 	}
 	
-	def appendBlockStyleAttributes(style:Style):Unit = {
+	def appendBlockStyleAttributes(style:Style, currentStyle:Style):Unit = {
 		if(style!=null){
-			appendInlineStyleAttributes(style)
-			attr("background-color","#",style.hexBackground)
-			attrNoZero("space-before",style.paragraph.spaceBefore,"mm")
-			attrNoZero("space-after",style.paragraph.spaceAfter,"mm")
-			attrNoZero("padding-left",style.paragraph.padding.left,"mm")
-			attrNoZero("padding-right",style.paragraph.padding.right,"mm")
-			attrNoZero("padding-top",style.paragraph.padding.top,"mm")
-			attrNoZero("padding-bottom",style.paragraph.padding.bottom,"mm")
-			attrNoZero("margin-left",style.paragraph.margin.left,"mm")
-			attrNoZero("margin-right",style.paragraph.margin.right,"mm")
-			attrNoZero("margin-top",style.paragraph.margin.top,"mm")
-			attrNoZero("margin-bottom",style.paragraph.margin.bottom,"mm")
+			appendInlineStyleAttributes(style,currentStyle)
+			attrIfChanged("background-color",currentStyle.hexBackground,style.hexBackground)
+			attrNoZero("space-before",style.paragraph.spaceBefore,style.paragraph.unit)
+			attrNoZero("space-after",style.paragraph.spaceAfter,style.paragraph.unit)
+			attrNoZero("padding-left",style.paragraph.padding.left,style.paragraph.unit)
+			attrNoZero("padding-right",style.paragraph.padding.right,style.paragraph.unit)
+			attrNoZero("padding-top",style.paragraph.padding.top,style.paragraph.unit)
+			attrNoZero("padding-bottom",style.paragraph.padding.bottom,style.paragraph.unit)
+			attrNoZero("margin-left",style.paragraph.margin.left,style.paragraph.unit)
+			attrNoZero("margin-right",style.paragraph.margin.right,style.paragraph.unit)
+			attrNoZero("margin-top",style.paragraph.margin.top,style.paragraph.unit)
+			attrNoZero("margin-bottom",style.paragraph.margin.bottom,style.paragraph.unit)
+			attrIfChanged("text-indent",currentStyle.text.indent,style.text.indent,style.text.unit)
+			if(attrIfChanged("hyphenate",currentStyle.text.hyphenate,style.text.hyphenate)){
+				attrNoZero("country",locale.getCountry)
+				attrNoZero("language",locale.getLanguage)
+			}
 		}
 	}
 	
-	def appendInlineStyleAttributes(style:Style):Unit = {
+	def appendInlineStyleAttributes(style:Style, currentStyle:Style):Unit = {
 		if(style!=null){
-			attr("font-family",style.font.family)
-			attr("font-size",style.font.size,"pt")
-			attr("font-style",if(style.font.italic){"italic"}else{"normal"})
-			attr("font-weight",if(style.font.bold){"bold"}else{"normal"})
-			attr("color","#",style.hexColor)
+			attrIfChanged("font-family",currentStyle.font.family,style.font.family)
+			attrIfChanged("font-size",currentStyle.font.size,style.font.size,"pt")
+			attrIfChanged("font-style",resolveFontStyle(currentStyle.font),resolveFontStyle(style.font))
+			attrIfChanged("font-weight",resolveFontWeight(currentStyle.font),resolveFontWeight(style.font))
+			attrIfChanged("color",currentStyle.hexColor,style.hexColor)
+			attrIfChanged("letter-spacing",currentStyle.text.letterSpacing,style.text.letterSpacing)
+			attrIfChanged("word-spacing",currentStyle.text.wordSpacing,style.text.wordSpacing)
+			attrIfChanged("line-height",currentStyle.text.lineHeight,style.text.lineHeight,style.text.unit)
+			attrIfChanged("text-align",currentStyle.text.align,style.text.align)
+			attrIfChanged("text-decoration",currentStyle.text.decoration,style.text.decoration)
+			attrIfChanged("text-transform",currentStyle.text.transform,style.text.transform)
 		}
 	}
+	
+	private def resolveFontStyle(fs:FontStyle):String = if(fs.italic){"italic"}else{"normal"}
+	private def resolveFontWeight(fs:FontStyle):String = if(fs.bold){"bold"}else{"normal"}
 	
 }

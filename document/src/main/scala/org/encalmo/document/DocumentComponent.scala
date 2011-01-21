@@ -7,7 +7,7 @@ import annotation.tailrec
  * DocumentComponent trait
  * @author artur.opala
  */
-abstract class DocumentComponent(private val dcStyle:Style) extends TreeLike[DocumentComponent] {
+abstract class DocumentComponent(private val dcStyle:Style) extends TreeLikeWithParent[DocumentComponent] {
     
     /** Component's own style declaration */
     def myStyle:Style = dcStyle
