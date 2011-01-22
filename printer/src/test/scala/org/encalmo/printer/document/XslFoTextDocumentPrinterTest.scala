@@ -30,7 +30,11 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		val d3 = d|3
 		
 		val calc1 = Calculation("1")
-		val expr1 = a*b/c
+		val expr1 = (a*b/c + c/b + (a^3))^2
+		val expr4 = a*b/c + c/b + (a^3)
+		
+		dumpRaw(expr1)
+		
 		calc1 put (d1 -> expr1)
 		
 		val a1 = Symbol1("Ar")
@@ -67,6 +71,8 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Resolve(style1,style4,calc1,d1)),
 	    		Section(
 		            Evaluate(style1,style4,calc1,d1+sin(4.126))),
+		        Section(
+		            Evaluate(style1,style4,calc1,expr4)),
 	    		Section(
 		            Result(style1,calc1,d1)),
 	            Section(style2,

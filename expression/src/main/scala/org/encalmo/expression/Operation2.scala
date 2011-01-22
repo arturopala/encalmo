@@ -3,7 +3,7 @@ package org.encalmo.expression
 import org.encalmo.common._
 
 /**
- * Two argument operations root type
+ * Two argument operation trait
  * @author artur.opala
  */
 trait Operation2 extends Operation {
@@ -33,7 +33,7 @@ trait Operation2 extends Operation {
 	  if(vl==l && vr==r) f(this) else f(copy(vl,vr))
   }
   
-  /*final override def travel(parent:Node[Expression] = null,traveler:Traveler[Expression], position:Int=0):Unit = {
+  final override def travel(parent:Node[Expression] = null,traveler:Traveler[Expression], position:Int=0):Unit = {
 	  val n = Node(parent,this,position)
 	  traveler.onEnter(n)
 	  traveler.onBeforeChildEnter(n,0,l)
@@ -44,11 +44,11 @@ trait Operation2 extends Operation {
 	  r.travel(n,traveler,1)
 	  traveler.onAfterChildExit(n,1,r)
 	  traveler.onExit(n)
-  }*/
+  }
 
 }
 
 object Operation2 {
-  def unapply(o:Operation2) = Some((o.l,o.r,o.operator,o.precedence))
+  def unapply(o:Operation2) = Some(o.l,o.r,o.operator,o.precedence)
 }
 

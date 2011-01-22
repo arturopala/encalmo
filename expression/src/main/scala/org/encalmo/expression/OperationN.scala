@@ -2,6 +2,11 @@ package org.encalmo.expression
 
 import org.encalmo.common._
 
+/**
+ * Operation with N-arguments
+ * (usually more than two)
+ * @author artur.opala
+ */
 trait OperationN extends Operation {
 	
   def args:Seq[Expression]
@@ -24,11 +29,17 @@ trait OperationN extends Operation {
   def copy(e:Expression*):OperationN
 	
   final override def eval():Expression = {
-	  val r = args.map(_.eval).partition(_.isInstanceOf[Value])
-	  if(r._2.isEmpty)
-	 	  calculate(r._1.map(_.asInstanceOf[Value]):_*)
-	  else
-	 	  this
+	  val ps = args.map(_.eval).partition(_.isInstanceOf[Value])
+	  if(ps._1.isEmpty){
+	 	  copy(args:_*)
+	  }else{
+		  val result:Expression = calculate(ps._1.map(_.asInstanceOf[Value]):_*)
+		  if(ps._2.isEmpty){
+		 	  result
+		  } else {
+		 	  copy((ps._2.+:(result)):_*)
+		  }
+	  }
   }
   
   final override def map(f:Transformation):Expression = {
@@ -40,26 +51,14 @@ trait OperationN extends Operation {
 	  }
   }
   
-  /*final override def travel(parent:Node[Expression] = null, traveler:Traveler[Expression], position:Int=0):Unit = {
-	  val n = Node(parent,this,position)
-	  traveler.onEnter(n)
-	  var i=0
-	  var pe:Expression = null
-	  args.foreach(e => {
-	 	  if(i>0){
-	 	 	  traveler.onBetweenChildren(n,pe,e)
-	 	  }
-	 	  traveler.onBeforeChildEnter(n,i,e)
-	 	  e.travel(n,traveler,i)
-	 	  traveler.onAfterChildExit(n,i,e)
-	 	  i = i+1
-	 	  pe = e
-	  })
-	  traveler.onExit(n)
-  }*/
-  
 }
 
+/**
+ * Companion object of OperationN trait
+ * @author artur.opala
+ */
 object OperationN {
-	def unapply(o:OperationN) = Some((o.args,o.operator))
+	
+  def unapply(o:OperationN) = Some(Seq(o.args:_*),o.operator)
+	
 }

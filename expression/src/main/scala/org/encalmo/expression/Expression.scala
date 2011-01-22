@@ -15,16 +15,6 @@ trait Expression extends TreeLike[Expression] {
   def eval():Expression = this
   
   /**
-   * Travels internal structure of the expression 
-   * @param t traveler
-   */
-  /*override def travel(parent:Node[Expression] = null, traveler:Traveler[Expression], position:Int=0):Unit = {
-	  val n = Node(parent,this,position)
-	  traveler.onEnter(n)
-	  traveler.onExit(n)
-  }*/
-  
-  /**
    * Assigns this expression to the symbol s
    * @param s symbol
    * @return new definition of s
@@ -37,6 +27,7 @@ trait Expression extends TreeLike[Expression] {
 	  case Void => this
 	  case Unknown => Unknown
 	  case _ if ZERO.eq(e) => this; 
+	  //case Sum(l,r) => MultiSum(this,l,r); 
 	  case _ => Sum(this,e)
   }
   
@@ -52,6 +43,7 @@ trait Expression extends TreeLike[Expression] {
 	  case Unknown => Unknown
 	  case _ if ONE.eq(e) => this; 
 	  case _ if ZERO.eq(e) => ZERO; 
+	  //case Prod(l,r) => MultiProd(this,l,r);
 	  case _ => Prod(this,e)
   }
   

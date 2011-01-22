@@ -1,9 +1,5 @@
 package org.encalmo.expression
 
-/*
- * Named operations classes set
- */
-
 /**
  * Square root operation
  */
@@ -50,7 +46,7 @@ case class min(args:Expression*) extends OperationN with NamedOperation {
 	
   override def calculate(v:Value*):Expression = {
 	  if(v.forall(_.isInstanceOf[Number]))
-	 	  v.map(_.asInstanceOf[Number]).reduceLeft[Number]((b,a) => Number(Math.min(b.r.d,a.r.d)))
+	 	  new Number(v.map(_.asInstanceOf[Number].r.d).reduceLeft[Double]((b,a) => Math.min(a,b)))
 	  else
 	 	  copy(v:_*)
   }
@@ -65,7 +61,7 @@ case class max(args:Expression*) extends OperationN with NamedOperation {
 	
   override def calculate(v:Value*):Expression = {
 	  if(v.forall(_.isInstanceOf[Number]))
-	 	  v.map(_.asInstanceOf[Number]).reduceLeft[Number]((b,a) => Number(Math.max(b.r.d,a.r.d)))
+	 	  new Number(v.map(_.asInstanceOf[Number].r.d).reduceLeft[Double]((b,a) => Math.max(a,b)))
 	  else
 	 	  copy(v:_*)
   }

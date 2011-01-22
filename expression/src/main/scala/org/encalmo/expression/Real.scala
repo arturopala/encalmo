@@ -16,28 +16,6 @@ object Real{
   val one = new Real(1)
   val pi = new Real(Math.Pi)
   val e = new Real(Math.E)
-	
-  /*val f0:java.text.DecimalFormat = new java.text.DecimalFormat("0")
-  val f1:java.text.DecimalFormat = new java.text.DecimalFormat("0.#")
-  val f2:java.text.DecimalFormat = new java.text.DecimalFormat("0.##")
-  val f3:java.text.DecimalFormat = new java.text.DecimalFormat("0.###")
-  val f4:java.text.DecimalFormat = new java.text.DecimalFormat("0.####")
-  
-  def format(r:Real):(String,String) = r.d match {
-      case d if d<1E-12 => (f3.format(d*1E12),"-12")
-      case d if d<1E-9 => (f3.format(d*1E9),"-9")
-      case d if d<1E-6 => (f3.format(d*1E6),"-6")
-      case d if d<1E-5 => (f3.format(d*1E5),"-5")
-      case d if d<1E-4 => (f3.format(d*1E4),"-4")
-      case d if d<1E-3 => (f3.format(d*1E3),"-3")
-      case d if d<0 => (f3.format(d),null)
-      case d if d>1E9 => (f3.format(d/1E9),"9")
-      case d if d>1E6 => (f3.format(d/1E6),"6")
-      case d if d>1E5 => (f3.format(d/1E5),"5")
-      case d if d>1E4 => (f3.format(d/1E4),"4")
-      case d if d>1E3 => (f3.format(d/1E3),"3")
-      case _ => (f4.format(r.d),null)
-  }*/
   
   private def getFormat(locale:java.util.Locale):java.text.DecimalFormat = {
 	  val format = java.text.NumberFormat.getNumberInstance(locale).asInstanceOf[java.text.DecimalFormat]
@@ -119,8 +97,13 @@ class Real(val d:Double){
   def deg:Real = Real(Math.toDegrees(d))
   def isInt = (d.toInt==d)
   
+  /**
+   * Equals two real numbers if differs no more then 0.00000001
+   */
   override def equals(a:Any):Boolean = a match {	
-	  case r:Real => r.d-d<0.000001
+	  case r:Real => {
+	 	  r.d==d || (Math.abs(r.d-d)<0.00000001)
+	  }
 	  case _ => false
   }
   

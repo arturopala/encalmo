@@ -52,7 +52,7 @@ class RealUnitTest extends AssertionsForJUnit {
 		assertEquals(Real(1)*Real(2), Real(2));
 		assertNotSame(Real(1)*Real(2), Real(3));
 		assertEquals(Real(1.1)*Real(0.1),Real(0.11));
-		isEqual(1.5*Real(2.54), 3.81);
+		isEqual(Real(1.5)*Real(2.54), 3.81);
 		assertNotSame(Real(1.1)*Real(-2.1), Real(2.3100));
 	}
 	

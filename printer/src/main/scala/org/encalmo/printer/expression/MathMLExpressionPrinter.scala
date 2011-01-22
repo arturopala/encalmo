@@ -100,9 +100,10 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 			case o: Operation => {
 				node.element match {
 					case o:Power => {
-						if (position==1) {
-							output.startb(MROW)
+						if(position==0){
+							output.leftBracket
 						}
+						output.startb(MROW)
 					}
 					case o: Operation => {
 						output.startb(MROW)
@@ -138,8 +139,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 			case o: Operation => {
 				node.element match {
 					case o:Power => {
-						if (position==1) {
-							output.end(MROW)
+						output.end(MROW)
+						if(position==0){
+							output.rightBracket
 						}
 					}  
 					case o:cbrt => {

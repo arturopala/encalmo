@@ -80,9 +80,7 @@ case class Number(r:Real) extends Value {
   def isInt = r.isInt
   
   override def equals(a:Any):Boolean = a match {	
-	  case o:Number if ZERO.eq(o) => r==Real.zero
-	  case o:Number if ONE.eq(o) => r==Real.one
-	  case o:Number => o.r.equals(r)
+	  case Number(r) => this.r==r
 	  case _ => false
   }
 }
@@ -104,11 +102,6 @@ object ZERO extends Number(Real.zero){
   override def unary_-():Expression = this
   override def isInt = false
   
-  override def equals(a:Any):Boolean = a match {	
-	  case o:Number if o.r==Real.zero => true
-	  case _ => false
-  }
-  
 }
 
 /**
@@ -123,10 +116,5 @@ object ONE extends Number(Real.one){
   override def % (e:Expression):Expression = e
   override def ^ (e:Expression):Expression = ONE
   override def isInt = true
-  
-  override def equals(a:Any):Boolean = a match {	
-	  case o:Number if o.r==Real.one => true
-	  case _ => false
-  }
  
 }
