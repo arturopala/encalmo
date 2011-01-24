@@ -73,6 +73,7 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	def printConsole = Console.println(getResult)
 	
 	def saveToFile(file:java.io.File) = {
+	    file.getParentFile.mkdirs
 		val text = getResult
 		using[java.io.OutputStreamWriter](new java.io.OutputStreamWriter(new java.io.FileOutputStream(file),"utf-8")){
 			os => {
