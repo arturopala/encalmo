@@ -7,17 +7,39 @@ import annotation.tailrec
  * @author artur.opala
  */
 trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
+	
+	val MAX_MAP_ALL_LOOP_COUNT:Int = 256
     
     /** Children components */
     def children:Seq[A] = Seq.empty
     
 	/**
-	 * Maps this structure with tranformation function. 
+	 * Maps this structure once with tranformation function. 
 	 * Subtypes should return own copy with custom arguments after transformation
 	 * @param f transformate
 	 * @return tranformed structure
 	 */
 	def map(f:A=>A):A = f(this.asInstanceOf[A])
+	
+	/**
+	 * Maps this structure with tranformation function in loop
+	 * while returns non identical results or if loop count exceeds max allowed number (256)
+	 * Subtypes should return own copy with custom arguments after transformation
+	 * @param f transformate
+	 * @return fully tranformed structure or lasty transformed in case of max loop count overflow
+	 */
+	final def mapAll(f:A=>A, c:Int = 0):A = {
+		val e:A = map(f)
+		if(c>=MAX_MAP_ALL_LOOP_COUNT){
+			e
+		}else{
+			if(this.eq(e)) {
+				return e
+			}else{
+				e.mapAll(f, c+1)
+			}
+		}
+	}
     
     /**
      * Travels internal structure of the expression 

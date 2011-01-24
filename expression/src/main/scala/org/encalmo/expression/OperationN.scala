@@ -23,21 +23,28 @@ trait OperationN extends Operation {
   
   /**
    * Operation copy with exchanged parameters
-   * @param e
-   * @return
    */
   def copy(e:Expression*):OperationN
 	
   final override def eval():Expression = {
 	  val ps = args.map(_.eval).partition(_.isInstanceOf[Value])
 	  if(ps._1.isEmpty){
-	 	  copy(args:_*)
+	 	  if(args.sameElements(ps._2)){
+	 	 	  this // returns this if none argument has been transformed by eval
+	 	  }else{
+	 		  copy(ps._2:_*) // returns copy with transformed arguments
+	 	  }
 	  }else{
 		  val result:Expression = calculate(ps._1.map(_.asInstanceOf[Value]):_*)
 		  if(ps._2.isEmpty){
-		 	  result
+		 	  result // returns only evaluation
 		  } else {
-		 	  copy((ps._2.+:(result)):_*)
+		 	  val newargs = ps._2.+:(result)
+		 	  if(args.sameElements(newargs)){
+		 	 	  this // returns this if none argument has been transformed by eval and calculate
+		 	  }else{
+		 		  copy(newargs:_*) // returns mix of both
+		 	  }
 		  }
 	  }
   }

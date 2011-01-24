@@ -27,7 +27,7 @@ trait Expression extends TreeLike[Expression] {
 	  case Void => this
 	  case Unknown => Unknown
 	  case _ if ZERO.eq(e) => this; 
-	  //case Sum(l,r) => MultiSum(this,l,r); 
+	  case Sum(l,r) => Sum(this,l,r); 
 	  case _ => Sum(this,e)
   }
   
@@ -43,7 +43,7 @@ trait Expression extends TreeLike[Expression] {
 	  case Unknown => Unknown
 	  case _ if ONE.eq(e) => this; 
 	  case _ if ZERO.eq(e) => ZERO; 
-	  //case Prod(l,r) => MultiProd(this,l,r);
+	  case Prod(l,r) => Prod(this,l,r);
 	  case _ => Prod(this,e)
   }
   

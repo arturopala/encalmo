@@ -83,10 +83,17 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 				case o:root => {
 					output.startb(MROOT)
 				}
+				case hypot(l,r) => {
+					output.startb(MSQRT)
+				}
 				case o: NamedOperation => {
-					output.mi(o.operator)
-					if (!o.isInstanceOf[Operation1]) {
-						output.leftBracket
+					o match {
+						case _ => {
+							output.mi(o.operator)
+							if (!o.isInstanceOf[Operation1]) {
+								output.leftBracket
+							}
+						}
 					}
 				}
 				case _ => Unit
@@ -99,8 +106,19 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 		child match {
 			case o: Operation => {
 				node.element match {
+					case o:hypot => {
+						output.startb(MSUP)
+						if(!child.isInstanceOf[sqrt]
+	                        && !child.isInstanceOf[cbrt]
+						    && !child.isInstanceOf[root]){
+							output.leftBracket
+						}
+					}
 					case o:Power => {
-						if(position==0){
+						if(position==0
+							&& !child.isInstanceOf[sqrt]
+	                        && !child.isInstanceOf[cbrt]
+						    && !child.isInstanceOf[root]){
 							output.leftBracket
 						}
 						output.startb(MROW)
@@ -111,7 +129,15 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 					case _ => Unit
 				}
 			}
-			case _ => Unit
+			case _ => {
+				node.element match {
+					case o:hypot => {
+						output.startb(MSUP)
+						output.startb(MROW)
+					}
+					case _ => Unit
+				}
+			}
 		}
 	}
 
@@ -121,6 +147,12 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 			case o:Power => Unit
 			case o:cbrt => Unit
 			case o:root => Unit
+			case o:hypot => {
+				output.mo("+","infix","thickmathspace","thickmathspace")
+			}
+			case o:MultipleInfixOperation => {
+				output.mo(o.operator,"infix","thickmathspace","thickmathspace")
+			}
 			case o: InfixOperation => {
 				output.mo(o.operator,"infix","thickmathspace","thickmathspace")
 			}
@@ -138,9 +170,23 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 		child match {
 			case o: Operation => {
 				node.element match {
+					case o:hypot => {
+						if(!child.isInstanceOf[sqrt]
+	                        && !child.isInstanceOf[cbrt]
+						    && !child.isInstanceOf[root]){
+							output.rightBracket
+						}
+						output.startb(MN)
+						output.append("2")
+						output.end(MN)
+						output.end(MSUP)
+					}
 					case o:Power => {
 						output.end(MROW)
-						if(position==0){
+						if(position==0 
+							&& !child.isInstanceOf[sqrt]
+	                        && !child.isInstanceOf[cbrt]
+						    && !child.isInstanceOf[root]){
 							output.rightBracket
 						}
 					}  
@@ -158,7 +204,18 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 					case _ => Unit
 				}
 			}
-			case _ => Unit
+			case _ => {
+				node.element match {
+					case o:hypot => {
+						output.end(MROW)
+						output.startb(MN)
+						output.append("2")
+						output.end(MN)
+						output.end(MSUP)
+					}
+					case _ => Unit
+				}
+			}
 		}
 	}
 
@@ -184,9 +241,16 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 				case o:root => {
 					output.end(MROOT)
 				}
+				case hypot(l,r) => {
+					output.end(MSQRT)
+				}
 				case o: NamedOperation => {
-					if (!o.isInstanceOf[Operation1]) {
-						output.rightBracket
+					o match {
+						case _ => {
+							if (!o.isInstanceOf[Operation1]) {
+								output.rightBracket
+							}
+						}
 					}
 				}
 				case _ => Unit

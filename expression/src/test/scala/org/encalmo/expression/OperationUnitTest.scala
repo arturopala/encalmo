@@ -17,9 +17,10 @@ class OperationUnitTest extends AssertionsForJUnit {
 		val e3:Expression = Number(3.8)+(Number(6.2)+Number(12.1))
 		assertEquals(Number(22.1),e3.eval)
 		val e4:Expression = e3+e2
+		assertEquals(e2,e3)
 		assertEquals(Number(44.2),e4.eval)
-		//assertEquals(classOf[MultiSum],e3.getClass())
-		//assertEquals(classOf[MultiSum],e4.getClass())
+		assertEquals(classOf[Sum],e3.getClass())
+		assertEquals(classOf[Sum],e4.getClass())
 	}
 	
 	@Test def verifyProd1() {
@@ -30,10 +31,11 @@ class OperationUnitTest extends AssertionsForJUnit {
 		val e3:Expression = Number(3.8)*(Number(6.2)*Number(12.1))
 		assertEquals(Number(285.076),e3.eval)
 		val e4:Expression = e3*e2
+		assertEquals(e2,e3)
 		assertEquals(Number(81268.325776),e4.eval)
 		dumpRaw(e1,e2,e3,e4)
-		//assertEquals(classOf[MultiProd],e3.getClass())
-		//assertEquals(classOf[MultiProd],e4.getClass())
+		assertEquals(classOf[Prod],e3.getClass())
+		assertEquals(classOf[Prod],e4.getClass())
 	}
 	
 	@Test def verifyMin1() {
@@ -102,29 +104,29 @@ class OperationUnitTest extends AssertionsForJUnit {
 	
 	@Test def verifyMultiSum() {
 		import BasicSymbols.a
-		val e1:Expression = MultiSum(1,2,3,4,5,6,7)
+		val e1:Expression = Sum(1,2,3,4,5,6,7)
 		assertEquals(Number(28),e1.eval)
-		val e2:Expression = MultiSum(1,2,3,4,5,6,a)
-		assertEquals(MultiSum(21,a),e2.eval)
-		val e3:Expression = MultiSum(1,1,1,1,1,1,1)
+		val e2:Expression = Sum(1,2,3,4,5,6,a)
+		assertEquals(Sum(21,a),e2.eval)
+		val e3:Expression = Sum(1,1,1,1,1,1,1)
 		assertEquals(Number(7),e3.eval)
 		assertFalse(ONE==e3.eval)
-		val e4:Expression = MultiSum(0,0,0,0,0,0,0)
+		val e4:Expression = Sum(0,0,0,0,0,0,0)
 		assertEquals(ZERO,e4.eval)
 		assertFalse(Number(7)==e4.eval)
 	}
 	
 	@Test def verifyMultiProd() {
 		import BasicSymbols.a
-		val e1:Expression = MultiProd(1,1,1,1,1,1,1)
+		val e1:Expression = Prod(1,1,1,1,1,1,1)
 		assertEquals(One,e1.eval)
-		val e3:Expression = MultiProd(0,0,0,0,0,0,0)
+		val e3:Expression = Prod(0,0,0,0,0,0,0)
 		assertEquals(Zero,e3.eval)
-		val e2:Expression = MultiProd(1,2,3,4,5,6,a)
-		assertEquals(MultiProd(720,a),e2.eval)
-		val e4:Expression = MultiProd(1,0,0,0,0,0,0)
+		val e2:Expression = Prod(1,2,3,4,5,6,a)
+		assertEquals(Prod(720,a),e2.eval)
+		val e4:Expression = Prod(1,0,0,0,0,0,0)
 		assertEquals(Zero,e4.eval)
-		val e5:Expression = MultiProd(1,1,1,1,1,1,0)
+		val e5:Expression = Prod(1,1,1,1,1,1,0)
 		assertEquals(Zero,e5.eval)
 	}
 	

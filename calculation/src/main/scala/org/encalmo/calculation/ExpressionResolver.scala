@@ -7,7 +7,7 @@ import org.encalmo.expression._
  */
 trait ExpressionResolver {
 	
-	private val MAX_LOOP_COUNT:Int = 128
+	val MAX_MAP_ALL_LOOP_COUNT:Int = 256
 	
 	/**
 	 * Resolves all symbols to mapped expressions 
@@ -25,7 +25,7 @@ trait ExpressionResolver {
 	
 	def map(e1:Expression, t:Transformation, c:Int = 0):Expression = {
 		val e2 = e1.map(t)
-		if(c>=MAX_LOOP_COUNT){
+		if(c>=MAX_MAP_ALL_LOOP_COUNT){
 			throw new IllegalStateException("Probably circular reference: "+e1)
 		}else{
 			if(e1.eq(e2)) {

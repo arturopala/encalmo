@@ -213,7 +213,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		FOPHelper.buildPDF(output.getResult, "target/test-results/xslFoTextDocumentPrinterTest1.pdf")
 	}
 	
-	def test2() {
+	@Test def test2() {
 		
 		import BasicSymbols._
 		
@@ -260,7 +260,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	    c1 put (G -> 80E9)
 	    c1 put (fd -> 215E6)
 	    c1 put (NRc -> ( A*fd ))
-	    c1 put (Nxcr -> ( (pi^2)*E*Ix/((mix*l)^2) ))
+	    c1 put (Nxcr -> ( (PI^2)*E*Ix/((mix*l)^2) ))
 	    c1 put (Io -> ( Ix+Iy ))
 	    c1 put (io -> ( hypot(ix,ix) ))
 	    c1 put (Iomega2 -> ( 2*(Ix*(h^2)/4) ))

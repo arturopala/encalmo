@@ -4,6 +4,8 @@ import scala.collection.mutable.LinkedList
 
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Transformations
+import org.encalmo.expression.Operation2
+import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
 
@@ -22,7 +24,15 @@ extends Expr(myStyle,calc,expr:_*){
 		if(resolved!=e){
 			se = se :+ ExpressionToPrint(resolved,styleOfResolved,"=",null,ExpressionToPrint.TYPE_EXPRESSION_RESOLVED)
 		}
-		val evaluation1 = calc.map(resolved,Transformations.evalNamedOperations)
+		val evaluation1 = resolved match {
+			case o:Operation2 => {
+				o.copy(calc.evaluate(o.l),calc.evaluate(o.r))
+			}
+			case o:OperationN => {
+				o.copy(o.args.map(calc.evaluate(_)):_*)
+			}
+			case _ => calc.evaluate(resolved)
+		}
 		val evaluated = calc.evaluate(evaluation1)
 		if(evaluation1!=evaluated){
 			se = se :+ ExpressionToPrint(evaluation1,styleOfResolved,"=",null,ExpressionToPrint.TYPE_EXPRESSION_INTERMEDIATE_EVALUATION)

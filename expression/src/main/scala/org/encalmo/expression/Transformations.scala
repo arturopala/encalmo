@@ -14,6 +14,36 @@ object Transformations {
 		case _ => e
 	}
 	
+	def simplifyPowerAndRoot(e:Expression):Expression = e match {
+		case Power(l,r) => {
+			l match {
+				case sqrt(x) if (r.eval==Number(2)) => x
+				case cbrt(x) if (r.eval==Number(3)) => x
+				case root(x,y) if (r.eval==y.eval) => x
+				case _ => e
+			}
+		}
+		case sqrt(x) => {
+			x match {
+				case Power(l,r) if (r.eval==Number(2)) => l
+				case _ => e
+			}
+		}
+		case cbrt(x) => {
+			x match {
+				case Power(l,r) if (r.eval==Number(3)) => l
+				case _ => e
+			}
+		}
+		case root(x,y) => {
+			x match {
+				case Power(l,r) if (r.eval==y.eval) => l
+				case _ => e
+			}
+		}
+		case _ => e
+	}
+	
 	def simplifyProd(e:Expression):Expression = e match {
 	    case Prod(l,r) if (ZERO.eq(l) || ZERO.eq(r)) => ZERO
 	    case Prod(l,r) if (ONE.eq(l)) => r
