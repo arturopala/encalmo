@@ -8,6 +8,7 @@ import org.encalmo.expression.Operation2
 import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
+import org.encalmo.document.StyledPlaces._
 
 /**
  * Evaluate: symbol = resolved = evaluated
@@ -15,30 +16,44 @@ import org.encalmo.calculation.Calculation
 class Evaluate(myStyle:Style, val styleOfResolved:Style, val styleOfEvaluated:Style, calc:Calculation, expr:Expression*) 
 extends Expr(myStyle,calc,expr:_*){
 	
+	override def toString = "Evaluate("+myStyle+","+styleOfResolved+","+styleOfEvaluated+","+calc+","+expr.mkString(",")+")"
+	
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
-		var se = e match {
-			case s:Symbol => Seq[ExpressionToPrint](ExpressionToPrint(e,myStyle,null,null,ExpressionToPrint.TYPE_SYMBOL))
-			case _ => Seq[ExpressionToPrint](ExpressionToPrint(e,myStyle,null,null,ExpressionToPrint.TYPE_EXPRESSION_UNRESOLVED))
-		}
-		val resolved = calc.resolve(e)
-		if(resolved!=e){
-			se = se :+ ExpressionToPrint(resolved,styleOfResolved,"=",null,ExpressionToPrint.TYPE_EXPRESSION_RESOLVED)
-		}
-		val evaluation1 = resolved match {
-			case o:Operation2 => {
-				o.copy(calc.evaluate(o.l),calc.evaluate(o.r))
+		var se = Seq[ExpressionToPrint]()
+		var ue = e // unresolved expression
+		val evaluated = calc.evaluate(e) // evaluated expression
+		if(e.isInstanceOf[Symbol]){
+			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,STYLED_PLACE_EXPRESSION_SYMBOL),null,null)
+			ue = calc.getRawExpression(e.asInstanceOf[Symbol]) match {
+				case Some(x) => x
+				case None => e
 			}
-			case o:OperationN => {
-				o.copy(o.args.map(calc.evaluate(_)):_*)
+			if(ue!=e && ue!=evaluated){
+				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,STYLED_PLACE_EXPRESSION_UNRESOLVED),"=",null)
 			}
-			case _ => calc.evaluate(resolved)
+		}else{
+			if(ue!=evaluated){
+				se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,STYLED_PLACE_EXPRESSION_UNRESOLVED),null,null)
+			}
 		}
-		val evaluated = calc.evaluate(evaluation1)
-		if(evaluation1!=evaluated){
-			se = se :+ ExpressionToPrint(evaluation1,styleOfResolved,"=",null,ExpressionToPrint.TYPE_EXPRESSION_INTERMEDIATE_EVALUATION)
-		}
-		if(evaluated!=resolved){
-			se = se :+ ExpressionToPrint(evaluated,styleOfEvaluated,"=",null,ExpressionToPrint.TYPE_EXPRESSION_EVALUATED)
+		if(evaluated!=e){
+			val substituted = calc.substitute(ue) // expression with substituted symbols
+			val evaluation1 = substituted match { // partialy evaluated expression
+				case o:Operation2 => {
+					o.copy(calc.evaluate(o.l),calc.evaluate(o.r))
+				}
+				case o:OperationN => {
+					o.copy(o.args.map(calc.evaluate(_)):_*)
+				}
+				case _ => calc.evaluate(substituted)
+			}
+			if(substituted!=ue && substituted!=evaluated){
+				se = se :+ ExpressionToPrint(substituted,resolveStyle(styleOfResolved,STYLED_PLACE_EXPRESSION_RESOLVED),"=",null)
+			}
+			if(evaluation1!=substituted && evaluation1!=evaluated){
+				se = se :+ ExpressionToPrint(evaluation1,resolveStyle(styleOfResolved,STYLED_PLACE_EXPRESSION_INTERMEDIATE_EVALUATION),"=",null)
+			}
+			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,STYLED_PLACE_EXPRESSION_EVALUATED),"=",null)
 		}
 		se
 	}

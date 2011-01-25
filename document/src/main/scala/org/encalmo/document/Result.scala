@@ -4,23 +4,21 @@ package org.encalmo.document
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
+import org.encalmo.document.StyledPlaces._
 
 /**
  * Result component class
  * @author artur.opala
  */
-class Result(myStyle:Style, val calc:Calculation, val expr:Expression*) 
-extends DocumentComponent(myStyle) {
+class Result(myStyle:Style, calc:Calculation, expr:Expression*) 
+extends Expr(myStyle,calc,expr:_*){
 	
-	/** Resolves this expressions to sequences of ExpressionToPrint objects */
-	def resolve:Seq[Seq[ExpressionToPrint]] = {
-		for(e <- expr) yield resolveExpression(e)
-	}
+	override def toString = "Result("+myStyle+","+calc+","+expr.mkString(",")+")"
 	
 	/** Function to implement */
-	def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
+	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		val evaluated = calc.evaluate(e)
-		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,myStyle,null,null,ExpressionToPrint.TYPE_EXPRESSION_EVALUATED))
+		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,resolveStyle(myStyle,STYLED_PLACE_EXPRESSION_EVALUATED),null,null))
 	}
 	
 }

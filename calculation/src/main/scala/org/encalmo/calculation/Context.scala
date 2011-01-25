@@ -14,6 +14,11 @@ trait Context extends Map[Symbol,Expression] with ExpressionResolver{
 	 * Returns expression mapped to that symbol or None
 	 */
 	override def getExpression(s:Symbol):Option[Expression] = this.get(s)
+	
+	/**
+	 * Returns expression mapped to that symbol or None
+	 */
+	override def getRawExpression(s:Symbol):Option[Expression] = this.get(s)
 
 	/**
 	 * Returns true if exists expression mapped to that symbol

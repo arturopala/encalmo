@@ -97,6 +97,8 @@ class Real(val d:Double){
   def deg:Real = Real(Math.toDegrees(d))
   def isInt = (d.toInt==d)
   
+  def absInt:Int = Math.floor(Math.abs(d)).toInt
+  
   /**
    * Equals two real numbers if differs no more then 0.00000001
    */

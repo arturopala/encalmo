@@ -10,6 +10,7 @@ import org.junit.runners.Suite;
 @RunWith(classOf[Suite])
 @Suite.SuiteClasses(Array(
 	classOf[ContextUnitTest],
-	classOf[ContextSetUnitTest]
+	classOf[ContextSetUnitTest],
+	classOf[CalculationUnitTest]
 ))
 class TestSuite

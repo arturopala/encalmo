@@ -8,6 +8,7 @@ import org.encalmo.calculation._
 import org.encalmo.document._
 import org.encalmo.printer._
 import org.encalmo.fop.FOPHelper
+import org.encalmo.document.StyledPlaces._
 
 class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	
@@ -24,6 +25,15 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		val style2 = DefaultStyle.use(font2).useColor(java.awt.Color.BLUE)
 		val style3 = DefaultStyle.use(font3).marginLeft(10).useLetterSpacing("1pt")
 		val style4 = DefaultStyle.use(font4).useColor(java.awt.Color.RED)
+		
+		val styleManager = StyleManager()
+		styleManager.define(STYLED_PLACE_NUM_SECTION_01, style1)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_02, style2)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_03, style3)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_04, style4)
+		styleManager.define(STYLED_PLACE_EXPRESSION_SYMBOL, style2.fontBold.useColor(java.awt.Color.GREEN))
+		styleManager.define(STYLED_PLACE_EXPRESSION_NUMBERS, DefaultStyle.useColor(java.awt.Color.ORANGE))
+		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, style2.fontBold.useColor(java.awt.Color.MAGENTA).useDecoration("underline"))
 		
 		val d1 = d|1
 		val d2 = d|2
@@ -55,11 +65,12 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		calc1 put (c -> 0.57)
 		
 		val doc1 = Document(style1, "Test document",
+			styleManager,
 			Enumerator(),
     		Chapter(style2,"Test chapter",
 				Section("header"),
 				Section(style2,"footer"),
-				StyleList(style1,style2,style3,style4),
+				styleManager,
 	    		Section(
 		            Text("test1"),
 		            Text(style1,"test2"),
@@ -68,13 +79,13 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	    		Section(
 		            Expr(calc1,d1)),
 	    		Section(
-		            Resolve(style1,style4,calc1,d1)),
+		            Resolve(calc1,d1)),
 	    		Section(
-		            Evaluate(style1,style4,calc1,d1+sin(4.126))),
+		            Evaluate(calc1,d1+sin(4.126))),
 		        Section(
-		            Evaluate(style1,style4,calc1,expr4)),
+		            Evaluate(calc1,expr4)),
 	    		Section(
-		            Result(style1,calc1,d1)),
+		            Result(calc1,d1)),
 	            Section(style2,
 		            Text("test1"),
 		            Text(style1,"test2"),
@@ -244,6 +255,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	    val lambdad = lambda over ("_")
 		
 		c1 put (h -> 0.4)
+		c1 put (h -> 0.4)
 	    c1 put (bf -> 0.155)
 	    c1 put (tf -> 0.00144)
 	    c1 put (tw -> 0.00216)
@@ -260,7 +272,8 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	    c1 put (G -> 80E9)
 	    c1 put (fd -> 215E6)
 	    c1 put (NRc -> ( A*fd ))
-	    c1 put (Nxcr -> ( (PI^2)*E*Ix/((mix*l)^2) ))
+		val eNxcr = (PI^2)*E*Ix/((mix*l)^2) 
+	    c1 put (Nxcr -> eNxcr)
 	    c1 put (Io -> ( Ix+Iy ))
 	    c1 put (io -> ( hypot(ix,ix) ))
 	    c1 put (Iomega2 -> ( 2*(Ix*(h^2)/4) ))
@@ -272,17 +285,24 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	    c1 put (fi -> ( (1+(lambdad^(2*n)))^(-(1/n)) ))
 	    c1 put (Nmax -> ( fi*NRc ))
 		
-		val BOLD = DefaultStyle.fontBold
-		val ITALIC = DefaultStyle.fontItalic
-		
 		val c2 = c1
 		val c3 = c1
 		val c4 = c1
 		val c5 = c1
 		val c6 = c1
 		
-		val doc1 = Document("",
-		      Chapter("",
+		val style1 = DefaultStyle.useSpaceBefore(3)
+		val BOLD = style1.fontBold
+		val ITALIC = style1.fontItalic
+		val styleManager = StyleManager()
+		styleManager.define(STYLED_PLACE_EXPRESSION_SYMBOL, DefaultStyle.fontBold)
+		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, DefaultStyle.fontBold)
+		styleManager.define(STYLED_PLACE_EXPRESSION_NUMBERS, DefaultStyle.useColor(java.awt.Color.PINK))
+		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, DefaultStyle.fontBold.useColor(java.awt.Color.MAGENTA))
+		
+		val doc1 = Document(style1,"",
+		     styleManager,
+			 Chapter("",
 		      	  Section("Ćwiczenie z przedmiotu 'Cieńkościenne konstrukcje metalowe'. Słup ściskany osiowo - wyboczenie giętne i skrętne. Autorzy: Irmina Grudzień, Artur Opala."),
 		      	  Section(""),
 		          Section("W ćwiczeniu przyjęto słup krzyżowy o profilu +I400 (wg rysunku w załączniku) ze stali St3SX zamocowany przegubowo na obu końcach."),

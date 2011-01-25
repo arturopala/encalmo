@@ -66,8 +66,8 @@ extends Traveler[DocumentComponent] {
 	def writeWithSpaceAround(s:String) = {
 		if(s!=null){
 			output.start(INLINE)
-			output.attr("padding-start","0.2em")
-			output.attr("padding-end","0.2em")
+			output.attr("padding-start","0.1em")
+			output.attr("padding-end","0.1em")
 			output.body
 			output.append(s)
 			output.end(INLINE)
@@ -80,23 +80,34 @@ extends Traveler[DocumentComponent] {
 		}
 		if(se.tail!=null && !se.tail.isEmpty){
 			se.tail.foreach(etp => {
-				writeExpression(etp, if (etp.style!=null) etp.style else style )
+				writeExpression(etp, style)
 			})
 		}
 	}
 	
 	def writeExpression(etp:ExpressionToPrint, style:Style){
-		writeWithSpaceAround(etp.prefix)
-		output.startb(INSTREAM_FOREIGN_OBJECT)
 		val mc = mathOutput.color
-		if(style!=null){
-			mathOutput.color = style.hexColor
+		writeWithSpaceAround(etp.prefix)
+		etp.expression match {
+			case _ => {
+				output.start(INSTREAM_FOREIGN_OBJECT)
+				if (etp.style!=null){
+					output.appendInlineStyleAttributes(etp.style, if(style!=null)style else styleStack.top)
+					mathOutput.color = etp.style.hexColor
+				}else{
+					if(style!=null) {
+						output.appendInlineStyleAttributes(style, styleStack.top)
+						mathOutput.color = style.hexColor
+					}
+				}
+				output.body
+				mathOutput.open
+				etp.expression.travel(traveler = ept)
+				mathOutput.close
+				mathOutput.color = mc
+				output.end(INSTREAM_FOREIGN_OBJECT)
+			}
 		}
-		mathOutput.open
-		etp.expression.travel(traveler = ept)
-		mathOutput.close
-		mathOutput.color = mc
-		output.end(INSTREAM_FOREIGN_OBJECT)
 		writeWithSpaceAround(etp.suffix)
 	}
 	
@@ -150,6 +161,13 @@ extends Traveler[DocumentComponent] {
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
+			case sm:StyleManager => {
+				sm.get(StyledPlaces.STYLED_PLACE_EXPRESSION_NUMBERS) match {
+					case Some(s) => {mathOutput.numberColor = s.hexColor}
+					case None => Unit
+				}
+				return
+			}
 			case nvc:NonVisualDocumentComponent => return
 			case d:Document => {}
 			case chapter:Chapter => {
@@ -196,24 +214,37 @@ extends Traveler[DocumentComponent] {
 				}
 			}
 			case expr:Expr => {
-				if(expr.myStyle!=null){
-					output.start(INLINE)
-					output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
-					output.body
-				}
 				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
-				if(ess.head!=null){
-					writeExpressionSeq(ess.head, expr.myStyle)
-				}
-				if(ess.tail!=null && !ess.tail.isEmpty){
-					ess.tail.foreach(es => {
-						write(COMMA)
-						write(SPACE)
-						writeExpressionSeq(es, expr.myStyle)
-					})
-				}
-				if(expr.myStyle!=null){
-					output.end(INLINE)
+				if(!ess.isEmpty){
+					if(ess.size>1 && expr.isForceLineBreak){
+						for(es <- ess){
+							output.start(BLOCK)
+							if(expr.myStyle!=null){
+								output.appendBlockStyleAttributes(expr.myStyle, styleStack.top)
+							}
+							output.body
+							writeExpressionSeq(es, expr.myStyle)
+							output.end(BLOCK)
+						}
+					}else{
+						if(expr.myStyle!=null){
+							output.start(INLINE)
+							output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
+							output.attr("padding-end","1em")
+							output.body
+						}
+						if(ess.head!=null){
+							writeExpressionSeq(ess.head, expr.myStyle)
+						}
+						if(ess.tail!=null && !ess.tail.isEmpty){
+							ess.tail.foreach(es => {
+								writeExpressionSeq(es, expr.myStyle)
+							})
+						}
+						if(expr.myStyle!=null){
+							output.end(INLINE)
+						}
+					}
 				}
 			}
 			case _ => {}

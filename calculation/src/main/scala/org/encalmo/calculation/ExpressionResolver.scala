@@ -10,14 +10,37 @@ trait ExpressionResolver {
 	val MAX_MAP_ALL_LOOP_COUNT:Int = 256
 	
 	/**
-	 * Resolves all symbols to mapped expressions 
+	 * Replaces symbols with thei mappings
 	 */
 	def resolve(e:Expression):Expression = {
-		map(e,resolver)
+		e match {
+			case s:Symbol => {
+				getRawExpression(s) match {
+					case Some(x) => map(x,resolver)
+					case None => s
+				}
+			}
+			case _ => map(e,resolver)
+		}
 	}
 	
 	/**
-	 * Resolves and evaluates all symbols to values
+	 * Substitutes symbols with their evaluations
+	 */
+	def substitute(e:Expression):Expression = {
+		e match {
+			case s:Symbol => {
+				getRawExpression(s) match {
+					case Some(x) => map(x,substitutor)
+					case None => s
+				}
+			}
+			case _ => map(e,substitutor)
+		}
+	}
+	
+	/**
+	 * Evaluates
 	 */
 	def evaluate(e:Expression):Expression = {
 		map(e,evaluator)
@@ -41,14 +64,14 @@ trait ExpressionResolver {
 	 */
 	private val resolver:Transformation = {
 		e => e match {
-			case s:Symbol => this.getExpression(s).getOrElse(s)
+			case s:Symbol => this.getRawExpression(s).getOrElse(s)
 			case _ => e
 		}
 	}
 	
 	/**
 	 * Single-pass evaluating transformation. 
-	 * Replaces symbols with values
+	 * Evaluates expressions
 	 */
 	private val evaluator:Transformation = {
 		e => e match {
@@ -61,9 +84,28 @@ trait ExpressionResolver {
 	}
 	
 	/**
+	 * Single-pass substituting transformation. 
+	 * Replaces symbols with values
+	 */
+	private val substitutor:Transformation = {
+		e => e match {
+			case s:Symbol => this.getExpression(s) match {
+				case Some(x) => x.eval
+				case None => s
+			}
+			case _ => e
+		}
+	}
+	
+	/**
 	 * Should return expression mapped to that symbol or None
 	 */
 	def getExpression(s:Symbol):Option[Expression]
+	
+	/**
+	 * Should return unresolved expression mapped to that symbol or None
+	 */
+	def getRawExpression(s:Symbol):Option[Expression]
 	
 	/**
 	 * Should return true if exists expression mapped to that symbol

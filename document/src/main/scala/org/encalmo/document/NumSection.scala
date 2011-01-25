@@ -1,6 +1,7 @@
 package org.encalmo.document
 
 import annotation.tailrec
+import org.encalmo.document.StyledPlaces._
 
 /**
  * Numbered section component class
@@ -36,18 +37,30 @@ extends Section(nsStyle,flow:_*) {
 		if(nsStyle!=null){
 			nsStyle
 		}else{
-			val slo = parentOrSiblingOfType[StyleList](classOf[StyleList])
+			val slo = parentOrSiblingOfType[StyleManager](classOf[StyleManager])
 			if(slo.isDefined){
-				val ss = slo.get.itemStyle
-				if(ss.size>level){
-					ss(level)
-				}else{
-					ss.last
+				val sm = slo.get
+				level match {
+					case 1 => sm.get(STYLED_PLACE_NUM_SECTION_01).getOrElse(resolveStyle(sm))
+					case 2 => sm.get(STYLED_PLACE_NUM_SECTION_02).getOrElse(resolveStyle(sm))
+					case 3 => sm.get(STYLED_PLACE_NUM_SECTION_03).getOrElse(resolveStyle(sm))
+					case 4 => sm.get(STYLED_PLACE_NUM_SECTION_04).getOrElse(resolveStyle(sm))
+					case 5 => sm.get(STYLED_PLACE_NUM_SECTION_05).getOrElse(resolveStyle(sm))
+					case 6 => sm.get(STYLED_PLACE_NUM_SECTION_06).getOrElse(resolveStyle(sm))
+					case 7 => sm.get(STYLED_PLACE_NUM_SECTION_07).getOrElse(resolveStyle(sm))
+					case 8 => sm.get(STYLED_PLACE_NUM_SECTION_08).getOrElse(resolveStyle(sm))
+					case 9 => sm.get(STYLED_PLACE_NUM_SECTION_09).getOrElse(resolveStyle(sm))
+					case 10 => sm.get(STYLED_PLACE_NUM_SECTION_10).getOrElse(resolveStyle(sm))
+					case _ => resolveStyle(sm)
 				}
 			}else{
 				super.style
 			}
 		}
+	}
+	
+	private def resolveStyle(sm:StyleManager):Style = {
+		sm.get(STYLED_PLACE_NUM_SECTION).getOrElse(super.style)
 	}
 }
 

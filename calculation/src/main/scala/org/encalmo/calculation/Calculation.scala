@@ -25,18 +25,6 @@ class Calculation(val id:String) extends LinkedHashSet[ExpressionResolver] with 
 	def put(t:(Symbol,Expression)) = context.put(t._1 ,t._2)
 	
 	/**
-	 * Resolves all symbols to mapped expressions 
-	 * Uses and updates internal cache of resolved symbols.
-	 */
-	override def resolve(e:Expression):Expression = {
-		val expr = super.resolve(e)
-		e match {
-			case s:Symbol => addToCache(s,expr)
-			case _ => expr
-		}
-	}
-	
-	/**
 	 * Resolves and evaluates all symbols to values
 	 * Uses and updates internal cache of resolved symbols.
 	 */
@@ -61,6 +49,24 @@ class Calculation(val id:String) extends LinkedHashSet[ExpressionResolver] with 
 	def findExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
 		if(it.hasNext){
 			it.next.getExpression(s).orElse(findExpression(s,it))
+		}else{
+			None
+		}
+	}
+	
+	/**
+	 * Returns expression mapped to that symbol or None
+	 */
+	override def getRawExpression(s:Symbol):Option[Expression] = {
+		findRawExpression(s,this.elements)
+	}
+	
+	/**
+	 * Resolves symbol in nested contexts
+	 */
+	def findRawExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
+		if(it.hasNext){
+			it.next.getRawExpression(s).orElse(findRawExpression(s,it))
 		}else{
 			None
 		}

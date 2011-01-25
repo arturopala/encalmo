@@ -27,5 +27,6 @@ object MathMLTags {
 		
 	val ENTITY_THICK_SPACE = "&ThickSpace;"
 	val ENTITY_THIN_SPACE = "&ThinSpace;"
+	val ENTITY_CENTER_DOT = "&CenterDot;"
 
 }

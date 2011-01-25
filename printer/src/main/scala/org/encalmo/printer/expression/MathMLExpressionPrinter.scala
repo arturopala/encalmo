@@ -59,7 +59,8 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 
 	override def onEnter(node: Node[Expression]): Unit = node.element match {
 		case s: Symbol => output.symbol(s)
-		case n: Number => output.mn(n,locale)
+		case c: Constant[_] => output.symbol(c.s)
+		case n: Number => output.mn(n)
 		case o: Operation => {
 			writeOpeningBracketIfNeeded(node, o)
 			o match {

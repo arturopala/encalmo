@@ -16,6 +16,12 @@ class MathMLOutput(
 extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	var color:String = "#000000"
+	var numberColor:String = null
+	
+	lazy val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",java.text.DecimalFormatSymbols.getInstance(locale))
 	
 	override def open = {
 		start(MATH)
@@ -83,37 +89,53 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		buffer append (s match {
 		case "-" => "&minus;"
 		case "+" => "+"
-		case "*" => "&CenterDot;"
+		case "*" => ENTITY_CENTER_DOT
 		case _ => s
 		})
 		end(MO)
 	}
 
-	def mn(n: Number, locale: java.util.Locale):Unit = {
-		if (n.r < 0) {
+	def mn(n: Number):Unit = {
+		val nf:NumberFormatted = n.formatForPrint
+		if(nf.hasExponent || nf.isNegative) {
 			startb(MROW)
+		}
+		if(numberColor!=null){
+			start(MSTYLE)
+			attr("color",numberColor)
+			body
+		}
+		if (nf.isNegative) {
 			mo("-", "prefix")
 		}
-		val f = n.r.abs.format(locale)
 		startb(MN)
-		append(f)
+		append(nf.integer.toString)
+		if(nf.fraction>0){
+			nf.decimals match {
+				case 1 => append(fractionFormat1.format(nf.fraction))
+				case 2 => append(fractionFormat2.format(nf.fraction))
+				case 3 => append(fractionFormat3.format(nf.fraction))
+				case _ => append(fractionFormat4.format(nf.fraction))
+			}
+		}
 		end(MN)
-		/*if (f._2 != null) {
-			buffer append "<mo>"
-			buffer append "&CenterDot;"
-			buffer append "</mo>"
-			buffer append "<msup>"
-			buffer append "<mn>"
-			buffer append "10"
-			buffer append "</mn>"
-			buffer append "<mrow>"
-			buffer append "<mn>"
-			buffer append f._2
-			buffer append "</mn>"
-			buffer append "</mrow>"
-			buffer append "</msup>"
-		}*/
-		if (n.r < 0) {
+		if(nf.hasExponent) {
+			startb(MO)
+			append(ENTITY_CENTER_DOT)
+			end(MO)
+			startb(MSUP)
+			startb(MN)
+			append("10")
+			end(MN)
+			startb(MN)
+			append(nf.exponent.toString)
+			end(MN)
+			end(MSUP)
+		}
+		if(numberColor!=null){
+			end(MSTYLE)
+		}
+		if(nf.hasExponent || nf.isNegative) {
 			end(MROW)
 		}
 	}

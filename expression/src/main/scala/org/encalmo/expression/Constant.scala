@@ -14,7 +14,7 @@ case class Constant[t<:Expression](s:Symbol,e:t) extends Expression {
  * PI number constant
  * @author artur.opala
  */
-object PI extends Constant[Number](BasicSymbols.Pi,Number(Real.pi))
+object PI extends Constant[Number](BasicSymbols.pi,Number(Real.pi))
 
 /**
  * E number constant
