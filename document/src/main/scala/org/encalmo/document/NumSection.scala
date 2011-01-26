@@ -39,29 +39,29 @@ extends Section(nsStyle,flow:_*) {
 		}else{
 			val slo = parentOrSiblingOfType[StyleManager](classOf[StyleManager])
 			if(slo.isDefined){
-				val sm = slo.get
-				level match {
-					case 1 => sm.get(STYLED_PLACE_NUM_SECTION_01).getOrElse(resolveStyle(sm))
-					case 2 => sm.get(STYLED_PLACE_NUM_SECTION_02).getOrElse(resolveStyle(sm))
-					case 3 => sm.get(STYLED_PLACE_NUM_SECTION_03).getOrElse(resolveStyle(sm))
-					case 4 => sm.get(STYLED_PLACE_NUM_SECTION_04).getOrElse(resolveStyle(sm))
-					case 5 => sm.get(STYLED_PLACE_NUM_SECTION_05).getOrElse(resolveStyle(sm))
-					case 6 => sm.get(STYLED_PLACE_NUM_SECTION_06).getOrElse(resolveStyle(sm))
-					case 7 => sm.get(STYLED_PLACE_NUM_SECTION_07).getOrElse(resolveStyle(sm))
-					case 8 => sm.get(STYLED_PLACE_NUM_SECTION_08).getOrElse(resolveStyle(sm))
-					case 9 => sm.get(STYLED_PLACE_NUM_SECTION_09).getOrElse(resolveStyle(sm))
-					case 10 => sm.get(STYLED_PLACE_NUM_SECTION_10).getOrElse(resolveStyle(sm))
-					case _ => resolveStyle(sm)
-				}
+				resolveStyle(slo.get,level)
 			}else{
 				super.style
 			}
 		}
 	}
 	
-	private def resolveStyle(sm:StyleManager):Style = {
-		sm.get(STYLED_PLACE_NUM_SECTION).getOrElse(super.style)
+	@tailrec
+	private def resolveStyle(sm:StyleManager, level:Int):Style = {
+		if(level>10){
+			resolveStyle(sm,10)
+		}else{
+			if(level<0){
+				sm.get(STYLED_PLACE_NUM_SECTION).getOrElse(super.style)
+			}else{
+				sm.get(NumSection.level2styledPlacesMap(level)) match {
+					case Some(style) => style
+					case None => resolveStyle(sm,level-1)
+				}
+			}
+		}
 	}
+	
 }
 
 /**
@@ -69,6 +69,20 @@ extends Section(nsStyle,flow:_*) {
  * @author artur.opala
  */
 object NumSection {
+	
+	val level2styledPlacesMap:Map[Int,StyledPlace] = Map(
+			0 -> STYLED_PLACE_NUM_SECTION_LEVEL_00,
+			1 -> STYLED_PLACE_NUM_SECTION_LEVEL_01,
+			2 -> STYLED_PLACE_NUM_SECTION_LEVEL_02,
+			3 -> STYLED_PLACE_NUM_SECTION_LEVEL_03,
+			4 -> STYLED_PLACE_NUM_SECTION_LEVEL_04,
+			5 -> STYLED_PLACE_NUM_SECTION_LEVEL_05,
+			6 -> STYLED_PLACE_NUM_SECTION_LEVEL_06,
+			7 -> STYLED_PLACE_NUM_SECTION_LEVEL_07,
+			8 -> STYLED_PLACE_NUM_SECTION_LEVEL_08,
+			9 -> STYLED_PLACE_NUM_SECTION_LEVEL_09,
+			10 -> STYLED_PLACE_NUM_SECTION_LEVEL_10
+	)
 	
 	val defaultEnumerator = Enumerator()
 	

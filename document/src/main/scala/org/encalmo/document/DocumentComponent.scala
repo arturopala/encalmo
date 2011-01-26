@@ -18,7 +18,11 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeLikeWith
     	if(myStyle!=null){
     		myStyle
     	}else{
-    		if(!parent.isDefined) DefaultStyle else parent.get.style
+    		if(!parent.isDefined) {
+    			DefaultStyle 
+    		} else {
+    			parent.get.style
+    		}
     	}
     }
 

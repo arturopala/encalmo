@@ -2,605 +2,671 @@
 <!DOCTYPE ml:math PUBLIC "-//W3C//DTD MathML 2.0//EN" "">
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Stix" font-size="11pt">
   <fo:layout-master-set>
-    <fo:simple-page-master master-name="default" page-width="210mm" page-height="297mm" margin-left="20mm" margin-top="20mm" margin-right="20mm" margin-bottom="20mm">
-      <fo:region-body margin-top="10mm"/>
+    <fo:simple-page-master master-name="default" page-width="210mm" page-height="297mm" margin-left="20mm" margin-top="20mm"
+       margin-right="20mm" margin-bottom="20mm">
+      <fo:region-body margin-top="10mm" margin-bottom="10mm"/>
       <fo:region-before extent="10mm"/>
       <fo:region-after extent="10mm"/>
     </fo:simple-page-master>
   </fo:layout-master-set>
-  <fo:page-sequence master-reference="default">
+  <fo:page-sequence master-reference="default"
+     space-before="3pt">
     <fo:static-content flow-name="xsl-region-before">
-      <fo:block></fo:block>
+      <fo:block>Ćwiczenie z przedmiotu 'Cieńkościenne konstrukcje metalowe'. Słup ściskany osiowo - wyboczenie giętne i skrętne. Autorzy: Irmina Grudzień, Artur Opala.</fo:block>
     </fo:static-content>
     <fo:static-content flow-name="xsl-region-after">
       <fo:block></fo:block>
     </fo:static-content>
     <fo:flow flow-name="xsl-region-body">
-      <fo:block>   
-        <fo:instream-foreign-object>
-          <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-            <ml:mrow>
-              <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                <ml:msub>
-                  <ml:mi>d</ml:mi>
-                  <ml:mi>1</ml:mi>
-                </ml:msub>
-              </ml:mstyle>
-            </ml:mrow>
-          </ml:math>
-        </fo:instream-foreign-object> = 
-        <fo:instream-foreign-object>
-          <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-            <ml:mrow>
-              <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                <ml:mfrac>
-                  <ml:mrow>
-                    <ml:mi>a</ml:mi>
-                    <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                    <ml:mi>b</ml:mi>
-                  </ml:mrow>
-                  <ml:mi>c</ml:mi>
-                </ml:mfrac>
-              </ml:mstyle>
-            </ml:mrow>
-          </ml:math>
-        </fo:instream-foreign-object> = 
-        <fo:instream-foreign-object>
-          <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-            <ml:mrow>
-              <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                <ml:mfrac>
-                  <ml:mrow>
-                    <ml:mi>a</ml:mi>
-                    <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                    <ml:mi>b</ml:mi>
-                  </ml:mrow>
-                  <ml:mi>c</ml:mi>
-                </ml:mfrac>
-              </ml:mstyle>
-            </ml:mrow>
-          </ml:math>
-        </fo:instream-foreign-object>
-      </fo:block>
-      <fo:block>   
-        <fo:instream-foreign-object>
-          <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-            <ml:mrow>
-              <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                <ml:msub>
-                  <ml:mi>d</ml:mi>
-                  <ml:mi>2</ml:mi>
-                </ml:msub>
-              </ml:mstyle>
-            </ml:mrow>
-          </ml:math>
-        </fo:instream-foreign-object> = 
-        <fo:instream-foreign-object>
-          <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-            <ml:mrow>
-              <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                <ml:mrow>
-                  <ml:mrow>
-                    <ml:mrow>
-                      <ml:mrow>
-                        <ml:mfenced open="(" close=")" separators=";">
-                          <ml:mrow>
-                            <ml:mrow>
-                              <ml:mrow>
-                                <ml:mrow>
-                                  <ml:mi>Ar</ml:mi>
-                                  <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                                  <ml:msub>
-                                    <ml:mi>Ar</ml:mi>
-                                    <ml:mi>a</ml:mi>
-                                  </ml:msub>
-                                </ml:mrow>
-                                <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                                <ml:msubsup>
-                                  <ml:mi>Ar</ml:mi>
-                                  <ml:mi>a</ml:mi>
-                                  <ml:mi>&beta;</ml:mi>
-                                </ml:msubsup>
-                              </ml:mrow>
-                              <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                              <ml:munder>
-                                <ml:msubsup>
-                                  <ml:mi>Ar</ml:mi>
-                                  <ml:mi>a</ml:mi>
-                                  <ml:mi>b</ml:mi>
-                                </ml:msubsup>
-                                <ml:mi>&gamma;</ml:mi>
-                              </ml:munder>
-                            </ml:mrow>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                            <ml:munderover>
-                              <ml:msubsup>
-                                <ml:mi>Ar</ml:mi>
-                                <ml:mi>a</ml:mi>
-                                <ml:mi>b</ml:mi>
-                              </ml:msubsup>
-                              <ml:mi>c</ml:mi>
-                              <ml:mi>d</ml:mi>
-                            </ml:munderover>
-                          </ml:mrow>
-                        </ml:mfenced>
-                      </ml:mrow>
-                      <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                      <ml:mrow>
-                        <ml:mfenced open="(" close=")" separators=";">
-                          <ml:mrow>
-                            <ml:munderover>
-                              <ml:msubsup>
-                                <ml:mi>Ar</ml:mi>
-                                <ml:msup>
-                                  <ml:mi>&alpha;</ml:mi>
-                                  <ml:mi>z</ml:mi>
-                                </ml:msup>
-                                <ml:mi>b</ml:mi>
-                              </ml:msubsup>
-                              <ml:mi>c</ml:mi>
-                              <ml:mi>d</ml:mi>
-                            </ml:munderover>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&minus;</ml:mo>
-                            <ml:mn>1,3</ml:mn>
-                          </ml:mrow>
-                        </ml:mfenced>
-                      </ml:mrow>
+      <fo:block>
+        <fo:block>W ćwiczeniu przyjęto słup krzyżowy o profilu +I400 (wg rysunku w załączniku) ze stali St3SX zamocowany przegubowo na obu końcach.</fo:block>
+        <fo:block>Obliczenia i wymiarowanie przeprowadzono kolejno dla 6 różnych długości słupa, l = 3, 4, 5, 6, 7 i 8m.</fo:block>
+        <fo:block font-weight="bold" space-before="3pt">1. Parametry zadania
+          <fo:block font-style="italic" font-weight="normal" space-before="3pt">Wszystkie parametry i wyniki podano w odpowiednich jednostkach SI (metrach i Newtonach)</fo:block>
+          <fo:block font-style="normal" font-weight="bold" space-before="3pt">1.1. Parametry geometryczne:
+            <fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="14"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mi fontstyle="italic">h</ml:mi>
                     </ml:mrow>
-                    <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                    <ml:mrow>
-                      <ml:mfrac>
-                        <ml:mrow>
-                          <ml:msqrt>
-                            <ml:mrow>
-                              <ml:msup>
-                                <ml:mi>c</ml:mi>
-                                <ml:mrow>
-                                  <ml:mn>2</ml:mn>
-                                  <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&minus;</ml:mo>
-                                  <ml:mi>r</ml:mi>
-                                </ml:mrow>
-                              </ml:msup>
-                            </ml:mrow>
-                          </ml:msqrt>
-                        </ml:mrow>
-                        <ml:mrow>
-                          <ml:mrow>
-                            <ml:mi>sin</ml:mi>
-                            <ml:mn>4,126</ml:mn>
-                          </ml:mrow>
-                          <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                          <ml:mi>&phiv;</ml:mi>
-                        </ml:mrow>
-                      </ml:mfrac>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn  font-weight="bold">0.4</ml:mn>
                     </ml:mrow>
-                  </ml:mrow>
-                  <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                  <ml:mrow>
-                    <ml:mfrac>
-                      <ml:mrow>
-                        <ml:mroot>
-                          <ml:mrow>
-                            <ml:mi>l</ml:mi>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                            <ml:mi>k</ml:mi>
-                          </ml:mrow>
-                          <ml:mrow>
-                            <ml:mi>f</ml:mi>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&minus;</ml:mo>
-                            <ml:mn>1</ml:mn>
-                          </ml:mrow>
-                        </ml:mroot>
-                      </ml:mrow>
-                      <ml:mrow>
-                        <ml:mroot>
-                          <ml:mrow>
-                            <ml:msup>
-                              <ml:mn>0,123</ml:mn>
-                              <ml:mi>f</ml:mi>
-                            </ml:msup>
-                          </ml:mrow>
-                          <ml:mrow>
-                            <ml:mn>3</ml:mn>
-                          </ml:mrow>
-                        </ml:mroot>
-                      </ml:mrow>
-                    </ml:mfrac>
-                  </ml:mrow>
-                </ml:mrow>
-                <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                <ml:mrow>
-                  <ml:mi>max</ml:mi>
-                  <ml:mfenced open="(" close=")" separators=",">
-                    <ml:mrow>
-                      <ml:mi>Ar</ml:mi>
-                    </ml:mrow>
-                    <ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
                       <ml:msub>
-                        <ml:mi>Ar</ml:mi>
-                        <ml:mi>a</ml:mi>
+                        <ml:mi>b</ml:mi>
+                        <ml:mi>f</ml:mi>
                       </ml:msub>
                     </ml:mrow>
-                    <ml:mrow>
-                      <ml:msubsup>
-                        <ml:mi>Ar</ml:mi>
-                        <ml:mi>a</ml:mi>
-                        <ml:mi>&beta;</ml:mi>
-                      </ml:msubsup>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn>0.155</ml:mn>
                     </ml:mrow>
-                    <ml:mrow>
-                      <ml:munder>
-                        <ml:msubsup>
-                          <ml:mi>Ar</ml:mi>
-                          <ml:mi>a</ml:mi>
-                          <ml:mi>b</ml:mi>
-                        </ml:msubsup>
-                        <ml:mi>&gamma;</ml:mi>
-                      </ml:munder>
-                    </ml:mrow>
-                  </ml:mfenced>
-                </ml:mrow>
-              </ml:mstyle>
-            </ml:mrow>
-          </ml:math>
-        </fo:instream-foreign-object> = 
-        <fo:instream-foreign-object>
-          <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-            <ml:mrow>
-              <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                <ml:mrow>
-                  <ml:mrow>
-                    <ml:mrow>
-                      <ml:mrow>
-                        <ml:mfenced open="(" close=")" separators=";">
-                          <ml:mrow>
-                            <ml:mrow>
-                              <ml:mrow>
-                                <ml:mrow>
-                                  <ml:mi>Ar</ml:mi>
-                                  <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                                  <ml:msub>
-                                    <ml:mi>Ar</ml:mi>
-                                    <ml:mi>a</ml:mi>
-                                  </ml:msub>
-                                </ml:mrow>
-                                <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                                <ml:msubsup>
-                                  <ml:mi>Ar</ml:mi>
-                                  <ml:mi>a</ml:mi>
-                                  <ml:mi>&beta;</ml:mi>
-                                </ml:msubsup>
-                              </ml:mrow>
-                              <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                              <ml:munder>
-                                <ml:msubsup>
-                                  <ml:mi>Ar</ml:mi>
-                                  <ml:mi>a</ml:mi>
-                                  <ml:mi>b</ml:mi>
-                                </ml:msubsup>
-                                <ml:mi>&gamma;</ml:mi>
-                              </ml:munder>
-                            </ml:mrow>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                            <ml:munderover>
-                              <ml:msubsup>
-                                <ml:mi>Ar</ml:mi>
-                                <ml:mi>a</ml:mi>
-                                <ml:mi>b</ml:mi>
-                              </ml:msubsup>
-                              <ml:mi>c</ml:mi>
-                              <ml:mi>d</ml:mi>
-                            </ml:munderover>
-                          </ml:mrow>
-                        </ml:mfenced>
-                      </ml:mrow>
-                      <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                      <ml:mrow>
-                        <ml:mfenced open="(" close=")" separators=";">
-                          <ml:mrow>
-                            <ml:munderover>
-                              <ml:msubsup>
-                                <ml:mi>Ar</ml:mi>
-                                <ml:msup>
-                                  <ml:mi>&alpha;</ml:mi>
-                                  <ml:mi>z</ml:mi>
-                                </ml:msup>
-                                <ml:mi>b</ml:mi>
-                              </ml:msubsup>
-                              <ml:mi>c</ml:mi>
-                              <ml:mi>d</ml:mi>
-                            </ml:munderover>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&minus;</ml:mo>
-                            <ml:mn>1,3</ml:mn>
-                          </ml:mrow>
-                        </ml:mfenced>
-                      </ml:mrow>
-                    </ml:mrow>
-                    <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                    <ml:mrow>
-                      <ml:mfrac>
-                        <ml:mrow>
-                          <ml:msqrt>
-                            <ml:mrow>
-                              <ml:msup>
-                                <ml:mi>c</ml:mi>
-                                <ml:mrow>
-                                  <ml:mn>2</ml:mn>
-                                  <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&minus;</ml:mo>
-                                  <ml:mi>r</ml:mi>
-                                </ml:mrow>
-                              </ml:msup>
-                            </ml:mrow>
-                          </ml:msqrt>
-                        </ml:mrow>
-                        <ml:mrow>
-                          <ml:mrow>
-                            <ml:mi>sin</ml:mi>
-                            <ml:mn>4,126</ml:mn>
-                          </ml:mrow>
-                          <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                          <ml:mi>&phiv;</ml:mi>
-                        </ml:mrow>
-                      </ml:mfrac>
-                    </ml:mrow>
-                  </ml:mrow>
-                  <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                  <ml:mrow>
-                    <ml:mfrac>
-                      <ml:mrow>
-                        <ml:mroot>
-                          <ml:mrow>
-                            <ml:mi>l</ml:mi>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                            <ml:mi>k</ml:mi>
-                          </ml:mrow>
-                          <ml:mrow>
-                            <ml:mi>f</ml:mi>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&minus;</ml:mo>
-                            <ml:mn>1</ml:mn>
-                          </ml:mrow>
-                        </ml:mroot>
-                      </ml:mrow>
-                      <ml:mrow>
-                        <ml:mroot>
-                          <ml:mrow>
-                            <ml:msup>
-                              <ml:mn>0,123</ml:mn>
-                              <ml:mi>f</ml:mi>
-                            </ml:msup>
-                          </ml:mrow>
-                          <ml:mrow>
-                            <ml:mn>3</ml:mn>
-                          </ml:mrow>
-                        </ml:mroot>
-                      </ml:mrow>
-                    </ml:mfrac>
-                  </ml:mrow>
-                </ml:mrow>
-                <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                <ml:mrow>
-                  <ml:mi>max</ml:mi>
-                  <ml:mfenced open="(" close=")" separators=";">
-                    <ml:mrow>
-                      <ml:mi>Ar</ml:mi>
-                    </ml:mrow>
-                    <ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
                       <ml:msub>
-                        <ml:mi>Ar</ml:mi>
-                        <ml:mi>a</ml:mi>
+                        <ml:mi>t</ml:mi>
+                        <ml:mi>f</ml:mi>
                       </ml:msub>
                     </ml:mrow>
-                    <ml:mrow>
-                      <ml:msubsup>
-                        <ml:mi>Ar</ml:mi>
-                        <ml:mi>a</ml:mi>
-                        <ml:mi>&beta;</ml:mi>
-                      </ml:msubsup>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn>0.001</ml:mn>
                     </ml:mrow>
-                    <ml:mrow>
-                      <ml:munder>
-                        <ml:msubsup>
-                          <ml:mi>Ar</ml:mi>
-                          <ml:mi>a</ml:mi>
-                          <ml:mi>b</ml:mi>
-                        </ml:msubsup>
-                        <ml:mi>&gamma;</ml:mi>
-                      </ml:munder>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>t</ml:mi>
+                        <ml:mi>w</ml:mi>
+                      </ml:msub>
                     </ml:mrow>
-                  </ml:mfenced>
-                </ml:mrow>
-              </ml:mstyle>
-            </ml:mrow>
-          </ml:math>
-        </fo:instream-foreign-object>
-      </fo:block>
-      <fo:block></fo:block>
-      <fo:block></fo:block>
-      <fo:block></fo:block>
-      <fo:block>
-        <fo:block></fo:block>
-        <fo:block></fo:block>
-        <fo:block></fo:block>
-      </fo:block>
-      <fo:block>
-        <fo:block></fo:block>
-        <fo:block></fo:block>
-        <fo:block>
-          <fo:block></fo:block>
-          <fo:block></fo:block>
-          <fo:block></fo:block>
-          <fo:instream-foreign-object>
-            <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-              <ml:mrow>
-                <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                  <ml:msub>
-                    <ml:mi>d</ml:mi>
-                    <ml:mi>3</ml:mi>
-                  </ml:msub>
-                </ml:mstyle>
-              </ml:mrow>
-            </ml:math>
-          </fo:instream-foreign-object> = 
-          <fo:instream-foreign-object>
-            <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-              <ml:mrow>
-                <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                  <ml:mrow>
-                    <ml:mfenced open="(" close=")" separators=";">
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn>0.002</ml:mn>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mi>A</ml:mi>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn>0.023</ml:mn>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block space-before="3pt">1.2. Parametry wytrzymałościowe:
+            <fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>I</ml:mi>
+                        <ml:mi>x</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
                       <ml:mrow>
+                        <ml:mn>303.7</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>-6</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>I</ml:mi>
+                        <ml:mi>y</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow>
+                      <ml:msub>
+                        <ml:mi>I</ml:mi>
+                        <ml:mi>x</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mrow>
+                        <ml:mn>303.7</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>-6</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>I</ml:mi>
+                        <ml:mi>o</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow>
+                      <ml:msub>
+                        <ml:mi>I</ml:mi>
+                        <ml:mi>x</ml:mi>
+                      </ml:msub>
+                      <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
+                      <ml:msub>
+                        <ml:mi>I</ml:mi>
+                        <ml:mi>y</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow>
+                      <ml:mrow>
+                        <ml:mn>303.7</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>-6</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                      <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
+                      <ml:mrow>
+                        <ml:mn>303.7</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>-6</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mrow>
+                        <ml:mn>607.4</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>-6</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>i</ml:mi>
+                        <ml:mi>x</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow>
+                      <ml:msqrt>
                         <ml:mrow>
-                          <ml:mrow>
-                            <ml:mrow>
-                              <ml:mi>Ar</ml:mi>
-                              <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                              <ml:msub>
-                                <ml:mi>Ar</ml:mi>
-                                <ml:mi>a</ml:mi>
-                              </ml:msub>
-                            </ml:mrow>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                            <ml:msubsup>
-                              <ml:mi>Ar</ml:mi>
-                              <ml:mi>a</ml:mi>
-                              <ml:mi>&beta;</ml:mi>
-                            </ml:msubsup>
-                          </ml:mrow>
-                          <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                          <ml:munder>
-                            <ml:msubsup>
-                              <ml:mi>Ar</ml:mi>
-                              <ml:mi>a</ml:mi>
-                              <ml:mi>b</ml:mi>
-                            </ml:msubsup>
-                            <ml:mi>&gamma;</ml:mi>
-                          </ml:munder>
+                          <ml:mfrac linethickness="0.6">
+                            <ml:msub>
+                              <ml:mi>I</ml:mi>
+                              <ml:mi>x</ml:mi>
+                            </ml:msub>
+                            <ml:mi>A</ml:mi>
+                          </ml:mfrac>
                         </ml:mrow>
-                        <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                        <ml:munderover>
-                          <ml:msubsup>
-                            <ml:mi>Ar</ml:mi>
-                            <ml:mi>a</ml:mi>
-                            <ml:mi>b</ml:mi>
-                          </ml:msubsup>
-                          <ml:mi>c</ml:mi>
-                          <ml:mi>d</ml:mi>
-                        </ml:munderover>
-                      </ml:mrow>
-                    </ml:mfenced>
-                  </ml:mrow>
-                  <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                  <ml:mrow>
-                    <ml:mfenced open="(" close=")" separators=";">
-                      <ml:mrow>
-                        <ml:munderover>
-                          <ml:msubsup>
-                            <ml:mi>Ar</ml:mi>
-                            <ml:msup>
-                              <ml:mi>&alpha;</ml:mi>
-                              <ml:mi>z</ml:mi>
-                            </ml:msup>
-                            <ml:mi>b</ml:mi>
-                          </ml:msubsup>
-                          <ml:mi>c</ml:mi>
-                          <ml:mi>d</ml:mi>
-                        </ml:munderover>
-                        <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&minus;</ml:mo>
-                        <ml:mn>1,3</ml:mn>
-                      </ml:mrow>
-                    </ml:mfenced>
-                  </ml:mrow>
-                </ml:mstyle>
-              </ml:mrow>
-            </ml:math>
-          </fo:instream-foreign-object> = 
-          <fo:instream-foreign-object>
-            <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-              <ml:mrow>
-                <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                  <ml:mrow>
-                    <ml:mfenced open="(" close=")" separators=";">
-                      <ml:mrow>
-                        <ml:mrow>
-                          <ml:mrow>
-                            <ml:mrow>
-                              <ml:mi>Ar</ml:mi>
-                              <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                              <ml:msub>
-                                <ml:mi>Ar</ml:mi>
-                                <ml:mi>a</ml:mi>
-                              </ml:msub>
-                            </ml:mrow>
-                            <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                            <ml:msubsup>
-                              <ml:mi>Ar</ml:mi>
-                              <ml:mi>a</ml:mi>
-                              <ml:mi>&beta;</ml:mi>
-                            </ml:msubsup>
-                          </ml:mrow>
-                          <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                          <ml:munder>
-                            <ml:msubsup>
-                              <ml:mi>Ar</ml:mi>
-                              <ml:mi>a</ml:mi>
-                              <ml:mi>b</ml:mi>
-                            </ml:msubsup>
-                            <ml:mi>&gamma;</ml:mi>
-                          </ml:munder>
-                        </ml:mrow>
-                        <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
-                        <ml:munderover>
-                          <ml:msubsup>
-                            <ml:mi>Ar</ml:mi>
-                            <ml:mi>a</ml:mi>
-                            <ml:mi>b</ml:mi>
-                          </ml:msubsup>
-                          <ml:mi>c</ml:mi>
-                          <ml:mi>d</ml:mi>
-                        </ml:munderover>
-                      </ml:mrow>
-                    </ml:mfenced>
-                  </ml:mrow>
-                  <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                  <ml:mrow>
-                    <ml:mfenced open="(" close=")" separators=";">
-                      <ml:mrow>
-                        <ml:munderover>
-                          <ml:msubsup>
-                            <ml:mi>Ar</ml:mi>
-                            <ml:msup>
-                              <ml:mi>&alpha;</ml:mi>
-                              <ml:mi>z</ml:mi>
-                            </ml:msup>
-                            <ml:mi>b</ml:mi>
-                          </ml:msubsup>
-                          <ml:mi>c</ml:mi>
-                          <ml:mi>d</ml:mi>
-                        </ml:munderover>
-                        <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&minus;</ml:mo>
-                        <ml:mn>1,3</ml:mn>
-                      </ml:mrow>
-                    </ml:mfenced>
-                  </ml:mrow>
-                </ml:mstyle>
-              </ml:mrow>
-            </ml:math>
-          </fo:instream-foreign-object> 
-          <fo:instream-foreign-object>
-            <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
-              <ml:mrow>
-                <ml:mstyle scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="medium">
-                  <ml:mfrac>
-                    <ml:mrow>
-                      <ml:mi>a</ml:mi>
-                      <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-                      <ml:mi>b</ml:mi>
+                      </ml:msqrt>
                     </ml:mrow>
-                    <ml:mi>c</ml:mi>
-                  </ml:mfrac>
-                </ml:mstyle>
-              </ml:mrow>
-            </ml:math>
-          </fo:instream-foreign-object>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow>
+                      <ml:msqrt>
+                        <ml:mrow>
+                          <ml:mfrac linethickness="0.6">
+                            <ml:mrow>
+                              <ml:mn>303.7</ml:mn>
+                              <ml:mo>&CenterDot;</ml:mo>
+                              <ml:msup>
+                                <ml:mn>10</ml:mn>
+                                <ml:mn>-6</ml:mn>
+                              </ml:msup>
+                            </ml:mrow>
+                            <ml:mn>0.023</ml:mn>
+                          </ml:mfrac>
+                        </ml:mrow>
+                      </ml:msqrt>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn>0.114</ml:mn>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>i</ml:mi>
+                        <ml:mi>o</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow>
+                      <ml:msqrt>
+                        <ml:msup>
+                          <ml:mrow>
+                            <ml:msub>
+                              <ml:mi>i</ml:mi>
+                              <ml:mi>x</ml:mi>
+                            </ml:msub>
+                          </ml:mrow>
+                          <ml:mn>2</ml:mn>
+                        </ml:msup>
+                        <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
+                        <ml:msup>
+                          <ml:mrow>
+                            <ml:msub>
+                              <ml:mi>i</ml:mi>
+                              <ml:mi>x</ml:mi>
+                            </ml:msub>
+                          </ml:mrow>
+                          <ml:mn>2</ml:mn>
+                        </ml:msup>
+                      </ml:msqrt>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow>
+                      <ml:msqrt>
+                        <ml:msup>
+                          <ml:mrow>
+                            <ml:mn>0.114</ml:mn>
+                          </ml:mrow>
+                          <ml:mn>2</ml:mn>
+                        </ml:msup>
+                        <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">+</ml:mo>
+                        <ml:msup>
+                          <ml:mrow>
+                            <ml:mn>0.114</ml:mn>
+                          </ml:mrow>
+                          <ml:mn>2</ml:mn>
+                        </ml:msup>
+                      </ml:msqrt>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn>0.161</ml:mn>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>I</ml:mi>
+                        <ml:mi>&omega;</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mrow>
+                        <ml:mn>830</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>-9</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>I</ml:mi>
+                        <ml:mi>t</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mrow>
+                        <ml:mn>3.66</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>-6</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block space-before="3pt">1.3. Parametry materiałowe:
+            <fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mi>E</ml:mi>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mrow>
+                        <ml:mn>205000</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>6</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mi>G</ml:mi>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mrow>
+                        <ml:mn>80000</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>6</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>f</ml:mi>
+                        <ml:mi>d</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mrow>
+                        <ml:mn>215000</ml:mn>
+                        <ml:mo>&CenterDot;</ml:mo>
+                        <ml:msup>
+                          <ml:mn>10</ml:mn>
+                          <ml:mn>3</ml:mn>
+                        </ml:msup>
+                      </ml:mrow>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block space-before="3pt">1.4. Współczynniki długości wyboczeniowej:
+            <fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>&mu;</ml:mi>
+                        <ml:mi>x</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn>1</ml:mn>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+              <fo:block>
+                <fo:instream-foreign-object>
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:msub>
+                        <ml:mi>&mu;</ml:mi>
+                        <ml:mi>&phiv;</ml:mi>
+                      </ml:msub>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+                <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+                <fo:instream-foreign-object color="#0000ff">
+                  <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                    <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                       fontstyle="normal" fontweight="bold">
+                      <ml:mn>1</ml:mn>
+                    </ml:mrow>
+                  </ml:math>
+                </fo:instream-foreign-object>
+              </fo:block>
+            </fo:block>
+          </fo:block>
+          <fo:block space-before="3pt">1.5. Nośność obliczeniowa przekroju przy osiowym ściskaniu:
+            <fo:block>
+              <fo:instream-foreign-object>
+                <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                  <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#000000" fontsize="11"
+                     fontstyle="normal" fontweight="bold">
+                    <ml:msub>
+                      <ml:mi>N</ml:mi>
+                      <ml:mi>Rc</ml:mi>
+                    </ml:msub>
+                  </ml:mrow>
+                </ml:math>
+              </fo:instream-foreign-object>
+              <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+              <fo:instream-foreign-object>
+                <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                  <ml:mrow>
+                    <ml:mi>A</ml:mi>
+                    <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
+                    <ml:msub>
+                      <ml:mi>f</ml:mi>
+                      <ml:mi>d</ml:mi>
+                    </ml:msub>
+                  </ml:mrow>
+                </ml:math>
+              </fo:instream-foreign-object>
+              <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+              <fo:instream-foreign-object>
+                <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                  <ml:mrow>
+                    <ml:mn>0.023</ml:mn>
+                    <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
+                    <ml:mrow>
+                      <ml:mn>215000</ml:mn>
+                      <ml:mo>&CenterDot;</ml:mo>
+                      <ml:msup>
+                        <ml:mn>10</ml:mn>
+                        <ml:mn>3</ml:mn>
+                      </ml:msup>
+                    </ml:mrow>
+                  </ml:mrow>
+                </ml:math>
+              </fo:instream-foreign-object>
+              <fo:inline padding-start="0.1em" padding-end="0.1em">=</fo:inline>
+              <fo:instream-foreign-object color="#0000ff">
+                <ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" mode="inline">
+                  <ml:mrow scriptminsize="6pt" scriptsizemultiplier="0.63" linethickness="0.6" color="#0000ff" fontsize="11"
+                     fontstyle="normal" fontweight="bold">
+                    <ml:mrow>
+                      <ml:mn>5028.9</ml:mn>
+                      <ml:mo>&CenterDot;</ml:mo>
+                      <ml:msup>
+                        <ml:mn>10</ml:mn>
+                        <ml:mn>3</ml:mn>
+                      </ml:msup>
+                    </ml:mrow>
+                  </ml:mrow>
+                </ml:math>
+              </fo:instream-foreign-object>
+            </fo:block>
+          </fo:block>
+        </fo:block>
+        <fo:block></fo:block>
+        <fo:block></fo:block>
+        <fo:block font-style="italic" space-before="3pt">Literatura :
+          <fo:block>1. Norma PN-90 B-03200 "Konstrukcje stalowe. Obliczenia statyczne i projektowanie."</fo:block>
+          <fo:block>2. Bogucki W., Żyburtowicz M. "Tablice do projektowania konstrukcji metalowych" Warszawa 1996</fo:block>
+          <fo:block>3. Gosowski B. "Skręcanie i zginanie otwartych, stężonych elementów konstrukcji metalowych" Wrocław 2004</fo:block>
+          <fo:block>4. Gosowski B., Kubica E. "Badania laboratoryjne z konstrukcji metalowych" Wrocław 2007</fo:block>
         </fo:block>
       </fo:block>
     </fo:flow>

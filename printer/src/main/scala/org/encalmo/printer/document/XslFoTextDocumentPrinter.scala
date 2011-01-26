@@ -86,25 +86,25 @@ extends Traveler[DocumentComponent] {
 	}
 	
 	def writeExpression(etp:ExpressionToPrint, style:Style){
-		val mc = mathOutput.color
+		val mc = mathOutput.mathStyle
 		writeWithSpaceAround(etp.prefix)
 		etp.expression match {
 			case _ => {
 				output.start(INSTREAM_FOREIGN_OBJECT)
 				if (etp.style!=null){
 					output.appendInlineStyleAttributes(etp.style, if(style!=null)style else styleStack.top)
-					mathOutput.color = etp.style.hexColor
+					mathOutput.mathStyle = etp.style
 				}else{
 					if(style!=null) {
 						output.appendInlineStyleAttributes(style, styleStack.top)
-						mathOutput.color = style.hexColor
+						mathOutput.mathStyle = style
 					}
 				}
 				output.body
 				mathOutput.open
 				etp.expression.travel(traveler = ept)
 				mathOutput.close
-				mathOutput.color = mc
+				mathOutput.mathStyle = mc
 				output.end(INSTREAM_FOREIGN_OBJECT)
 			}
 		}
@@ -163,91 +163,93 @@ extends Traveler[DocumentComponent] {
 		node.element match {
 			case sm:StyleManager => {
 				sm.get(StyledPlaces.STYLED_PLACE_EXPRESSION_NUMBERS) match {
-					case Some(s) => {mathOutput.numberColor = s.hexColor}
+					case Some(s) => {mathOutput.numberStyle = s}
 					case None => Unit
 				}
 				return
 			}
 			case nvc:NonVisualDocumentComponent => return
-			case d:Document => {}
+			case d:Document => {
+				
+			}
 			case chapter:Chapter => {
 				tryStartPageSequence(chapter,chapter.style)
 			}
 			case _ => {
 				tryStartPageSequence(null,node.element.style)
-			}
-		}
-		node.element match {
-			case ns:NumSection => {
-				val en:Enumerator = ns.enumerator
-				val sc = counterFor(en)
-				output.start(BLOCK)
-				output.appendBlockStyleAttributes(ns.resolveStyle(sc.currentLevel),styleStack.top)
-				output.body
-				val ens = en.style
-				if(ens!=null){
-					output.start(INLINE)
-					output.appendInlineStyleAttributes(en.style, styleStack.top)
-					output.body
-				}
-				
-				output.append(sc.current.mkString("",".","."+SPACE))
-				sc.in // counter level increment
-				if(ens!=null){
-					output.end(INLINE)
-				}
-			}
-			case s:Section => {
-				output.start(BLOCK)
-				output.appendBlockStyleAttributes(s.myStyle, styleStack.top)
-				output.body
-			}
-			case t:Text => {
-				if(t.myStyle!=null){
-					output.start(INLINE)
-					output.appendInlineStyleAttributes(t.myStyle, styleStack.top)
-					output.body
-				}
-				output.append(t.text);
-				if(t.myStyle!=null){
-					output.end(INLINE)
-				}
-			}
-			case expr:Expr => {
-				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
-				if(!ess.isEmpty){
-					if(ess.size>1 && expr.isForceLineBreak){
-						for(es <- ess){
-							output.start(BLOCK)
-							if(expr.myStyle!=null){
-								output.appendBlockStyleAttributes(expr.myStyle, styleStack.top)
-							}
-							output.body
-							writeExpressionSeq(es, expr.myStyle)
-							output.end(BLOCK)
-						}
-					}else{
-						if(expr.myStyle!=null){
+				node.element match {
+					case ns:NumSection => {
+						val en:Enumerator = ns.enumerator
+						val sc = counterFor(en)
+						output.start(BLOCK)
+						output.appendBlockStyleAttributes(ns.resolveStyle(sc.currentLevel),styleStack.top)
+						output.body
+						val ens = en.style
+						if(ens!=null){
 							output.start(INLINE)
-							output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
-							output.attr("padding-end","1em")
+							output.appendInlineStyleAttributes(en.style, styleStack.top)
 							output.body
 						}
-						if(ess.head!=null){
-							writeExpressionSeq(ess.head, expr.myStyle)
-						}
-						if(ess.tail!=null && !ess.tail.isEmpty){
-							ess.tail.foreach(es => {
-								writeExpressionSeq(es, expr.myStyle)
-							})
-						}
-						if(expr.myStyle!=null){
+						
+						output.append(sc.current.mkString("",".","."+SPACE))
+						sc.in // counter level increment
+						if(ens!=null){
 							output.end(INLINE)
 						}
 					}
+					case s:Section => {
+						output.start(BLOCK)
+						output.appendBlockStyleAttributes(s.myStyle, styleStack.top)
+						output.body
+					}
+					case t:Text => {
+						if(t.myStyle!=null){
+							output.start(INLINE)
+							output.appendInlineStyleAttributes(t.myStyle, styleStack.top)
+							output.body
+						}
+						output.append(t.text);
+						if(t.myStyle!=null){
+							output.end(INLINE)
+						}
+					}
+					case expr:Expr => {
+						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
+						if(!ess.isEmpty){
+							if(ess.size>1 && expr.isForceLineBreak){
+								for(es <- ess){
+									output.start(BLOCK)
+									if(expr.myStyle!=null){
+										output.appendBlockStyleAttributes(expr.myStyle, styleStack.top)
+									}
+									output.body
+									writeExpressionSeq(es, expr.myStyle)
+									output.end(BLOCK)
+								}
+							}else{
+								if(expr.myStyle!=null){
+									output.start(INLINE)
+									output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
+									output.attr("padding-end","1em")
+									output.body
+								}
+								if(ess.head!=null){
+									writeExpressionSeq(ess.head, expr.myStyle)
+								}
+								if(ess.tail!=null && !ess.tail.isEmpty){
+									ess.tail.foreach(es => {
+										writeExpressionSeq(es, expr.myStyle)
+									})
+								}
+								if(expr.myStyle!=null){
+									output.end(INLINE)
+								}
+							}
+						}
+					}
+					case _ => {}
 				}
 			}
-			case _ => {}
 		}
 		// pushing current style on the stack
 		styleStack.push(node.element.style)
@@ -267,8 +269,12 @@ extends Traveler[DocumentComponent] {
 	override def onAfterChildExit(node:Node[DocumentComponent], position:Int, child:DocumentComponent):Unit = Unit
 	
 	override def onExit(node:Node[DocumentComponent]):Unit = {
+		node.element match {
+			case nvc:NonVisualDocumentComponent => return
+			case _ => 
+		}
 		// removing current style from the stack
-		styleStack.push(node.element.style)
+		styleStack.pop
 		node.element match {
 			case d:Document => {
 				endPageSequence

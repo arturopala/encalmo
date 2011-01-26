@@ -1,6 +1,9 @@
 package org.encalmo.printer
 import java.io.Writer
 import org.encalmo.expression._
+import org.encalmo.document.Style
+import org.encalmo.document.FontStyle
+import org.encalmo.document.DefaultStyle
 import MathMLTags._
 
 /**
@@ -15,9 +18,10 @@ class MathMLOutput(
 ) 
 extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
-	var color:String = "#000000"
-	var numberColor:String = null
+	var mathStyle:Style = DefaultStyle
+	var numberStyle:Style = null
 	
+	lazy val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
@@ -28,17 +32,17 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		declareNamespace("http://www.w3.org/1998/Math/MathML")
 		attr("mode","inline")
 		body
-		startb(MROW)
-		start(MSTYLE)
-		attr("scriptminsize","6pt")
-		attr("scriptsizemultiplier","0.63")
-		attr("linethickness","0.6")
-		attr("color",color)
+		start(MROW)
+		attr("scriptminsize","4pt")
+		attr("scriptsizemultiplier","0.6")
+		//attr("linethickness","0.6")
+		if(mathStyle!=null){
+			appendStyleAttributes(mathStyle)
+		}
 		body
 	}
 	
 	override def close = {
-		end(MSTYLE)
 		end(MROW)
 		end(MATH)
 	}
@@ -98,18 +102,23 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	def mn(n: Number):Unit = {
 		val nf:NumberFormatted = n.formatForPrint
 		if(nf.hasExponent || nf.isNegative) {
-			startb(MROW)
-		}
-		if(numberColor!=null){
-			start(MSTYLE)
-			attr("color",numberColor)
+			start(MROW)
+			if(numberStyle!=null){
+				appendStyleAttributes(numberStyle)
+			}
 			body
 		}
 		if (nf.isNegative) {
 			mo("-", "prefix")
 		}
-		startb(MN)
-		append(nf.integer.toString)
+		start(MN)
+		if(!nf.hasExponent && !nf.isNegative){
+			if(numberStyle!=null){
+				appendStyleAttributes(numberStyle)
+			}
+		}
+		body
+		append(integerFormat1.format(nf.integer))
 		if(nf.fraction>0){
 			nf.decimals match {
 				case 1 => append(fractionFormat1.format(nf.fraction))
@@ -119,21 +128,29 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			}
 		}
 		end(MN)
-		if(nf.hasExponent) {
-			startb(MO)
+		if(nf.hasExponent && nf.exponent!=0) {
+			start(MO)
+			attr("fontsize",resolveStyle.font.size-2)
+			body
 			append(ENTITY_CENTER_DOT)
 			end(MO)
-			startb(MSUP)
+			start(MSUP)
+			attr("fontsize",resolveStyle.font.size-2)
+			body
 			startb(MN)
 			append("10")
 			end(MN)
+			if(nf.exponent<0){
+				startb(MROW)
+				mo("-", "prefix")
+			}
 			startb(MN)
-			append(nf.exponent.toString)
+			append(Math.abs(nf.exponent).toString)
 			end(MN)
+			if(nf.exponent<0){
+				end(MROW)
+			}
 			end(MSUP)
-		}
-		if(numberColor!=null){
-			end(MSTYLE)
 		}
 		if(nf.hasExponent || nf.isNegative) {
 			end(MROW)
@@ -192,5 +209,17 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		else if (s.hasUnderscript) end(MUNDER)
 		//under-over script end
 	}
+	
+	def appendStyleAttributes(style:Style) = {
+		attr("color",style.hexColor)
+		attr("fontsize",style.font.size)
+		//attr("fontstyle",resolveFontStyle(style.font))
+		//attr("fontweight",resolveFontWeight(style.font))
+		//attr("fontfamily",style.font.family)
+	}
+	
+	private def resolveStyle = if(numberStyle!=null) numberStyle else mathStyle
+	private def resolveFontStyle(fs:FontStyle):String = if(fs.italic){"italic"}else{"normal"}
+	private def resolveFontWeight(fs:FontStyle):String = if(fs.bold){"bold"}else{"normal"}
 	
 }

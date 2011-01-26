@@ -27,10 +27,10 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		val style4 = DefaultStyle.use(font4).useColor(java.awt.Color.RED)
 		
 		val styleManager = StyleManager()
-		styleManager.define(STYLED_PLACE_NUM_SECTION_01, style1)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_02, style2)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_03, style3)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_04, style4)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_00, style1)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_01, style2)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_02, style3)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_03, style4)
 		styleManager.define(STYLED_PLACE_EXPRESSION_SYMBOL, style2.fontBold.useColor(java.awt.Color.GREEN))
 		styleManager.define(STYLED_PLACE_EXPRESSION_NUMBERS, DefaultStyle.useColor(java.awt.Color.ORANGE))
 		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, style2.fontBold.useColor(java.awt.Color.MAGENTA).useDecoration("underline"))
@@ -295,10 +295,17 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		val BOLD = style1.fontBold
 		val ITALIC = style1.fontItalic
 		val styleManager = StyleManager()
-		styleManager.define(STYLED_PLACE_EXPRESSION_SYMBOL, DefaultStyle.fontBold)
-		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, DefaultStyle.fontBold)
-		styleManager.define(STYLED_PLACE_EXPRESSION_NUMBERS, DefaultStyle.useColor(java.awt.Color.PINK))
-		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, DefaultStyle.fontBold.useColor(java.awt.Color.MAGENTA))
+		styleManager.define(STYLED_PLACE_EXPRESSION_SYMBOL, style1.paddingLeft(15))
+		styleManager.define(STYLED_PLACE_EXPRESSION_UNRESOLVED, style1.fontSmaller)
+		styleManager.define(STYLED_PLACE_EXPRESSION_RESOLVED, style1.fontSmaller)
+		styleManager.define(STYLED_PLACE_EXPRESSION_INTERMEDIATE_EVALUATION, style1.fontSmaller)
+		styleManager.define(STYLED_PLACE_EXPRESSION_NUMBERS, style1.useColor(java.awt.Color.BLUE))
+		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, style1.fontBold)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_00, style1.fontBold.useSpaceBefore(8))
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_01, style1.useSpaceBefore(5))
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_02, style1.fontSmaller)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_03, style1.fontSmaller.fontItalic)
+		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_04, style1.fontSmaller.fontItalic)
 		
 		val doc1 = Document(style1,"",
 		     styleManager,
@@ -308,22 +315,22 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		          Section("W ćwiczeniu przyjęto słup krzyżowy o profilu +I400 (wg rysunku w załączniku) ze stali St3SX zamocowany przegubowo na obu końcach."),
 		          Section("Obliczenia i wymiarowanie przeprowadzono kolejno dla 6 różnych długości słupa, l = 3, 4, 5, 6, 7 i 8m."),
 		          
-		      NumSection(BOLD,"Parametry zadania",  
+		      NumSection("Parametry zadania",  
 		          Section(ITALIC,"Wszystkie parametry i wyniki podano w odpowiednich jednostkach SI (metrach i Newtonach)"),
-		          NumSection(BOLD,"Parametry geometryczne:",
+		          NumSection("Parametry geometryczne:",
 		            Section(Evaluate(c1,h,bf,tf,tw,A))),
-		          NumSection(BOLD,"Parametry wytrzymałościowe:",
+		          NumSection("Parametry wytrzymałościowe:",
 		            Section(Evaluate(c1,Ix,Iy,Io,ix,io,Iomega,It))),
-		          NumSection(BOLD,"Parametry materiałowe:",
+		          NumSection("Parametry materiałowe:",
 		            Section(Evaluate(c1,E,G,fd))),
-		          NumSection(BOLD,"Współczynniki długości wyboczeniowej:",
+		          NumSection("Współczynniki długości wyboczeniowej:",
 		            Section(Evaluate(c1,mix,mif))),
-		          NumSection(BOLD,"Nośność obliczeniowa przekroju przy osiowym ściskaniu:",
+		          NumSection("Nośność obliczeniowa przekroju przy osiowym ściskaniu:",
 		            Section(Evaluate(c1,NRc)))
 		          
 		      ),
-		      NumSection(BOLD,"Obliczenie sił krytycznych wyboczenia giętnego i skrętnego dla zadanych przypadków.",
-		          NumSection(BOLD,"Obliczenia dla l = 3m :",
+		      NumSection("Obliczenie sił krytycznych wyboczenia giętnego i skrętnego dla zadanych przypadków.",
+		          NumSection("Obliczenia dla l = 3m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
 		              Section(Evaluate(c1,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
@@ -332,7 +339,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		              Section(Evaluate(c1,Nfcr)))
 		          ),
 		          
-		          NumSection(BOLD,"Obliczenia dla l = 4m :",
+		          NumSection("Obliczenia dla l = 4m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
 		              Section(Evaluate(c2,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
@@ -341,7 +348,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		              Section(Evaluate(c2,Nfcr)))
 		          ),
 		          
-		          NumSection(BOLD,"Obliczenia dla l = 5m :",
+		          NumSection("Obliczenia dla l = 5m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
 		              Section(Evaluate(c3,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
@@ -350,7 +357,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		              Section(Evaluate(c3,Nfcr)))
 		          ),
 		          
-		          NumSection(BOLD,"Obliczenia dla l = 6m :",
+		          NumSection("Obliczenia dla l = 6m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
 		              Section(Evaluate(c4,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
@@ -359,7 +366,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		              Section(Evaluate(c4,Nfcr)))
 		          ),
 		          
-		          NumSection(BOLD,"Obliczenia dla l = 7m :",
+		          NumSection("Obliczenia dla l = 7m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
 		              Section(Evaluate(c4,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
@@ -368,7 +375,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		              Section(Evaluate(c4,Nfcr)))
 		          ),
 		          
-		          NumSection(BOLD,"K. Obliczenia dla l = 8m :",
+		          NumSection("K. Obliczenia dla l = 8m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
 		              Section(Evaluate(c4,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
@@ -377,7 +384,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		              Section(Evaluate(c4,Nfcr)))
 		          ),
 		          
-		          NumSection(BOLD,"Podsumowanie obliczeń :",
+		          NumSection("Podsumowanie obliczeń :",
 		            Section("dla l = 3m : ",Evaluate(c1,Nxcr,lambdax,Nfcr,lambdaf)),
 		            Section("dla l = 4m : ",Evaluate(c2,Nxcr,lambdax,Nfcr,lambdaf)),
 		            Section("dla l = 5m : ",Evaluate(c3,Nxcr,lambdax,Nfcr,lambdaf)),
@@ -386,14 +393,14 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		            Section("dla l = 8m : ",Evaluate(c6,Nxcr,lambdax,Nfcr,lambdaf))
 		          ),
 		          
-		          NumSection(BOLD,"Wnioski z obliczeń :",
+		          NumSection("Wnioski z obliczeń :",
 		             Section("Dla długości słupa krótszych od 7m siła krytyczna wyboczenia skrętnego jest mniejsza od siły krytycznej wyboczenia giętnego.")   
 		          )
 		      ),
 		      
-		      NumSection(BOLD,"Wymiarowanie słupa wg PN-90 B-03200.",
+		      NumSection("Wymiarowanie słupa wg PN-90 B-03200.",
 		          Section("Obliczenie maksymalnej osiowej siły ściskającej ",Evaluate(c1,Nmax)," dla każdej z rozpatrywanych długości słupa."),
-		          NumSection(BOLD,"Obliczenia dla l = 3m :",
+		          NumSection("Obliczenia dla l = 3m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
 		            Section(Evaluate(c1,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (",Evaluate(c1,n),"):",
@@ -401,7 +408,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		          NumSection("Maksymalna osiowa siła ściskająca:",
 		            Section(Evaluate(c1,Nmax)))
 		        ),
-		        NumSection(BOLD,"Obliczenia dla l = 4m :",
+		        NumSection("Obliczenia dla l = 4m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
 		            Section(Evaluate(c2,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
@@ -409,7 +416,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		          NumSection("Maksymalna osiowa siła ściskająca:",
 		            Section(Evaluate(c2,Nmax)))
 		        ),
-		        NumSection(BOLD,"Obliczenia dla l = 5m :",
+		        NumSection("Obliczenia dla l = 5m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
 		            Section(Evaluate(c3,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
@@ -417,7 +424,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		          NumSection("Maksymalna osiowa siła ściskająca:",
 		            Section(Evaluate(c3,Nmax)))
 		        ),
-		        NumSection(BOLD,"Obliczenia dla l = 6m :",
+		        NumSection("Obliczenia dla l = 6m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
 		            Section(Evaluate(c4,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
@@ -425,7 +432,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		          NumSection("Maksymalna osiowa siła ściskająca:",
 		            Section(Evaluate(c4,Nmax)))
 		        ),
-		        NumSection(BOLD,"Obliczenia dla l = 7m :",
+		        NumSection("Obliczenia dla l = 7m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
 		            Section(Evaluate(c5,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
@@ -433,7 +440,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		          NumSection("Maksymalna osiowa siła ściskająca:",
 		            Section(Evaluate(c5,Nmax)))
 		        ),
-		        NumSection(BOLD,"Obliczenia dla l = 8m :",
+		        NumSection("Obliczenia dla l = 8m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
 		            Section(Evaluate(c6,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
@@ -441,7 +448,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		          NumSection("Maksymalna osiowa siła ściskająca:",
 		            Section(Evaluate(c6,Nmax)))
 		        ),
-		        NumSection(BOLD,"Podsumowanie wymiarowania :",
+		        NumSection("Podsumowanie wymiarowania :",
 		            Section("dla l = 3m : ",Evaluate(c1,fi,Nmax)),
 		            Section("dla l = 4m : ",Evaluate(c2,fi,Nmax)),
 		            Section("dla l = 5m : ",Evaluate(c3,fi,Nmax)),
@@ -462,7 +469,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	      )
 		)
 		
-		val output:XslFoOutput = new XslFoOutput(Layout(), new java.util.Locale("US"))
+		val output:XslFoOutput = new XslFoOutput(Layout(), new java.util.Locale("PL"))
 		output.open
 		XslFoTextDocumentPrinter.print(doc1,output)
 		output.close

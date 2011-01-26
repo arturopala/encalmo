@@ -63,8 +63,6 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			attrIfChanged("background-color",currentStyle.hexBackground,style.hexBackground)
 			attrNoZero("space-before",style.paragraph.spaceBefore,style.paragraph.unit)
 			attrNoZero("space-after",style.paragraph.spaceAfter,style.paragraph.unit)
-			attrNoZero("padding-left",style.paragraph.padding.left,style.paragraph.unit)
-			attrNoZero("padding-right",style.paragraph.padding.right,style.paragraph.unit)
 			attrNoZero("padding-top",style.paragraph.padding.top,style.paragraph.unit)
 			attrNoZero("padding-bottom",style.paragraph.padding.bottom,style.paragraph.unit)
 			attrNoZero("margin-left",style.paragraph.margin.left,style.paragraph.unit)
@@ -92,6 +90,8 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			attrIfChanged("text-align",currentStyle.text.align,style.text.align)
 			attrIfChanged("text-decoration",currentStyle.text.decoration,style.text.decoration)
 			attrIfChanged("text-transform",currentStyle.text.transform,style.text.transform)
+			attrNoZero("padding-left",style.paragraph.padding.left,style.paragraph.unit)
+			attrNoZero("padding-right",style.paragraph.padding.right,style.paragraph.unit)
 		}
 	}
 	
