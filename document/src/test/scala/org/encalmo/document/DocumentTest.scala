@@ -80,6 +80,19 @@ class DocumentTest extends AssertionsForJUnit {
        assertSame(sr4.style, style2);
        val sr5 = doc1.select(0,0,0,2).getOrElse(fail()).asInstanceOf[Text]
        assertSame(sr5.style, style2);
+       val sr6 = sr4.parentOfType[Document](classOf[Document])
+       assertSame(doc1, sr6.get);
+       val pred1 = (o:Document) => {true}
+       val pred2 = (o:NumSection) => {true}
+       val i1 = sr4.countParentsOfTypeUntil[Document](classOf[Document],pred1)
+       val i2 = sr4.countParentsOfTypeUntil[NumSection](classOf[NumSection],pred2)
+       assertEquals(1, i1);
+       assertEquals(2, i2);
+       val sr7 = doc1.select(0,0,6,2,0)
+       val sr8 = sr4.parentOrSiblingOfType[Text](classOf[Text])
+       assertSame(sr7.get, sr8.get);
+       val i3 = sr4.enumeratorLevel
+       assertEquals(2, i3)
     }
     
     @Test def testDocument2() {

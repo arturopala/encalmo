@@ -4,7 +4,7 @@ package org.encalmo.common
  * Tree structure node
  * @author artur.opala
  */
-case class Node[A](parent:Node[A], element:A, position:Int = 0) {
+case class Node[A<:AnyRef](parent:Node[A], element:A, position:Int = 0) {
 	
 	lazy val level:Int = parent match {
 		case null => 0

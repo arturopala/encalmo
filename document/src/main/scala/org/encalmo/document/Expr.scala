@@ -4,7 +4,6 @@ package org.encalmo.document
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
-import org.encalmo.document.StyledPlaces._
 
 /**
  * Expression component class
@@ -15,6 +14,8 @@ extends DocumentComponent(myStyle) {
 
 	override def toString = "Expr("+myStyle+","+calc+","+expr.mkString(",")+")"
 	
+	lazy val parentStylesConfig:Option[StylesConfig] = parentOrSiblingOfType[StylesConfig](classOf[StylesConfig])
+	
 	/** Resolves this expressions to sequences of ExpressionToPrint objects */
 	final def resolve:Seq[Seq[ExpressionToPrint]] = {
 		for(e <- expr) yield resolveExpression(e)
@@ -23,8 +24,8 @@ extends DocumentComponent(myStyle) {
 	/** Function to implement */
 	def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		e match {
-			case s:Symbol => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,STYLED_PLACE_EXPRESSION_SYMBOL),null,null))
-			case _ => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,STYLED_PLACE_EXPRESSION_EVALUATED),null,null))
+			case s:Symbol => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null))
+			case _ => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null))
 		}
 	}
 	
@@ -33,20 +34,13 @@ extends DocumentComponent(myStyle) {
 	/**
 	 * Resolves style for this expression
 	 */
-	final def resolveStyle(definedStyle:Style, styledPlace:StyledPlace):Style = {
-		if(definedStyle!=null){
-			definedStyle
-		}else{
-			val slo:Option[StyleManager] = parentOrSiblingOfType[StyleManager](classOf[StyleManager])
-			slo match {
-				case Some(sm) => sm.get(styledPlace).getOrElse(resolveStyle(sm))
+	final def resolveStyle(definedStyle:Style, part:StylesConfigSymbols.Value):Style = {
+		Option(definedStyle).getOrElse(
+			parentStylesConfig match {
+				case Some(psc) => psc.expressions.part(part).getOrElse(psc.expressions.expression.getOrElse(null))
 				case None => null
 			}
-		}
-	}
-	
-	private def resolveStyle(sm:StyleManager):Style = {
-		sm.get(STYLED_PLACE_EXPRESSION).getOrElse(null)
+		)
 	}
 	
 }

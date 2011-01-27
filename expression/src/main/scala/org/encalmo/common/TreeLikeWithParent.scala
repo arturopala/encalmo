@@ -40,7 +40,7 @@ trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
     			}
     			case o => {
     				if(!o.children.isEmpty){
-    					val r = o.children.find(x => t.isAssignableFrom(x.getClass))
+    					val r = o.children.takeWhile(x => x.ne(this)).find(x => t.isAssignableFrom(x.getClass))
     					if(r.isDefined){
     						Some(r.get.asInstanceOf[B])
     					}else{
@@ -50,6 +50,24 @@ trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
     					o.parentOrSiblingOfType[B](t)
     				}
     			}
+    		}
+    	}
+    }
+    
+    /** Count parent components of the type A until predicate is true */
+    //@tailrec
+    final def countParentsOfTypeUntil[B](t:Class[B],until:B=>Boolean,c:Int=0):Int = {
+    	if(!parent.isDefined) c else {
+    		val p = parent.get
+    		p match {
+    			case o if (t.isAssignableFrom(o.getClass)) => {
+    				if(until(o.asInstanceOf[B])){
+    					o.countParentsOfTypeUntil[B](t,until,c+1)
+    				}else{
+    					c
+    				}
+    			}
+    			case o => o.countParentsOfTypeUntil[B](t,until,c)
     		}
     	}
     }

@@ -161,8 +161,8 @@ extends Traveler[DocumentComponent] {
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
-			case sm:StyleManager => {
-				sm.get(StyledPlaces.STYLED_PLACE_EXPRESSION_NUMBERS) match {
+			case sc:StylesConfig => {
+				sc.expressions.numbers match {
 					case Some(s) => {mathOutput.numberStyle = s}
 					case None => Unit
 				}
@@ -182,7 +182,7 @@ extends Traveler[DocumentComponent] {
 						val en:Enumerator = ns.enumerator
 						val sc = counterFor(en)
 						output.start(BLOCK)
-						output.appendBlockStyleAttributes(ns.resolveStyle(sc.currentLevel),styleStack.top)
+						output.appendBlockStyleAttributes(ns.myStyle,styleStack.top)
 						output.body
 						val ens = en.style
 						if(ens!=null){

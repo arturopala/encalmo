@@ -4,7 +4,6 @@ package org.encalmo.document
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
-import org.encalmo.document.StyledPlaces._
 
 /**
  * Result component class
@@ -18,7 +17,7 @@ extends Expr(myStyle,calc,expr:_*){
 	/** Function to implement */
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		val evaluated = calc.evaluate(e)
-		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,resolveStyle(myStyle,STYLED_PLACE_EXPRESSION_EVALUATED),null,null))
+		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null))
 	}
 	
 }

@@ -8,7 +8,7 @@ import org.encalmo.calculation._
 import org.encalmo.document._
 import org.encalmo.printer._
 import org.encalmo.fop.FOPHelper
-import org.encalmo.document.StyledPlaces._
+import org.encalmo.document.StylesConfigSymbols._
 
 class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	
@@ -26,14 +26,7 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		val style3 = DefaultStyle.use(font3).marginLeft(10).useLetterSpacing("1pt")
 		val style4 = DefaultStyle.use(font4).useColor(java.awt.Color.RED)
 		
-		val styleManager = StyleManager()
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_00, style1)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_01, style2)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_02, style3)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_03, style4)
-		styleManager.define(STYLED_PLACE_EXPRESSION_SYMBOL, style2.fontBold.useColor(java.awt.Color.GREEN))
-		styleManager.define(STYLED_PLACE_EXPRESSION_NUMBERS, DefaultStyle.useColor(java.awt.Color.ORANGE))
-		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, style2.fontBold.useColor(java.awt.Color.MAGENTA).useDecoration("underline"))
+		val stylesConfig = StylesConfig()
 		
 		val d1 = d|1
 		val d2 = d|2
@@ -65,12 +58,11 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		calc1 put (c -> 0.57)
 		
 		val doc1 = Document(style1, "Test document",
-			styleManager,
 			Enumerator(),
     		Chapter(style2,"Test chapter",
 				Section("header"),
 				Section(style2,"footer"),
-				styleManager,
+				stylesConfig,
 	    		Section(
 		            Text("test1"),
 		            Text(style1,"test2"),
@@ -214,6 +206,8 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	            )
             )
        )
+       
+       doc1.dumpTreeToConsole
 		
 		val output:XslFoOutput = new XslFoOutput(Layout(),new java.util.Locale("PL"))
 		output.open
@@ -294,21 +288,22 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		val style1 = DefaultStyle.useSpaceBefore(3)
 		val BOLD = style1.fontBold
 		val ITALIC = style1.fontItalic
-		val styleManager = StyleManager()
-		styleManager.define(STYLED_PLACE_EXPRESSION_SYMBOL, style1.paddingLeft(15))
-		styleManager.define(STYLED_PLACE_EXPRESSION_UNRESOLVED, style1.fontSmaller)
-		styleManager.define(STYLED_PLACE_EXPRESSION_RESOLVED, style1.fontSmaller)
-		styleManager.define(STYLED_PLACE_EXPRESSION_INTERMEDIATE_EVALUATION, style1.fontSmaller)
-		styleManager.define(STYLED_PLACE_EXPRESSION_NUMBERS, style1.useColor(java.awt.Color.BLUE))
-		styleManager.define(STYLED_PLACE_EXPRESSION_EVALUATED, style1.fontBold)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_00, style1.fontBold.useSpaceBefore(8))
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_01, style1.useSpaceBefore(5))
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_02, style1.fontSmaller)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_03, style1.fontSmaller.fontItalic)
-		styleManager.define(STYLED_PLACE_NUM_SECTION_LEVEL_04, style1.fontSmaller.fontItalic)
+		
+		val stylesConfig = StylesConfig()
+		stylesConfig(EXPR_SYMBOL) = style1.paddingLeft(15)
+		stylesConfig(EXPR_UNRESOLVED) = style1.fontSmaller
+		stylesConfig(EXPR_SUBSTITUTED) = style1.fontSmaller
+		stylesConfig(EXPR_PARTIALLY_EVALUATED) = style1.fontSmaller
+		stylesConfig(EXPR_NUMBERS) = style1.useColor(java.awt.Color.BLUE)
+		stylesConfig(EXPR_EVALUATED) = style1.fontBold
+		stylesConfig(NUMSECT_LEVEL0) = style1.fontBold.useSpaceBefore(8)
+		stylesConfig(NUMSECT_LEVEL1) = style1.useSpaceBefore(5)
+		stylesConfig(NUMSECT_LEVEL2) = style1.fontSmaller
+		stylesConfig(NUMSECT_LEVEL3) = style1.fontSmaller.fontItalic
+		stylesConfig(NUMSECT_LEVEL4) = style1.fontSmaller.fontSmaller.fontItalic
 		
 		val doc1 = Document(style1,"",
-		     styleManager,
+		     stylesConfig,
 			 Chapter("",
 		      	  Section("Ćwiczenie z przedmiotu 'Cieńkościenne konstrukcje metalowe'. Słup ściskany osiowo - wyboczenie giętne i skrętne. Autorzy: Irmina Grudzień, Artur Opala."),
 		      	  Section(""),

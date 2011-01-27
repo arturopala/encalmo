@@ -8,7 +8,6 @@ import org.encalmo.expression.Operation2
 import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
-import org.encalmo.document.StyledPlaces._
 
 /**
  * Evaluate: symbol = resolved = evaluated
@@ -23,17 +22,17 @@ extends Expr(myStyle,calc,expr:_*){
 		var ue = e // unresolved expression
 		val evaluated = calc.evaluate(e) // evaluated expression
 		if(e.isInstanceOf[Symbol]){
-			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,STYLED_PLACE_EXPRESSION_SYMBOL),null,null)
+			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null)
 			ue = calc.getRawExpression(e.asInstanceOf[Symbol]) match {
 				case Some(x) => x
 				case None => e
 			}
 			if(ue!=e && ue!=evaluated){
-				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,STYLED_PLACE_EXPRESSION_UNRESOLVED),"=",null)
+				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null)
 			}
 		}else{
 			if(ue!=evaluated){
-				se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,STYLED_PLACE_EXPRESSION_UNRESOLVED),null,null)
+				se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,StylesConfigSymbols.EXPR_UNRESOLVED),null,null)
 			}
 		}
 		if(evaluated!=e){
@@ -48,12 +47,12 @@ extends Expr(myStyle,calc,expr:_*){
 				case _ => calc.evaluate(substituted)
 			}
 			if(substituted!=ue && substituted!=evaluated){
-				se = se :+ ExpressionToPrint(substituted,resolveStyle(styleOfResolved,STYLED_PLACE_EXPRESSION_RESOLVED),"=",null)
+				se = se :+ ExpressionToPrint(substituted,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_SUBSTITUTED),"=",null)
 			}
 			if(evaluation1!=substituted && evaluation1!=evaluated){
-				se = se :+ ExpressionToPrint(evaluation1,resolveStyle(styleOfResolved,STYLED_PLACE_EXPRESSION_INTERMEDIATE_EVALUATION),"=",null)
+				se = se :+ ExpressionToPrint(evaluation1,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED),"=",null)
 			}
-			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,STYLED_PLACE_EXPRESSION_EVALUATED),"=",null)
+			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",null)
 		}
 		se
 	}

@@ -4,7 +4,7 @@ package org.encalmo.common
  * Tree structure traveler
  * @author artur.opala
  */
-trait Traveler[A] {
+trait Traveler[A<:AnyRef] {
 	
 	def onEnter(node:Node[A]):Unit = Unit
 	

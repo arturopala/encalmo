@@ -5,8 +5,8 @@ E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculati
 E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala
 E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala
 E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\ContextSet.scala
-E:\Projekty\encalmo\calculation\src\test\scala\org\encalmo\calculation\ContextUnitTest.scala -> E:\Projekty\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext.scala
 E:\Projekty\encalmo\calculation\src\test\scala\org\encalmo\calculation\ContextUnitTest.scala -> E:\Projekty\encalmo\calculation\src\test\scala\org\encalmo\calculation\ContextUnitTest.scala
+E:\Projekty\encalmo\calculation\src\test\scala\org\encalmo\calculation\ContextUnitTest.scala -> E:\Projekty\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext.scala
 E:\Projekty\encalmo\calculation\src\test\scala\org\encalmo\calculation\ContextUnitTest.scala -> E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala
 E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\Context.scala -> E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\Context.scala
 E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\Context.scala -> E:\Projekty\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala

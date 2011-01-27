@@ -4,7 +4,7 @@ package org.encalmo.common
  * Interface of travelable tree-like strutures
  * @author artur.opala
  */
-trait Travelable[A] {
+trait Travelable[A<:AnyRef] {
 	
 	/**
 	 * Main function to implement.
@@ -31,7 +31,7 @@ trait Travelable[A] {
 		t.result 
 	}
 	
-	private class SelectTraveler[A](coordinate:Int*) extends Traveler[A] {
+	private class SelectTraveler[A<:AnyRef](coordinate:Int*) extends Traveler[A] {
 		
 		var result:Option[A] = None
 		
@@ -58,7 +58,7 @@ trait Travelable[A] {
 			}
 			Console.print(node.coordinate.mkString("(", ",", ")"))
 			Console.print(" ")
-			Console.println(node.element)
+			Console.println(node.element.getClass)
 		}
 	}
 
