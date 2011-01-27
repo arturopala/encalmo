@@ -35,7 +35,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		attr("margin-bottom",layout.bottomMargin,"mm")
 		body
 		start(REGION_BODY)
-		attr("margin-top","10","mm")
+		attr("margin-top","15","mm")
 		attr("margin-bottom","10","mm")
 		end
 		start(REGION_BEFORE)

@@ -251,7 +251,7 @@ extends Traveler[DocumentComponent] {
 				}
 			}
 		}
-		// pushing current style on the stack
+		// push current style on the stack
 		styleStack.push(node.element.style)
 	}
 	

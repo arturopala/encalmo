@@ -9,6 +9,9 @@ import org.encalmo.document.StyledPlaces._
  */
 class NumSection(val nsStyle:Style, val myEnumerator:Enumerator, flow:DocumentComponent*) 
 extends Section(nsStyle,flow:_*) {
+    
+    lazy val parentStyleManager = parentOrSiblingOfType[StyleManager](classOf[StyleManager])
+    lazy val parentNumSection = parentOfType[NumSection](classOf[NumSection])
 	
 	override def myStyle:Style = nsStyle
 	
@@ -20,12 +23,11 @@ extends Section(nsStyle,flow:_*) {
     	if(myEnumerator!=null){
     		myEnumerator
     	}else{
-    		val pns = parentOfType[NumSection](classOf[NumSection])
-    		if(!pns.isDefined){
+    		if(!parentNumSection.isDefined){
     			parentOrSiblingOfType[EnumeratorProvider](classOf[EnumeratorProvider])
     			.getOrElse(NumSection.defaultEnumerator).asInstanceOf[EnumeratorProvider].enumerator
     		}else{
-    			pns.get.enumerator
+    			parentNumSection.get.enumerator
     		}
     	}
     }
@@ -37,9 +39,8 @@ extends Section(nsStyle,flow:_*) {
 		if(nsStyle!=null){
 			nsStyle
 		}else{
-			val slo = parentOrSiblingOfType[StyleManager](classOf[StyleManager])
-			if(slo.isDefined){
-				resolveStyle(slo.get,level)
+			if(parentStyleManager.isDefined){
+				resolveStyle(parentStyleManager.get,level)
 			}else{
 				super.style
 			}
