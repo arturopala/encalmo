@@ -5,41 +5,74 @@ package org.encalmo.expression
  * @author artur.opala
  */
 trait Symbol extends Expression {
-	
-	def name:String
-	def subscript:Symbol = null
-	def superscript:Symbol = null
-	def underscript:Symbol = null
-	def overscript:Symbol = null
-	
-	val face:String = name + forFace(subscript) + forFace(superscript) + forFace(underscript) + forFace(overscript)
-  
-	private def forFace(script:Symbol) = if(script!=null) "{"+script.face+"}" else ""
-		
-	def |(sub:Symbol):Symbol
-	def |(sub:Symbol, sup:Symbol):Symbol
-	def |(int:Int):Symbol = this | String.valueOf(int)
-	def |(sub:Symbol,int2:Int):Symbol = this | (sub,String.valueOf(int2))
-	def |(int1:Int,sup:Symbol):Symbol = this | (String.valueOf(int1),sup)
-	def |(int1:Int,int2:Int):Symbol = this | (String.valueOf(int1),String.valueOf(int2))
-	def !(sup:Symbol):Symbol
-	def !(int:Int):Symbol = this ! String.valueOf(int)
-	def +(n:String):Symbol
-	
-	def under(under:Symbol):Symbol
-	def over(over:Symbol):Symbol
-	
-	def hasSubscript:Boolean = subscript!=null
-	def hasSuperscript:Boolean = superscript!=null
-	def hasSubOrSupscript:Boolean = hasSubscript || hasSuperscript
-	def hasSubAndSupscript:Boolean = hasSubscript && hasSuperscript
-	def hasUnderscript:Boolean = underscript!=null
-	def hasOverscript:Boolean = overscript!=null
-	def hasOverOrUnderscript:Boolean = hasUnderscript || hasOverscript
-	def hasOverAndUnderscript:Boolean = hasUnderscript && hasOverscript
-	
+
+    def name:String
+    def subscript:Symbol = null
+    def superscript:Symbol = null
+    def underscript:Symbol = null
+    def overscript:Symbol = null
+
+    def |(sub:Symbol):Symbol
+    def |(sub:Symbol, sup:Symbol):Symbol
+    def !(sup:Symbol):Symbol
+    def +(n:String):Symbol
+    def under(under:Symbol):Symbol
+    def over(over:Symbol):Symbol
+
+    def |(int:Int):Symbol = this | String.valueOf(int)
+    def |(sub:Symbol,int2:Int):Symbol = this | (sub,String.valueOf(int2))
+    def |(int1:Int,sup:Symbol):Symbol = this | (String.valueOf(int1),sup)
+    def |(int1:Int,int2:Int):Symbol = this | (String.valueOf(int1),String.valueOf(int2))
+
+    def !(int:Int):Symbol = this ! String.valueOf(int)
+
+    def hasSubscript:Boolean = subscript!=null
+    def hasSuperscript:Boolean = superscript!=null
+    def hasSubOrSupscript:Boolean = hasSubscript || hasSuperscript
+    def hasSubAndSupscript:Boolean = hasSubscript && hasSuperscript
+    def hasUnderscript:Boolean = underscript!=null
+    def hasOverscript:Boolean = overscript!=null
+    def hasOverOrUnderscript:Boolean = hasUnderscript || hasOverscript
+    def hasOverAndUnderscript:Boolean = hasUnderscript && hasOverscript
+
+    val face:String = name + forFace(subscript) + forFace(superscript) + forFace(underscript) + forFace(overscript)
+    private def forFace(script:Symbol) = if(script!=null) "{"+script.face+"}" else ""
+
+    def is(description:String):Symbol = SymbolWithDescription(this,description)
+
 }
 
+/**
+ * Symbol proxy class
+ * @author artur.opala
+ */
+case class SymbolProxy(symbol:Symbol) extends Symbol {
+    
+    override def name:String = symbol.name
+    override def subscript:Symbol = symbol.subscript
+    override def superscript:Symbol = symbol.superscript
+    override def underscript:Symbol = symbol.underscript
+    override def overscript:Symbol = symbol.overscript
+    
+    override def |(sub:Symbol):Symbol = copy(symbol = symbol | sub)
+    override def |(sub:Symbol, sup:Symbol):Symbol = copy(symbol = symbol | (sub,sup))
+    override def !(sup:Symbol):Symbol = copy(symbol = symbol | sup)
+    override def +(n:String):Symbol = copy(symbol = symbol + n)
+    override def under(under:Symbol):Symbol = copy(symbol = symbol.under(under))
+    override def over(over:Symbol):Symbol = copy(symbol = symbol.over(over))
+    
+}
+
+/**
+ * Symbol with description
+ * @author artur.opala
+ */
+case class SymbolWithDescription(override val symbol:Symbol, description:String) extends SymbolProxy(symbol)
+
+/**
+ * Symbol companion object
+ * @author artur.opala
+ */
 object Symbol {
 	
 	def apply(char:Char):Symbol = new Symbol1(String.valueOf(char))

@@ -10,8 +10,8 @@ case class FontStyle(
 	bold:Boolean=false,
 	italic:Boolean=false
 ){
-	def withSize(s:Int):FontStyle = copy(size=s)
-	def withFamily(f:String):FontStyle = copy(family=f)
+	def fontSize(s:Int):FontStyle = copy(size=s)
+	def useFamily(f:String):FontStyle = copy(family=f)
 	def makeBold:FontStyle = copy(bold=true)
 	def makeItalic:FontStyle = copy(italic=true)
 	def makeNormal:FontStyle = copy(italic=false,bold=false)

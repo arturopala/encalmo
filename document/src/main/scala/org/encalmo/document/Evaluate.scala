@@ -22,17 +22,17 @@ extends Expr(myStyle,calc,expr:_*){
 		var ue = e // unresolved expression
 		val evaluated = calc.evaluate(e) // evaluated expression
 		if(e.isInstanceOf[Symbol]){
-			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null)
+			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
 			ue = calc.getRawExpression(e.asInstanceOf[Symbol]) match {
 				case Some(x) => x
 				case None => e
 			}
 			if(ue!=e && ue!=evaluated){
-				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null)
+				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
 			}
 		}else{
 			if(ue!=evaluated){
-				se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,StylesConfigSymbols.EXPR_UNRESOLVED),null,null)
+				se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,StylesConfigSymbols.EXPR_UNRESOLVED),null,null,parentStylesConfig)
 			}
 		}
 		if(evaluated!=e){
@@ -47,12 +47,12 @@ extends Expr(myStyle,calc,expr:_*){
 				case _ => calc.evaluate(substituted)
 			}
 			if(substituted!=ue && substituted!=evaluated){
-				se = se :+ ExpressionToPrint(substituted,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_SUBSTITUTED),"=",null)
+				se = se :+ ExpressionToPrint(substituted,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_SUBSTITUTED),"=",null,parentStylesConfig)
 			}
 			if(evaluation1!=substituted && evaluation1!=evaluated){
-				se = se :+ ExpressionToPrint(evaluation1,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED),"=",null)
+				se = se :+ ExpressionToPrint(evaluation1,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED),"=",null,parentStylesConfig)
 			}
-			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",null)
+			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",null,parentStylesConfig)
 		}
 		se
 	}

@@ -5,13 +5,15 @@ package org.encalmo.document
  * @author artur.opala
  */
 case class ParagraphStyle(
-		val margin:BoxDim = BoxDim(),
-		val padding:BoxDim = BoxDim(),
-		val spaceBefore:Int = 0,
-		val spaceAfter:Int = 0,
-		val startIndent:Int = 0,
-		val endIndent:Int = 0,
-		val unit:String = "pt"
+		margin:BoxDim = BoxDim(),
+		padding:BoxDim = BoxDim(),
+		spaceBefore:Int = 0,
+		spaceAfter:Int = 0,
+		startIndent:Int = 0,
+		endIndent:Int = 0,
+		width:Int = 0,
+		height:Int = 0,
+		unit:String = "pt"
 	) {
 	
 	def paddingTop(d:Int) = copy(padding = padding.setTop(d))
@@ -34,6 +36,9 @@ case class ParagraphStyle(
 	def useMargins(bd:BoxDim) = copy(margin = bd)
 	
 	def useUnit(u:String) = copy(unit = u)
+	
+	def setWidth(d:Int) = copy(width = d)
+	def setHeight(d:Int) = copy(height = d)
 
 }
 

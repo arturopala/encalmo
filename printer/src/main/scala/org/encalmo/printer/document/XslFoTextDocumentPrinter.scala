@@ -74,40 +74,75 @@ extends Traveler[DocumentComponent] {
 		}
 	}
 	
-	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style){
-		if(se.head!=null){
-			writeExpression(se.head, style)
-		}
-		if(se.tail!=null && !se.tail.isEmpty){
-			se.tail.foreach(etp => {
-				writeExpression(etp, style)
-			})
-		}
+	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean){
+	    if(!se.isEmpty){
+	        if(se.head!=null){
+                writeExpressionSeqStart(se.head, style, printDescription)
+	        }
+    	    output.start(LIST_ITEM_BODY)
+    	    output.attr("start-indent","body-start()")
+    	    output.body
+    	    output.startb(BLOCK)
+    		if(se.head!=null){
+    			writeExpression(se.head, style)
+    		}
+    		if(se.tail!=null && !se.tail.isEmpty){
+    			se.tail.foreach(etp => {
+    				writeExpression(etp, style)
+    			})
+    		}
+    		output.end(BLOCK)
+            output.end(LIST_ITEM_BODY)
+	    }
 	}
 	
-	def writeExpression(etp:ExpressionToPrint, style:Style){
+	def writeExpressionSeqStart(etp:ExpressionToPrint, style:Style, printDescription:Boolean) = {
+	    output.start(LIST_ITEM_LABEL)
+	    output.attr("end-indent","label-end()")
+	    val descStyle = etp.stylesConfig match {
+            case Some(x) => x.expressions.symbolDescription.getOrElse(styleStack.top)
+            case None => styleStack.top
+        }
+        output.appendInlineStyleAttributes(descStyle,styleStack.top)
+        output.body
+        output.start(BLOCK)
+        output.body
+        output.append(style.list.bullet)
+        if(printDescription){
+    	    etp.expression match {
+                case symb:SymbolWithDescription => {
+                    if(symb.description!=null){
+                        output.startb(INLINE)
+                        output.append(symb.description)
+                        output.end(INLINE)
+                    }
+                }
+                case _ => 
+            }
+        }
+        output.end(BLOCK)
+        output.end(LIST_ITEM_LABEL)
+	}
+	
+	def writeExpression(etp:ExpressionToPrint, style:Style) = {
 		val mc = mathOutput.mathStyle
 		writeWithSpaceAround(etp.prefix)
-		etp.expression match {
-			case _ => {
-				output.start(INSTREAM_FOREIGN_OBJECT)
-				if (etp.style!=null){
-					output.appendInlineStyleAttributes(etp.style, if(style!=null)style else styleStack.top)
-					mathOutput.mathStyle = etp.style
-				}else{
-					if(style!=null) {
-						output.appendInlineStyleAttributes(style, styleStack.top)
-						mathOutput.mathStyle = style
-					}
-				}
-				output.body
-				mathOutput.open
-				etp.expression.travel(traveler = ept)
-				mathOutput.close
-				mathOutput.mathStyle = mc
-				output.end(INSTREAM_FOREIGN_OBJECT)
-			}
-		}
+		output.start(INSTREAM_FOREIGN_OBJECT)
+        if (etp.style!=null){
+            output.appendInlineStyleAttributes(etp.style, if(style!=null)style else styleStack.top)
+            mathOutput.mathStyle = etp.style
+        }else{
+            if(style!=null) {
+                output.appendInlineStyleAttributes(style, styleStack.top)
+                mathOutput.mathStyle = style
+            }
+        }
+        output.body
+        mathOutput.open
+        etp.expression.travel(traveler = ept)
+        mathOutput.close
+        mathOutput.mathStyle = mc
+        output.end(INSTREAM_FOREIGN_OBJECT)
 		writeWithSpaceAround(etp.suffix)
 	}
 	
@@ -182,7 +217,7 @@ extends Traveler[DocumentComponent] {
 						val en:Enumerator = ns.enumerator
 						val sc = counterFor(en)
 						output.start(BLOCK)
-						output.appendBlockStyleAttributes(ns.myStyle,styleStack.top)
+						output.appendBlockStyleAttributes(ns.style,styleStack.top)
 						output.body
 						val ens = en.style
 						if(ens!=null){
@@ -199,7 +234,7 @@ extends Traveler[DocumentComponent] {
 					}
 					case s:Section => {
 						output.start(BLOCK)
-						output.appendBlockStyleAttributes(s.myStyle, styleStack.top)
+						output.appendBlockStyleAttributes(s.style, styleStack.top)
 						output.body
 					}
 					case t:Text => {
@@ -216,16 +251,26 @@ extends Traveler[DocumentComponent] {
 					case expr:Expr => {
 						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
 						if(!ess.isEmpty){
-							if(ess.size>1 && expr.isForceLineBreak){
+						    val doPrintDescription:Boolean = expr.isPrintDescription && ess.forall(es => es.headOption.exists(ept => ept.expression.isInstanceOf[SymbolWithDescription]))
+							if(expr.isForceLineBreak){
+							    output.start(LIST_BLOCK)
+							    if(expr.isPrintDescription){
+							        output.appendListBlockStyleAttributes(expr.style)
+							    }else{
+							        output.attr("provisional-distance-between-starts","1em")
+						            output.attr("provisional-label-separation","0.2em")
+							    }
+                                if(expr.myStyle!=null){
+                                    output.appendBlockStyleAttributes(expr.myStyle, styleStack.top)
+                                }
+                                output.body
 								for(es <- ess){
-									output.start(BLOCK)
-									if(expr.myStyle!=null){
-										output.appendBlockStyleAttributes(expr.myStyle, styleStack.top)
-									}
+									output.start(LIST_ITEM)
 									output.body
-									writeExpressionSeq(es, expr.myStyle)
-									output.end(BLOCK)
+									writeExpressionSeq(es, expr.style, doPrintDescription)
+									output.end(LIST_ITEM)
 								}
+                                output.end(LIST_BLOCK)
 							}else{
 								if(expr.myStyle!=null){
 									output.start(INLINE)
@@ -234,11 +279,11 @@ extends Traveler[DocumentComponent] {
 									output.body
 								}
 								if(ess.head!=null){
-									writeExpressionSeq(ess.head, expr.myStyle)
+									writeExpressionSeq(ess.head, expr.style, false)
 								}
 								if(ess.tail!=null && !ess.tail.isEmpty){
 									ess.tail.foreach(es => {
-										writeExpressionSeq(es, expr.myStyle)
+										writeExpressionSeq(es, expr.style, false)
 									})
 								}
 								if(expr.myStyle!=null){

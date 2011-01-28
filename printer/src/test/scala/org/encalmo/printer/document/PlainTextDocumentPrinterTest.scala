@@ -15,7 +15,7 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 		import BasicSymbols._
 		
 		val font1 = DefaultFontStyle.++.makeBold
-		val font2 = DefaultFontStyle.withSize(8).makeItalic
+		val font2 = DefaultFontStyle.fontSize(8).makeItalic
 		
 		val style1 = DefaultStyle.use(font1)
 		val style2 = DefaultStyle.use(font2)

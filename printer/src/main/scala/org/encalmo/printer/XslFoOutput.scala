@@ -60,7 +60,6 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 	def appendBlockStyleAttributes(style:Style, currentStyle:Style):Unit = {
 		if(style!=null){
 			appendInlineStyleAttributes(style,currentStyle)
-			attrIfChanged("background-color",currentStyle.hexBackground,style.hexBackground)
 			attrNoZero("space-before",style.paragraph.spaceBefore,style.paragraph.unit)
 			attrNoZero("space-after",style.paragraph.spaceAfter,style.paragraph.unit)
 			attrNoZero("padding-top",style.paragraph.padding.top,style.paragraph.unit)
@@ -77,6 +76,11 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		}
 	}
 	
+	def appendListBlockStyleAttributes(style:Style):Unit = {
+        attrNoZero("provisional-distance-between-starts",style.list.distanceBetweenStarts,style.list.unit)
+        attrNoZero("provisional-label-separation",style.list.distanceLabelSeparation,style.list.unit)
+	}
+	
 	def appendInlineStyleAttributes(style:Style, currentStyle:Style):Unit = {
 		if(style!=null){
 			attrIfChanged("font-family",currentStyle.font.family,style.font.family)
@@ -84,6 +88,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			attrIfChanged("font-style",resolveFontStyle(currentStyle.font),resolveFontStyle(style.font))
 			attrIfChanged("font-weight",resolveFontWeight(currentStyle.font),resolveFontWeight(style.font))
 			attrIfChanged("color",currentStyle.hexColor,style.hexColor)
+            attrIfChanged("background-color",currentStyle.hexBackground,style.hexBackground)
 			attrIfChanged("letter-spacing",currentStyle.text.letterSpacing,style.text.letterSpacing)
 			attrIfChanged("word-spacing",currentStyle.text.wordSpacing,style.text.wordSpacing)
 			attrIfChanged("line-height",currentStyle.text.lineHeight,style.text.lineHeight,style.text.unit)
@@ -92,6 +97,8 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			attrIfChanged("text-transform",currentStyle.text.transform,style.text.transform)
 			attrNoZero("padding-left",style.paragraph.padding.left,style.paragraph.unit)
 			attrNoZero("padding-right",style.paragraph.padding.right,style.paragraph.unit)
+			attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
+			attrNoZero("min-height",style.paragraph.height,style.paragraph.unit)
 		}
 	}
 	

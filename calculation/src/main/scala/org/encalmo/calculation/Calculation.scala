@@ -25,6 +25,11 @@ class Calculation(val id:String) extends LinkedHashSet[ExpressionResolver] with 
 	def put(t:(Symbol,Expression)) = context.put(t._1 ,t._2)
 	
 	/**
+     * Maps symbol to expression in the internal default context
+     */
+	def update(s:Symbol,e:Expression) = context.put(s,e)
+	
+	/**
 	 * Resolves and evaluates all symbols to values
 	 * Uses and updates internal cache of resolved symbols.
 	 */

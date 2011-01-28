@@ -10,6 +10,7 @@ case class Style(
 	font:FontStyle = DefaultFontStyle,
 	text:TextStyle = DefaultTextStyle,
 	paragraph:ParagraphStyle = DefaultParagraphStyle,
+	list:ListStyle = DefaultListStyle,
 	color:Color = Color.BLACK,
 	background:Color = Color.WHITE
 ){
@@ -24,6 +25,8 @@ case class Style(
 	
 	def use(f:FontStyle):Style = copy(font=f)
 	def use(p:ParagraphStyle):Style = copy(paragraph=p)
+    def use(l:ListStyle):Style = copy(list=l)
+    def use(t:TextStyle):Style = copy(text=t)
 	
 	def useColor(c:Color):Style = copy(color=c)
 	def useBackground(b:Color):Style = copy(background=b)
@@ -32,6 +35,7 @@ case class Style(
 	def fontItalic:Style = copy(font = font.makeItalic)
 	def fontBigger:Style = copy(font = font++)
 	def fontSmaller:Style = copy(font = font--)
+	def fontSize(d:Int):Style = copy(font = font.fontSize(d))
 	
 	def useAlign(d:String) = copy(text = text.useAlign(d))
 	def useDecoration(d:String) = copy(text = text.useDecoration(d))
@@ -65,6 +69,14 @@ case class Style(
 
 	def hyphenateOn = copy(text = text.hyphenateOn)
 	def hyphenateOff = copy(text = text.hyphenateOff)
+	
+	def width(d:Int) = copy(paragraph = paragraph.setWidth(d))
+	def height(d:Int) = copy(paragraph = paragraph.setHeight(d))
+	
+	def useDistanceBetweenStarts(d:Int) = copy(list = list.useDistanceBetweenStarts(d))
+    def useDistanceLabelSeparation(d:Int) = copy(list = list.useDistanceLabelSeparation(d))
+    def useBullet(s:String) = copy(list = list.useBullet(s))
+	
 }
 
 /**

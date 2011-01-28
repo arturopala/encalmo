@@ -18,8 +18,8 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		
 		val font1 = DefaultFontStyle.++.makeBold
 		val font2 = DefaultFontStyle.makeItalic
-		val font3 = DefaultFontStyle.withSize(9)
-		val font4 = DefaultFontStyle.withSize(8).makeItalic
+		val font3 = DefaultFontStyle.fontSize(9)
+		val font4 = DefaultFontStyle.fontSize(8).makeItalic
 		
 		val style1 = DefaultStyle.use(font1).useSpaceBefore(3)
 		val style2 = DefaultStyle.use(font2).useColor(java.awt.Color.BLUE)
@@ -285,19 +285,20 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		val c5 = c1
 		val c6 = c1
 		
-		val style1 = DefaultStyle.useSpaceBefore(3)
+		val style1 = DefaultStyle.fontSize(11).useSpaceBefore(2).useSpaceAfter(2)
 		val BOLD = style1.fontBold
 		val ITALIC = style1.fontItalic
 		
 		val stylesConfig = StylesConfig()
-		stylesConfig(EXPR_SYMBOL) = style1.paddingLeft(15)
+		stylesConfig(EXPRESSION) = style1.marginLeft(15)
+		stylesConfig(EXPR_SYMBOL) = style1.paddingRight(2)
 		stylesConfig(EXPR_UNRESOLVED) = style1.fontSmaller
 		stylesConfig(EXPR_SUBSTITUTED) = style1.fontSmaller
 		stylesConfig(EXPR_PARTIALLY_EVALUATED) = style1.fontSmaller
 		stylesConfig(EXPR_NUMBERS) = style1.useColor(java.awt.Color.BLUE)
 		stylesConfig(EXPR_EVALUATED) = style1.fontBold
-		stylesConfig(NUMSECT_LEVEL0) = style1.fontBold.useSpaceBefore(8)
-		stylesConfig(NUMSECT_LEVEL1) = style1.useSpaceBefore(5)
+		stylesConfig(NUMSECT_LEVEL0) = style1.fontBold.useSpaceBefore(9)
+		stylesConfig(NUMSECT_LEVEL1) = style1.useSpaceBefore(7)
 		stylesConfig(NUMSECT_LEVEL2) = style1.fontSmaller
 		stylesConfig(NUMSECT_LEVEL3) = style1.fontSmaller.fontItalic
 		stylesConfig(NUMSECT_LEVEL4) = style1.fontSmaller.fontSmaller.fontItalic

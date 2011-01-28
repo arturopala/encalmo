@@ -9,12 +9,21 @@ import org.encalmo.calculation.Calculation
  * Expression component class
  * @author artur.opala
  */
-class Expr(myStyle:Style, val calc:Calculation, val expr:Expression*) 
-extends DocumentComponent(myStyle) {
+class Expr(val exStyle:Style, val calc:Calculation, val expr:Expression*) 
+extends DocumentComponent(exStyle) {
 
-	override def toString = "Expr("+myStyle+","+calc+","+expr.mkString(",")+")"
+	override def toString = "Expr("+exStyle+","+calc+","+expr.mkString(",")+")"
 	
 	lazy val parentStylesConfig:Option[StylesConfig] = parentOrSiblingOfType[StylesConfig](classOf[StylesConfig])
+	
+	override lazy val myStyle:Style = {
+        Option(exStyle).getOrElse(
+            parentStylesConfig match {
+                case Some(psc) => psc.expressions.expression.getOrElse(null)
+                case None => null
+            }
+        )
+    }
 	
 	/** Resolves this expressions to sequences of ExpressionToPrint objects */
 	final def resolve:Seq[Seq[ExpressionToPrint]] = {
@@ -24,18 +33,19 @@ extends DocumentComponent(myStyle) {
 	/** Function to implement */
 	def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		e match {
-			case s:Symbol => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null))
-			case _ => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null))
+			case s:Symbol => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig))
+			case _ => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null,parentStylesConfig))
 		}
 	}
 	
 	def isForceLineBreak:Boolean = true
+	def isPrintDescription:Boolean = true
 	
 	/**
-	 * Resolves style for this expression
+	 * Resolves style for this expression part
 	 */
-	final def resolveStyle(definedStyle:Style, part:StylesConfigSymbols.Value):Style = {
-		Option(definedStyle).getOrElse(
+	final def resolveStyle(defaultStyle:Style, part:StylesConfigSymbols.Value):Style = {
+		Option(defaultStyle).getOrElse(
 			parentStylesConfig match {
 				case Some(psc) => psc.expressions.part(part).getOrElse(psc.expressions.expression.getOrElse(null))
 				case None => null

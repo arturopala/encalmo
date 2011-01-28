@@ -7,6 +7,8 @@ import annotation.tailrec
  * @author artur.opala
  */
 trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
+    
+    self:A =>
 	
 	/** Parent component */
     var parent:Option[A] = None
@@ -16,7 +18,7 @@ trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
     }
     
     /** Nearest parent component of the type A */
-    //@tailrec
+    @tailrec
     final def parentOfType[B](t:Class[B]):Option[B] = {
     	if(!parent.isDefined) None else {
     		val p = parent.get
@@ -30,7 +32,7 @@ trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
     }
     
     /** Nearest parent or sibling component of the type A */
-    //@tailrec
+    @tailrec
     final def parentOrSiblingOfType[B](t:Class[B]):Option[B] = {
     	if(!parent.isDefined) None else {
     		val p = parent.get
@@ -55,7 +57,7 @@ trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
     }
     
     /** Count parent components of the type A until predicate is true */
-    //@tailrec
+    @tailrec
     final def countParentsOfTypeUntil[B](t:Class[B],until:B=>Boolean,c:Int=0):Int = {
     	if(!parent.isDefined) c else {
     		val p = parent.get

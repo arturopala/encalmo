@@ -10,5 +10,6 @@ case class ExpressionToPrint(
 	expression:Expression,
 	style:Style,
 	prefix:String,
-	suffix:String
+	suffix:String,
+	stylesConfig:Option[StylesConfig] = None
 )

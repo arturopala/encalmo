@@ -19,16 +19,16 @@ extends Expr(myStyle,calc,expr:_*){
 		var se = Seq[ExpressionToPrint]()
 		var ue = e // unresolved expression
 		if(e.isInstanceOf[Symbol]){
-			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null)
+			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
 			ue = calc.getRawExpression(e.asInstanceOf[Symbol]) match {
 				case Some(x) => x
 				case None => e
 			}
 			if(ue!=e){
-				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null)
+				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
 			}
 		}else{
-			se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,StylesConfigSymbols.EXPR_UNRESOLVED),null,null)
+			se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,StylesConfigSymbols.EXPR_UNRESOLVED),null,null,parentStylesConfig)
 		}
 		se
 	}

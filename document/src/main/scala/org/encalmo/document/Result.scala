@@ -17,7 +17,7 @@ extends Expr(myStyle,calc,expr:_*){
 	/** Function to implement */
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		val evaluated = calc.evaluate(e)
-		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null))
+		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null,parentStylesConfig))
 	}
 	
 }

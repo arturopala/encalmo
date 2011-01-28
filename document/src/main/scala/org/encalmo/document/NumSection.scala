@@ -13,7 +13,7 @@ extends Section(nsStyle,flow:_*) {
     lazy val parentNumSection = parentOfType[NumSection](classOf[NumSection])
     lazy val parentEnumeratorProvider = parentOrSiblingOfType[EnumeratorProvider](classOf[EnumeratorProvider])
 	
-	override def toString = "NumSection("+myStyle+","+flow.mkString(",")+")"
+	override def toString = "NumSection("+nsStyle+","+flow.mkString(",")+")"
 	
 	/** Section's resolved enumerator */
 	@tailrec
