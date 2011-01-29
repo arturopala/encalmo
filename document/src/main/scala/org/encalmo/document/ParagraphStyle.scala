@@ -58,6 +58,9 @@ case class BoxDim(
 		right:Int = 0,
 		bottom:Int = 0
 	){
+    
+    def apply(d:Int):BoxDim = BoxDim(d,d,d,d)
+    def apply(d1:Int,d2:Int):BoxDim = BoxDim(d1,d2,d1,d2)
 	
 	def setTop(d:Int) = copy(top = d)
 	def setBottom(d:Int) = copy(bottom = d)

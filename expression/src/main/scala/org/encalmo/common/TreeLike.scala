@@ -69,5 +69,16 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
 		}
 		traveler.onExit(n)
   	}
+  	
+  	/**
+  	 * Counts tree leafs starting at this node
+  	 */
+  	final def countTreeLeafs:Int = {
+  	    if(children.isEmpty){
+  	        0
+  	    }else{
+  	        children.size + children.map(_.countTreeLeafs).sum
+  	    }
+  	}
 
 }

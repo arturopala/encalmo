@@ -21,7 +21,7 @@ trait Expression extends TreeLike[Expression] {
    */
   def as(s:Symbol):Expression = Definition(s,this)
   
-  def or(c:Case):Selection = Selection(this,Seq(c))
+  def or(c:Case):Selection = Selection(CaseExpression(this),Seq(c))
   
   def + (e:Expression):Expression = e match {
 	  case Void => this

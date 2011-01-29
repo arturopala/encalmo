@@ -10,7 +10,7 @@ class MathMLExpressionPrinterTest extends AssertionsForJUnit {
 	
 	import BasicSymbols._
 	
-	@Test def testContext1() {
+	@Test def test1() {
 		val o:MathMLOutput = new MathMLOutput(java.util.Locale.ENGLISH)
 		val a1 = Symbol1("Ar")
 		val a2 = Symbol2("Ar",BasicSymbols.a)
@@ -24,6 +24,26 @@ class MathMLExpressionPrinterTest extends AssertionsForJUnit {
 		MathMLExpressionPrinter.print(e,o)
 		o.close
 		o.printConsole
+		
+		val sel1 = 1 or (InRange(0.75,a3,1.4) then (1.56-(0.75*a3))) or (GreaterThan(a,1.4) then (1/(a3^2)))
+		val rel = a2*(5+sel1)
+		val o2:MathMLOutput = new MathMLOutput(new java.util.Locale("PL"))
+		o.open
+        MathMLExpressionPrinter.print(e,o)
+        o.close
+        o.printConsole
+	}
+	
+	@Test def test2() {
+	    val o:MathMLOutput = new MathMLOutput(new java.util.Locale("PL"))
+        val a2 = Symbol2("Ar",BasicSymbols.a)
+        val a3 = Symbol3("Ar",BasicSymbols.a,BasicSymbols.beta)
+        val sel1 = 1 or (InRange(0.75,a3,1.4) then (1.56-(0.75*a3))) or (GreaterThan(a,1.4) then (1/(a3^2)))
+        val rel = a2*(5+sel1)
+        o.open
+        MathMLExpressionPrinter.print(rel,o)
+        o.close
+        o.printConsole
 	}
 	
 }

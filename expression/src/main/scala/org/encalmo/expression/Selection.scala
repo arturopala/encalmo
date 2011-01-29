@@ -8,7 +8,9 @@ package org.encalmo.expression
  * @author artur.opala
  *
  */
-case class Selection(e:Expression,cases:Seq[Case]) extends Expression with Auxiliary {
+case class Selection(ce:CaseExpression,cases:Seq[Case]) extends Expression with Auxiliary {
+    
+    override def children = cases.:+(ce)
 
 	/**
 	 * Examines cases. Returns expression of case which test first returns true, 
@@ -17,9 +19,9 @@ case class Selection(e:Expression,cases:Seq[Case]) extends Expression with Auxil
 	 */
   def select:Expression = {
 	  for(cas:Case <- cases){
-	 	  if(cas.test)return cas.e
+	 	  if(cas.test)return cas.ce.expr
 	  }
-	  e
+	  ce.expr
   }
   
     /**
@@ -29,16 +31,16 @@ case class Selection(e:Expression,cases:Seq[Case]) extends Expression with Auxil
 	 */
   override def eval:Expression = {
     for(cas:Case <- cases){
-    	if(cas.test)return cas.e.eval
+    	if(cas.test)return cas.ce.eval
     }
-    e.eval
+    ce.eval
   }
   
   /**
    * Maps default expression and all cases
    */
   final override def map(f:Transformation):Expression = {
-	  val ve = e.map(f)
+	  val ve = ce.map(f)
 	  val m:Seq[Case] = cases.map(c => {
 	 	  val vc =c.map(f)
 	 	  if(vc.isInstanceOf[Case]){
@@ -47,16 +49,16 @@ case class Selection(e:Expression,cases:Seq[Case]) extends Expression with Auxil
 	 	 	  EmptyCase
 	 	  }
 	  })
-	  if(ve==e && cases.zip(m).forall(t => t._1 eq t._2)){
+	  if(ve==ce.expr && cases.zip(m).forall(t => t._1 eq t._2)){
 	 	  f(this)
 	  }else{
-	 	  f(Selection(ve,m))
+	 	  f(Selection(CaseExpression(ve),m))
 	  }
   }
   
   /**
    * Returns new selection with appended case
    */
-  override def or(c:Case):Selection = Selection(e,cases.:+(c))
+  override def or(c:Case):Selection = Selection(ce,cases.:+(c))
 
 }

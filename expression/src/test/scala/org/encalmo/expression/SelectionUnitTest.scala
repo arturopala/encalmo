@@ -36,8 +36,8 @@ class SelectionUnitTest extends AssertionsForJUnit {
 	
 	@Test def testSelection1() {
 		val expr1 = a*b
-		val expr4 = Selection(expr1,Seq.empty[Case])
-		assertEquals("Selection(Prod(Symbol(a),Symbol(b)),List())",expr4.toString);
+		val expr4 = Selection(CaseExpression(expr1),Seq.empty[Case])
+		assertEquals("Selection(CaseExpression(Prod(Symbol(a),Symbol(b))),List())",expr4.toString);
 		assertEquals(expr4,expr4.map(identity))
 		val expr5 = expr4.map(negation)
 		assertTrue(expr4 ne expr5)

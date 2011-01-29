@@ -35,14 +35,14 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		attr("margin-bottom",layout.bottomMargin,"mm")
 		body
 		start(REGION_BODY)
-		attr("margin-top","15","mm")
-		attr("margin-bottom","10","mm")
+		attr("margin-top",layout.bodyTopMargin,"mm")
+		attr("margin-bottom",layout.bodyBottomMargin,"mm")
 		end
 		start(REGION_BEFORE)
-		attr("extent","10","mm")
+		attr("extent",layout.headerExtent,"mm")
 		end
 		start(REGION_AFTER)
-		attr("extent","10","mm")
+		attr("extent",layout.footerExtent,"mm")
 		end
 		end(SIMPLE_PAGE_MASTER)
 		end(LAYOUT_MASTER_SET)

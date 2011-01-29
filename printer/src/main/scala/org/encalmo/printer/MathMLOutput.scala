@@ -212,6 +212,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	def appendStyleAttributes(style:Style) = {
 		attr("color",style.hexColor)
+		attr("background",style.hexBackground)
 		attr("fontsize",style.font.size)
 		//attr("fontstyle",resolveFontStyle(style.font))
 		//attr("fontweight",resolveFontWeight(style.font))
@@ -221,5 +222,26 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	private def resolveStyle = if(numberStyle!=null) numberStyle else mathStyle
 	private def resolveFontStyle(fs:FontStyle):String = if(fs.italic){"italic"}else{"normal"}
 	private def resolveFontWeight(fs:FontStyle):String = if(fs.bold){"bold"}else{"normal"}
+	
+	def convert(s:String) = {
+	    val cs = s match {
+	        case "if" => {
+	            locale.getLanguage match {
+	                case "pl" => "dla"
+	                case _ => "if"
+	            }
+	        }
+	        case ">" => "&gt;"
+	        case "<" => "&lt;"
+	        case "<=" => "&le;"
+	        case ">=" => "&geq;"
+	        case "!=" => "&ne;"
+	        case "!= 0" => "&ne; 0"
+	        case "= 0" => "&equiv; 0"
+	        case "=" => "="
+	        case _ => s
+	    }
+	    mo(cs)
+	}
 	
 }

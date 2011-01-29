@@ -14,7 +14,7 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeLikeWith
     
     /** Component's resolved style */
     @tailrec
-    final def style:Style = {
+    lazy val style:Style = {
     	if(myStyle!=null){
     		myStyle
     	}else{

@@ -56,6 +56,7 @@ public class FOPHelper {
             FOP_FACTORY.setFontBaseURL(FOPHelper.class.getResource("/fonts/").toExternalForm());
             FOP_FACTORY.setHyphenBaseURL(FOPHelper.class.getResource("/hyph/").toExternalForm());
             FOP_FACTORY.setBreakIndentInheritanceOnReferenceAreaBoundary(true);
+            FOP_FACTORY.setUseCache(true);
         } 
         catch(RuntimeException re){
             throw re;
@@ -94,7 +95,7 @@ public class FOPHelper {
         SAX_PARSER_FACTORY.setValidating(false);
     }
     
-	public static StringBuffer buildFO(String template, Object model) {
+	public static StringBuffer buildFO(final String template, final Object model) {
 		Template temp;
 		try {
 			cfg.setClassForTemplateLoading(FOPHelper.class, "/");
@@ -112,12 +113,12 @@ public class FOPHelper {
 		}
 	}
 
-	public static FormattingResults buildPDF(StringBuffer fo, String pdf)
+	public static FormattingResults buildPDF(final StringBuffer fo, final String pdf)
 			throws IOException, FOPException {
 		return buildPDF(fo.toString(), pdf);
 	}
 
-	public static FormattingResults buildPDF(String foString, String pdfFile) {
+	public static FormattingResults buildPDF(final String foString, final String pdfFile) {
 		OutputStream out = null;
 		File file = new File(pdfFile);
 		file.getParentFile().mkdirs();
@@ -132,8 +133,8 @@ public class FOPHelper {
 		return fopResults;
 	}
 
-	public static FormattingResults buildPDF(String foString,
-			OutputStream outStream) {
+	public static FormattingResults buildPDF(final String foString,
+			final OutputStream outStream) {
 		try {
 			Fop fop = configureFOP(outStream);
 			XMLReader xmlReader = configureXmlReader(fop);
@@ -153,15 +154,15 @@ public class FOPHelper {
 
 	}
 
-	private static XMLReader configureXmlReader(Fop fop)
+	private static XMLReader configureXmlReader(final Fop fop)
 			throws ParserConfigurationException, SAXException, FOPException {
 		SAXParser saxParser = SAX_PARSER_FACTORY.newSAXParser();
 		XMLReader xmlReader = saxParser.getXMLReader();
 		DefaultHandler fopHandler = fop.getDefaultHandler();
 		xmlReader.setContentHandler(fopHandler);
 		xmlReader.setEntityResolver(new EntityResolver() {
-			public InputSource resolveEntity(String publicId,
-					String systemId) throws SAXException, IOException {
+			public InputSource resolveEntity(final String publicId,
+					final String systemId) throws SAXException, IOException {
 				String localPath = LOCAL_DTD_MAP.get(publicId);
 				if (localPath != null) {
 					return new InputSource(this.getClass().getResourceAsStream(localPath));
@@ -177,7 +178,7 @@ public class FOPHelper {
 		return xmlReader;
 	}
 
-	private static Fop configureFOP(OutputStream outStream) throws FOPException {
+	private static Fop configureFOP(final OutputStream outStream) throws FOPException {
 		FOUserAgent foUserAgent = FOP_FACTORY.newFOUserAgent();
 		Fop fop = FOP_FACTORY.newFop(MimeConstants.MIME_PDF, foUserAgent,outStream);
 		return fop;

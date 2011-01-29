@@ -59,20 +59,22 @@ extends Traveler[DocumentComponent] {
 		}
 	}
 	
-	def writeExpressionSeq(se:Seq[ExpressionToPrint]){
-		if(se.head!=null){
-			writeExpression(se.head)
-		}
-		if(se.tail!=null && !se.tail.isEmpty){
-			se.tail.foreach(e => {
-				write(" = ")
-				writeExpression(e)
-			})
-		}
+	def writeExpression(se:Seq[ExpressionToPrint]){
+		se.foreach(writeExpressionPart(_))
 	}
 	
-	def writeExpression(etp:ExpressionToPrint){
+	def writeExpressionPart(etp:ExpressionToPrint){
+	    if(etp.prefix!=null){
+	        w.write(SPACE)
+	        w.write(etp.prefix)
+	        w.write(SPACE)
+	    }
 		etp.expression.travel(traveler = ept)
+		if(etp.suffix!=null){
+		    w.write(SPACE)
+		    w.write(etp.suffix)
+		    w.write(SPACE)
+		}
 	}
 	
 	def plus = {tabs = tabs+1}
@@ -109,15 +111,25 @@ extends Traveler[DocumentComponent] {
 			}
 			case expr:Expr => {
 				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
-				if(ess.head!=null){
-					writeExpressionSeq(ess.head)
-				}
-				if(ess.tail!=null && !ess.tail.isEmpty){
-					ess.tail.foreach(es => {
-						write(COMMA)
-						write(SPACE)
-						writeExpressionSeq(es)
-					})
+				if(expr.isForceLineBreak){
+				    plus
+				    ess.foreach(e => {
+				        canNewLine = true;
+				        writeLineEnd;
+                        if(e.head.expression.isInstanceOf[SymbolWithDescription]){
+                            write(e.head.expression.asInstanceOf[SymbolWithDescription].description)
+                            plus
+                            canNewLine = true;
+                            writeLineEnd;
+                        }
+				        writeExpression(e)
+                        minus
+			        })
+				    canNewLine = true
+				    writeLineEnd
+				    minus
+				}else{
+				    ess.foreach(e => {write(" ");writeExpression(e);write(" ")})
 				}
 			}
 			case _ =>

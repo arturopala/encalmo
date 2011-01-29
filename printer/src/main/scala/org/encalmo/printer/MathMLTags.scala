@@ -24,6 +24,9 @@ object MathMLTags {
 	val MUNDER 		= "munder"
 	val MUNDEROVER 	= "munderover"
 	val MSTYLE 		= "mstyle"
+	val MTABLE      = "mtable"
+	val MTR         = "mtr"
+    val MTD         = "mtd"
 		
 	val ENTITY_THICK_SPACE = "&ThickSpace;"
 	val ENTITY_THIN_SPACE = "&ThinSpace;"

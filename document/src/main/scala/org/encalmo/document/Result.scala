@@ -6,19 +6,24 @@ import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
 
 /**
- * Result component class
+ * Result inline component class
  * @author artur.opala
  */
-class Result(myStyle:Style, calc:Calculation, expr:Expression*) 
-extends Expr(myStyle,calc,expr:_*){
+class Result(rStyle:Style, calc:Calculation, expr:Expression*) 
+extends Expr(rStyle,calc,expr:_*){
+    
+    override lazy val myStyle:Style = rStyle
 	
 	override def toString = "Result("+myStyle+","+calc+","+expr.mkString(",")+")"
 	
 	/** Function to implement */
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		val evaluated = calc.evaluate(e)
-		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null,parentStylesConfig))
+		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,style,null,null,parentStylesConfig))
 	}
+	
+	override def isForceLineBreak:Boolean = false
+    override def isPrintDescription:Boolean = false
 	
 }
 

@@ -65,6 +65,9 @@ case class Style(
 	def usePaddings(bd:BoxDim) = copy(paragraph = paragraph.usePaddings(bd))
 	def useMargins(bd:BoxDim) = copy(paragraph = paragraph.useMargins(bd))
 	
+	def paddings(d:Int) = copy(paragraph = paragraph.usePaddings(BoxDim(d,d,d,d)))
+	def margins(d:Int) = copy(paragraph = paragraph.useMargins(BoxDim(d,d,d,d)))
+	
 	def useUnit(u:String) = copy(paragraph = paragraph.useUnit(u),text = text.useUnit(u))
 
 	def hyphenateOn = copy(text = text.hyphenateOn)

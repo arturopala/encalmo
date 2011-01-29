@@ -93,6 +93,11 @@ class DocumentTest extends AssertionsForJUnit {
        assertSame(sr7.get, sr8.get);
        val i3 = sr4.enumeratorLevel
        assertEquals(2, i3)
+       
+       val i4 = doc1.countTreeLeafs
+       assertEquals(40, i4)
+       val i5 = sr4.countTreeLeafs
+       assertEquals(1, i5)
     }
     
     @Test def testDocument2() {

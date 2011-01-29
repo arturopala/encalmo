@@ -1,5 +1,7 @@
 package org.encalmo.expression
 
+import scala.collection.immutable.StringOps
+
 /**
  * Symbol
  * @author artur.opala
@@ -35,10 +37,18 @@ trait Symbol extends Expression {
     def hasOverOrUnderscript:Boolean = hasUnderscript || hasOverscript
     def hasOverAndUnderscript:Boolean = hasUnderscript && hasOverscript
 
-    val face:String = name + forFace(subscript) + forFace(superscript) + forFace(underscript) + forFace(overscript)
+    lazy val face:String = name + forFace(subscript) + forFace(superscript) + forFace(underscript) + forFace(overscript)
+    lazy val face2:String = new StringOps(name).filter(_ match {
+            case ',' => false
+            case '/' => false
+            case '.' => false
+            case _ => true
+        }) + forFace2(subscript) + forFace2(superscript) + forFace2(underscript) + forFace2(overscript)
+    
     private def forFace(script:Symbol) = if(script!=null) "{"+script.face+"}" else ""
+    private def forFace2(script:Symbol) = if(script!=null) script.face2 else ""
 
-    def is(description:String):Symbol = SymbolWithDescription(this,description)
+    def is(description:String):SymbolWithDescription = SymbolWithDescription(this,description)
 
 }
 
@@ -67,7 +77,11 @@ case class SymbolProxy(symbol:Symbol) extends Symbol {
  * Symbol with description
  * @author artur.opala
  */
-case class SymbolWithDescription(override val symbol:Symbol, description:String) extends SymbolProxy(symbol)
+case class SymbolWithDescription(override val symbol:Symbol, val description:String, val unit:String = "") extends SymbolProxy(symbol) {
+    
+    def unit(unit:String):SymbolWithDescription = SymbolWithDescription(symbol,description,unit)
+    
+}
 
 /**
  * Symbol companion object

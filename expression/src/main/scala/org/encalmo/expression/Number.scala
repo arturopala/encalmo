@@ -87,7 +87,12 @@ case class Number(r:Real) extends Value {
 	final def analyze(d:Double):(Long,Double) = {
 		val ad = Math.abs(d)
 		val fd = Math.floor(ad).toLong
-		(fd,ad-fd)
+		val fr = ad-fd
+		if(fr+0.0001>=1) {
+		    (fd+1,0)
+		} else {
+		    (fd,ad-fd)
+		}
 	}
 		
 	final def getScale(d:Double):Int = java.lang.Math.log10(d).toInt

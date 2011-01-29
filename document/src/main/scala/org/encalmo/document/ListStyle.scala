@@ -7,7 +7,7 @@ package org.encalmo.document
 case class ListStyle(
     distanceBetweenStarts:Int=10,
     distanceLabelSeparation:Int=2,
-    bullet:String = "&#187;",
+    bullet:String = "·",
     unit:String = "pt"
 ){
    

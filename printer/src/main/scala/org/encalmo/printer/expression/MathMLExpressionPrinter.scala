@@ -57,50 +57,83 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 
 	// Traveler interface implementation
 
-	override def onEnter(node: Node[Expression]): Unit = node.element match {
-		case s: Symbol => output.symbol(s)
-		case c: Constant[_] => output.symbol(c.s)
-		case n: Number => output.mn(n)
-		case o: Operation => {
-			writeOpeningBracketIfNeeded(node, o)
-			o match {
-				case o: PrefixOperation => {
-					output.mo(o.operator,"prefix")
-				}
-				case o:Quot => {
-					output.start(MFRAC)
-					output.attr("linethickness","0.6")
-					output.body
-				}
-				case o:Power => {
-					output.startb(MSUP)
-				}
-				case o:sqrt => {
-					output.startb(MSQRT)
-				}
-				case o:cbrt => {
-					output.startb(MROOT)
-				}
-				case o:root => {
-					output.startb(MROOT)
-				}
-				case hypot(l,r) => {
-					output.startb(MSQRT)
-				}
-				case o: NamedOperation => {
-					o match {
-						case _ => {
-							output.mi(o.operator)
-							if (!o.isInstanceOf[Operation1]) {
-								output.leftBracket
-							}
-						}
-					}
-				}
-				case _ => Unit
-			}
-		}
-		case _ => Unit
+	override def onEnter(node: Node[Expression]): Unit = {
+	    if(node.parent!=null){
+            node.parent.element match {
+                case ct:CaseTest => {
+                    output.convert(ct.operator(node.position))
+                }
+                case _ =>
+            }
+        }
+	    node.element match {
+    		case s: Symbol => output.symbol(s)
+    		case c: Constant[_] => output.symbol(c.s)
+    		case n: Number => output.mn(n)
+    		case o: Operation => {
+    			writeOpeningBracketIfNeeded(node, o)
+    			o match {
+    				case o: PrefixOperation => {
+    					output.mo(o.operator,"prefix")
+    				}
+    				case o:Quot => {
+    					output.start(MFRAC)
+    					output.attr("linethickness","0.6")
+    					output.body
+    				}
+    				case o:Power => {
+    					output.startb(MSUP)
+    				}
+    				case o:sqrt => {
+    					output.startb(MSQRT)
+    				}
+    				case o:cbrt => {
+    					output.startb(MROOT)
+    				}
+    				case o:root => {
+    					output.startb(MROOT)
+    				}
+    				case hypot(l,r) => {
+    					output.startb(MSQRT)
+    				}
+    				case o: NamedOperation => {
+    					o match {
+    						case _ => {
+    							output.mi(o.operator)
+    							if (!o.isInstanceOf[Operation1]) {
+    								output.leftBracket
+    							}
+    						}
+    					}
+    				}
+    				case _ => Unit
+    			}
+    		}
+            case s:Selection => {
+                output.start(MFENCED)
+                output.attr("open","{")
+                output.attr("close","")
+                output.attr("separators","")
+                output.body
+                output.start(MTABLE)
+                output.attr("columnalign","left")
+                output.body
+            }
+            case ct:Case => {
+                output.startb(MTR)
+            }
+            case ct:CaseTest => {
+               output.start(MTD)
+               //output.attr("rowalign","left")
+               output.body
+            }
+            case ct:CaseExpression => {
+               output.start(MTD)
+               //output.attr("rowalign","left")
+               output.body
+            }
+    		case _ => Unit
+	    }
 	}
 
 	override def onBeforeChildEnter(node: Node[Expression], position: Int, child: Expression): Unit = {
@@ -163,6 +196,11 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 			case o: OperationN => {
 				output.separator
 			}
+            case ct:Case => {
+                output.startb(MTD)
+                output.convert("if")
+                output.end(MTD)
+            }
 			case _ => Unit
 		}
 	}
@@ -258,6 +296,19 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 			}
 			writeClosingBracketIfNeeded(node, o)
 		}
+        case s:Selection => {
+            output.end(MTABLE)
+            output.end(MFENCED)
+        }
+        case ct:Case => {
+            output.end(MTR)
+        }
+        case ct:CaseTest => {
+           output.end(MTD)
+        }
+        case ct:CaseExpression => {
+           output.end(MTD)
+        }
 		case _ => Unit
 		}
 	}

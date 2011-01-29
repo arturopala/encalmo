@@ -82,7 +82,11 @@ extends Traveler[DocumentComponent] {
     	    output.start(LIST_ITEM_BODY)
     	    output.attr("start-indent","body-start()")
     	    output.body
-    	    output.startb(BLOCK)
+    	    output.start(BLOCK)
+    	    if(printDescription){
+    	        output.attr("text-indent","-",style.list.distanceLabelSeparation-5,"pt")
+    	    }
+    	    output.body
     		if(se.head!=null){
     			writeExpression(se.head, style)
     		}
@@ -106,20 +110,23 @@ extends Traveler[DocumentComponent] {
         output.appendInlineStyleAttributes(descStyle,styleStack.top)
         output.body
         output.start(BLOCK)
+        output.attr("text-indent","-6pt")
+        output.body
+        output.start(INLINE)
         output.body
         output.append(style.list.bullet)
+        output.append("&nbsp;")
         if(printDescription){
     	    etp.expression match {
                 case symb:SymbolWithDescription => {
                     if(symb.description!=null){
-                        output.startb(INLINE)
                         output.append(symb.description)
-                        output.end(INLINE)
                     }
                 }
                 case _ => 
             }
         }
+        output.end(INLINE)
         output.end(BLOCK)
         output.end(LIST_ITEM_LABEL)
 	}
@@ -146,6 +153,19 @@ extends Traveler[DocumentComponent] {
 		writeWithSpaceAround(etp.suffix)
 	}
 	
+	def writeExpressionSeqInline(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean){
+        if(!se.isEmpty){
+            if(se.head!=null){
+                writeExpression(se.head, style)
+            }
+            if(se.tail!=null && !se.tail.isEmpty){
+                se.tail.foreach(etp => {
+                    writeExpression(etp, style)
+                })
+            }
+        }
+    }
+	
 	var isInFlow:Boolean = false
 	
 	def tryStartPageSequence(chapter:Chapter, style:Style) = {
@@ -162,18 +182,33 @@ extends Traveler[DocumentComponent] {
 					output.start(STATIC_CONTENT)
 					output.attr("flow-name","xsl-region-before")
 					output.body
+					output.start(BLOCK)
+                    output.attr("text-align","center")
+                    output.attr("font-size","80%")
+                    output.attr("border-bottom","0.3pt solid black")
+                    output.body
 					isInFlow = true
 					chapter.header.travel(traveler=this)
 					isInFlow = false
+					output.end(BLOCK)
 					output.end(STATIC_CONTENT)
 				}
 				if(chapter.footer!=null){
 					output.start(STATIC_CONTENT)
 					output.attr("flow-name","xsl-region-after")
 					output.body
+                    output.start(BLOCK)
+                    output.attr("text-align","right")
+                    output.attr("font-size","80%")
+                    output.attr("border-top","1pt solid black")
+                    output.body
 					isInFlow = true
 					chapter.footer.travel(traveler=this)
 					isInFlow = false
+					output.startb(INLINE)
+					output.elem(PAGE_NUMBER)
+					output.end(INLINE)
+					output.end(BLOCK)
 					output.end(STATIC_CONTENT)
 				}
 			}
@@ -218,6 +253,9 @@ extends Traveler[DocumentComponent] {
 						val sc = counterFor(en)
 						output.start(BLOCK)
 						output.appendBlockStyleAttributes(ns.style,styleStack.top)
+						if(node.coordinate.last==0 || node.coordinate.last==1){
+						    //output.attr("keep-with-previous","always")
+						}
 						output.body
 						val ens = en.style
 						if(ens!=null){
@@ -237,13 +275,13 @@ extends Traveler[DocumentComponent] {
 						output.appendBlockStyleAttributes(s.style, styleStack.top)
 						output.body
 					}
-					case t:Text => {
+					case t:TextContent => {
 						if(t.myStyle!=null){
 							output.start(INLINE)
 							output.appendInlineStyleAttributes(t.myStyle, styleStack.top)
 							output.body
 						}
-						output.append(t.text);
+						output.append(t.textContent);
 						if(t.myStyle!=null){
 							output.end(INLINE)
 						}
@@ -263,9 +301,15 @@ extends Traveler[DocumentComponent] {
                                 if(expr.myStyle!=null){
                                     output.appendBlockStyleAttributes(expr.myStyle, styleStack.top)
                                 }
+                                if(node.coordinate.last==0 || node.coordinate.last==1){
+                                    //output.attr("keep-with-previous","always")
+                                }
                                 output.body
 								for(es <- ess){
 									output.start(LIST_ITEM)
+									output.attr("padding-top",expr.style.paragraph.spaceBefore)
+									output.attr("padding-bottom",expr.style.paragraph.spaceAfter)
+									output.attr("border-bottom","0.5pt dotted gray")
 									output.body
 									writeExpressionSeq(es, expr.style, doPrintDescription)
 									output.end(LIST_ITEM)
@@ -279,11 +323,11 @@ extends Traveler[DocumentComponent] {
 									output.body
 								}
 								if(ess.head!=null){
-									writeExpressionSeq(ess.head, expr.style, false)
+									writeExpressionSeqInline(ess.head, expr.style, false)
 								}
 								if(ess.tail!=null && !ess.tail.isEmpty){
 									ess.tail.foreach(es => {
-										writeExpressionSeq(es, expr.style, false)
+										writeExpressionSeqInline(es, expr.style, false)
 									})
 								}
 								if(expr.myStyle!=null){

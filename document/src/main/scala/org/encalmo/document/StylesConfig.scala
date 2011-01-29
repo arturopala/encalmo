@@ -36,6 +36,31 @@ case class StylesConfig(
 		}
 	}
 	
+	def apply(sym:StylesConfigSymbols.Value):Option[Style] = {
+        sym match {
+            case StylesConfigSymbols.EXPRESSION => expressions.expression
+            case StylesConfigSymbols.EXPR_SYMBOL => expressions.symbol
+            case StylesConfigSymbols.EXPR_SYMB_DESCRIPTION => expressions.symbolDescription
+            case StylesConfigSymbols.EXPR_UNRESOLVED => expressions.unresolved
+            case StylesConfigSymbols.EXPR_SUBSTITUTED => expressions.substituted
+            case StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED => expressions.partiallyEvaluated
+            case StylesConfigSymbols.EXPR_EVALUATED => expressions.evaluated
+            case StylesConfigSymbols.EXPR_NUMBERS => expressions.numbers
+            case StylesConfigSymbols.NUMSECTION => numsections.numsection
+            case StylesConfigSymbols.NUMSECT_LEVEL0 => numsections.level0
+            case StylesConfigSymbols.NUMSECT_LEVEL1 => numsections.level1
+            case StylesConfigSymbols.NUMSECT_LEVEL2 => numsections.level2
+            case StylesConfigSymbols.NUMSECT_LEVEL3 => numsections.level3
+            case StylesConfigSymbols.NUMSECT_LEVEL4 => numsections.level4
+            case StylesConfigSymbols.NUMSECT_LEVEL5 => numsections.level5
+            case StylesConfigSymbols.NUMSECT_LEVEL6 => numsections.level6
+            case StylesConfigSymbols.NUMSECT_LEVEL7 => numsections.level7
+            case StylesConfigSymbols.NUMSECT_LEVEL8 => numsections.level8
+            case StylesConfigSymbols.NUMSECT_LEVEL9 => numsections.level9
+            case _ => None
+        }
+    }
+	
 }
 
 /**
