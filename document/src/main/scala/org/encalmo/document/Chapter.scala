@@ -5,11 +5,9 @@ package org.encalmo.document
  * @author artur.opala
  */
 class Chapter(myStyle:Style, val title:String, val header:Section, val footer:Section, flow:DocumentComponent*) 
-extends DocumentComponentSeq(myStyle, flow:_*) with TextContent {
+extends DocumentComponentSeq(myStyle, flow:_*) with BlockComponent {
 	
 	override def toString = "Chapter("+myStyle+","+title+","+header+","+footer+","+flow.mkString(",")+")"
-
-	override def textContent:String = title
 	
 }
 

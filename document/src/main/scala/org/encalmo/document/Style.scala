@@ -16,11 +16,17 @@ case class Style(
 ){
 	
 	val hexColor:String = {
-		"#"+Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {val h = x.toHexString; if(h.size>1) h else {"0"+h}}).mkString
+		"#"+Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {
+			val h:String = x.toHexString
+			if(h.size>1) h else ("0"+h)
+		}).mkString
 	}
 	
 	val hexBackground:String = {
-		"#"+Seq[Int](background.getRed,background.getGreen,background.getBlue).map(x => x.toHexString).mkString
+		"#"+Seq[Int](background.getRed,background.getGreen,background.getBlue).map(x => {
+			val h:String = x.toHexString
+			if(h.size>1) h else ("0"+h)
+		}).mkString
 	}
 	
 	def use(f:FontStyle):Style = copy(font=f)

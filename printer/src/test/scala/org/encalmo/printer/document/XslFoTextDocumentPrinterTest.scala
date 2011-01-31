@@ -69,8 +69,6 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Text(style2,"test3")
 	            ),
 	    		Section(
-		            Expr(calc1,d1)),
-	    		Section(
 		            Resolve(calc1,d1)),
 	    		Section(
 		            Evaluate(calc1,d1+sin(4.126))),
@@ -83,7 +81,7 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Text(style1,"test2"),
 		            Text(style2,"test3"),
 		            "Test expression output forms",
-		            Expr(calc1,d2)),
+		            Resolve(calc1,d2)),
 	    		Section(
 		            Resolve(calc1,d2)),
 	    		Section(

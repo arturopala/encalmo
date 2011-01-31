@@ -73,7 +73,7 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
   	/**
   	 * Counts tree leafs starting at this node
   	 */
-  	final def countTreeLeafs:Int = {
+  	final lazy val countTreeLeafs:Int = {
   	    if(children.isEmpty){
   	        0
   	    }else{

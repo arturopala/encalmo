@@ -25,6 +25,9 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeLikeWith
     		}
     	}
     }
+    
+    lazy val isFirstBlockComponent = isFirstChildrenOfType[BlockComponent](classOf[BlockComponent])
+    lazy val isFirstInlineComponent = isFirstChildrenOfType[InlineComponent](classOf[InlineComponent])
 
 }
 

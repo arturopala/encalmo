@@ -40,6 +40,11 @@ extends Traveler[DocumentComponent] {
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
 	
+	val blockExprPrintStrategy:ExpressionPrintStrategy = output.preferences.expressionPrintStrategy match {
+		case "table" => new ExpressionPrintAsTableStrategy(this)
+		case _ => new ExpressionPrintAsTableStrategy(this)
+	}
+	
 	/** Section counters map */
 	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
 	
@@ -63,84 +68,17 @@ extends Traveler[DocumentComponent] {
 		w.write(s);
 	}
 	
-	def writeWithSpaceAround(s:String) = {
-		if(s!=null){
-			output.start(INLINE)
-			output.attr("padding-start","0.1em")
-			output.attr("padding-end","0.1em")
-			output.body
-			output.append(s)
-			output.end(INLINE)
-		}
-	}
-	
-	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean){
-	    if(!se.isEmpty){
-	        if(se.head!=null){
-                writeExpressionSeqStart(se.head, style, printDescription)
-	        }
-    	    output.start(LIST_ITEM_BODY)
-    	    output.attr("start-indent","body-start()")
-    	    output.body
-    	    output.start(BLOCK)
-    	    if(printDescription){
-    	        output.attr("text-indent","-",style.list.distanceLabelSeparation-5,"pt")
-    	    }
-    	    output.body
-    		if(se.head!=null){
-    			writeExpression(se.head, style)
-    		}
-    		if(se.tail!=null && !se.tail.isEmpty){
-    			se.tail.foreach(etp => {
-    				writeExpression(etp, style)
-    			})
-    		}
-    		output.end(BLOCK)
-            output.end(LIST_ITEM_BODY)
-	    }
-	}
-	
-	def writeExpressionSeqStart(etp:ExpressionToPrint, style:Style, printDescription:Boolean) = {
-	    output.start(LIST_ITEM_LABEL)
-	    output.attr("end-indent","label-end()")
-	    val descStyle = etp.stylesConfig match {
-            case Some(x) => x.expressions.symbolDescription.getOrElse(styleStack.top)
-            case None => styleStack.top
-        }
-        output.appendInlineStyleAttributes(descStyle,styleStack.top)
-        output.body
-        output.start(BLOCK)
-        output.attr("text-indent","-6pt")
-        output.body
-        output.start(INLINE)
-        output.body
-        output.append(style.list.bullet)
-        output.append("&nbsp;")
-        if(printDescription){
-    	    etp.expression match {
-                case symb:SymbolWithDescription => {
-                    if(symb.description!=null){
-                        output.append(symb.description)
-                    }
-                }
-                case _ => 
-            }
-        }
-        output.end(INLINE)
-        output.end(BLOCK)
-        output.end(LIST_ITEM_LABEL)
-	}
-	
 	def writeExpression(etp:ExpressionToPrint, style:Style) = {
 		val mc = mathOutput.mathStyle
-		writeWithSpaceAround(etp.prefix)
+		if(etp.prefix!=null)mathOutput.prefix = etp.prefix
+		if(etp.suffix!=null)mathOutput.suffix = etp.suffix
 		output.start(INSTREAM_FOREIGN_OBJECT)
         if (etp.style!=null){
-            output.appendInlineStyleAttributes(etp.style, if(style!=null)style else styleStack.top)
+            output.attrNoZero("min-width",etp.style.paragraph.width,etp.style.paragraph.unit)
             mathOutput.mathStyle = etp.style
         }else{
             if(style!=null) {
-                output.appendInlineStyleAttributes(style, styleStack.top)
+                output.attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
                 mathOutput.mathStyle = style
             }
         }
@@ -150,21 +88,7 @@ extends Traveler[DocumentComponent] {
         mathOutput.close
         mathOutput.mathStyle = mc
         output.end(INSTREAM_FOREIGN_OBJECT)
-		writeWithSpaceAround(etp.suffix)
 	}
-	
-	def writeExpressionSeqInline(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean){
-        if(!se.isEmpty){
-            if(se.head!=null){
-                writeExpression(se.head, style)
-            }
-            if(se.tail!=null && !se.tail.isEmpty){
-                se.tail.foreach(etp => {
-                    writeExpression(etp, style)
-                })
-            }
-        }
-    }
 	
 	var isInFlow:Boolean = false
 	
@@ -199,7 +123,6 @@ extends Traveler[DocumentComponent] {
 					output.body
                     output.start(BLOCK)
                     output.attr("text-align","right")
-                    output.attr("font-size","80%")
                     output.attr("border-top","1pt solid black")
                     output.body
 					isInFlow = true
@@ -238,7 +161,7 @@ extends Traveler[DocumentComponent] {
 				}
 				return
 			}
-			case nvc:NonVisualDocumentComponent => return
+			case nvc:NonVisualComponent => return
 			case d:Document => {
 				
 			}
@@ -253,8 +176,8 @@ extends Traveler[DocumentComponent] {
 						val sc = counterFor(en)
 						output.start(BLOCK)
 						output.appendBlockStyleAttributes(ns.style,styleStack.top)
-						if(node.coordinate.last==0 || node.coordinate.last==1){
-						    //output.attr("keep-with-previous","always")
+						if(ns.isFirstBlockComponent){
+						    output.attr("keep-with-previous","always")
 						}
 						output.body
 						val ens = en.style
@@ -286,54 +209,27 @@ extends Traveler[DocumentComponent] {
 							output.end(INLINE)
 						}
 					}
-					case expr:Expr => {
+					case expr:InlineExpr => {
+						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
+						ess.foreach(es => {
+							if(expr.myStyle!=null){
+								output.start(INLINE)
+								output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
+								output.attr("padding-end","1em")
+								output.body
+							}
+							es.foreach(etp => {
+			                    writeExpression(etp, expr.style)
+			                })
+							if(expr.myStyle!=null){
+								output.end(INLINE)
+							}
+						})
+					}
+					case expr:BlockExpr => {
 						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
 						if(!ess.isEmpty){
-						    val doPrintDescription:Boolean = expr.isPrintDescription && ess.forall(es => es.headOption.exists(ept => ept.expression.isInstanceOf[SymbolWithDescription]))
-							if(expr.isForceLineBreak){
-							    output.start(LIST_BLOCK)
-							    if(expr.isPrintDescription){
-							        output.appendListBlockStyleAttributes(expr.style)
-							    }else{
-							        output.attr("provisional-distance-between-starts","1em")
-						            output.attr("provisional-label-separation","0.2em")
-							    }
-                                if(expr.myStyle!=null){
-                                    output.appendBlockStyleAttributes(expr.myStyle, styleStack.top)
-                                }
-                                if(node.coordinate.last==0 || node.coordinate.last==1){
-                                    //output.attr("keep-with-previous","always")
-                                }
-                                output.body
-								for(es <- ess){
-									output.start(LIST_ITEM)
-									output.attr("padding-top",expr.style.paragraph.spaceBefore)
-									output.attr("padding-bottom",expr.style.paragraph.spaceAfter)
-									output.attr("border-bottom","0.5pt dotted gray")
-									output.body
-									writeExpressionSeq(es, expr.style, doPrintDescription)
-									output.end(LIST_ITEM)
-								}
-                                output.end(LIST_BLOCK)
-							}else{
-								if(expr.myStyle!=null){
-									output.start(INLINE)
-									output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
-									output.attr("padding-end","1em")
-									output.body
-								}
-								if(ess.head!=null){
-									writeExpressionSeqInline(ess.head, expr.style, false)
-								}
-								if(ess.tail!=null && !ess.tail.isEmpty){
-									ess.tail.foreach(es => {
-										writeExpressionSeqInline(es, expr.style, false)
-									})
-								}
-								if(expr.myStyle!=null){
-									output.end(INLINE)
-								}
-							}
+							blockExprPrintStrategy.print(node,expr,ess)
 						}
 					}
 					case _ => {}
@@ -359,7 +255,7 @@ extends Traveler[DocumentComponent] {
 	
 	override def onExit(node:Node[DocumentComponent]):Unit = {
 		node.element match {
-			case nvc:NonVisualDocumentComponent => return
+			case nvc:NonVisualComponent => return
 			case _ => 
 		}
 		// removing current style from the stack
@@ -384,5 +280,144 @@ extends Traveler[DocumentComponent] {
 		}
 	}
 	
+	/** Expression print strategy */
+	trait ExpressionPrintStrategy {
+		def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]])
+    }
+    
+    /** Print expression as table */
+    class ExpressionPrintAsTableStrategy (
+		traveler:XslFoTextDocumentPrinterTraveler
+	)extends ExpressionPrintStrategy {
+    	
+    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
+    		val doPrintDescription:Boolean = expr.isPrintDescription && ess.forall(es => es.headOption.exists(ept => ept.expression.isInstanceOf[SymbolWithDescription]))
+    		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
+    		val styleConfigOpt = expr.parentStylesConfig 
+    		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor(_))
+			val tableRowStyle:Option[Style] = styleConfigOpt match {
+				case Some(styleConfig) => styleConfig.expressions.block 
+				case None => None
+			}
+    		
+    		output.start(TABLE)
+    		output.attr("table-layout","fixed")
+    		output.attr("width","100%")
+    		if(expr.isFirstBlockComponent){
+    			output.attr("keep-with-previous","always")
+			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
+			}
+    		output.body
+    		output.tableColumn("3","em")
+    		output.tableColumn("proportional-column-width(35)","")
+    		output.tableColumn("proportional-column-width(65)","")
+    		output.start(TABLE_BODY)
+			output.body
+			for(es <- ess){
+				output.startb(TABLE_ROW)
+				val bullet = sc.map(_.current.mkString("",".",".")).getOrElse(null)
+				writeExpressionSeq(es, expr.style, doPrintDescription, bullet, tableRowStyle, false)
+				sc.foreach(_.next)
+				output.end(TABLE_ROW)
+			}
+            output.end(TABLE_BODY)
+            output.end(TABLE)
+    	}
+    	
+    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle:Option[Style], secondTableRow:Boolean){
+		    if(!se.isEmpty){
+	        	val etp1 = se.head
+	        	val paddingTop = tableRowStyle match {
+	        		case Some(x) => x.paragraph.spaceBefore 
+	        		case None => 3
+	        	}
+	        	val paddingBottom = tableRowStyle match {
+	        		case Some(x) => x.paragraph.spaceAfter
+	        		case None => 3
+	        	}
+	        	val indent:Int = if(etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
+		    	val isCell1 = bullet!=null
+		        val isCell2 = printDescription && etp1.expression.isInstanceOf[SymbolWithDescription]
+                val descStyle = etp1.stylesConfig match {
+		            case Some(x) => x.expressions.symbolDescription.getOrElse(styleStack.top)
+		            case None => styleStack.top
+		        }
+	        	val leafs:Int = se.map(x => x.expression.countTreeLeafs).sum
+	        	val twoRows:Boolean = !secondTableRow && (leafs>15 || (etp1.expression match {
+	        		case sd:SymbolWithDescription => sd.description.size>150
+	        		case _ => false
+	        	}))
+	        	val twoTableRows = !secondTableRow && (isCell2 && twoRows && leafs<15)
+		    	if(isCell1){
+					output.start(TABLE_CELL)
+					output.body
+			        output.start(BLOCK)
+			        output.attr("padding-top",paddingTop,"pt")
+			        output.attr("padding-bottom",paddingBottom,"pt")
+			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
+			        output.body
+			        output.append(bullet)
+			        output.end(BLOCK)
+			        output.end(TABLE_CELL)
+		    	}
+		        if(isCell2 && !twoRows){
+			        output.start(TABLE_CELL)
+			        if(!twoTableRows) output.attr("border-bottom","0.5pt dotted gray")
+			        output.body
+			        output.start(BLOCK)
+			        output.attr("margin-right","3pt")
+			        output.attr("padding-top",paddingTop,"pt")
+			        output.attr("padding-bottom",paddingBottom,"pt")
+			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
+		        	output.attr("keep-together.within-page","always")
+			        output.body
+			        if(!secondTableRow) output.append(etp1.expression.asInstanceOf[SymbolWithDescription].description)
+			        output.end(BLOCK)
+			        output.end(TABLE_CELL)
+		    	}
+		        output.start(TABLE_CELL)
+		        if(!secondTableRow && (!isCell2 || twoRows)){
+		        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
+		        	output.attr("number-columns-spanned",ncs);
+		        }
+				if(!twoTableRows) output.attr("border-bottom","0.5pt dotted gray")
+			    output.attr("vertical-align","middle")
+		        output.body
+		        if(isCell2 && twoRows){
+		        	output.start(BLOCK)
+		        	output.attr("keep-together.within-page","always")
+			        output.attr("margin-top",paddingTop,"pt")
+			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
+			        output.body
+			        output.append(etp1.expression.asInstanceOf[SymbolWithDescription].description)
+			        output.end(BLOCK)
+		        }
+				if(twoTableRows){
+					output.end(TABLE_CELL)
+					output.end(TABLE_ROW)
+					output.startb(TABLE_ROW)
+					writeExpressionSeq(se, style, printDescription, "", tableRowStyle, true)
+				}else{
+			        output.start(BLOCK)
+			        output.appendInlineStyleAttributes(style,styleStack.top)
+			        output.attr("text-indent",-indent-3,"pt")
+			        output.attr("margin-top",paddingTop,"pt")
+			        output.attr("margin-bottom",paddingBottom,"pt")
+			        output.attr("margin-left",indent+5,"pt")
+			        output.attr("keep-together.within-page","always")
+			        output.body
+			        se.foreach(etp => {
+	    				writeExpression(etp, style)
+	    			})
+			        output.end(BLOCK)
+			        output.end(TABLE_CELL)
+				}
+		    }
+		}
+    	
+	}
+	
 }
+
+
 

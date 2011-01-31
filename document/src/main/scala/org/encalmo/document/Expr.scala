@@ -9,7 +9,7 @@ import org.encalmo.calculation.Calculation
  * Expression component class
  * @author artur.opala
  */
-class Expr(val exStyle:Style, val calc:Calculation, val expr:Expression*) 
+abstract class Expr(val exStyle:Style, val calc:Calculation, val expr:Expression*) 
 extends DocumentComponent(exStyle) {
 
 	override def toString = "Expr("+exStyle+","+calc+","+expr.mkString(",")+")"
@@ -38,9 +38,6 @@ extends DocumentComponent(exStyle) {
 		}
 	}
 	
-	def isForceLineBreak:Boolean = true
-	def isPrintDescription:Boolean = true
-	
 	/**
 	 * Resolves style for this expression part
 	 */
@@ -56,17 +53,23 @@ extends DocumentComponent(exStyle) {
 }
 
 /**
- * Expr: expression or symbol or value
+ * Block-style expression
  * @author artur.opala
  */
-object Expr {
+abstract class BlockExpr(exStyle:Style, calc:Calculation, expr:Expression*) 
+extends Expr(exStyle,calc,expr:_*) with BlockComponent {
 	
-	def apply(calc:Calculation, expr:Expression*):Expr = {
-		new Expr(null,calc,expr:_*)
-	}
+	def isPrintDescription:Boolean
 	
-	def apply(mystyle:Style, calc:Calculation, expr:Expression*):Expr = {
-		new Expr(mystyle,calc,expr:_*)
-	}
+	def variant:Int
+	
+}
+
+/**
+ * Inline-style expression
+ * @author artur.opala
+ */
+abstract class InlineExpr(exStyle:Style, calc:Calculation, expr:Expression*) 
+extends Expr(exStyle,calc,expr:_*) with InlineComponent {
 	
 }

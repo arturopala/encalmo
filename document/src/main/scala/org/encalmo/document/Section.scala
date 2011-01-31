@@ -5,7 +5,7 @@ package org.encalmo.document
  * @author artur.opala
  */
 class Section(myStyle:Style, flow:DocumentComponent*) 
-extends DocumentComponentSeq(myStyle,flow:_*) {
+extends DocumentComponentSeq(myStyle,flow:_*) with BlockComponent {
 	
 	override def toString = "Section("+myStyle+","+flow.mkString(",")+")"
 	

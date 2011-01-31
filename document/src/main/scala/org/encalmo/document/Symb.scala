@@ -10,7 +10,7 @@ import org.encalmo.calculation.Calculation
  * @author artur.opala
  */
 class Symb(sStyle:Style, expr:Expression*) 
-extends Expr(sStyle,null,expr:_*){
+extends InlineExpr(sStyle,null,expr:_*){
 	
     override lazy val myStyle:Style = sStyle
     
@@ -20,9 +20,7 @@ extends Expr(sStyle,null,expr:_*){
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		Seq[ExpressionToPrint](ExpressionToPrint(e,style,null,null,parentStylesConfig))
 	}
-	
-	override def isForceLineBreak:Boolean = false
-	override def isPrintDescription:Boolean = false
+    
 }
 
 /**

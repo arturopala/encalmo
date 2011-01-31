@@ -16,6 +16,7 @@
     <module>calculation</module>
     <module>document</module>
     <module>printer</module>
+    <module>examples</module>
   </modules>
   
   <dependencies>

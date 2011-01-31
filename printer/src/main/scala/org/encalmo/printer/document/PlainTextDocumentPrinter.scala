@@ -109,28 +109,28 @@ extends Traveler[DocumentComponent] {
 				plus
 				writeLineEnd
 			}
-			case expr:Expr => {
+			case expr:InlineExpr => {
 				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
-				if(expr.isForceLineBreak){
-				    plus
-				    ess.foreach(e => {
-				        canNewLine = true;
-				        writeLineEnd;
-                        if(e.head.expression.isInstanceOf[SymbolWithDescription]){
-                            write(e.head.expression.asInstanceOf[SymbolWithDescription].description)
-                            plus
-                            canNewLine = true;
-                            writeLineEnd;
-                        }
-				        writeExpression(e)
-                        minus
-			        })
-				    canNewLine = true
-				    writeLineEnd
-				    minus
-				}else{
-				    ess.foreach(e => {write(" ");writeExpression(e);write(" ")})
-				}
+				ess.foreach(e => {write(" ");writeExpression(e);write(" ")})
+			}
+			case expr:BlockExpr => {
+				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
+				plus
+			    ess.foreach(e => {
+			        canNewLine = true;
+			        writeLineEnd;
+                    if(e.head.expression.isInstanceOf[SymbolWithDescription]){
+                        write(e.head.expression.asInstanceOf[SymbolWithDescription].description)
+                        plus
+                        canNewLine = true;
+                        writeLineEnd;
+                    }
+			        writeExpression(e)
+                    minus
+		        })
+			    canNewLine = true
+			    writeLineEnd
+			    minus
 			}
 			case _ =>
 		}

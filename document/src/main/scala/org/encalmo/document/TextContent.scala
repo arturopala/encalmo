@@ -1,7 +1,7 @@
 package org.encalmo.document
 
 /**
- * Text content holder trait
+ * Text component trait
  * @author artur.opala
  */
 trait TextContent {

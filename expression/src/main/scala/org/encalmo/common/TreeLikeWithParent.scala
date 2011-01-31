@@ -73,5 +73,23 @@ trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
     		}
     	}
     }
+    
+    
+  	
+  	/**
+  	 * Checks if this is the first children of type B
+  	 */
+  	final def isFirstChildrenOfType[B](t:Class[B]):Boolean = {
+  	    this.isInstanceOf[B] && (parent match {
+  	    	case None => true
+  	    	case Some(p) => {
+  	    		p.children.takeWhile(
+    				x => x.ne(this)
+				).forall(
+					z => !(t.isAssignableFrom(t.getClass))
+				)
+  	    	}
+  	    })
+  	}
 
 }

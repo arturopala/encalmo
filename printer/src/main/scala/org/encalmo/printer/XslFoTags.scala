@@ -24,5 +24,10 @@ object XslFoTags {
     val LIST_ITEM_BODY      = "list-item-body"
     val LIST_ITEM_LABEL     = "list-item-label"
     val PAGE_NUMBER         = "page-number"
+    val TABLE         		= "table"
+    val TABLE_BODY         	= "table-body"
+    val TABLE_COLUMN        = "table-column"
+    val TABLE_ROW         	= "table-row"
+    val TABLE_CELL         	= "table-cell"
 
 }

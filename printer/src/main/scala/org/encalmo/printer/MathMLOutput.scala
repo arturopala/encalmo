@@ -20,6 +20,8 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	var mathStyle:Style = DefaultStyle
 	var numberStyle:Style = null
+	var prefix:String = null
+	var suffix:String = null
 	
 	lazy val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",java.text.DecimalFormatSymbols.getInstance(locale))
@@ -35,16 +37,36 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		start(MROW)
 		attr("scriptminsize","4pt")
 		attr("scriptsizemultiplier","0.6")
-		//attr("linethickness","0.6")
-		if(mathStyle!=null){
-			appendStyleAttributes(mathStyle)
-		}
 		body
+		if(prefix!=null & prefix!=""){
+			startb(MTEXT)
+			append(ENTITY_THICK_SPACE)
+			append(prefix)
+			append(ENTITY_THICK_SPACE)
+			end(MTEXT)
+		}
+		if(mathStyle!=null){
+			start(MSTYLE)
+			appendStyleAttributes(mathStyle)
+			body
+		}
 	}
 	
 	override def close = {
+		if(mathStyle!=null){
+			end(MSTYLE)
+		}
+		if(suffix!=null & suffix!=""){
+			startb(MTEXT)
+			append(ENTITY_THICK_SPACE)
+			append(suffix)
+			append(ENTITY_THICK_SPACE)
+			end(MTEXT)
+		}
 		end(MROW)
 		end(MATH)
+		prefix = null
+		suffix = null
 	}
 	
 	def thickspace = {

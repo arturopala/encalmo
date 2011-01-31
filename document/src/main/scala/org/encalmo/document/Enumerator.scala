@@ -43,4 +43,14 @@ object Enumerator {
  * @author artur.opala
  */
 class EnumeratorComponent(val enumerator:Enumerator)
-extends DocumentComponent(null) with EnumeratorProvider with NonVisualDocumentComponent
+extends DocumentComponent(null) with EnumeratorProvider with NonVisualComponent
+
+/**
+ * Default enumerator singleton
+ * @author artur.opala
+ */
+object DefaultEnumerator extends Enumerator(){
+	
+	def apply(level:Int, item:Int):String = String.valueOf(item)
+	
+}

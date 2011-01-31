@@ -10,7 +10,7 @@ import org.encalmo.calculation.Calculation
  * @author artur.opala
  */
 class Result(rStyle:Style, calc:Calculation, expr:Expression*) 
-extends Expr(rStyle,calc,expr:_*){
+extends InlineExpr(rStyle,calc,expr:_*){
     
     override lazy val myStyle:Style = rStyle
 	
@@ -21,9 +21,6 @@ extends Expr(rStyle,calc,expr:_*){
 		val evaluated = calc.evaluate(e)
 		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,style,null,null,parentStylesConfig))
 	}
-	
-	override def isForceLineBreak:Boolean = false
-    override def isPrintDescription:Boolean = false
 	
 }
 

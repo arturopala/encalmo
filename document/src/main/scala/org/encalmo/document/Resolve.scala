@@ -10,8 +10,8 @@ import org.encalmo.calculation.Calculation
 /**
  * Resolve: symbol = resolved
  */
-class Resolve(myStyle:Style, val styleOfResolved:Style, calc:Calculation, expr:Expression*) 
-extends Expr(myStyle,calc,expr:_*){
+class Resolve(myStyle:Style, val styleOfResolved:Style, val isPrintDescription:Boolean, val variant:Int, calc:Calculation, expr:Expression*) 
+extends BlockExpr(myStyle,calc,expr:_*){
 	
 	override def toString = "Resolve("+myStyle+","+styleOfResolved+","+calc+","+expr.mkString(",")+")"
 	
@@ -41,15 +41,23 @@ extends Expr(myStyle,calc,expr:_*){
 object Resolve {
 	
 	def apply(styleOfSymbol:Style, styleOfResolved:Style, calc:Calculation, expr:Expression*) = {
-		new Resolve(styleOfSymbol,styleOfResolved,calc,expr:_*)
+		new Resolve(styleOfSymbol,styleOfResolved,true,1,calc,expr:_*)
 	}
 	
 	def apply(mystyle:Style, calc:Calculation, expr:Expression*) = {
-		new Resolve(mystyle,mystyle,calc,expr:_*)
+		new Resolve(mystyle,mystyle,true,1,calc,expr:_*)
 	}
 	
 	def apply(calc:Calculation, expr:Expression*) = {
-		new Resolve(null,null,calc,expr:_*)
+		new Resolve(null,null,true,1,calc,expr:_*)
+	}
+	
+	def apply(isPrintDescription:Boolean, calc:Calculation, expr:Expression*) = {
+		new Resolve(null,null,isPrintDescription,1,calc,expr:_*)
+	}
+	
+	def apply(isPrintDescription:Boolean, variant:Int, calc:Calculation, expr:Expression*) = {
+		new Resolve(null,null,isPrintDescription,variant,calc,expr:_*)
 	}
 	
 	def unapply(e:Resolve) = Some(e.myStyle, e.styleOfResolved ,e.calc,e.expr)

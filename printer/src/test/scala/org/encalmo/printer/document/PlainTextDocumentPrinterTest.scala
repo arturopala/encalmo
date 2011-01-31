@@ -32,9 +32,9 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Text("test1"),
 		            Text(style1,"test2"),
 		            Text(style2,"test3"),
-		            Expr(calc1,d),
+		            Evaluate(calc1,d),
 		            "Test expression",
-		            Expr(calc1,d)
+		            Evaluate(calc1,d)
 	            ),
 	            Section(style2,
 		            Text("test1"),
@@ -146,79 +146,79 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 		      NumSection(BOLD,"Parametry zadania",  
 		          Section(ITALIC,"Wszystkie parametry i wyniki podano w odpowiednich jednostkach SI (metrach i Newtonach)"),
 		          NumSection(BOLD,"Parametry geometryczne:",
-		            Section(Expr(c1,h,bf,tf,tw,A))),
+		            Section(Evaluate(c1,h,bf,tf,tw,A))),
 		          NumSection(BOLD,"Parametry wytrzymałościowe:",
-		            Section(Expr(c1,Ix,Iy,Io,ix,io,Iomega,It))),
+		            Section(Evaluate(c1,Ix,Iy,Io,ix,io,Iomega,It))),
 		          NumSection(BOLD,"Parametry materiałowe:",
-		            Section(Expr(c1,E,G,fd))),
+		            Section(Evaluate(c1,E,G,fd))),
 		          NumSection(BOLD,"Współczynniki długości wyboczeniowej:",
-		            Section(Expr(c1,mix,mif))),
+		            Section(Evaluate(c1,mix,mif))),
 		          NumSection(BOLD,"Nośność obliczeniowa przekroju przy osiowym ściskaniu:",
-		            Section(Expr(c1,NRc)))
+		            Section(Evaluate(c1,NRc)))
 		          
 		      ),
 		      NumSection(BOLD,"Obliczenie sił krytycznych wyboczenia giętnego i skrętnego dla zadanych przypadków.",
 		          NumSection(BOLD,"Obliczenia dla l = 3m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Expr(c1,lambdax,lambdaf))),
+		              Section(Evaluate(c1,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Expr(c1,Nxcr))),
+		              Section(Evaluate(c1,Nxcr))),
 		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Expr(c1,Nfcr)))
+		              Section(Evaluate(c1,Nfcr)))
 		          ),
 		          
 		          NumSection(BOLD,"Obliczenia dla l = 4m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Expr(c2,lambdax,lambdaf))),
+		              Section(Evaluate(c2,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Expr(c2,Nxcr))),
+		              Section(Evaluate(c2,Nxcr))),
 		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Expr(c2,Nfcr)))
+		              Section(Evaluate(c2,Nfcr)))
 		          ),
 		          
 		          NumSection(BOLD,"Obliczenia dla l = 5m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Expr(c3,lambdax,lambdaf))),
+		              Section(Evaluate(c3,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Expr(c3,Nxcr))),
+		              Section(Evaluate(c3,Nxcr))),
 		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Expr(c3,Nfcr)))
+		              Section(Evaluate(c3,Nfcr)))
 		          ),
 		          
 		          NumSection(BOLD,"Obliczenia dla l = 6m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Expr(c4,lambdax,lambdaf))),
+		              Section(Evaluate(c4,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Expr(c4,Nxcr))),
+		              Section(Evaluate(c4,Nxcr))),
 		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Expr(c4,Nfcr)))
+		              Section(Evaluate(c4,Nfcr)))
 		          ),
 		          
 		          NumSection(BOLD,"Obliczenia dla l = 7m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Expr(c4,lambdax,lambdaf))),
+		              Section(Evaluate(c4,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Expr(c4,Nxcr))),
+		              Section(Evaluate(c4,Nxcr))),
 		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Expr(c4,Nfcr)))
+		              Section(Evaluate(c4,Nfcr)))
 		          ),
 		          
 		          NumSection(BOLD,"K. Obliczenia dla l = 8m :",
 		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Expr(c4,lambdax,lambdaf))),
+		              Section(Evaluate(c4,lambdax,lambdaf))),
 		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Expr(c4,Nxcr))),
+		              Section(Evaluate(c4,Nxcr))),
 		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Expr(c4,Nfcr)))
+		              Section(Evaluate(c4,Nfcr)))
 		          ),
 		          
 		          NumSection(BOLD,"Podsumowanie obliczeń :",
-		            Section("dla l = 3m : ",Expr(c1,Nxcr,lambdax,Nfcr,lambdaf)),
-		            Section("dla l = 4m : ",Expr(c2,Nxcr,lambdax,Nfcr,lambdaf)),
-		            Section("dla l = 5m : ",Expr(c3,Nxcr,lambdax,Nfcr,lambdaf)),
-		            Section("dla l = 6m : ",Expr(c4,Nxcr,lambdax,Nfcr,lambdaf)),
-		            Section("dla l = 7m : ",Expr(c5,Nxcr,lambdax,Nfcr,lambdaf)),
-		            Section("dla l = 8m : ",Expr(c6,Nxcr,lambdax,Nfcr,lambdaf))
+		            Section("dla l = 3m : ",Evaluate(c1,Nxcr,lambdax,Nfcr,lambdaf)),
+		            Section("dla l = 4m : ",Evaluate(c2,Nxcr,lambdax,Nfcr,lambdaf)),
+		            Section("dla l = 5m : ",Evaluate(c3,Nxcr,lambdax,Nfcr,lambdaf)),
+		            Section("dla l = 6m : ",Evaluate(c4,Nxcr,lambdax,Nfcr,lambdaf)),
+		            Section("dla l = 7m : ",Evaluate(c5,Nxcr,lambdax,Nfcr,lambdaf)),
+		            Section("dla l = 8m : ",Evaluate(c6,Nxcr,lambdax,Nfcr,lambdaf))
 		          ),
 		          
 		          NumSection(BOLD,"Wnioski z obliczeń :",
@@ -227,62 +227,62 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 		      ),
 		      
 		      NumSection(BOLD,"Wymiarowanie słupa wg PN-90 B-03200.",
-		          Section("Obliczenie maksymalnej osiowej siły ściskającej ",Expr(c1,Nmax)," dla każdej z rozpatrywanych długości słupa."),
+		          Section("Obliczenie maksymalnej osiowej siły ściskającej ",Evaluate(c1,Nmax)," dla każdej z rozpatrywanych długości słupa."),
 		          NumSection(BOLD,"Obliczenia dla l = 3m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Expr(c1,lambdad))),
-		          NumSection("Współczynnik wyboczeniowy wg krzywej c (",Expr(c1,n),"):",
-		            Section(Expr(c1,fi))),
+		            Section(Evaluate(c1,lambdad))),
+		          NumSection("Współczynnik wyboczeniowy wg krzywej c (",Evaluate(c1,n),"):",
+		            Section(Evaluate(c1,fi))),
 		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Expr(c1,Nmax)))
+		            Section(Evaluate(c1,Nmax)))
 		        ),
 		        NumSection(BOLD,"Obliczenia dla l = 4m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Expr(c2,lambdad))),
+		            Section(Evaluate(c2,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Expr(c2,fi))),
+		            Section(Evaluate(c2,fi))),
 		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Expr(c2,Nmax)))
+		            Section(Evaluate(c2,Nmax)))
 		        ),
 		        NumSection(BOLD,"Obliczenia dla l = 5m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Expr(c3,lambdad))),
+		            Section(Evaluate(c3,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Expr(c3,fi))),
+		            Section(Evaluate(c3,fi))),
 		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Expr(c3,Nmax)))
+		            Section(Evaluate(c3,Nmax)))
 		        ),
 		        NumSection(BOLD,"Obliczenia dla l = 6m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Expr(c4,lambdad))),
+		            Section(Evaluate(c4,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Expr(c4,fi))),
+		            Section(Evaluate(c4,fi))),
 		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Expr(c4,Nmax)))
+		            Section(Evaluate(c4,Nmax)))
 		        ),
 		        NumSection(BOLD,"Obliczenia dla l = 7m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Expr(c5,lambdad))),
+		            Section(Evaluate(c5,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Expr(c5,fi))),
+		            Section(Evaluate(c5,fi))),
 		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Expr(c5,Nmax)))
+		            Section(Evaluate(c5,Nmax)))
 		        ),
 		        NumSection(BOLD,"Obliczenia dla l = 8m :",
 		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Expr(c6,lambdad))),
+		            Section(Evaluate(c6,lambdad))),
 		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Expr(c6,fi))),
+		            Section(Evaluate(c6,fi))),
 		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Expr(c6,Nmax)))
+		            Section(Evaluate(c6,Nmax)))
 		        ),
 		        NumSection(BOLD,"Podsumowanie wymiarowania :",
-		            Section("dla l = 3m : ",Expr(c1,fi,Nmax)),
-		            Section("dla l = 4m : ",Expr(c2,fi,Nmax)),
-		            Section("dla l = 5m : ",Expr(c3,fi,Nmax)),
-		            Section("dla l = 6m : ",Expr(c4,fi,Nmax)),
-		            Section("dla l = 7m : ",Expr(c5,fi,Nmax)),
-		            Section("dla l = 8m : ",Expr(c6,fi,Nmax))
+		            Section("dla l = 3m : ",Evaluate(c1,fi,Nmax)),
+		            Section("dla l = 4m : ",Evaluate(c2,fi,Nmax)),
+		            Section("dla l = 5m : ",Evaluate(c3,fi,Nmax)),
+		            Section("dla l = 6m : ",Evaluate(c4,fi,Nmax)),
+		            Section("dla l = 7m : ",Evaluate(c5,fi,Nmax)),
+		            Section("dla l = 8m : ",Evaluate(c6,fi,Nmax))
 		          )
 		      ),
 		      EmptySection,

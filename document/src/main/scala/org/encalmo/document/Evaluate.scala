@@ -13,8 +13,8 @@ import org.encalmo.calculation.Calculation
 /**
  * Evaluate: symbol = resolved = evaluated
  */
-class Evaluate(myStyle:Style, val styleOfResolved:Style, val styleOfEvaluated:Style, override val isPrintDescription:Boolean, calc:Calculation, expr:Expression*) 
-extends Expr(myStyle,calc,expr:_*){
+class Evaluate(myStyle:Style, val styleOfResolved:Style, val styleOfEvaluated:Style, val isPrintDescription:Boolean, val variant:Int, calc:Calculation, expr:Expression*) 
+extends BlockExpr(myStyle,calc,expr:_*){
 	
 	override def toString = "Evaluate("+myStyle+","+styleOfResolved+","+styleOfEvaluated+","+calc+","+expr.mkString(",")+")"
 	
@@ -74,23 +74,27 @@ extends Expr(myStyle,calc,expr:_*){
 object Evaluate {
 	
 	def apply(mystyle:Style, styleOfResolved:Style, styleOfEvaluated:Style, calc:Calculation, expr:Expression*) = {
-		new Evaluate(mystyle,styleOfResolved,styleOfEvaluated,true,calc,expr:_*)
+		new Evaluate(mystyle,styleOfResolved,styleOfEvaluated,true,1,calc,expr:_*)
 	}
 	
 	def apply(mystyle:Style, style2:Style, calc:Calculation, expr:Expression*) = {
-		new Evaluate(mystyle,style2,style2,true,calc,expr:_*)
+		new Evaluate(mystyle,style2,style2,true,1,calc,expr:_*)
 	}
 	
 	def apply(mystyle:Style, calc:Calculation, expr:Expression*) = {
-		new Evaluate(mystyle,mystyle,mystyle,true,calc,expr:_*)
+		new Evaluate(mystyle,mystyle,mystyle,true,1,calc,expr:_*)
 	}
 	
 	def apply(calc:Calculation, expr:Expression*) = {
-        new Evaluate(null,null,null,true,calc,expr:_*)
+        new Evaluate(null,null,null,true,1,calc,expr:_*)
     }
 	
 	def apply(isForceLineBreak:Boolean, calc:Calculation, expr:Expression*) = {
-		new Evaluate(null,null,null,isForceLineBreak,calc,expr:_*)
+		new Evaluate(null,null,null,isForceLineBreak,1,calc,expr:_*)
+	}
+	
+	def apply(isForceLineBreak:Boolean, variant:Int, calc:Calculation, expr:Expression*) = {
+		new Evaluate(null,null,null,isForceLineBreak,variant,calc,expr:_*)
 	}
 	
 	def unapply(e:Evaluate) = Some(e.myStyle,e.styleOfResolved,e.styleOfEvaluated,e.calc,e.expr)

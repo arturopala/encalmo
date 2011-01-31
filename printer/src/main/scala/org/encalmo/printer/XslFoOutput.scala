@@ -10,6 +10,7 @@ import XslFoTags._
 class XslFoOutput(
 	val layout:Layout = Layout(),
 	locale:java.util.Locale = java.util.Locale.getDefault,
+	val preferences:XslFoOutputPreferences = XslFoOutputPreferences(),
 	namespace:String = "fo",
 	buffer:StringBuilder = new StringBuilder,
 	indent:Indent = new Indent(2)
@@ -102,7 +103,20 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		}
 	}
 	
+	def appendTableRowStyleAttributes(style:Style, currentStyle:Style):Unit = {
+		
+	}
+	
+	def appendTableCellStyleAttributes(style:Style, currentStyle:Style):Unit = {
+		
+	}
+	
 	private def resolveFontStyle(fs:FontStyle):String = if(fs.italic){"italic"}else{"normal"}
 	private def resolveFontWeight(fs:FontStyle):String = if(fs.bold){"bold"}else{"normal"}
 	
+	def tableColumn(width:String,unit:String) = {
+		start(TABLE_COLUMN)
+		attr("column-width",width,unit)
+		end
+	}
 }

@@ -4,7 +4,7 @@ package org.encalmo.document
  * Text component class
  */
 class Text(myStyle:Style, val text:String) 
-extends DocumentComponent(myStyle) with TextContent {
+extends DocumentComponent(myStyle) with TextContent with InlineComponent {
 	
 	override def toString = "Text("+myStyle+","+text+")"
 	

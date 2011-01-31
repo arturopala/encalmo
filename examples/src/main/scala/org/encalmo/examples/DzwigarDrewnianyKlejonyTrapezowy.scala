@@ -282,10 +282,10 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
             Section("Ćwiczenie projektowe nr 2 z \"Konstrukcji Drewnianych\". Autor: Artur Opala 61315. Wrocław 2010/2011"),
             Section(""),
             NumSection("Dane do projektowania",
-                Section(style1.fontItalic,"Dźwigar trapezowy z drewna klejonego warstwowo.",
+                Section(style1.fontItalic.fontSmaller.marginLeft(20),"Dźwigar trapezowy z drewna klejonego warstwowo.",
                 "Drewno klejone warstwowo kombinowane klasy GL36c.",
                 "Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.3.1.3.",
-                "Klasa odporności ogniowej R30 (konstrukcja dachu)"),
+                "Klasa odporności ogniowej R30 (konstrukcja dachu)."),
                 NumSection("Geometria dźwigara",Evaluate(calc,l0,h1,h2,hm,b,alphag,xihb,xilh)),
                 NumSection("Obciążenia charakterystyczne",Evaluate(calc,rhok,G0k,G1k,Qk1,Qk2)),
                 NumSection("Współczynniki częściowe dla oddziaływań",Evaluate(calc,gamG1,gamQ1,gamQi,psi0i)),
@@ -303,15 +303,13 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
                         Section(styleWarunek,"Warunek 6.11 jest spełniony: ",
                                 Symb(sigmam0d),LE,Symb(fmd),ARROW,Result(calc,sigmam0d),"Pa",LE,Result(calc,fmd),"Pa")),
                 NumSection("Uwzględnienie zmiennego przekroju dźwigara",
-                        Section(styleDescription,DescriptionOfSymbol(kmalpha)),
-                        Evaluate(false,calc,kmalpha),
+                        Evaluate(calc,kmalpha),
                         Evaluate(calc,fmalphad),
                         Section(styleWarunek,"Warunek 6.38 jest spełniony: ",
                                 Symb(sigmam0d),LE,Symb(fmalphad),ARROW,Result(calc,sigmam0d),"Pa",LE,Result(calc,fmalphad),"Pa")),
                 NumSection("Sprawdzenie stateczności przekroju",
                         Evaluate(calc,leff,sigmamcrit,lambdarel),
-                        Section(styleDescription,DescriptionOfSymbol(kcritm)),
-                        Evaluate(false,calc,kcritm),
+                        Evaluate(calc,kcritm),
                         Evaluate(calc,fmcritd),
                         Section(styleWarunek,"Warunek 6.33 jest spełniony: ",
                                 Symb(sigmam0d),LE,Symb(fmcritd),ARROW,Result(calc,sigmam0d),"Pa",LE,Result(calc,fmcritd),"Pa")),
@@ -348,7 +346,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     )
     
     @Test def printPdf:Unit = {
-        val layout = Layout().useLeftMargin(30)
+        val layout = Predefined.layout
         val output:XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open
         XslFoTextDocumentPrinter.print(doc1,output)

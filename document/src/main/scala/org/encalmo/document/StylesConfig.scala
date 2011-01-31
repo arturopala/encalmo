@@ -9,11 +9,12 @@ import scala.collection.mutable.Map
 case class StylesConfig(
 		var expressions:ExprStylesConfig = ExprStylesConfig(),
 		var numsections:NumSectionStylesConfig = NumSectionStylesConfig()
-	)extends DocumentComponent(null) with NonVisualDocumentComponent {
+	)extends DocumentComponent(null) with NonVisualComponent {
 	
 	def update(sym:StylesConfigSymbols.Value,style:Style) = {
 		sym match {
 			case StylesConfigSymbols.EXPRESSION => expressions = expressions.copy(expression = Option(style))
+			case StylesConfigSymbols.EXPR_ROW => expressions = expressions.copy(block = Option(style))
 			case StylesConfigSymbols.EXPR_SYMBOL => expressions = expressions.copy(symbol = Option(style))
 			case StylesConfigSymbols.EXPR_SYMB_DESCRIPTION => expressions = expressions.copy(symbolDescription = Option(style))
 			case StylesConfigSymbols.EXPR_UNRESOLVED => expressions = expressions.copy(unresolved = Option(style))
@@ -39,6 +40,7 @@ case class StylesConfig(
 	def apply(sym:StylesConfigSymbols.Value):Option[Style] = {
         sym match {
             case StylesConfigSymbols.EXPRESSION => expressions.expression
+            case StylesConfigSymbols.EXPR_ROW => expressions.block
             case StylesConfigSymbols.EXPR_SYMBOL => expressions.symbol
             case StylesConfigSymbols.EXPR_SYMB_DESCRIPTION => expressions.symbolDescription
             case StylesConfigSymbols.EXPR_UNRESOLVED => expressions.unresolved
@@ -69,7 +71,7 @@ case class StylesConfig(
  */
 object StylesConfigSymbols extends Enumeration {
 	type StylesConfigSymbols = Value
-	val EXPRESSION,EXPR_SYMBOL,EXPR_UNRESOLVED,EXPR_SUBSTITUTED,EXPR_PARTIALLY_EVALUATED,EXPR_EVALUATED,EXPR_NUMBERS,EXPR_SYMB_DESCRIPTION = Value
+	val EXPRESSION,EXPR_ROW,EXPR_SYMBOL,EXPR_UNRESOLVED,EXPR_SUBSTITUTED,EXPR_PARTIALLY_EVALUATED,EXPR_EVALUATED,EXPR_NUMBERS,EXPR_SYMB_DESCRIPTION = Value
 	val NUMSECTION,NUMSECT_LEVEL0,NUMSECT_LEVEL1,NUMSECT_LEVEL2,NUMSECT_LEVEL3,NUMSECT_LEVEL4,NUMSECT_LEVEL5,NUMSECT_LEVEL6,NUMSECT_LEVEL7,NUMSECT_LEVEL8,NUMSECT_LEVEL9 = Value
 }
 
@@ -85,7 +87,8 @@ case class ExprStylesConfig(
 		partiallyEvaluated:Option[Style] = None,
 		evaluated:Option[Style] = None,
 		numbers:Option[Style] = None,
-		symbolDescription:Option[Style] = None
+		symbolDescription:Option[Style] = None,
+		block:Option[Style] = None
 	){
 	
 	lazy val part:Map[StylesConfigSymbols.Value,Option[Style]] = Map(

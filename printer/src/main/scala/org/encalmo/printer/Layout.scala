@@ -21,7 +21,7 @@ case class Layout(
     def useFormat(lf:LayoutFormat) = copy(format = lf)
     
     def useLeftMargin(d:Int):Layout = copy(leftMargin = d)
-    def useRightMargin(d:Int):Layout = copy(leftMargin = d)
+    def useRightMargin(d:Int):Layout = copy(rightMargin = d)
     def useTopMargin(d:Int):Layout = copy(topMargin = d)
     def useBottomMargin(d:Int):Layout = copy(bottomMargin = d)
     
