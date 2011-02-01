@@ -71,7 +71,10 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	    		Section(
 		            Resolve(calc1,d1)),
 	    		Section(
-		            Evaluate(calc1,d1+sin(4.126))),
+		            Evaluate(calc1,d1+sin(4.126)),
+		            Evaluate(style1,calc1,d1+sin(4.126)),
+		            Evaluate(style2,calc1,d1+sin(4.126)),
+		            Evaluate(style2.fontBold,style2,calc1,d1+sin(4.126))),
 		        Section(
 		            Evaluate(calc1,expr4)),
 	    		Section(

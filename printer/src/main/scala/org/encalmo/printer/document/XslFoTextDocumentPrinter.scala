@@ -335,7 +335,7 @@ extends Traveler[DocumentComponent] {
 	        		case Some(x) => x.paragraph.spaceAfter
 	        		case None => 3
 	        	}
-	        	val indent:Int = if(etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
+	        	val indent:Int = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
 		    	val isCell1 = bullet!=null
 		        val isCell2 = printDescription && etp1.expression.isInstanceOf[SymbolWithDescription]
                 val descStyle = etp1.stylesConfig match {

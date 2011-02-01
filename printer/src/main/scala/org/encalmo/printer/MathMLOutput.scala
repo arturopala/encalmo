@@ -35,8 +35,8 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		attr("mode","inline")
 		body
 		start(MROW)
-		attr("scriptminsize","4pt")
-		attr("scriptsizemultiplier","0.6")
+		attr("scriptminsize","3pt")
+		attr("scriptsizemultiplier","0.5")
 		body
 		if(prefix!=null & prefix!=""){
 			startb(MTEXT)
@@ -57,7 +57,9 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			end(MSTYLE)
 		}
 		if(suffix!=null & suffix!=""){
-			startb(MTEXT)
+			start(MTEXT)
+			attr("mathvariant","italic")
+			body
 			append(ENTITY_THICK_SPACE)
 			append(suffix)
 			append(ENTITY_THICK_SPACE)
@@ -233,17 +235,22 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	}
 	
 	def appendStyleAttributes(style:Style) = {
-		attr("color",style.hexColor)
-		attr("background",style.hexBackground)
-		attr("fontsize",style.font.size)
-		//attr("fontstyle",resolveFontStyle(style.font))
-		//attr("fontweight",resolveFontWeight(style.font))
-		//attr("fontfamily",style.font.family)
+		attr("mathcolor",style.hexColor)
+		attr("mathbackground",style.hexBackground)
+		attr("mathsize",style.font.size)
+		attr("mathvariant",resolveFontVariant(style.font))
 	}
 	
 	private def resolveStyle = if(numberStyle!=null) numberStyle else mathStyle
-	private def resolveFontStyle(fs:FontStyle):String = if(fs.italic){"italic"}else{"normal"}
-	private def resolveFontWeight(fs:FontStyle):String = if(fs.bold){"bold"}else{"normal"}
+	
+	private def resolveFontVariant(fs:FontStyle):String = {
+		fs match {
+			case fs if fs.italic && fs.bold => "bold-italic"
+			case fs if fs.italic => "italic"
+			case fs if fs.bold => "bold"
+			case _ => "normal"
+		}
+	}
 	
 	def convert(s:String) = {
 	    val cs = s match {
