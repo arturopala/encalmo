@@ -8,11 +8,33 @@ import org.encalmo.common._
  */
 class PlainTextExpressionPrinterTraveler(w:java.io.Writer, locale:java.util.Locale = java.util.Locale.getDefault) extends Traveler[Expression] {
 	
+	lazy val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",java.text.DecimalFormatSymbols.getInstance(locale))
+	
 	def writeOpeningBracket = w.write('(');
 	def writeClosingBracket = w.write(')');
 	def writeSpace = w.write(' ');
 	def writeSymbol(s:Symbol) = w.write(s.face2) 
-	def writeNumber(n:Number) = w.write(n.format(locale))
+	def writeNumber(n:Number) = {
+		val nf:NumberFormatted = n.formatForPrint
+		if (nf.isNegative)w.write("-");
+		w.write(integerFormat1.format(nf.integer))
+		if(nf.fraction>0){
+			nf.decimals match {
+				case 1 => w.write(fractionFormat1.format(nf.fraction))
+				case 2 => w.write(fractionFormat2.format(nf.fraction))
+				case 3 => w.write(fractionFormat3.format(nf.fraction))
+				case _ => w.write(fractionFormat4.format(nf.fraction))
+			}
+		}
+		if(nf.hasExponent && nf.exponent!=0) {
+			w.write("E")
+			w.write(""+nf.exponent)
+		}
+	}
 	def writeListSeparator = w.write(';');
 	
 	def writeOpeningBracketIfNeeded(node:Node[Expression],o:Operation):Unit = {

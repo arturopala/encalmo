@@ -58,7 +58,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		}
 		if(suffix!=null & suffix!=""){
 			start(MTEXT)
-			attr("mathvariant","italic")
+			attr("mathsize",resolveStyle.font.size-2)
 			body
 			append(ENTITY_THICK_SPACE)
 			append(suffix)
@@ -154,12 +154,12 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		end(MN)
 		if(nf.hasExponent && nf.exponent!=0) {
 			start(MO)
-			attr("fontsize",resolveStyle.font.size-2)
+			attr("mathsize",resolveStyle.font.size-2)
 			body
 			append(ENTITY_CENTER_DOT)
 			end(MO)
 			start(MSUP)
-			attr("fontsize",resolveStyle.font.size-2)
+			attr("mathsize",resolveStyle.font.size-2)
 			body
 			startb(MN)
 			append("10")

@@ -304,7 +304,7 @@ extends Traveler[DocumentComponent] {
     		output.attr("table-layout","fixed")
     		output.attr("width","100%")
     		if(expr.isFirstBlockComponent){
-    			output.attr("keep-with-previous","always")
+    			//output.attr("keep-with-previous","always")
 			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
 			}
     		output.body
@@ -395,7 +395,9 @@ extends Traveler[DocumentComponent] {
 				if(twoTableRows){
 					output.end(TABLE_CELL)
 					output.end(TABLE_ROW)
-					output.startb(TABLE_ROW)
+					output.start(TABLE_ROW)
+					output.attr("keep-with-previous","always")
+					output.body
 					writeExpressionSeq(se, style, printDescription, "", tableRowStyle, true)
 				}else{
 			        output.start(BLOCK)

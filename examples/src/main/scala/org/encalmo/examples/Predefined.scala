@@ -9,9 +9,9 @@ import org.encalmo.document.StylesConfigSymbols._
 
 object Predefined {
 	
-	val layout = Layout().useLeftMargin(40).useRightMargin(10).useBottomMargin(10)
+	val layout = Layout().useLeftMargin(35).useRightMargin(15).useBottomMargin(10)
     
-    val style1 = DefaultStyle.fontSize(11).useSpaceBefore(2).useSpaceAfter(2).useDistanceBetweenStarts(212).useDistanceLabelSeparation(40)
+    val style1 = DefaultStyle.fontSize(11).useSpaceBefore(1).useSpaceAfter(1).useDistanceBetweenStarts(212).useDistanceLabelSeparation(40)
     val BOLD = style1.fontBold
     val ITALIC = style1.fontItalic
     val BLUE = new java.awt.Color(0,0,207)
@@ -20,7 +20,7 @@ object Predefined {
     
     val stylesConfig = StylesConfig()
     stylesConfig(EXPRESSION) = style1
-    stylesConfig(EXPR_ROW) = style1.useSpaceBefore(2).useSpaceAfter(2)
+    stylesConfig(EXPR_ROW) = style1.useSpaceBefore(1).useSpaceAfter(1)
     stylesConfig(EXPR_SYMBOL) = style1.width(35).fontBigger.useColor(BLUE)
     stylesConfig(EXPR_SYMB_DESCRIPTION) = style1.fontSmaller.fontSmaller.fontItalic.hyphenateOn
     stylesConfig(EXPR_UNRESOLVED) = style1.fontSmaller.fontSmaller
