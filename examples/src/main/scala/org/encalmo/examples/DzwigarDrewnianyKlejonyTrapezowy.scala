@@ -1,7 +1,5 @@
 package org.encalmo.examples
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert._
 import org.junit.Test
 import org.encalmo.expression._
 import org.encalmo.calculation._
@@ -12,7 +10,7 @@ import org.encalmo.fop.FOPHelper
 import org.encalmo.document.StylesConfigSymbols._
 import org.encalmo.examples.Predefined._
 
-class DzwigarDrewnianyKlejonyTrapezowy extends AssertionsForJUnit {
+class DzwigarDrewnianyKlejonyTrapezowy {
     
     import BasicSymbols._
     
@@ -281,11 +279,17 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
         Chapter("",
             Section("Ćwiczenie projektowe nr 2 z \"Konstrukcji Drewnianych\". Autor: Artur Opala 61315. Wrocław 2010/2011"),
             Section(""),
-            NumSection("Dane do projektowania",
-                Section(style1.fontItalic.fontSmaller.marginLeft(20),"Dźwigar trapezowy z drewna klejonego warstwowo.",
-                "Drewno klejone warstwowo kombinowane klasy GL36c.",
-                "Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.3.1.3.",
-                "Klasa odporności ogniowej R30 (konstrukcja dachu)."),
+            NumSection("Zadanie",
+                Section(styleComment,"Dźwigar trapezowy z drewna klejonego warstwowo."),
+                Section(styleComment,"Drewno klejone warstwowo kombinowane klasy GL36c."),
+                Section(styleComment,"Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.3.1.3."),
+                Section(styleComment,"Klasa odporności ogniowej R30 (konstrukcja dachu)."),
+                NumSection("Normy i literatura",
+                	Section(styleComment," [1] Norma PN-EN 1995-1-1:2010 \"Eurokod 5. Projektowanie konstrukcji drewnianych. Część 1-1: Postanowienia ogólne. Reguły ogólne i reguły dotyczące budynków\""),
+                	Section(styleComment," [2] Norma PN-EN 1194:2000")
+                )
+            ),
+            NumSection("Dane do obliczeń",
                 NumSection("Geometria dźwigara",Evaluate(calc,l0,h1,h2,hm,b,alphag,xihb,xilh)),
                 NumSection("Obciążenia charakterystyczne",Evaluate(calc,rhok,G0k,G1k,Qk1,Qk2)),
                 NumSection("Współczynniki częściowe dla oddziaływań",Evaluate(calc,gamG1,gamQ1,gamQi,psi0i)),
@@ -341,7 +345,9 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
                         Evaluate(calc,xmaxfi2,hmaxfi2,RAfi2,Myfi2,Wyfi2,sigmam0fi2),
                         Section(styleWarunek,"Warunek SGN jest spełniony: ",
                                 Symb(sigmam0fi2),LE,Symb(kcritfi2),Symb(fmdfi2),ARROW,Result(calc,sigmam0fi2),"Pa",LE,Result(calc,kcritfi2*fmdfi2),"Pa"))
-            )
+            ),
+			Section(style1.marginTop(30),""),
+			Section("Koniec obliczeń.")
         )
     )
     

@@ -1,7 +1,5 @@
 package org.encalmo.examples
 
-import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert._
 import org.junit.Test
 import org.encalmo.expression._
 import org.encalmo.calculation._
@@ -12,20 +10,19 @@ import org.encalmo.fop.FOPHelper
 import org.encalmo.document.StylesConfigSymbols._
 import org.encalmo.examples.Predefined._
 
-class SlupDrewnianyZlozonyWkrety extends AssertionsForJUnit {
+class SlupDrewnianyZlozonyWkrety {
     
     import BasicSymbols._
     
     val calc = Calculation("1")
     
-    val description = """Słup wielogałęziowy z drewna litego klasy C27 łączonego na wkręty typu 'SPAX T-STAR plus' z łbem stożkowym. Obciążenie siłą osiową, zamocowanie 
-obustronnie przegubowe. Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.3.1.3."""
-    
     val l0 = l|0 is "rozpiętość obliczeniowa" unit "m"
     calc(l0) = 3.8
-    val S = BasicSymbols.S is "siła ściskająca osiowo" unit "N"
-    calc(S) = 68000
-    val daneWejsciowe = Seq(l0,S)
+    val Fcd = BasicSymbols.F|"c,d" is "siła ściskająca osiowo" unit "N"
+    calc(Fcd) = 68000
+    val mic = mu|c is "współczynnik długości wyboczeniowej"
+    calc(mic) = 1
+    val daneWejsciowe = Seq(l0,Fcd,mic)
     
     val b1 = BasicSymbols.b|1 is "szerokość przekroju półki" unit "m"
     calc(b1) = 0.063
@@ -60,14 +57,44 @@ obustronnie przegubowe. Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.
     val Iy2 = BasicSymbols.I|"y,2" is "moduł bezwładności segmentu półki względem osi Y" unit "m4"
     calc(Iy2) = (h2*(b2^3))/12
     val Iz = BasicSymbols.I|"y" is "moduł bezwładności przekroju złożonego względem osi Z" unit "m4"
-    calc(Iz) = Iz2+4*(Iz1+A1*(az^2))
+    calc(Iz) = Iz2+4*(Iz1+A1*(ay^2))
     val Iy = BasicSymbols.I|"z" is "moduł bezwładności przekroju złożonego względem osi Y" unit "m4"
-    calc(Iy) = Iy2+4*(Iy1+A1*(ay^2))
+    calc(Iy) = Iy2+4*(Iy1+A1*(az^2))
     val Imin = BasicSymbols.I|"min" is "mniejszy z modułów bezwładności" unit "m4"
     calc(Imin) = min(Iz,Iy)
     val imin = BasicSymbols.i|"min" is "promień bezwładności" unit "m"
     calc(imin) = sqrt(Imin/A)
     val wlasciwosciGeometryczne = Seq(ay,az,A1,A2,A,Iz1,Iy1,Iz2,Iy2,Iz,Iy,Imin,imin)
+    
+    val d = BasicSymbols.d is "przyjęta średnica wewnętrzna trzpienia dla wkręta samowiercącego SPAX&reg; T-STAR T40(8mm)" unit "mm"
+    calc(d) = 5.6
+    val deff = BasicSymbols.d|"ef" is "przyjęta efektywna średnica trzpienia wkręta" unit "mm"
+    calc(deff) = 6.0
+    val s1min = s|"1,min" is "minimalny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
+    calc(s1min) = (5+5)*d
+    val s1 = s|"1" is "przyjęty rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
+    calc(s1) = 115
+    val nh = n|"h" is "przyjęta ilość wkrętów w rzędzie na szerokości półki" unit "szt."
+    calc(nh) = 2
+    val np = n|"p" is "ilość płaszczyzn styku środnika z półką wg B.1.3(1) [1]"
+    calc(np) = 2
+    val s1eff = s|"1,eff" is "efektywny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
+    calc(s1eff) = s1/(nh*np)
+    val s2 = s|1 is "minimalny rozstaw wkrętów w poprzek włókien wg tablicy 8.2 [1]" unit "mm"
+    calc(s2) = 5*d
+    val s3c = s|"3,c" is "minimalna odległość wkręta od końca nieobciążonego" unit "mm"
+    calc(s3c) = 10*d
+    val s3t = s|"3,t" is "minimalna odległość wkręta od końca obciążonego" unit "mm"
+    calc(s3t) = 15*d
+    val s4c = s|"4,c" is "minimalna odległość wkręta od boku nieobciążonego" unit "mm"
+    calc(s4c) = 5*d
+    val s4t = s|"4,t" is "minimalna odległość wkręta od boku obciążonego" unit "mm"
+    calc(s4t) = 5*d
+    val t2 = t|"2" is "minimalna długość zakotwienia łącznika" unit "mm"
+    calc(t2) = 6*d
+    val lw = l|"w" is "minimalna długość łącznika" unit "mm"
+    calc(lw) = (b1*1000)+t2
+    val przyjeteLaczniki = Seq(d,deff,s1,nh,np,s1eff,s2,s3c,s3t,s4c,s4t,t2,lw)
     
     val kmod = k|"mod" is """współczynnik modyfikujący efekt czasu trwania obciążenia i zmiany wilgotności materiału,
  przyjęty dla 2 klasy użytkowania i oddziaływania długotrwałego z Tab. 3.1 [1]"""
@@ -123,58 +150,28 @@ obustronnie przegubowe. Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.
     calc(Gdd) = Gmean/gamM
     val wlasciwosciMechaniczneObliczeniowe = Seq(fmd,ft0d,ft90d,fc0d,fc90d,fvd,E0d,E90d,Gdd)
     
-    val dmax = BasicSymbols.d|"max" is "maksymalna średnica trzpienia wkręta wg 8.19 [1]" unit "mm"
-    calc(dmax) = min(b1,b2)/7*1000
-    val d = BasicSymbols.d is "przyjęta średnica trzpienia wkręta" unit "mm"
-    calc(d) = 5
-    val deff = BasicSymbols.d|"eff" is "efektywna średnica trzpienia wkręta" unit "mm"
-    calc(deff) = 1.1*d
-    val s1 = s|1 is "przyjęty rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
-    calc(s1) = (5+5)*d
-    val nh = n|"h" is "przyjęta ilość wkrętów w rzędzie na szerokości półki" unit "szt."
-    calc(nh) = 2
-    val s1eff = s|"1,eff" is "efektywny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
-    calc(s1eff) = s1/nh
-    val s2 = s|1 is "minimalny rozstaw wkrętów w poprzek włókien" unit "mm"
-    calc(s2) = 5*d
-    val s3c = s|"3,c" is "minimalna odległość wkręta od końca nieobciążonego" unit "mm"
-    calc(s3c) = 10*d
-    val s3t = s|"3,t" is "minimalna odległość wkręta od końca obciążonego" unit "mm"
-    calc(s3t) = 15*d
-    val s4c = s|"4,c" is "minimalna odległość wkręta od boku nieobciążonego" unit "mm"
-    calc(s4c) = 5*d
-    val s4t = s|"4,t" is "minimalna odległość wkręta od boku obciążonego" unit "mm"
-    calc(s4t) = 5*d
-    val t2 = t|"2" is "minimalna długość zakotwienia łącznika" unit "mm"
-    calc(t2) = 6*d
-    val lw = l|"w" is "minimalna długość łącznika" unit "mm"
-    calc(lw) = (b1*1000)+t2
-    val przyjeteLaczniki = Seq(dmax,d,deff,s1,nh,s1eff,s2,s3c,s3t,s4c,s4t,t2,lw)
-    
-    val mic = mu|c is "współczynnik długości wyboczeniowej"
-    calc(mic) = 1
     val lc = l|c is "długość wyboczeniowa" unit "m"
     calc(lc) = mic*l0
     val betac = beta|c is "współczynnik prostoliniowości elementów wg 6.29 [1]"
     calc(betac) = 0.2
     
-    val Kser = K|"ser" is "moduł podatności łączników mechanicznych dla stanu granicznego nośności (SGN)" unit "N/m"
+    val Kser = K|"ser" is "moduł podatności łączników mechanicznych dla stanu granicznego nośności (SGN) wg tablicy 7.1 [1]" unit "N/m"
     calc(Kser) = ((rhom^1.5)*deff*0.001)/23
-    val Ku = K|"u" is "moduł podatności łączników mechanicznych dla stanu granicznego użytkowalności (SGU)" unit "N/m"
+    val Ku = K|"u" is "moduł podatności łączników mechanicznych dla stanu granicznego użytkowalności (SGU) wg 2.1 [1]" unit "N/m"
     calc(Ku) = (2*Kser)/3
-    val gamma1SGN = (gamma|"1")!"SGN" is "współczynnik zmniejszający moment bezwładności półek ze względu na podatność połączeń dla SGN"
+    val gamma1SGN = (gamma|"1") is "współczynnik zmniejszający moment bezwładności półek ze względu na podatność połączeń dla SGN wg B.5 [1]"
     calc(gamma1SGN) = (1+(((PI^2)*E0mean*A1*(s1eff*0.001))/(Ku*(l0^2)*1000000)))^(-1)
-    val gamma1SGU = (gamma|"1")!"SGU" is "współczynnik zmniejszający moment bezwładności półek ze względu na podatność połączeń dla SGU"
+    val gamma1SGU = (gamma|"1")!"SGU" is "współczynnik zmniejszający moment bezwładności półek ze względu na podatność połączeń dla SGU wg B.5 [1]"
     calc(gamma1SGU) = (1+(((PI^2)*E0mean*A1*(s1eff*0.001))/(Kser*(l0^2)*1000000)))^(-1)
-    val EIzeffSGN = (Symbol("(EI)")|"z,ef")!"SGN" is "sztywność zastępcza względem osi Z dla SGN" unit "Nm²" 
-    calc(EIzeffSGN) = E0mean*(Iz2+4*(Iz1+gamma1SGN*A1*(az^2)))
-    val EIzeffSGU = (Symbol("(EI)")|"z,ef")!"SGU" is "sztywność zastępcza względem osi Z dla SGU" unit "Nm²" 
-    calc(EIzeffSGU) = E0mean*(Iz2+4*(Iz1+gamma1SGU*A1*(az^2)))
-    val EIyeffSGN = (Symbol("(EI)")|"y,ef")!"SGN" is "sztywność zastępcza względem osi Y dla SGN" unit "Nm²" 
-    calc(EIyeffSGN) = E0mean*(Iy2+4*(Iy1+gamma1SGN*A1*(ay^2)))
-    val EIyeffSGU = (Symbol("(EI)")|"y,ef")!"SGU" is "sztywność zastępcza względem osi Y dla SGU" unit "Nm²" 
-    calc(EIyeffSGU) = E0mean*(Iy2+4*(Iy1+gamma1SGU*A1*(ay^2)))
-    val EIeffSGN = (Symbol("(EI)")|"ef")!"SGN" is "sztywność zastępcza dla SGN" unit "Nm²" 
+    val EIzeffSGN = (Symbol("(EI)")|"z,ef") is "sztywność zastępcza względem osi Z dla SGN wg B.1 [1]" unit "Nm²" 
+    calc(EIzeffSGN) = E0mean*(Iz2+4*(Iz1+gamma1SGN*A1*(ay^2)))
+    val EIzeffSGU = (Symbol("(EI)")|"z,ef")!"SGU" is "sztywność zastępcza względem osi Z dla SGU wg B.1 [1]" unit "Nm²" 
+    calc(EIzeffSGU) = E0mean*(Iz2+4*(Iz1+gamma1SGU*A1*(ay^2)))
+    val EIyeffSGN = (Symbol("(EI)")|"y,ef") is "sztywność zastępcza względem osi Y dla SGN wg B.1 [1]" unit "Nm²" 
+    calc(EIyeffSGN) = E0mean*(Iy2+4*(Iy1+gamma1SGN*A1*(az^2)))
+    val EIyeffSGU = (Symbol("(EI)")|"y,ef")!"SGU" is "sztywność zastępcza względem osi Y dla SGU wg B.1 [1]" unit "Nm²" 
+    calc(EIyeffSGU) = E0mean*(Iy2+4*(Iy1+gamma1SGU*A1*(az^2)))
+    val EIeffSGN = (Symbol("(EI)")|"ef") is "sztywność zastępcza dla SGN" unit "Nm²" 
     calc(EIeffSGN) = min(EIzeffSGN,EIyeffSGN)
     val EIeffSGU = (Symbol("(EI)")|"ef")!"SGU" is "sztywność zastępcza dla SGU" unit "Nm²" 
     calc(EIeffSGU) = min(EIzeffSGU,EIyeffSGU)
@@ -182,39 +179,78 @@ obustronnie przegubowe. Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.
     calc(xiEI) = (EIyeffSGN*100)/EIzeffSGN
     val sztywnoscZastepcza = Seq(Kser,Ku,gamma1SGN/*,gamma1SGU*/,EIzeffSGN,EIyeffSGN,EIeffSGN/*,EIzeffSGU,EIyeffSGU,EIeffSGU*/,xiEI)
     
-    val Ief = I|"ef" is "efektywny moduł bezwładności" unit "m4"
+    val Ief = I|"ef" is "efektywny moduł bezwładności wg C.4 [1]" unit "m4"
     calc(Ief) = EIeffSGN/E0mean
-    val lambdaeff = lambda|"ef" is "smukłość efektywna"
+    val lambdaeff = lambda|"ef" is "smukłość efektywna wg C.3 [1]"
     calc(lambdaeff) = lc*sqrt(A/Ief)
-    val lambdarel = lambda|"rel" is "smukłość względna"
+    val lambdarel = lambda|"rel" is "smukłość względna wg 6.22 [1]"
     calc(lambdarel) = (lambdaeff/PI)*sqrt(fc0k/E005)
-    val kmin = k|"min" is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego"
+    val kmin = k|"min" is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego wg 6.27 [1]"
     calc(kmin) = 0.5*(1+betac*(lambdarel-0.3)+(lambdarel^2))
-    val kc = k|c is "współczynnik wyboczeniowy"
+    val kc = k|c is "współczynnik wyboczeniowy wg 6.25 [1]"
     calc(kc) = 1/(kmin+sqrt((kmin^2)-(lambdarel^2)))
-    val NRc = N|"R,c" is "Nośność obliczeniowa na ściskanie" unit "N"
+    val sigmac0d = sigma|"c,0,d" is "obliczeniowe naprężenie ściskające wzdłuż włókien wg C.2 [1]" unit "Pa"
+    calc(sigmac0d) = Fcd/A
+    val NRc = N|"R,c" is "nośność obliczeniowa na ściskanie" unit "N"
     calc(NRc) = fc0d*A
-    val Smax = S|"max" is "Maksymalna osiowa siła ściskająca" unit "N"
-    calc(Smax) = kc*NRc
-    val xiS = BasicSymbols.xi|S is "Wytężenie słupa na ściskanie" unit "%"
-    calc(xiS) = (S*100)/Smax
-    val nosnoscObliczeniowa = Seq(Ief,lambdaeff,lambdarel,kmin,kc,NRc,Smax,xiS)
+    val Fmax = F|"max" is "maksymalna osiowa siła ściskająca" unit "N"
+    calc(Fmax) = kc*NRc
+    val xiS = BasicSymbols.xi|"c" is "wytężenie słupa na ściskanie" unit "%"
+    calc(xiS) = (Fcd*100)/Fmax
+    val nosnoscObliczeniowa = Seq(lc,betac,Ief,lambdaeff,lambdarel,kmin,kc,sigmac0d,NRc,Fmax,xiS)
     
-    val lambdac = lambda|"c" is "smukłość słupa jednorodnego"
+    val lambdac = lambda|"c" is "smukłość słupa połączonego niepodatnie"
     calc(lambdac) = lc/imin
-    val lambdarel2 = lambda|("rel",j) is "smukłość względna słupa jednorodnego"
+    val lambdarel2 = lambda|("rel",2) is "smukłość względna słupa połączonego niepodatnie"
     calc(lambdarel2) = (lambdac/PI)*sqrt(fc0k/E005)
-    val kmin2 = k|("min",j) is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego"
+    val kmin2 = k|("min",2) is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego"
     calc(kmin2) = 0.5*(1+betac*(lambdarel2-0.3)+(lambdarel2^2))
-    val kc2 = k|(c,j) is "współczynnik wyboczeniowy dla  słupa jednorodnego"
+    val kc2 = k|(c,2) is "współczynnik wyboczeniowy dla  słupa połączonego niepodatnie"
     calc(kc2) = 1/(kmin2+sqrt((kmin2^2)-(lambdarel2^2)))
-    val NRc2 = N|("R,c",j) is "Nośność obliczeniowa na ściskanie słupa jednorodnego" unit "N"
+    val NRc2 = N|("R,c",2) is "nośność obliczeniowa na ściskanie słupa połączonego niepodatnie" unit "N"
     calc(NRc2) = fc0d*A
-    val Smax2 = S|("max",j) is "Maksymalna osiowa siła ściskająca dla słupa jednorodnego" unit "N"
-    calc(Smax2) = kc2*NRc2
-    val deltaJW = delta|"j/w" is "strata nośności słupa spowodowana wpływem podatności łączników na sztywność" unit "%"
-    calc(deltaJW) = ((Smax2-Smax)/Smax2)*100
-    val nosnoscSlupaJednorodnego = Seq(mic,lc,lambdac,betac,lambdarel2,kmin2,kc2,NRc2,Smax2,deltaJW)
+    val Fmax2 = F|("max",2) is "maksymalna osiowa siła ściskająca dla słupa połączonego niepodatnie" unit "N"
+    calc(Fmax2) = kc2*NRc2
+    val deltaJW = delta|"p/n" is "strata nośności maksymalnej słupa spowodowana zastosowaniem łączników podatnych" unit "%"
+    calc(deltaJW) = ((Fmax2-Fmax)/Fmax2)*100
+    val nosnoscSlupaNiepodatnie = Seq(lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,deltaJW)
+    
+    val Vd = V|"d" is "siła ścinająca wg C.5 [1]" unit "N"
+    calc(Vd) = Fcd/(120*kc) or (InRange(30,lambdaeff,60) then (Fcd/(3600*kc))) or (GreaterThan(lambdaeff,60) then (Fcd/(60*kc)))
+    val tau2max = tau|"2,max" is "maksymalne naprężenia ścinające w środniku wg B.9 [1]" unit "Pa"
+    calc(tau2max) = E0mean*(gamma1SGN*A1*az+0.5*b2*(h^2))/(b2*EIeffSGN)*Vd
+    val nosnoscScinanie = Seq(Vd,tau2max)
+    
+    val Fi = F|"i" is "obciążenie łącznika wg B.10 [1]" unit "N"
+    calc(Fi) = ((gamma1SGN*E0mean*A1*ay*(s1eff*0.001))/EIeffSGN)*Vd
+    val kef = k|"ef" is "współczynnik efektywnej liczby łączników w szeregu z tablicy 8.1 [1]"
+    calc(kef) = 0.85
+    val betal = beta|l is "stosunek wytrzymałości charakterystycznych na docisk łącznika do elementów złącza"
+    calc(betal) = 1
+    val fhk = f|"h,k" is "wytrzymałość charakterystyczna na docisk w elemencie drewnianym wg 8.16 [1]" unit "Pa"
+    calc(fhk) = 0.082*(1-0.01*deff)*rhok*1000000
+    val MyRk = M|"y,Rk" is "moment charakterystyczny uplastycznienia wkręta wg 2.2.1.a [2]" unit "Nm"
+    calc(MyRk) = 75*(d^2.6)*1000
+    val FaxRk = F|"ax,Rk" is "nośność charakterystyczna łącznika na wyciąganie"
+    calc(FaxRk) = 0
+    val FvRk = F|"v,Rk" is "nośność charakterystyczna łącznika odniesiona do jednej płaszczyzny ścinania wg 8.6 [1]" unit "N"
+    val FvRka = F|"v,Rk,a" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia a" unit "N"
+    val FvRkb = F|"v,Rk,b" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia b" unit "N"
+    val FvRkc = F|"v,Rk,c" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia c" unit "N"
+    val FvRkd = F|"v,Rk,d" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia d" unit "N"
+    val FvRke = F|"v,Rk,e" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia e" unit "N"
+    val FvRkf = F|"v,Rk,f" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia f" unit "N"
+    calc(FvRka) = fhk*b1*(deff*0.001)
+    calc(FvRkb) = fhk*b2*(deff*0.001)
+    calc(FvRkc) = (fhk*b1*(deff*0.001)/(1+betal))*(sqrt(betal+2*(betal^2)*(1+b2/b1+((b2/b1)^2))+(betal^3)*((b2/b1)^2))-betal*(1+(b2/b1)))+FaxRk/4
+    calc(FvRkd) = 1.05*(fhk*b1*(deff*0.001)/(2+betal))*(sqrt(2*betal*(1+betal)+((4*betal*(2+betal)*MyRk)/(fhk*deff*0.001*(b1^2))))-betal)+FaxRk/4
+    calc(FvRke) = 1.05*(fhk*b2*(deff*0.001)/(1+2*betal))*(sqrt(2*(betal^2)*(1+betal)+((4*betal*(1+2*betal)*MyRk)/(fhk*deff*0.001*(b2^2))))-betal)+FaxRk/4
+    calc(FvRkf) = 1.15*sqrt((2*betal)/(1+betal))*sqrt(2*MyRk*fhk*deff*0.001)+FaxRk/4
+    calc(FvRk) = min(FvRka,FvRkb,FvRkc,FvRkd,FvRke,FvRkf)
+    val FvRd = F|"v,Rd" is "nośność obliczeniowa łącznika" unit "N"
+    calc(FvRd) = (kmod*FvRk)/gamM
+    
+    val nosnoscLacznikow = Seq(Fi,kef,betal,fhk,MyRk,FvRka,FvRkb,FvRkc,FvRkd,FvRke,FvRkf,FvRk,FvRd)
     
     val LE = "&nbsp;&le;&nbsp;"
     val ARROW = "&nbsp;&rArr;&nbsp;"
@@ -224,73 +260,38 @@ obustronnie przegubowe. Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.
         Chapter("",
             Section("Ćwiczenie projektowe nr 1 z \"Konstrukcji Drewnianych\". Autor: Artur Opala 61315. Wrocław 2010/2011"),
             Section(""),
-            NumSection("Dane do projektowania",
-                Section(style1.fontItalic.fontSmaller.marginLeft(20),Text(description)),
-                NumSection("Dane wejściowe",Evaluate(calc,daneWejsciowe:_*)),
+            NumSection("Zadanie",
+                Section(styleComment,"Słup wielogałęziowy z drewna litego klasy C27 łączonego na wkręty SPAX&reg; T-STAR T40(8mm)."),
+                Section(styleComment,"Obciążenie siłą osiową, zamocowanie obustronnie przegubowe."),
+                Section(styleComment,"Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.3.1.3."),
+                NumSection("Normy i literatura",
+                	Section(styleComment," [1] Norma PN-EN 1995-1-1:2010 \"Eurokod 5. Projektowanie konstrukcji drewnianych. Część 1-1: Postanowienia ogólne. Reguły ogólne i reguły dotyczące budynków\""),
+                	Section(styleComment," [2] Aprobata ITB AT-15-7343/2007 \"Wkręty samowiercące SPAX&reg; do konstrukcji drewnianych\"")
+                ),
+                NumSection("Dane wejściowe",Evaluate(calc,daneWejsciowe:_*))
+           ),
+           NumSection("Dane do obliczeń",
                 NumSection("Przyjęte wymiary przekroju słupa",Evaluate(calc,przyjetaGeometria:_*)),
-                NumSection("Właściwości geometryczne przekroju",Evaluate(calc,wlasciwosciGeometryczne:_*)),
                 NumSection("Przyjęte łączniki",Evaluate(calc,przyjeteLaczniki:_*)),
+                NumSection("Właściwości geometryczne przekroju",Evaluate(calc,wlasciwosciGeometryczne:_*)),
                 NumSection("Współczynniki",Evaluate(calc,wspolczynnikiCzesciowe:_*)),
                 NumSection("Właściwości mechaniczne charakterystyczne dla drewna litego klasy C27",Evaluate(calc,wlasciwosciMechaniczneCharakterystyczne:_*)),
                 NumSection("Właściwości mechaniczne obliczeniowe dla 2 klasy użytkowania i obciążeń długotrwałych",Evaluate(calc,wlasciwosciMechaniczneObliczeniowe:_*))),
            NumSection("Sprawdzenie stanów granicznych nośności wg PN-EN 1995-1-1",
                 NumSection("Obliczenie sztywności zastępczej",Evaluate(calc,sztywnoscZastepcza:_*)),
-                NumSection("Nośność obliczeniowa na ściskanie słupa wielogałęziowego",Evaluate(calc,nosnoscObliczeniowa:_*)),
-        		NumSection("Nośność porównawcza słupa jednorodnego (np. klejonego)",Evaluate(calc,nosnoscSlupaJednorodnego:_*))
-//                NumSection("Współczynniki częściowe dla oddziaływań",Evaluate(calc,gamG1,gamQ1,gamQi,psi0i)),
-//                NumSection("Kombinacje obciążeń",Evaluate(calc,qd)),
-//                NumSection("Współczynnik ",Symb(kmod),Evaluate(calc,kmod)),
-//                NumSection("Współczynnik materiałowy ",Symb(gamM),Evaluate(calc,gamM)),
-//                NumSection("Wytrzymałości i moduły charakterystyczne wg PN-EN 1194:2000",
-//                        Evaluate(calc,fmk,ft0k,ft90k,fc0k,fc90k,fvk,E0mean,E005,E90mean,Gmean)),
-//                NumSection("Wytrzymałości i moduły obliczeniowe",
-//                        Evaluate(calc,fmd,ft0d,ft90d,fc0d,fc90d,fvd,E0d,E90d,Gdd))
-            )/*,
-            NumSection("Sprawdzenie stanu granicznego nośności SGN wg PN-EN 1995-1-1",
-                NumSection("Sprawdzenie naprężeń maksymalnych od zginania",
-                        Evaluate(calc,xmax,hmax,RA,My,Wy,sigmam0d),
-                        Section(styleWarunek,"Warunek 6.11 jest spełniony: ",
-                                Symb(sigmam0d),LE,Symb(fmd),ARROW,Result(calc,sigmam0d),"Pa",LE,Result(calc,fmd),"Pa")),
-                NumSection("Uwzględnienie zmiennego przekroju dźwigara",
-                        Evaluate(calc,kmalpha),
-                        Evaluate(calc,fmalphad),
-                        Section(styleWarunek,"Warunek 6.38 jest spełniony: ",
-                                Symb(sigmam0d),LE,Symb(fmalphad),ARROW,Result(calc,sigmam0d),"Pa",LE,Result(calc,fmalphad),"Pa")),
-                NumSection("Sprawdzenie stateczności przekroju",
-                        Evaluate(calc,leff,sigmamcrit,lambdarel),
-                        Evaluate(calc,kcritm),
-                        Evaluate(calc,fmcritd),
-                        Section(styleWarunek,"Warunek 6.33 jest spełniony: ",
-                                Symb(sigmam0d),LE,Symb(fmcritd),ARROW,Result(calc,sigmam0d),"Pa",LE,Result(calc,fmcritd),"Pa")),
-                NumSection("Sprawdzenie nośności na ścinanie",
-                        Evaluate(calc,Vd,kcr,beff,taud),
-                        Section(styleWarunek,"Warunek 6.13 jest spełniony: ",
-                                Symb(taud),LE,Symb(fvd),ARROW,Result(calc,taud),"Pa",LE,Result(calc,fvd),"Pa")),
-                NumSection("Sprawdzenie nośności na docisk w poprzek włókien na podporze",
-                        Evaluate(calc,lpod,Aef,Fc90d,sigmac90d,kc90),
-                        Section(styleWarunek,"Warunek 6.3 jest spełniony: ",
-                                Symb(sigmac90d),LE,Symb(kc90),Symb(fc90d),ARROW,Result(calc,sigmac90d),"Pa",LE,Result(calc,kc90*fc90d),"Pa"))
-            ),
-            NumSection("Sprawdzenie stanu granicznego nośności SGN wg PN-EN 1995-1-1",
-                NumSection("Obliczenie ugięć",
-                        Evaluate(calc,wmax,kdef,psi21,Iz,umG,uinstG,umQ1,uinstQ1,umQi,uinstQi,ufinG,ufinQ1,ufinQi,wfin),
-                        Section(styleWarunek,"Warunek ugięć jest spełniony: ",
-                                Symb(wfin),LE,Symb(wmax),ARROW,Result(calc,wfin),"m",LE,Result(calc,wmax),"m"))
-            ),
-            NumSection("Sprawdzenie nośności w warunkach pożarowych wg PN-EN 1995-1-2",
-                Section(style1,"Oczekiwana klasa odporności ogniowej R30."),
-                NumSection("Dane wejściowe",Evaluate(calc,psi11,EdA)),
-                NumSection("Obliczenie nośności metodą zredukowanych właściwości",
-                        Evaluate(calc,t,betan,dcharn,Ar,pr,kfi,kmodmfi,kmodEfi,gammaMfi,fmdfi,Edfi,lefffi,sigmamcritfi,lambdarelfi,kcritfi,fmcritfi),
-                        Evaluate(calc,xmaxfi,hmaxfi,RAfi,Myfi,Wyfi,sigmam0fi),
-                        Section(styleWarunek,"Warunek SGN jest spełniony: ",
-                                Symb(sigmam0fi),LE,Symb(kcritfi),Symb(fmdfi),ARROW,Result(calc,sigmam0fi),"Pa",LE,Result(calc,kcritfi*fmdfi),"Pa")),
-                NumSection("Obliczenie nośności metodą zredukowanego przekroju",
-                        Evaluate(calc,k0,d0,deff,kmodmfi2,kmodEfi2,gammaMfi,fmdfi2,Edfi2,lefffi2,sigmamcritfi2,lambdarelfi2,kcritfi2,fmcritfi2),
-                        Evaluate(calc,xmaxfi2,hmaxfi2,RAfi2,Myfi2,Wyfi2,sigmam0fi2),
-                        Section(styleWarunek,"Warunek SGN jest spełniony: ",
-                                Symb(sigmam0fi2),LE,Symb(kcritfi2),Symb(fmdfi2),ARROW,Result(calc,sigmam0fi2),"Pa",LE,Result(calc,kcritfi2*fmdfi2),"Pa"))
-            )*/
+                NumSection("Sprawdzenie nośności na ściskanie",Evaluate(calc,nosnoscObliczeniowa:_*)),
+                Section(styleWarunek,"Warunek C.1 [1] jest spełniony: ",
+                                Symb(sigmac0d),LE,Symb(kc),Symb(fc0d),ARROW,Result(calc,sigmac0d),"Pa",LE,Result(calc,kc*fc0d),"Pa"),
+                NumSection("Porównanie obliczonej nośności z nośnością słupa z elementami połączonymi niepodatnie",Evaluate(calc,nosnoscSlupaNiepodatnie:_*)),
+				NumSection("Sprawdzenie nośności środnika na ścinanie",Evaluate(calc,nosnoscScinanie:_*)),
+				Section(styleWarunek,"Warunek 6.13 [1] jest spełniony: ",
+                                Symb(tau2max),LE,Symb(fvd),ARROW,Result(calc,tau2max),"Pa",LE,Result(calc,fvd),"Pa"),
+				NumSection("Sprawdzenie nośności łączników (wkrętów)",Evaluate(calc,nosnoscLacznikow:_*)),
+				Section(styleWarunek,"Warunek nośności wkręta jest spełniony: ",
+                                Symb(Fi),LE,Symb(FvRd),ARROW,Result(calc,Fi),"N",LE,Result(calc,FvRd),"N")
+			),
+			Section(style1.marginTop(30),""),
+			Section("Koniec obliczeń.")
         )
     )
     

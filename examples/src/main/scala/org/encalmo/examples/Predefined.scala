@@ -20,7 +20,7 @@ object Predefined {
     
     val stylesConfig = StylesConfig()
     stylesConfig(EXPRESSION) = style1
-    stylesConfig(EXPR_ROW) = style1.useSpaceBefore(1).useSpaceAfter(1)
+    stylesConfig(EXPR_ROW) = style1.useSpaceBefore(2).useSpaceAfter(1)
     stylesConfig(EXPR_SYMBOL) = style1.width(35).fontBigger.useColor(BLUE)
     stylesConfig(EXPR_SYMB_DESCRIPTION) = style1.fontSmaller.fontSmaller.fontItalic.hyphenateOn
     stylesConfig(EXPR_UNRESOLVED) = style1.fontSmaller.fontSmaller
@@ -36,5 +36,6 @@ object Predefined {
     
     val styleDescription:Style = stylesConfig(EXPR_SYMB_DESCRIPTION).get.marginLeft(23)
     val styleWarunek:Style = style1.marginTop(5).marginBottom(5).marginLeft(23).useBackground(YELLOW).paddings(5)
-
+    val styleComment = style1.fontSmaller.marginLeft(20)
+    
 }

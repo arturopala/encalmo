@@ -6,7 +6,7 @@ import org.junit.Test
 import org.encalmo.expression._
 import java.io.{StringWriter,PrintWriter}
 
-class SelectionUnitTest extends AssertionsForJUnit {
+/*class SelectionUnitTest extends AssertionsForJUnit {
 	
 	import BasicSymbols._
 	
@@ -141,4 +141,4 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		assertEquals("Selection(Sum(Prod(Symbol(a),Symbol(b)),Number(5.0)),List(Case(Sum(Symbol(a),Symbol(b)),OrCaseTest(AndCaseTest(NegCaseTest(IsZero(Symbol(c))),NegCaseTest(IsZero(Symbol(d)))),Equals(Symbol(c),Symbol(d))))))",expr4.toString);
 	}
 	
-}
+}*/

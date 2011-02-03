@@ -84,16 +84,16 @@ class NumberUnitTest extends AssertionsForJUnit {
 		val ffp4 = n4.formatForPrint
 		assertFalse(ffp4.isNegative)
 		assertTrue(ffp4.hasExponent)
-		assertEquals(129876,ffp4.integer)
-		assertEquals(3,ffp4.exponent)
-		assertEquals(.598,ffp4.fraction,0.000001)
+		assertEquals(129,ffp4.integer)
+		assertEquals(6,ffp4.exponent)
+		assertEquals(.876598,ffp4.fraction,0.000001)
 		
 		val n5 = Number(1298765980000.000)
 		val ffp5 = n5.formatForPrint
 		assertFalse(ffp5.isNegative)
-		assertEquals(1298,ffp5.integer)
-		assertEquals(9,ffp5.exponent)
-		assertEquals(.76598,ffp5.fraction,0.000001)
+		assertEquals(1,ffp5.integer)
+		assertEquals(12,ffp5.exponent)
+		assertEquals(.29876598,ffp5.fraction,0.000001)
 		
 		val n6 = Number(0.0000056789)
 		val ffp6 = n6.formatForPrint
