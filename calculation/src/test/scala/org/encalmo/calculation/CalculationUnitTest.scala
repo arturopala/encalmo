@@ -8,6 +8,26 @@ import java.io.{StringWriter,PrintWriter}
 
 class CalculationUnitTest extends AssertionsForJUnit {
 	
+	@Test def test2 = {
+		import BasicSymbols._
+		val c = Calculation("test")
+		val c1 = Calculation("1") 
+		val c2 = Calculation("2") 
+		val c3 = Calculation("3") 
+		c add c1
+		c add c2
+		c add c3
+		c1(a at c1.id) = 10
+		c2(a at c2.id) = 5
+		c3(a at c3.id) = 1
+		assertEquals(Number(10),c.evaluate(a at c1.id))
+		assertEquals(Number(5),c.evaluate(a at c2.id))
+		assertEquals(Number(1),c.evaluate(a at c3.id))
+		assertEquals(Number(10),c1.evaluate(a))
+		assertEquals(Number(5),c2.evaluate(a))
+		assertEquals(Number(1),c3.evaluate(a))
+	}
+	
 	@Test def test1 = {
 		import BasicSymbols._
 		

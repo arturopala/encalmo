@@ -3,6 +3,7 @@ package org.encalmo.document
 
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Symbol
+import org.encalmo.expression.SymbolWithDescription
 import org.encalmo.calculation.Calculation
 
 /**
@@ -19,7 +20,15 @@ extends InlineExpr(rStyle,calc,expr:_*){
 	/** Function to implement */
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		val evaluated = calc.evaluate(e)
-		Seq[ExpressionToPrint](ExpressionToPrint(evaluated,style,null,null,parentStylesConfig))
+		e match {
+			case sd:SymbolWithDescription => {
+				Seq[ExpressionToPrint](ExpressionToPrint(evaluated,style,null,sd.unit,parentStylesConfig))
+			}
+			case _ => {
+				Seq[ExpressionToPrint](ExpressionToPrint(evaluated,style,null,null,parentStylesConfig))
+			}
+		}
+		
 	}
 	
 }

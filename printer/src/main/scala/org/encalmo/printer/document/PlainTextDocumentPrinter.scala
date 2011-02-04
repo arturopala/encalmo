@@ -5,6 +5,7 @@ import org.encalmo.expression._
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
+import scala.collection.mutable.LinkedHashMap
 
 /**
  * Prints document as plain text 
@@ -29,6 +30,18 @@ extends Traveler[DocumentComponent] {
 	
 	val ept = new PlainTextExpressionPrinterTraveler(w, locale)
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
+	/** Section counters map */
+	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
+	
+	/** Returns counter linked to the enumerator */
+	private def counterFor(en:Enumerator):SectionCounter = {
+		var sco = counterMap.get(en)
+		if(!sco.isDefined){
+			sco = Some(SectionCounter(en))
+			counterMap.put(en,sco.get)
+		}
+		sco.get
+	}
 	
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
@@ -94,20 +107,33 @@ extends Traveler[DocumentComponent] {
 		}
 		node.element match {
 			case d:Document => {
-				plus
-				writeLineEnd
-				write("")
-				writeLineEnd
+				//plus
+				if(d.title!=null){
+					//writeLineEnd
+					//write(d.title)
+					//writeLineEnd
+				}
 			}
 			case c:Chapter => {
+				//plus
+				//writeLineEnd
+				//write("")
+				//writeLineEnd
+			}
+			case ns:NumSection => {
+				val sc = counterFor(ns.enumerator)
+				for(x <- 0 to (2-ns.enumeratorLevel)){
+					writeLineEnd
+					canNewLine = true;
+				}
+				canNewLine = false;
+				write(sc.current.mkString("",".","."+SPACE))
+				sc.in // counter level increment
 				plus
-				writeLineEnd
-				write("")
-				writeLineEnd
 			}
 			case s:Section => {
-				plus
 				writeLineEnd
+				plus
 			}
 			case expr:InlineExpr => {
 				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
@@ -115,22 +141,24 @@ extends Traveler[DocumentComponent] {
 			}
 			case expr:BlockExpr => {
 				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
-				plus
-			    ess.foreach(e => {
+				//plus
+			    ess.foreach(es => {
 			        canNewLine = true;
 			        writeLineEnd;
-                    if(e.head.expression.isInstanceOf[SymbolWithDescription]){
-                        write(e.head.expression.asInstanceOf[SymbolWithDescription].description)
+                    if(es.head.expression.isInstanceOf[SymbolWithDescription]){
+                        write(es.head.expression.asInstanceOf[SymbolWithDescription].description)
                         plus
                         canNewLine = true;
                         writeLineEnd;
+                        writeExpression(es)
+                        minus
+                    }else{
+                    	writeExpression(es)
                     }
-			        writeExpression(e)
-                    minus
 		        })
+			    //minus
 			    canNewLine = true
-			    writeLineEnd
-			    minus
+			    //writeLineEnd
 			}
 			case _ =>
 		}
@@ -152,12 +180,20 @@ extends Traveler[DocumentComponent] {
 	override def onExit(node:Node[DocumentComponent]):Unit = {
 		node.element match {
 			case d:Document => {
-				minus
+				//minus
 			}
 			case c:Chapter => {
+				//minus
+			}
+			case ns:NumSection => {
+				canNewLine = true
 				minus
+				val sc = counterFor(ns.enumerator)
+				sc.out //counter level decrement
+				sc.next // counter increment
 			}
 			case s:Section => {
+				canNewLine = true
 				minus
 			}
 			case _ =>

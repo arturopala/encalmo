@@ -121,3 +121,17 @@ case class log(e:Expression) extends Operation1 with NamedOperation {
   override def copy(e:Expression) = log(e)
   override val operator = "log"
 }
+
+/**
+ * Rounding operation
+ * default strategy: RoundingMode.CEILING
+ */
+case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Operation1 with NamedOperation {
+	
+  override def calculate(v:Value):Expression = v match {
+	  case Number(r) => Number(rm.round(r.d))
+	  case _ => copy(v)
+  }
+  override def copy(x:Expression) = round(x,rm)
+  override val operator = "round"
+}

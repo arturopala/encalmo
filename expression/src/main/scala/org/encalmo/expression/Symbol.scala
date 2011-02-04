@@ -13,6 +13,8 @@ trait Symbol extends Expression {
     def superscript:Symbol = null
     def underscript:Symbol = null
     def overscript:Symbol = null
+    
+    def contextId:Option[Seq[String]] = None
 
     def |(sub:Symbol):Symbol
     def |(sub:Symbol, sup:Symbol):Symbol
@@ -20,14 +22,14 @@ trait Symbol extends Expression {
     def +(n:String):Symbol
     def under(under:Symbol):Symbol
     def over(over:Symbol):Symbol
+    def at(id:String):Symbol
 
+    def !(int:Int):Symbol = this ! String.valueOf(int)
     def |(int:Int):Symbol = this | String.valueOf(int)
     def |(sub:Symbol,int2:Int):Symbol = this | (sub,String.valueOf(int2))
     def |(int1:Int,sup:Symbol):Symbol = this | (String.valueOf(int1),sup)
     def |(int1:Int,int2:Int):Symbol = this | (String.valueOf(int1),String.valueOf(int2))
-
-    def !(int:Int):Symbol = this ! String.valueOf(int)
-
+    
     def hasSubscript:Boolean = subscript!=null
     def hasSuperscript:Boolean = superscript!=null
     def hasSubOrSupscript:Boolean = hasSubscript || hasSuperscript
@@ -53,33 +55,34 @@ trait Symbol extends Expression {
 }
 
 /**
- * Symbol proxy class
+ * Symbol proxy abstract class
  * @author artur.opala
  */
-case class SymbolProxy(symbol:Symbol) extends Symbol {
+abstract class SymbolProxy(val symbol:Symbol) extends Symbol {
     
     override def name:String = symbol.name
     override def subscript:Symbol = symbol.subscript
     override def superscript:Symbol = symbol.superscript
     override def underscript:Symbol = symbol.underscript
     override def overscript:Symbol = symbol.overscript
+    override def contextId:Option[Seq[String]] = symbol.contextId
+}
+
+/**
+ * Symbol with description and unit
+ * @author artur.opala
+ */
+case class SymbolWithDescription(override val symbol:Symbol, val description:String, val unit:String = "") extends SymbolProxy(symbol) {
     
+    def unit(unit:String):SymbolWithDescription = SymbolWithDescription(symbol,description,unit)
+   
     override def |(sub:Symbol):Symbol = copy(symbol = symbol | sub)
     override def |(sub:Symbol, sup:Symbol):Symbol = copy(symbol = symbol | (sub,sup))
     override def !(sup:Symbol):Symbol = copy(symbol = symbol | sup)
     override def +(n:String):Symbol = copy(symbol = symbol + n)
     override def under(under:Symbol):Symbol = copy(symbol = symbol.under(under))
     override def over(over:Symbol):Symbol = copy(symbol = symbol.over(over))
-    
-}
-
-/**
- * Symbol with description
- * @author artur.opala
- */
-case class SymbolWithDescription(override val symbol:Symbol, val description:String, val unit:String = "") extends SymbolProxy(symbol) {
-    
-    def unit(unit:String):SymbolWithDescription = SymbolWithDescription(symbol,description,unit)
+    override def at(id:String):Symbol = copy(symbol = symbol.at(id))
     
 }
 
@@ -98,7 +101,7 @@ object Symbol {
   
 }
 
-case class Symbol1(name:String) extends Symbol {
+case class Symbol1(name:String, override val contextId:Option[Seq[String]] = None) extends Symbol {
 	override def toString = "Symbol("+name+")"
 	override def +(n:String):Symbol1 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol2 = Symbol2(name, s)
@@ -106,9 +109,10 @@ case class Symbol1(name:String) extends Symbol {
 	override def !(sup:Symbol):Symbol3 = Symbol3(name, null, sup)
 	override def under(under:Symbol):Symbol4 = Symbol4(name, null, null, under)
 	override def over(over:Symbol):Symbol5 = Symbol5(name, null, null, null, over)
+	override def at(id:String):Symbol1 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
 }
 
-case class Symbol2(name:String, override val subscript:Symbol) extends Symbol {
+case class Symbol2(name:String, override val subscript:Symbol, override val contextId:Option[Seq[String]] = None) extends Symbol {
 	override def toString = "Symbol("+name+","+subscript+")"
 	override def +(n:String):Symbol2 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol = Symbol2(name, s)
@@ -116,9 +120,10 @@ case class Symbol2(name:String, override val subscript:Symbol) extends Symbol {
 	override def !(sup:Symbol):Symbol3 = Symbol3(name, subscript, sup)
 	override def under(under:Symbol):Symbol4 = Symbol4(name, subscript, null, under)
 	override def over(over:Symbol):Symbol5 = Symbol5(name, subscript, null, null, over)
+	override def at(id:String):Symbol2 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
 }
 
-case class Symbol3(name:String, override val subscript:Symbol, override val superscript:Symbol) extends Symbol {
+case class Symbol3(name:String, override val subscript:Symbol, override val superscript:Symbol, override val contextId:Option[Seq[String]] = None) extends Symbol {
 	override def toString = "Symbol("+name+","+subscript+","+superscript+")"
 	override def +(n:String):Symbol3 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol3 = Symbol3(name, s, superscript)
@@ -126,9 +131,10 @@ case class Symbol3(name:String, override val subscript:Symbol, override val supe
 	override def !(sup:Symbol):Symbol3 = Symbol3(name, subscript, sup)
 	override def under(under:Symbol):Symbol4 = Symbol4(name, subscript, superscript, under)
 	override def over(over:Symbol):Symbol5 = Symbol5(name, subscript, superscript, null, over)
+	override def at(id:String):Symbol3 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
 }
 
-case class Symbol4(name:String, override val subscript:Symbol, override val superscript:Symbol, override val underscript:Symbol) extends Symbol {
+case class Symbol4(name:String, override val subscript:Symbol, override val superscript:Symbol, override val underscript:Symbol, override val contextId:Option[Seq[String]] = None) extends Symbol {
 	override def toString = "Symbol("+name+","+subscript+","+superscript+","+underscript+")"
 	override def +(n:String):Symbol4 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol4 = Symbol4(name, s, superscript, underscript)
@@ -136,9 +142,10 @@ case class Symbol4(name:String, override val subscript:Symbol, override val supe
 	override def !(sup:Symbol):Symbol4 = Symbol4(name, subscript, sup, underscript)
 	override def under(under:Symbol):Symbol4 = Symbol4(name, subscript, superscript, under)
 	override def over(over:Symbol):Symbol5 = Symbol5(name, subscript, superscript, underscript, over)
+	override def at(id:String):Symbol4 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
 } 
 
-case class Symbol5(name:String, override val subscript:Symbol, override val superscript:Symbol, override val underscript:Symbol, override val overscript:Symbol) extends Symbol {
+case class Symbol5(name:String, override val subscript:Symbol, override val superscript:Symbol, override val underscript:Symbol, override val overscript:Symbol, override val contextId:Option[Seq[String]] = None) extends Symbol {
 	override def toString = "Symbol("+name+","+subscript+","+superscript+","+underscript+","+overscript+")"
 	override def +(n:String):Symbol5 = this.copy(name = name+n)
 	override def |(s:Symbol):Symbol5 = Symbol5(name, s, superscript, underscript, overscript)
@@ -146,4 +153,5 @@ case class Symbol5(name:String, override val subscript:Symbol, override val supe
 	override def !(sup:Symbol):Symbol5 = Symbol5(name, subscript, sup, underscript, overscript)
 	override def under(under:Symbol):Symbol4 = Symbol4(name, subscript, superscript, under)
 	override def over(over:Symbol):Symbol5 = Symbol5(name, subscript, superscript, underscript, over)
+	override def at(id:String):Symbol5 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
 } 

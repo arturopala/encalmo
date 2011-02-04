@@ -71,6 +71,7 @@ class PlainTextExpressionPrinterTraveler(w:java.io.Writer, locale:java.util.Loca
 	    }
 	    node.element match {
     		case s:Symbol => writeSymbol(s)
+    		case sl: SymbolLike => writeSymbol(sl.symbol)
     		case n:Number => writeNumber(n)
     		case o:Operation => {
     			writeOpeningBracketIfNeeded(node,o)

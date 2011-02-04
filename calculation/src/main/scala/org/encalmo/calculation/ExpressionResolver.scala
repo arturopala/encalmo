@@ -80,6 +80,7 @@ trait ExpressionResolver {
 				case Some(x) => x.eval
 				case None => s
 			}
+			case sl:SymbolLike => sl.eval
 			case _ => e.eval
 		}
 	}
@@ -94,6 +95,7 @@ trait ExpressionResolver {
 				case Some(x) => x.eval
 				case None => s
 			}
+			case sl:SymbolLike => sl.eval
 			case _ => e
 		}
 	}

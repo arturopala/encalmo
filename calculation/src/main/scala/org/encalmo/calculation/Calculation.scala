@@ -5,7 +5,7 @@ import scala.collection.mutable.{LinkedHashSet,LinkedHashMap}
 import org.encalmo.expression._
 
 /** 
- * Calculation context set
+ * Calculation
  */
 class Calculation(val id:String) extends LinkedHashSet[ExpressionResolver] with ContextSet {
 	
@@ -15,19 +15,25 @@ class Calculation(val id:String) extends LinkedHashSet[ExpressionResolver] with 
 	this.add(context)
 	
 	/**
-	 * Maps symbol to expression in the internal default context
+	 * Maps symbol to expression in the internal context
 	 */
-	def put(s:Symbol,e:Expression) = context.put(s,e)
+	def put(s:Symbol,e:Expression):Option[Expression] = context.put(s,e)
 	
 	/**
-	 * Maps symbol to expression in the internal default context
+	 * Maps symbol to expression in the internal context
 	 */
-	def put(t:(Symbol,Expression)) = context.put(t._1 ,t._2)
+	def put(t:(Symbol,Expression)):Option[Expression] = put(t._1 ,t._2)
 	
 	/**
-     * Maps symbol to expression in the internal default context
+     * Maps symbol to expression in the internal context
      */
-	def update(s:Symbol,e:Expression) = context.put(s,e)
+	def update(s:Symbol,e:Expression) = put(s,e)
+	
+	/**
+	 * Returns expression which will evaluate 
+	 * this expression in the context of this calculation in the future
+	 */
+	def future(s:Symbol):FutureEvaluation = FutureEvaluation(this,s)
 	
 	/**
 	 * Resolves and evaluates all symbols to values

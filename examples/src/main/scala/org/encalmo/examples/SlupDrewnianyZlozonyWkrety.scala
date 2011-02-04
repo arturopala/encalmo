@@ -14,14 +14,19 @@ class SlupDrewnianyZlozonyWkrety {
     
     import BasicSymbols._
     
-    val calc = Calculation("1")
+    val calc = Calculation("zadanie")
+    val calc2 = IndexedCalculation("2")
+    val calc3 = Calculation("drewno")
+    
+    calc add calc2
+    calc add calc3
     
     val l0 = l|0 is "rozpiętość obliczeniowa" unit "m"
-    calc(l0) = 3.8
+    calc2(l0) = 3.8
     val Fcd = BasicSymbols.F|"c,d" is "siła ściskająca osiowo" unit "N"
-    calc(Fcd) = 68000
+    calc2(Fcd) = 68000
     val mic = mu|c is "współczynnik długości wyboczeniowej"
-    calc(mic) = 1
+    calc2(mic) = 1
     val daneWejsciowe = Seq(l0,Fcd,mic)
     
     val b1 = BasicSymbols.b|1 is "szerokość przekroju półki" unit "m"
@@ -90,70 +95,72 @@ class SlupDrewnianyZlozonyWkrety {
     calc(s4c) = 5*d
     val s4t = s|"4,t" is "minimalna odległość wkręta od boku obciążonego" unit "mm"
     calc(s4t) = 5*d
-    val t2 = t|"2" is "minimalna długość zakotwienia łącznika" unit "mm"
+    val t2 = t|"2" is "minimalna długość zakotwienia wkręta w elemencie od strony ostrza" unit "mm"
     calc(t2) = 6*d
-    val lw = l|"w" is "minimalna długość łącznika" unit "mm"
-    calc(lw) = (b1*1000)+t2
-    val przyjeteLaczniki = Seq(d,deff,s1min,s1,nh,np,s1eff,s2,s3c,s3t,s4c,s4t,t2,lw)
+    val lw = l|"w" is "wymagana długość wkręta" unit "mm"
+    calc(lw) = round((b1*1000)+t2,RoundingMode.Step(true,10))
+    val nw = n|"w" is "całkowita liczba wkrętów w słupie" unit "szt."
+    calc(nw) = 4*nh*(round((l0*1000-2*s3c)/s1)+1)
+    val przyjeteLaczniki = Seq(d,deff,s1min,s1,nh,np,s1eff,s2,s3c,s3t,s4c,s4t,t2,lw,nw)
     
     val kmod = k|"mod" is """współczynnik modyfikujący efekt czasu trwania obciążenia i zmiany wilgotności materiału,
  przyjęty dla 2 klasy użytkowania i oddziaływania długotrwałego z Tab. 3.1 [1]"""
-    calc(kmod) = 0.7
+    calc3(kmod) = 0.7
     val gamM = gamma|M is """częściowy współczynnik bezpieczeństwa właściwości materiału, uwzględniający także
  niedoskonałości modelowania i odchyłki wymiarowe, przyjęty dla drewna litego z Tab. 2.3 [1]"""
-    calc(gamM) = 1.3
+    calc3(gamM) = 1.3
     val wspolczynnikiCzesciowe = Seq(kmod,gamM)
     
     val fmk = f|"m,k" is "wytrzymałość charakterystyczna na zginanie" unit "Pa"
-    calc(fmk) = 27000000
+    calc3(fmk) = 27000000
     val ft0k = f|"t,0,k" is "wytrzymałość charakterystyczna na rozciąganie wzdłuż włókien" unit "Pa"
-    calc(ft0k) = 16000000
+    calc3(ft0k) = 16000000
     val ft90k = f|"t,90,k" is "wytrzymałość charakterystyczna na rozciąganie w poprzek włókien" unit "Pa"
-    calc(ft90k) = 400000
+    calc3(ft90k) = 400000
     val fc0k = f|"c,0,k" is "wytrzymałość charakterystyczna na ściskanie wzdłuż włókien" unit "Pa"
-    calc(fc0k) = 22000000
+    calc3(fc0k) = 22000000
     val fc90k = f|"c,90,k" is "wytrzymałość charakterystyczna na ściskanie w poprzek włókien" unit "Pa"
-    calc(fc90k) = 2600000
+    calc3(fc90k) = 2600000
     val fvk = f|"v,k" is "wytrzymałość charakterystyczna na ścinanie" unit "Pa"
-    calc(fvk) = 4000000
+    calc3(fvk) = 4000000
     val E0mean = E|"0,mean" is "średni moduł sprężystości wzdłuż włókien" unit "Pa"
-    calc(E0mean) = 11500000000l
-    val E005 = E|"0,mean" is "5 % kwantyl modułu sprężystości" unit "Pa" 
-    calc(E005) = 7700000000l
+    calc3(E0mean) = 11500000000l
+    val E005 = E|"0,05" is "5 % kwantyl modułu sprężystości" unit "Pa" 
+    calc3(E005) = 7700000000l
     val E90mean = E|"90,mean" is "średni moduł sprężystości w poprzek włókien" unit "Pa" 
-    calc(E90mean) = 380000000
+    calc3(E90mean) = 380000000
     val Gmean = G|"mean" is "średni moduł odkształcenia postaciowego" unit "Pa" 
-    calc(Gmean) = 720000000
+    calc3(Gmean) = 720000000
     val rhok = rho|"k" is "gęstość charakterystyczna" unit "kg/m³"
-    calc(rhok) = 370
+    calc3(rhok) = 370
     val rhom = rho|"m" is "gęstość średnia" unit "kg/m³"
-    calc(rhom) = 450
+    calc3(rhom) = 450
     val wlasciwosciMechaniczneCharakterystyczne = Seq(fmk,ft0k,ft90k,fc0k,fc90k,fvk,E0mean,E005,E90mean,Gmean,rhok,rhom)
     
     val fmd = f|"md" is "wytrzymałość obliczeniowa na zginanie" unit "Pa"
-    calc(fmd) = kmod*fmk/gamM
+    calc3(fmd) = kmod*fmk/gamM
     val ft0d = f|"t,0,d" is "wytrzymałość obliczeniowa na rozciąganie wzdłuż włókien" unit "Pa"
-    calc(ft0d) = kmod*ft0k/gamM
+    calc3(ft0d) = kmod*ft0k/gamM
     val ft90d = f|"t,90,d" is "wytrzymałość obliczeniowa na rozciąganie w poprzek włókien" unit "Pa"
-    calc(ft90d) = kmod*ft90k/gamM
+    calc3(ft90d) = kmod*ft90k/gamM
     val fc0d = f|"c,0,d" is "wytrzymałość obliczeniowa na ściskanie wzdłuż włókien" unit "Pa"
-    calc(fc0d) = kmod*fc0k/gamM
+    calc3(fc0d) = kmod*fc0k/gamM
     val fc90d = f|"c,90,d" is "wytrzymałość obliczeniowa na ściskanie w poprzek włókien" unit "Pa"
-    calc(fc90d) = kmod*fc90k/gamM
+    calc3(fc90d) = kmod*fc90k/gamM
     val fvd = f|"vd" is "wytrzymałość obliczeniowa na ścinanie" unit "Pa"
-    calc(fvd) = kmod*fvk/gamM
+    calc3(fvd) = kmod*fvk/gamM
     val E0d = E|"0,d" is "obliczeniowy moduł sprężystości wzdłuż włókien" unit "Pa"
-    calc(E0d) = E0mean/gamM
+    calc3(E0d) = E0mean/gamM
     val E90d = E|"90,d" is "obliczeniowy moduł sprężystości w poprzek włókien" unit "Pa"
-    calc(E90d) = E90mean/gamM
+    calc3(E90d) = E90mean/gamM
     val Gdd = G|"d" is "obliczeniowy moduł odkształcenia postaciowego" unit "Pa"
-    calc(Gdd) = Gmean/gamM
+    calc3(Gdd) = Gmean/gamM
     val wlasciwosciMechaniczneObliczeniowe = Seq(fmd,ft0d,ft90d,fc0d,fc90d,fvd,E0d,E90d,Gdd)
     
     val lc = l|c is "długość wyboczeniowa" unit "m"
-    calc(lc) = mic*l0
+    calc2(lc) = mic*l0
     val betac = beta|c is "współczynnik prostoliniowości elementów wg 6.29 [1]"
-    calc(betac) = 0.2
+    calc2(betac) = 0.2
     
     val Kser = K|"ser" is "moduł podatności łączników mechanicznych dla stanu granicznego nośności (SGN) wg tablicy 7.1 [1]" unit "N/m"
     calc(Kser) = ((rhom^1.5)*deff*0.001)/23
@@ -199,20 +206,20 @@ class SlupDrewnianyZlozonyWkrety {
     calc(xiS) = (Fcd*100)/Fmax
     val nosnoscObliczeniowa = Seq(lc,betac,Ief,lambdaeff,lambdarel,kmin,kc,sigmac0d,NRc,Fmax,xiS)
     
-    val lambdac = lambda|"c" is "smukłość słupa połączonego niepodatnie"
-    calc(lambdac) = lc/imin
-    val lambdarel2 = lambda|("rel",2) is "smukłość względna słupa połączonego niepodatnie"
-    calc(lambdarel2) = (lambdac/PI)*sqrt(fc0k/E005)
-    val kmin2 = k|("min",2) is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego"
-    calc(kmin2) = 0.5*(1+betac*(lambdarel2-0.3)+(lambdarel2^2))
-    val kc2 = k|(c,2) is "współczynnik wyboczeniowy dla  słupa połączonego niepodatnie"
-    calc(kc2) = 1/(kmin2+sqrt((kmin2^2)-(lambdarel2^2)))
-    val NRc2 = N|("R,c",2) is "nośność obliczeniowa na ściskanie słupa połączonego niepodatnie" unit "N"
-    calc(NRc2) = fc0d*A
-    val Fmax2 = F|("max",2) is "maksymalna osiowa siła ściskająca dla słupa połączonego niepodatnie" unit "N"
-    calc(Fmax2) = kc2*NRc2
-    val deltaJW = delta|"p/n" is "strata nośności maksymalnej słupa spowodowana zastosowaniem łączników podatnych" unit "%"
-    calc(deltaJW) = ((Fmax2-Fmax)/Fmax2)*100
+    val lambdac = lambda|"c" is "smukłość słupa"
+    calc2(lambdac) = lc/imin
+    val lambdarel2 = lambda|("rel","'") is "smukłość względna słupa"
+    calc2(lambdarel2) = (lambdac/PI)*sqrt(fc0k/E005)
+    val kmin2 = k|("min","'") is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego"
+    calc2(kmin2) = 0.5*(1+betac*(lambdarel2-0.3)+(lambdarel2^2))
+    val kc2 = k|("c","'") is "współczynnik wyboczeniowy"
+    calc2(kc2) = 1/(kmin2+sqrt((kmin2^2)-(lambdarel2^2)))
+    val NRc2 = N|("R,c","'") is "nośność obliczeniowa na ściskanie" unit "N"
+    calc2(NRc2) = fc0d*A
+    val Fmax2 = F|("max","'") is "maksymalna osiowa siła ściskająca" unit "N"
+    calc2(Fmax2) = kc2*NRc2
+    val deltaJW = delta|"1" is "strata nośności maksymalnej słupa spowodowana zastosowaniem łączników podatnych" unit "%"
+    calc2(deltaJW) = ((Fmax2-Fmax)/Fmax2)*100
     val nosnoscSlupaNiepodatnie = Seq(lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,deltaJW)
     
     val Vd = V|"d" is "siła ścinająca wg C.5 [1]" unit "N"
@@ -252,13 +259,34 @@ class SlupDrewnianyZlozonyWkrety {
     
     val nosnoscLacznikow = Seq(Fi,kef,betal,fhk,MyRk,FvRka,FvRkb,FvRkc,FvRkd,FvRke,FvRkf,FvRk,FvRd)
     
+    val arec = a|"rec" is "długość boku słupa kwadratowego"
+    val Sec2 = Kwadrat("rec",arec)
+    val calc4 = Calculation("slup kwadratowy jednorodny")
+    calc4(arec) = 0.138
+    calc4(A) = Sec2.A
+    calc4 add calc2
+    calc4 add calc3
+    calc4 add Sec2
+    val Aof1 = calc.future(A)
+    val Fmaxof1 = calc.future(Fmax)
+    val xi2 = xi|"2" is "stosunek nośności na ściskanie słupa kwadratowego i zaprojektowanego" unit "%"
+    calc4(xi2) = (Fmax2/Fmaxof1)*100
+    val delta2 = delta|"2" is "zmiana pola przekroju słupa wielogałęziowego w stosunku do słupa kwadratowego o zbliżonej niegorszej nośności" unit "%"
+    calc4(delta2) = ((Aof1-Sec2.A)/Aof1)*100
+    
+    val przekrojKwadratowy = Seq(arec,Sec2.A,Sec2.Imin,Sec2.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)
+    
+    
     val LE = "&nbsp;&le;&nbsp;"
     val ARROW = "&nbsp;&rArr;&nbsp;"
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,
         Chapter("",
-            Section("Ćwiczenie projektowe nr 1 z \"Konstrukcji Drewnianych\". Autor: Artur Opala 61315. Wrocław 2010/2011"),
+        	Section(
+            	Section("Ćwiczenie projektowe nr 1 z \"Konstrukcji Drewnianych\". Semestr zimowy 2010/2011."),
+        		Section("Autor: Artur Opala, album nr 61315. Prowadzący: dr inż. Tomasz Nowak, Instytut Budownictwa Politechiki Wrocławskiej.")
+        	),
             Section(""),
             NumSection("Zadanie",
                 Section(styleComment,"Słup wielogałęziowy z drewna litego klasy C27 łączonego na wkręty SPAX&reg; T-STAR T40(8mm)."),
@@ -266,7 +294,8 @@ class SlupDrewnianyZlozonyWkrety {
                 Section(styleComment,"Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.3.1.3."),
                 NumSection("Normy i literatura",
                 	Section(styleComment," [1] Norma PN-EN 1995-1-1:2010 \"Eurokod 5. Projektowanie konstrukcji drewnianych. Część 1-1: Postanowienia ogólne. Reguły ogólne i reguły dotyczące budynków\""),
-                	Section(styleComment," [2] Aprobata ITB AT-15-7343/2007 \"Wkręty samowiercące SPAX&reg; do konstrukcji drewnianych\"")
+                	Section(styleComment," [2] Aprobata ITB AT-15-7343/2007 \"Wkręty samowiercące SPAX&reg; do konstrukcji drewnianych\""),
+                	Section(styleComment," [3] Norma PN-EN 338:2009")
                 ),
                 NumSection("Dane wejściowe",Evaluate(calc,daneWejsciowe:_*))
            ),
@@ -275,23 +304,34 @@ class SlupDrewnianyZlozonyWkrety {
                 NumSection("Przyjęte łączniki",Evaluate(calc,przyjeteLaczniki:_*)),
                 NumSection("Właściwości geometryczne przekroju",Evaluate(calc,wlasciwosciGeometryczne:_*)),
                 NumSection("Współczynniki",Evaluate(calc,wspolczynnikiCzesciowe:_*)),
-                NumSection("Właściwości mechaniczne charakterystyczne dla drewna litego klasy C27",Evaluate(calc,wlasciwosciMechaniczneCharakterystyczne:_*)),
+                NumSection("Właściwości mechaniczne charakterystyczne dla drewna litego klasy C27 wg [3]",Evaluate(calc,wlasciwosciMechaniczneCharakterystyczne:_*)),
                 NumSection("Właściwości mechaniczne obliczeniowe dla 2 klasy użytkowania i obciążeń długotrwałych",Evaluate(calc,wlasciwosciMechaniczneObliczeniowe:_*))),
            NumSection("Sprawdzenie stanów granicznych nośności wg PN-EN 1995-1-1",
                 NumSection("Obliczenie sztywności zastępczej",Evaluate(calc,sztywnoscZastepcza:_*)),
                 NumSection("Sprawdzenie nośności na ściskanie",Evaluate(calc,nosnoscObliczeniowa:_*)),
                 Section(styleWarunek,"Warunek C.1 [1] jest spełniony: ",
-                                Symb(sigmac0d),LE,Symb(kc),Symb(fc0d),ARROW,Result(calc,sigmac0d),"Pa",LE,Result(calc,kc*fc0d),"Pa"),
-                NumSection("Porównanie obliczonej nośności z nośnością słupa z elementami połączonymi niepodatnie",Evaluate(calc,nosnoscSlupaNiepodatnie:_*)),
+                                Symb(sigmac0d),LE,Symb(kc),Symb(fc0d),ARROW,Result(calc,sigmac0d),LE,Result(calc,kc*fc0d)),
 				NumSection("Sprawdzenie nośności środnika na ścinanie",Evaluate(calc,nosnoscScinanie:_*)),
 				Section(styleWarunek,"Warunek 6.13 [1] jest spełniony: ",
-                                Symb(tau2max),LE,Symb(fvd),ARROW,Result(calc,tau2max),"Pa",LE,Result(calc,fvd),"Pa"),
+                                Symb(tau2max),LE,Symb(fvd),ARROW,Result(calc,tau2max),LE,Result(calc,fvd)),
 				NumSection("Sprawdzenie nośności łączników (wkrętów)",Evaluate(calc,nosnoscLacznikow:_*)),
 				Section(styleWarunek,"Warunek nośności wkręta jest spełniony: ",
-                                Symb(Fi),LE,Symb(FvRd),ARROW,Result(calc,Fi),"N",LE,Result(calc,FvRd),"N")
+                                Symb(Fi),LE,Symb(FvRd),ARROW,Result(calc,Fi),LE,Result(calc,FvRd))
 			),
-			Section(style1.marginTop(30),""),
-			Section("Koniec obliczeń.")
+			NumSection("Badania porównawcze",
+				NumSection("Porównanie ze słupem wielogałęziowym z elementów połączonych niepodatnie (klejonych)",Evaluate(calc,nosnoscSlupaNiepodatnie:_*)),
+				NumSection("Porównanie ze słupem jednorodnym kwadratowym o zbliżonej nośności na ściskanie",Evaluate(calc4,przekrojKwadratowy:_*)),
+				NumSection("Wnioski",
+					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem klejonym wykazało ",Result(calc,round(deltaJW,RoundingMode.HALF)),
+					"% utratę nośności ze względu na podatność łączników."),
+					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem jednorodnym kwadratowym o zbliżonej nośności wykazało ",Result(calc4,round(delta2,RoundingMode.HALF)),
+					"% stratę na przekroju słupa wielogałęziowego. Zastosowanie słupa o przekroju kwadratowym przy zadanym obciążeniu byłoby bardziej uzasadnione.")
+				)
+			),
+			Section(style1.marginTop(20),""),
+			Section("Koniec obliczeń."),
+			Section(style1.marginTop(20),""),
+			Section(style1.useAlign("right"),"Opracował: Artur Opala")
         )
     )
     

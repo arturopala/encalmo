@@ -68,7 +68,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
         }
 	    node.element match {
     		case s: Symbol => output.symbol(s)
-    		case c: Constant[_] => output.symbol(c.s)
+    		case sl: SymbolLike => output.symbol(sl.symbol)
     		case n: Number => output.mn(n)
     		case o: Operation => {
     			writeOpeningBracketIfNeeded(node, o)
