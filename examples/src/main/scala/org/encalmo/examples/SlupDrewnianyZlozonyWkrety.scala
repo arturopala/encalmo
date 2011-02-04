@@ -73,9 +73,9 @@ class SlupDrewnianyZlozonyWkrety {
     val s1min = s|"1,min" is "minimalny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
     calc(s1min) = (5+5)*d
     val s1 = s|"1" is "przyjęty rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
-    calc(s1) = 115
+    calc(s1) = 60
     val nh = n|"h" is "przyjęta ilość wkrętów w rzędzie na szerokości półki" unit "szt."
-    calc(nh) = 2
+    calc(nh) = 1
     val np = n|"p" is "ilość płaszczyzn styku środnika z półką wg B.1.3(1) [1]"
     calc(np) = 2
     val s1eff = s|"1,eff" is "efektywny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
@@ -94,7 +94,7 @@ class SlupDrewnianyZlozonyWkrety {
     calc(t2) = 6*d
     val lw = l|"w" is "minimalna długość łącznika" unit "mm"
     calc(lw) = (b1*1000)+t2
-    val przyjeteLaczniki = Seq(d,deff,s1,nh,np,s1eff,s2,s3c,s3t,s4c,s4t,t2,lw)
+    val przyjeteLaczniki = Seq(d,deff,s1min,s1,nh,np,s1eff,s2,s3c,s3t,s4c,s4t,t2,lw)
     
     val kmod = k|"mod" is """współczynnik modyfikujący efekt czasu trwania obciążenia i zmiany wilgotności materiału,
  przyjęty dla 2 klasy użytkowania i oddziaływania długotrwałego z Tab. 3.1 [1]"""
