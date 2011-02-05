@@ -36,7 +36,7 @@ class SlupDrewnianyZlozonyWkrety {
     val b2 = BasicSymbols.b|2 is "szerokość przekroju środnika" unit "m"
     calc(b2) = 0.032
     val h2 = BasicSymbols.h|2 is "wysokość przekroju środnika" unit "m"
-    calc(h2) = 0.10
+    calc(h2) = 0.16
     val b = BasicSymbols.b is "szerokość całkowita przekroju złożonego" unit "m"
     calc(b) = b2+2*b1
     val h = BasicSymbols.h is "wysokość całkowita przekroju złożonego" unit "m"

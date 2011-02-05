@@ -66,11 +66,11 @@ extends DocumentComponent(null){
 		seq += Character.SPACE
 		seq += Character.RARROW
 		seq += Character.SPACE
-		seq += Symb(r1)
+		seq += Result(calc,leftExpression)
 		seq += Character.SPACE
 		seq += operator
 		seq += Character.SPACE
-		seq += Symb(r2)
+		seq += Result(calc,rightExpression)
 		seq
 	}
 	

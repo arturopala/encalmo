@@ -111,6 +111,7 @@ E:\Projekty\encalmo\document\src\test\scala\org\encalmo\document\DocumentTest.sc
 E:\Projekty\encalmo\document\src\test\scala\org\encalmo\document\DocumentTest.scala -> E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Section.scala
 E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Assertion.scala -> E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Symb.scala
 E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Assertion.scala -> E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\TextToTranslate.scala
+E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Assertion.scala -> E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Result.scala
 E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Assertion.scala -> E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Character.scala
 E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Assertion.scala -> E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\StylesConfig.scala
 E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Assertion.scala -> E:\Projekty\encalmo\document\src\main\scala\org\encalmo\document\Style.scala
