@@ -29,6 +29,10 @@ trait Symbol extends Expression {
     def |(sub:Symbol,int2:Int):Symbol = this | (sub,String.valueOf(int2))
     def |(int1:Int,sup:Symbol):Symbol = this | (String.valueOf(int1),sup)
     def |(int1:Int,int2:Int):Symbol = this | (String.valueOf(int1),String.valueOf(int2))
+    def at(id:Option[String]):Symbol = id match {
+    	case Some(i) => this.at(i)
+    	case None => this
+    }
     
     def hasSubscript:Boolean = subscript!=null
     def hasSuperscript:Boolean = superscript!=null

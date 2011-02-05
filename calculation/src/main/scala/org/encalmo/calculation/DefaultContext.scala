@@ -6,7 +6,7 @@ import org.encalmo.expression._
 /** 
  * Default context class
  */
-class DefaultContext(val id:String) extends LinkedHashMap[Symbol,Expression] with Context {
+class DefaultContext(val id:Option[String] = None) extends LinkedHashMap[Symbol,Expression] with Context {
 	
 	override def equals(a:Any) = {
 		a match {
@@ -19,7 +19,7 @@ class DefaultContext(val id:String) extends LinkedHashMap[Symbol,Expression] wit
 
 object DefaultContext {
 	
-	def apply(id:String) = new DefaultContext(id)
+	def apply(id:Option[String] = None) = new DefaultContext(id)
 	
 	def unapply(d:DefaultContext) = Some(d.id)
 }

@@ -14,7 +14,7 @@ trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
     var parent:Option[A] = None
     
     for (f <- children) {
-        f.parent = Some(this.asInstanceOf[A])
+        f.parent = Some(this)
     }
     
     /** Nearest parent component of the type A */

@@ -119,4 +119,13 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		attr("column-width",width,unit)
 		end
 	}
+	
+	def append(ch:Character) = {
+		super.append(ch.text match {
+			case Character.SPACE.text => "&nbsp;"
+			case Character.LE.text => "&le;"
+			case Character.RARROW.text => "&rArr;"
+			case _ => ch.text
+		})
+	}
 }

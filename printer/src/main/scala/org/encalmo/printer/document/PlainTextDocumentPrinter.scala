@@ -43,6 +43,8 @@ extends Traveler[DocumentComponent] {
 		sco.get
 	}
 	
+	lazy val translator = new Translator(locale)
+	
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
 	val SEP = "\r\n"
@@ -98,6 +100,12 @@ extends Traveler[DocumentComponent] {
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
+			case ch:Character => {
+				write(ch.text)
+			}
+			case ttt:TextToTranslate => {
+				write(translator.translate(ttt.text))
+			}
 			case tc:TextContent => {
 				if(tc.textContent!=null){
 					write(tc.textContent)
@@ -159,6 +167,10 @@ extends Traveler[DocumentComponent] {
 			    //minus
 			    canNewLine = true
 			    //writeLineEnd
+			}
+			case a:Assertion => {
+				val s = Section(a.style,a.evaluate:_*)
+				s.travel(traveler = this);
 			}
 			case _ =>
 		}

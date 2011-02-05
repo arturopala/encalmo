@@ -89,12 +89,16 @@ object Evaluate {
         new Evaluate(null,null,null,true,1,calc,expr:_*)
     }
 	
-	def apply(isForceLineBreak:Boolean, calc:Calculation, expr:Expression*) = {
-		new Evaluate(null,null,null,isForceLineBreak,1,calc,expr:_*)
+	def apply(expr:Seq[Expression],calc:Calculation) = {
+        new Evaluate(null,null,null,true,1,calc,expr:_*)
+    }
+	
+	def apply(isPrintDescription:Boolean, calc:Calculation, expr:Expression*) = {
+		new Evaluate(null,null,null,isPrintDescription,1,calc,expr:_*)
 	}
 	
-	def apply(isForceLineBreak:Boolean, variant:Int, calc:Calculation, expr:Expression*) = {
-		new Evaluate(null,null,null,isForceLineBreak,variant,calc,expr:_*)
+	def apply(isPrintDescription:Boolean, variant:Int, calc:Calculation, expr:Expression*) = {
+		new Evaluate(null,null,null,isPrintDescription,variant,calc,expr:_*)
 	}
 	
 	def unapply(e:Evaluate) = Some(e.myStyle,e.styleOfResolved,e.styleOfEvaluated,e.calc,e.expr)

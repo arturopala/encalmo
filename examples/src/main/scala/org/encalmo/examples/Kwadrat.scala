@@ -3,13 +3,13 @@ package org.encalmo.examples
 import org.encalmo.expression._
 import org.encalmo.calculation._
 
-case class Kwadrat(override val id:String,a:Expression) extends Calculation(id) {
+class Kwadrat(id:Option[String],a:Expression) extends Calculation(id) {
 	
-	val A = Kwadrat.A at id
-    val Iz = Kwadrat.Iz at id
-    val Iy = Kwadrat.Iy at id
-    val Imin = Kwadrat.Imin at id
-    val imin = Kwadrat.imin at id
+	val A = symbol(Kwadrat.A)
+    val Iz = symbol(Kwadrat.Iz)
+    val Iy = symbol(Kwadrat.Iy)
+    val Imin = symbol(Kwadrat.Imin)
+    val imin = symbol(Kwadrat.imin)
 	
 	this(A) = a*a
     this(Iz) = (a^4)/12
@@ -20,6 +20,8 @@ case class Kwadrat(override val id:String,a:Expression) extends Calculation(id) 
 }
 
 object Kwadrat {
+	
+	def apply(id:String,a:Expression) = new Kwadrat(Option(id),a)
 	
 	val A = BasicSymbols.A is "pole powierzchni" unit "m²"
     val Iz = BasicSymbols.I|"z" is "moduł bezwładności względem osi Z" unit "m4"

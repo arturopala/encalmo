@@ -11,7 +11,7 @@ object Predefined {
 	
 	val layout = Layout().useLeftMargin(35).useRightMargin(15).useBottomMargin(10)
     
-    val style1 = DefaultStyle.fontSize(11).useSpaceBefore(1).useSpaceAfter(1).useDistanceBetweenStarts(212).useDistanceLabelSeparation(40)
+    val style1 = DefaultStyle.fontFamily("Stix").fontSize(11).useSpaceBefore(1).useSpaceAfter(1).useDistanceBetweenStarts(212).useDistanceLabelSeparation(40)
     val BOLD = style1.fontBold
     val ITALIC = style1.fontItalic
     val BLUE = new java.awt.Color(0,0,207)
@@ -33,9 +33,12 @@ object Predefined {
     stylesConfig(NUMSECT_LEVEL2) = style1.fontSmaller
     stylesConfig(NUMSECT_LEVEL3) = style1.fontSmaller.fontItalic
     stylesConfig(NUMSECT_LEVEL4) = style1.fontSmaller.fontSmaller.fontItalic
+    val styleWarunek:Style = style1.marginTop(5).marginBottom(5).marginLeft(23).useBackground(YELLOW).paddings(5)
+    stylesConfig(ASSERTION_TRUE) = styleWarunek
+    stylesConfig(ASSERTION_FALSE) = styleWarunek.fontBold.useColor(java.awt.Color.RED)
+    stylesConfig(ASSERTION_UNKNOWN) = styleWarunek.useBackground(java.awt.Color.ORANGE).useColor(java.awt.Color.RED)
     
     val styleDescription:Style = stylesConfig(EXPR_SYMB_DESCRIPTION).get.marginLeft(23)
-    val styleWarunek:Style = style1.marginTop(5).marginBottom(5).marginLeft(23).useBackground(YELLOW).paddings(5)
     val styleComment = style1.fontSmaller.marginLeft(20)
     
 }

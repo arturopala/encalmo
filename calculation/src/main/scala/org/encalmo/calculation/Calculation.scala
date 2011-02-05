@@ -7,7 +7,7 @@ import org.encalmo.expression._
 /** 
  * Calculation
  */
-class Calculation(val id:String) extends LinkedHashSet[ExpressionResolver] with ContextSet {
+class Calculation(val id:Option[String] = None) extends LinkedHashSet[ExpressionResolver] with ContextSet {
 	
 	val context = new DefaultContext(id)
 	val cache = new LinkedHashMap[Symbol,Expression]
@@ -15,18 +15,12 @@ class Calculation(val id:String) extends LinkedHashSet[ExpressionResolver] with 
 	this.add(context)
 	
 	/**
-	 * Maps symbol to expression in the internal context
+	 * Maps the symbol to the expression in the internal context
 	 */
-	def put(s:Symbol,e:Expression):Option[Expression] = context.put(s,e)
+	def put(s:Symbol,e:Expression):Option[Expression] = context.put(symbol(s),e)
 	
-	/**
-	 * Maps symbol to expression in the internal context
-	 */
 	def put(t:(Symbol,Expression)):Option[Expression] = put(t._1 ,t._2)
 	
-	/**
-     * Maps symbol to expression in the internal context
-     */
 	def update(s:Symbol,e:Expression) = put(s,e)
 	
 	/**
@@ -97,12 +91,34 @@ class Calculation(val id:String) extends LinkedHashSet[ExpressionResolver] with 
 	override def hasExpression(s:Symbol):Boolean = {
 		cache.get(s).isDefined || this.find(c => c.hasExpression(s)).isDefined
 	}
+	
+	/**
+	 * Returns symbol with context index
+	 */
+	def symbol(s:Symbol):Symbol = {
+		id match {
+			case Some(i) => {
+				s.contextId match {
+					case Some(currId) => {
+						if(!currId.contains(i)){
+							s.at(i)
+						}else{
+							s
+						}
+					}
+					case None => s.at(i)
+				}
+			}
+			case None => s
+		}
+	}
 
 
 }
 
 object Calculation{
 	
-	def apply(id:String) = new Calculation(id)
+	def apply():Calculation = new Calculation()
+	def apply(index:String):Calculation = new Calculation(Option(index))
 	
 }

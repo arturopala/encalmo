@@ -36,6 +36,7 @@ extends Traveler[DocumentComponent] {
 	val mathOutput = output.toMathMLOutput
 	val ept = new MathMLExpressionPrinterTraveler(mathOutput)
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
+	lazy val translator = new Translator(locale)
 	
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
@@ -198,6 +199,12 @@ extends Traveler[DocumentComponent] {
 						output.appendBlockStyleAttributes(s.style, styleStack.top)
 						output.body
 					}
+					case ch:Character => {
+						output.append(ch)
+					}
+					case ttt:TextToTranslate => {
+						output.append(translator.translate(ttt.text))
+					}
 					case t:TextContent => {
 						if(t.myStyle!=null){
 							output.start(INLINE)
@@ -231,6 +238,10 @@ extends Traveler[DocumentComponent] {
 						if(!ess.isEmpty){
 							blockExprPrintStrategy.print(node,expr,ess)
 						}
+					}
+					case a:Assertion => {
+						val s = Section(a.style,a.evaluate:_*)
+						s.travel(traveler = this);
 					}
 					case _ => {}
 				}

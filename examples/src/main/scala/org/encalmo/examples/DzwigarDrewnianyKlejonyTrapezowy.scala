@@ -14,8 +14,8 @@ class DzwigarDrewnianyKlejonyTrapezowy {
     
     import BasicSymbols._
     
-    val LE = "&nbsp;&le;&nbsp;"
-    val ARROW = "&nbsp;&rArr;&nbsp;"
+    val LE = Character.LE
+    val ARROW = Character.RARROW
     
     val calc = Calculation("1")
     

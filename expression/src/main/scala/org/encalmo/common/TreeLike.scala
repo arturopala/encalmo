@@ -48,26 +48,39 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
      * Travels internal structure of the expression 
      * @param t traveler
      */
-  	override def travel(parentNode:Node[A] = null, traveler:Traveler[A], position:Int=0):Unit = {
-		val n = Node(parentNode,this,position)
-		traveler.onEnter(n)
+  	final def travel(parentNode:Node[A] = null, traveler:Traveler[A], position:Int=0):Unit = {
+		val node = Node(parentNode,this,position)
+		traveler.onEnter(node)
+		val children = this.children
 		if(!children.isEmpty){
-			val zip:Seq[((A, A), Int)] = (children.+:(null.asInstanceOf[A])).zip(children.:+(null.asInstanceOf[A])).zipWithIndex
-			zip.foreach(z => {
-				val e = z._1._2 //current node
-				val pe = z._1._1 //previous node
-				val i = z._2 //position index
-				if(e!=null){
-					if(pe!=null){
-						traveler.onBetweenChildren(n,pe,e)
-					}
-					traveler.onBeforeChildEnter(n,i,e)
-					e.travel(n,traveler,i)
-					traveler.onAfterChildExit(n,i,e)
-				}
-			})
+			children.size match {
+				case 1 => travelChild(node,children(0),traveler)
+				case 2 => travel2Children(node,children(0),children(1),traveler)
+				case _ => travelNChildren(node,children,traveler)
+			}
+			
 		}
-		traveler.onExit(n)
+		traveler.onExit(node)
+  	}
+  	
+  	private def travelChild(node:Node[A],child:A,traveler:Traveler[A],position:Int = 0):Unit = {
+		traveler.onBeforeChildEnter(node,position,child)
+		child.travel(node,traveler,position)
+		traveler.onAfterChildExit(node,position,child)
+  	}
+  	
+  	private def travel2Children(node:Node[A],child1:A,child2:A,traveler:Traveler[A]):Unit = {
+		travelChild(node,child1,traveler,0)
+		traveler.onBetweenChildren(node,child1,child2)
+		travelChild(node,child2,traveler,1)
+  	}
+  	
+  	private def travelNChildren(node:Node[A],children:Seq[A],traveler:Traveler[A]):Unit = {
+		travelChild(node,children(0),traveler,0)
+		for(x <- 1 to children.size-1){
+			traveler.onBetweenChildren(node,children(x-1),children(x))
+			travelChild(node,children(x),traveler,x)
+	  	}
   	}
   	
   	/**

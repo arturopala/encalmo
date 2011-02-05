@@ -14,9 +14,9 @@ class SlupDrewnianyZlozonyWkrety {
     
     import BasicSymbols._
     
-    val calc = Calculation("zadanie")
-    val calc2 = IndexedCalculation("2")
-    val calc3 = Calculation("drewno")
+    val calc = Calculation()
+    val calc2 = Calculation("2")
+    val calc3 = Calculation()
     
     calc add calc2
     calc add calc3
@@ -36,7 +36,7 @@ class SlupDrewnianyZlozonyWkrety {
     val b2 = BasicSymbols.b|2 is "szerokość przekroju środnika" unit "m"
     calc(b2) = 0.032
     val h2 = BasicSymbols.h|2 is "wysokość przekroju środnika" unit "m"
-    calc(h2) = 0.16
+    calc(h2) = 0.10
     val b = BasicSymbols.b is "szerokość całkowita przekroju złożonego" unit "m"
     calc(b) = b2+2*b1
     val h = BasicSymbols.h is "wysokość całkowita przekroju złożonego" unit "m"
@@ -276,9 +276,8 @@ class SlupDrewnianyZlozonyWkrety {
     
     val przekrojKwadratowy = Seq(arec,Sec2.A,Sec2.Imin,Sec2.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)
     
-    
-    val LE = "&nbsp;&le;&nbsp;"
-    val ARROW = "&nbsp;&rArr;&nbsp;"
+    val LE = Character.LE
+    val ARROW = Character.RARROW
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,
@@ -309,14 +308,11 @@ class SlupDrewnianyZlozonyWkrety {
            NumSection("Sprawdzenie stanów granicznych nośności wg PN-EN 1995-1-1",
                 NumSection("Obliczenie sztywności zastępczej",Evaluate(calc,sztywnoscZastepcza:_*)),
                 NumSection("Sprawdzenie nośności na ściskanie",Evaluate(calc,nosnoscObliczeniowa:_*)),
-                Section(styleWarunek,"Warunek C.1 [1] jest spełniony: ",
-                                Symb(sigmac0d),LE,Symb(kc),Symb(fc0d),ARROW,Result(calc,sigmac0d),LE,Result(calc,kc*fc0d)),
+                AssertionLE("Warunek C.1 [1]",calc,sigmac0d,kc*fc0d),
 				NumSection("Sprawdzenie nośności środnika na ścinanie",Evaluate(calc,nosnoscScinanie:_*)),
-				Section(styleWarunek,"Warunek 6.13 [1] jest spełniony: ",
-                                Symb(tau2max),LE,Symb(fvd),ARROW,Result(calc,tau2max),LE,Result(calc,fvd)),
+				AssertionLE("Warunek 6.13 [1]",calc,tau2max,fvd),
 				NumSection("Sprawdzenie nośności łączników (wkrętów)",Evaluate(calc,nosnoscLacznikow:_*)),
-				Section(styleWarunek,"Warunek nośności wkręta jest spełniony: ",
-                                Symb(Fi),LE,Symb(FvRd),ARROW,Result(calc,Fi),LE,Result(calc,FvRd))
+				AssertionLE("Warunek nośności wkręta",calc,Fi,FvRd)
 			),
 			NumSection("Badania porównawcze",
 				NumSection("Porównanie ze słupem wielogałęziowym z elementów połączonych niepodatnie (klejonych)",Evaluate(calc,nosnoscSlupaNiepodatnie:_*)),

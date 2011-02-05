@@ -32,19 +32,6 @@ trait Operation2 extends Operation {
 	  val vr = r.map(f);
 	  if(vl==l && vr==r) f(this) else f(copy(vl,vr))
   }
-  
-  final override def travel(parent:Node[Expression] = null,traveler:Traveler[Expression], position:Int=0):Unit = {
-	  val n = Node(parent,this,position)
-	  traveler.onEnter(n)
-	  traveler.onBeforeChildEnter(n,0,l)
-	  l.travel(n,traveler,0)
-	  traveler.onAfterChildExit(n,0,l)
-	  traveler.onBetweenChildren(n,l,r);
-	  traveler.onBeforeChildEnter(n,1,r)
-	  r.travel(n,traveler,1)
-	  traveler.onAfterChildExit(n,1,r)
-	  traveler.onExit(n)
-  }
 
 }
 

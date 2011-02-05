@@ -8,7 +8,8 @@ import scala.collection.mutable.Map
  */
 case class StylesConfig(
 		var expressions:ExprStylesConfig = ExprStylesConfig(),
-		var numsections:NumSectionStylesConfig = NumSectionStylesConfig()
+		var numsections:NumSectionStylesConfig = NumSectionStylesConfig(),
+		var assertions:AssertionsStylesConfig = AssertionsStylesConfig()
 	)extends DocumentComponent(null) with NonVisualComponent {
 	
 	def update(sym:StylesConfigSymbols.Value,style:Style) = {
@@ -33,6 +34,9 @@ case class StylesConfig(
 			case StylesConfigSymbols.NUMSECT_LEVEL7 => numsections = numsections.copy(level7 = Option(style))
 			case StylesConfigSymbols.NUMSECT_LEVEL8 => numsections = numsections.copy(level8 = Option(style))
 			case StylesConfigSymbols.NUMSECT_LEVEL9 => numsections = numsections.copy(level9 = Option(style))
+			case StylesConfigSymbols.ASSERTION_FALSE => assertions = assertions.copy(iffalse = Option(style))
+			case StylesConfigSymbols.ASSERTION_TRUE => assertions = assertions.copy(iftrue = Option(style))
+			case StylesConfigSymbols.ASSERTION_UNKNOWN => assertions = assertions.copy(unknown = Option(style))
 			case _ => Unit
 		}
 	}
@@ -59,6 +63,9 @@ case class StylesConfig(
             case StylesConfigSymbols.NUMSECT_LEVEL7 => numsections.level7
             case StylesConfigSymbols.NUMSECT_LEVEL8 => numsections.level8
             case StylesConfigSymbols.NUMSECT_LEVEL9 => numsections.level9
+            case StylesConfigSymbols.ASSERTION_FALSE => assertions.iffalse
+			case StylesConfigSymbols.ASSERTION_TRUE => assertions.iftrue
+			case StylesConfigSymbols.ASSERTION_UNKNOWN => assertions.unknown
             case _ => None
         }
     }
@@ -73,6 +80,7 @@ object StylesConfigSymbols extends Enumeration {
 	type StylesConfigSymbols = Value
 	val EXPRESSION,EXPR_ROW,EXPR_SYMBOL,EXPR_UNRESOLVED,EXPR_SUBSTITUTED,EXPR_PARTIALLY_EVALUATED,EXPR_EVALUATED,EXPR_NUMBERS,EXPR_SYMB_DESCRIPTION = Value
 	val NUMSECTION,NUMSECT_LEVEL0,NUMSECT_LEVEL1,NUMSECT_LEVEL2,NUMSECT_LEVEL3,NUMSECT_LEVEL4,NUMSECT_LEVEL5,NUMSECT_LEVEL6,NUMSECT_LEVEL7,NUMSECT_LEVEL8,NUMSECT_LEVEL9 = Value
+	val ASSERTION_TRUE,ASSERTION_FALSE,ASSERTION_UNKNOWN = Value
 }
 
 /**
@@ -131,5 +139,10 @@ case class NumSectionStylesConfig(
 		8 -> level8,
 		9 -> level9
 	)
-	
 }
+
+case class AssertionsStylesConfig(
+		iftrue:Option[Style] = None,
+		iffalse:Option[Style] = None,
+		unknown:Option[Style] = None
+	)

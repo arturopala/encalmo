@@ -12,6 +12,13 @@ import org.encalmo.calculation._
  * @author artur.opala
  */
 class DocumentTest extends AssertionsForJUnit {
+	
+	@Test def testTranslator1() {
+		val t = Translator(new java.util.Locale("PL"))
+		assertEquals("spełniony",t.translate("verified"))
+		assertEquals("nie spełniony",t.translate("not verified"))
+		assertEquals("nieokreślony",t.translate("unknown"))
+	}
     
     @Test def testDocument1() {
         

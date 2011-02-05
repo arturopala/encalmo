@@ -3,7 +3,7 @@ package org.encalmo.calculation
 import org.encalmo.expression._
 
 @org.junit.Ignore
-class TestContext(id:String) extends DefaultContext(id) {
+class TestContext(id:String) extends DefaultContext() {
 	
 	import BasicSymbols._
 	

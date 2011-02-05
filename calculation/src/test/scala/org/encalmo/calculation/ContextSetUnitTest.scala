@@ -11,7 +11,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 	import BasicSymbols._
 	
 	@Test def testContextSet1() {
-		val calc = Calculation("test")
+		val calc = Calculation()
 		val context1 = TestContext2("1",1)
 		val context2 = TestContext2("2",2)
 		calc += context1
@@ -53,8 +53,8 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testContextSet2() {
-		val calc = Calculation("test")
-		val context1 = DefaultContext("1")
+		val calc = Calculation()
+		val context1 = DefaultContext()
 		calc add context1
 		calc put (x, 3)
 		calc put (y, 4)
@@ -66,8 +66,8 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testContextSet3() {
-		val calc = Calculation("test")
-		val context1 = DefaultContext("1")
+		val calc = Calculation()
+		val context1 = DefaultContext()
 		calc add context1
 		calc put (x, 3)
 		calc put (y, 4)
@@ -82,8 +82,8 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 	
 	//circular reference test
 	@Test def testContextSet4() {
-		val calc = Calculation("test")
-		val context1 = DefaultContext("1")
+		val calc = Calculation()
+		val context1 = DefaultContext()
 		calc add context1
 		calc put (x, 3)
 		calc put (y, 4)
@@ -102,7 +102,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testContextSet5() {
-		val calc = Calculation("test")
+		val calc = Calculation()
 		val context1 = TestContext2("1",1)
 		calc += context1
 		calc.context put (x, 3)
@@ -115,7 +115,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testContextSet6() {
-		val calc = Calculation("test")
+		val calc = Calculation()
 		val context1 = TestContext2("1",1)
 		calc += context1
 		calc.context put (x, 3)

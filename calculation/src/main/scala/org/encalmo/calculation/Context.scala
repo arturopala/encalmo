@@ -9,7 +9,7 @@ import org.encalmo.expression._
  */
 trait Context extends Map[Symbol,Expression] with ExpressionResolver{
 	
-	def id:String
+	def id:Option[String]
 	
 	/**
 	 * Returns expression mapped to that symbol or None
@@ -19,15 +19,19 @@ trait Context extends Map[Symbol,Expression] with ExpressionResolver{
 		oe match {
 			case Some(x) => oe
 			case None => {
-				s.contextId match {
-					case Some(currId) => {
-						if(!currId.contains(id)){
-							getExpression(s.at(id))
-						}else{
-							None
+				if(id.isDefined){
+					s.contextId match {
+						case Some(currId) => {
+							if(!currId.contains(id.get)){
+								getExpression(s.at(id.get))
+							}else{
+								None
+							}
 						}
+						case None => getExpression(s.at(id.get))
 					}
-					case None => getExpression(s.at(id))
+				} else {
+					None
 				}
 				
 			}
@@ -42,15 +46,19 @@ trait Context extends Map[Symbol,Expression] with ExpressionResolver{
 		oe match {
 			case Some(x) => oe
 			case None => {
-				s.contextId match {
-					case Some(currId) => {
-						if(!currId.contains(id)){
-							getRawExpression(s.at(id))
-						}else{
-							None
+				if(id.isDefined){
+					s.contextId match {
+						case Some(currId) => {
+							if(!currId.contains(id.get)){
+								getRawExpression(s.at(id.get))
+							}else{
+								None
+							}
 						}
+						case None => getRawExpression(s.at(id.get))
 					}
-					case None => getRawExpression(s.at(id))
+				}else{
+					None
 				}
 				
 			}
@@ -61,10 +69,18 @@ trait Context extends Map[Symbol,Expression] with ExpressionResolver{
 	 * Returns true if exists expression mapped to that symbol
 	 */
 	override def hasExpression(s:Symbol):Boolean = {
-		this.contains(s) || (s.contextId match {
-				case Some(currId) => this.contains(s.at(currId+","+id))
-				case None => this.contains(s.at(id))
-			})
+		this.contains(s) || (id.isDefined && (s.contextId match {
+			case Some(currId) => {
+				if(!currId.contains(id.get)){
+					this.contains(s.at(id.get))
+				}else{
+					false
+				}
+			}
+			case None => {
+				this.contains(s.at(id.get))
+			}
+		}))
 	}
   
 }

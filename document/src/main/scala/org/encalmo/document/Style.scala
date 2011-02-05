@@ -42,6 +42,7 @@ case class Style(
 	def fontBigger:Style = copy(font = font++)
 	def fontSmaller:Style = copy(font = font--)
 	def fontSize(d:Int):Style = copy(font = font.fontSize(d))
+	def fontFamily(f:String):Style = copy(font = font.useFamily(f))
 	
 	def useAlign(d:String) = copy(text = text.useAlign(d))
 	def useDecoration(d:String) = copy(text = text.useDecoration(d))

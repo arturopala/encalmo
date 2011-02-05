@@ -32,12 +32,13 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	override def open = {
 		start(MATH)
 		declareNamespace("http://www.w3.org/1998/Math/MathML")
-		attr("mode","inline")
+		//attr("displaystyle","true")
+		//attr("scriptlevel","0")
+		//attr("scriptsizemultiplier","0.5")
+		//attr("scriptminsize","3pt")
 		body
-		start(MROW)
-		attr("scriptminsize","3pt")
-		attr("scriptsizemultiplier","0.5")
-		body
+		//start(MROW)
+		//body
 		if(prefix!=null & prefix!=""){
 			startb(MTEXT)
 			append(ENTITY_THICK_SPACE)
@@ -65,7 +66,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			append(ENTITY_THICK_SPACE)
 			end(MTEXT)
 		}
-		end(MROW)
+		//end(MROW)
 		end(MATH)
 		prefix = null
 		suffix = null
