@@ -41,7 +41,7 @@ extends DocumentComponent(null){
 		}
 	}
 	
-	def evaluate:Seq[DocumentComponent] = {
+	def evaluate:(Option[Boolean],Seq[DocumentComponent]) = {
 		val seq:ListBuffer[DocumentComponent] = ListBuffer()
 		val r1 = calc.evaluate(leftExpression)
 		val r2 = calc.evaluate(rightExpression)
@@ -71,7 +71,7 @@ extends DocumentComponent(null){
 		seq += operator
 		seq += Character.SPACE
 		seq += Result(calc,rightExpression)
-		seq
+		(ob,seq)
 	}
 	
 }

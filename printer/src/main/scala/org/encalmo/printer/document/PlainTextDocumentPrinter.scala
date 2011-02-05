@@ -15,7 +15,15 @@ object PlainTextDocumentPrinter extends TextDocumentPrinter {
 	
 	override def print(input:Document,output:TextOutput = new TextOutput):TextOutput = {
 		val t = new PlainTextDocumentPrinterTraveler(output.asWriter, output.locale)
-		input.travel(traveler = t)
+		try{
+			input.travel(traveler = t)
+		}
+		catch {
+			case e => {
+				output.append("\r\n")
+				output.append(e.getClass.getName+": "+e.getMessage)
+			}
+		}
 		output
 	}
 
@@ -169,8 +177,14 @@ extends Traveler[DocumentComponent] {
 			    //writeLineEnd
 			}
 			case a:Assertion => {
-				val s = Section(a.style,a.evaluate:_*)
+				val result = a.evaluate
+				val s = Section(a.style,result._2:_*)
 				s.travel(traveler = this);
+				result._1 match {
+					case None => throw new IllegalStateException
+					case Some(b) if !b => throw new IllegalStateException("")
+					case _=>
+				}
 			}
 			case _ =>
 		}

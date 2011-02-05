@@ -240,7 +240,8 @@ extends Traveler[DocumentComponent] {
 						}
 					}
 					case a:Assertion => {
-						val s = Section(a.style,a.evaluate:_*)
+						val result = a.evaluate
+						val s = Section(a.style,result._2:_*)
 						s.travel(traveler = this);
 					}
 					case _ => {}
