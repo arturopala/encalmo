@@ -70,6 +70,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
     		case s: Symbol => output.symbol(s)
     		case sl: SymbolLike => output.symbol(sl.symbol)
     		case n: Number => output.mn(n)
+    		case tv: TextValue => output.mtext(tv.text)
     		case o: Operation => {
     			writeOpeningBracketIfNeeded(node, o)
     			o match {

@@ -220,7 +220,10 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		else if (s.hasSuperscript) startb(MSUP)
 		else if (s.hasSubscript) startb(MSUB)
 		//core symbol
-		mi(BasicSymbols.toMathML(s.name))
+		s match {
+			case sl:SymbolLocalized => mi(BasicSymbols.toMathML(translate(s.name)))
+			case _ => mi(BasicSymbols.toMathML(s.name))
+		}
 		if (s.hasSubscript) symbol(s.subscript)
 		if (s.hasSuperscript) symbol(s.superscript)
 		if (s.hasSubAndSupscript) end(MSUBSUP)

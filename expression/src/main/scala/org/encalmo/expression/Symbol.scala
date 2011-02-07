@@ -90,6 +90,18 @@ case class SymbolWithDescription(override val symbol:Symbol, val description:Str
     
 }
 
+case class SymbolLocalized(name:String, override val contextId:Option[Seq[String]] = None) extends Symbol {
+	
+	def |(sub:Symbol):Symbol = this
+    def |(sub:Symbol, sup:Symbol):Symbol = this
+    def !(sup:Symbol):Symbol = this
+    def +(n:String):Symbol = this
+    def under(under:Symbol):Symbol = this
+    def over(over:Symbol):Symbol = this
+    def at(id:String):Symbol = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
+	
+}
+
 /**
  * Symbol companion object
  * @author artur.opala

@@ -27,6 +27,8 @@ package object expression {
 	implicit def long2Number(l:Long):Number = l match{case _ if l==0 =>ZERO; case _ if l==1 =>ONE; case _=>Number(new Real(l))}
 	implicit def float2Number(f:Float):Number = f match{case _ if f==0 =>ZERO; case _ if f==1 =>ONE; case _=>Number(new Real(f))}
 	implicit def double2Number(d:Double):Number = d match{case _ if d==0 =>ZERO; case _ if d==1 =>ONE; case _=>Number(new Real(d))}
+	
+	def text(s:String):TextValue = TextValue(s)
 	  
 	implicit def exprFx2Expression(m:()=>Expression):Expression = new ExprFx(m)
 	implicit def realFx2Expression(m:()=>Real):Expression = new RealFx(m)

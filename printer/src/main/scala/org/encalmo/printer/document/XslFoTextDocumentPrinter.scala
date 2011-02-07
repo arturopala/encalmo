@@ -1,7 +1,7 @@
 package org.encalmo.printer.document
 
 import org.encalmo.common._
-import org.encalmo.expression._
+import org.encalmo.expression.SymbolWithDescription
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
@@ -24,7 +24,7 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
 
 }
 
-/**
+/** 
  * Travels and prints document as xsl-fo text 
  * @author artur.opala
  */
@@ -36,7 +36,6 @@ extends Traveler[DocumentComponent] {
 	val mathOutput = output.toMathMLOutput
 	val ept = new MathMLExpressionPrinterTraveler(mathOutput)
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
-	lazy val translator = new Translator(locale)
 	
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
@@ -203,7 +202,7 @@ extends Traveler[DocumentComponent] {
 						output.append(ch)
 					}
 					case ttt:TextToTranslate => {
-						output.append(translator.translate(ttt.text))
+						output.append(output.translate(ttt.text))
 					}
 					case t:TextContent => {
 						if(t.myStyle!=null){

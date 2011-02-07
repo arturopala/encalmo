@@ -10,29 +10,27 @@ import org.encalmo.fop.FOPHelper
 import org.encalmo.document.StylesConfigSymbols._
 import org.encalmo.examples.Predefined._
 
-class BetonSprezonyDzwigarTypuI {
+class StalZbiornik {
     
     import BasicSymbols._
-    import Concrete._
     
-    val daneMaterialowe,zestawienieObciazen,geometriaDzwigara,charakterystykiGeometryczne:Seq[Expression] = Seq()
+    val daneWejsciowe,daneMaterialowe,zestawienieObciazen,geometriaDzwigara,charakterystykiGeometryczne:Seq[Expression] = Seq()
     
     val calc = Calculation()
-    val beton = Concrete("C50/60")
-    calc add beton
     
-    val daneWejsciowe = Seq(C_class,fck,Ecm)
+    
+    
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,
         Chapter("",
         	Section(
-            	Section("Ćwiczenie projektowe z przedmiotu \"Betonowe Konstrukcje Sprężone\". Semestr zimowy 2010/2011."),
-        		Section("Autor: Artur Opala, album nr 61315. Prowadzący: dr inż. Aleksy Łodo, Instytut Budownictwa Politechiki Wrocławskiej.")
+            	Section("Ćwiczenie projektowe z przedmiotu \"Konstrukcje Metalowe\". Semestr zimowy 2010/2011."),
+        		Section("Autor: Artur Opala, album nr 61315. Prowadzący: dr inż. Wojciech Lorenc, Instytut Budownictwa Politechiki Wrocławskiej.")
         	),
             Section(""),
             NumSection("Zadanie",
-                Section(styleComment,"Dźwigar dachowy z betonu sprężonego."),
+                Section(styleComment,"Zbiornik metalowy na paliwa płynne z dachem stałym kopułowym."),
                 NumSection("Normy i literatura",
                 	Section(styleComment," [1] Norma PN-EN 1995-1-1:2010 \"Eurokod 5. Projektowanie konstrukcji drewnianych. Część 1-1: Postanowienia ogólne. Reguły ogólne i reguły dotyczące budynków\""),
                 	Section(styleComment," [2] Aprobata ITB AT-15-7343/2007 \"Wkręty samowiercące SPAX&reg; do konstrukcji drewnianych\""),
@@ -83,8 +81,8 @@ class BetonSprezonyDzwigarTypuI {
         XslFoTextDocumentPrinter.print(doc1,output)
         output.close
         output.printConsole
-        output.saveToFile(new java.io.File("target/test-results/ks-dzwigar.fo"))
-        FOPHelper.buildPDF(output.getResult, "target/test-results/ks-dzwigar.pdf")
+        output.saveToFile(new java.io.File("target/test-results/km-zbiornik.fo"))
+        FOPHelper.buildPDF(output.getResult, "target/test-results/km-zbiornik.pdf")
     }
     
     @Test def printText:Unit = {

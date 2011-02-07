@@ -1,7 +1,7 @@
 package org.encalmo.printer.document
 
 import org.encalmo.common._
-import org.encalmo.expression._
+import org.encalmo.expression.SymbolWithDescription
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
@@ -14,7 +14,7 @@ import scala.collection.mutable.LinkedHashMap
 object PlainTextDocumentPrinter extends TextDocumentPrinter {
 	
 	override def print(input:Document,output:TextOutput = new TextOutput):TextOutput = {
-		val t = new PlainTextDocumentPrinterTraveler(output.asWriter, output.locale)
+		val t = new PlainTextDocumentPrinterTraveler(output)
 		try{
 			input.travel(traveler = t)
 		}
@@ -33,10 +33,12 @@ object PlainTextDocumentPrinter extends TextDocumentPrinter {
  * Travels and prints document as plain text 
  * @author artur.opala
  */
-class PlainTextDocumentPrinterTraveler(w:java.io.Writer, locale:java.util.Locale = java.util.Locale.getDefault) 
+class PlainTextDocumentPrinterTraveler(output:TextOutput) 
 extends Traveler[DocumentComponent] {
 	
-	val ept = new PlainTextExpressionPrinterTraveler(w, locale)
+	val w = output.asWriter
+	val locale = output.locale
+	val ept = new PlainTextExpressionPrinterTraveler(output)
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
 	/** Section counters map */
 	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
@@ -50,8 +52,6 @@ extends Traveler[DocumentComponent] {
 		}
 		sco.get
 	}
-	
-	lazy val translator = new Translator(locale)
 	
 	val SPACE = " "
 	val COMMA = dfs.getPatternSeparator
@@ -112,7 +112,7 @@ extends Traveler[DocumentComponent] {
 				write(ch.text)
 			}
 			case ttt:TextToTranslate => {
-				write(translator.translate(ttt.text))
+				write(output.translate(ttt.text))
 			}
 			case tc:TextContent => {
 				if(tc.textContent!=null){

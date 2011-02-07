@@ -1,11 +1,15 @@
 package org.encalmo.printer
 
+import org.encalmo.document.Translator
+
 /**
  * Text printer output class
  * @param locale - a Locale object representing a specific geographical, political, or cultural region
  * @author artur.opala
  */
 class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val buffer:StringBuilder = new StringBuilder) extends Output[String] {
+	
+	lazy val translator = new Translator(locale)
 	
 	val CRLF = "\r\n"
 	
@@ -82,6 +86,8 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 			}
 		}
 	}
+	
+	def translate(s:String) = translator.translate(s)
 
 }
 

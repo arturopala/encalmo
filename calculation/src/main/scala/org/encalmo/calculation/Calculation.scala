@@ -9,7 +9,7 @@ import org.encalmo.expression._
  */
 class Calculation(val id:Option[String] = None) extends LinkedHashSet[ExpressionResolver] with ContextSet {
 	
-	val context = new DefaultContext(id)
+	val context = new MapContext(id)
 	val cache = new LinkedHashMap[Symbol,Expression]
 	
 	this.add(context)

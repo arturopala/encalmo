@@ -84,3 +84,9 @@ trait Context extends Map[Symbol,Expression] with ExpressionResolver{
 	}
   
 }
+
+object Context {
+	
+	def apply() = MapContext()
+	
+}
