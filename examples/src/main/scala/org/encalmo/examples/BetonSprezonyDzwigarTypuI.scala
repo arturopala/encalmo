@@ -7,7 +7,6 @@ import org.encalmo.document._
 import org.encalmo.printer._
 import org.encalmo.printer.document._
 import org.encalmo.fop.FOPHelper
-import org.encalmo.document.StylesConfigSymbols._
 import org.encalmo.examples.Predefined._
 
 class BetonSprezonyDzwigarTypuI {
@@ -21,7 +20,7 @@ class BetonSprezonyDzwigarTypuI {
     val beton = Concrete("C50/60")
     calc add beton
     
-    val daneWejsciowe = Seq(C_class,fck,Ecm)
+    val daneWejsciowe:Seq[Expression] = Seq(C_class,fck,Ecm)
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,

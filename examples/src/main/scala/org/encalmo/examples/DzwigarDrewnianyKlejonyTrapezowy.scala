@@ -93,7 +93,7 @@ niedoskonałości modelowania i odchyłki wymiarowe, przyjęty dla drewna klejon
     val fvd = f|"vd" is "wytrzymałość obliczeniowa na ścinanie" unit "Pa"; calc(fvd) = kmod*fvk/gamM
     val E0d = E|"0,d" is "obliczeniowy moduł sprężystości wzdłuż włókien" unit "Pa"; calc(E0d) = E0mean/gamM
     val E90d = E|"90,d" is "obliczeniowy moduł sprężystości w poprzek włókien" unit "Pa"; calc(E90d) = E90mean/gamM
-    val Gdd = G|"mean" is "obliczeniowy moduł odkształcenia postaciowego" unit "Pa"; calc(Gdd) = Gmean/gamM
+    val Gdd = G|"d" is "obliczeniowy moduł odkształcenia postaciowego" unit "Pa"; calc(Gdd) = Gmean/gamM
     
     val sigmam0d = sigma|"m,0,d" is "obliczeniowe naprężenie zginające" unit "Pa"
     val xmax = x|sigma is "miejsce wystąpienia największych naprężeń normalnych w przęśle liczone od podpory A" unit "m"

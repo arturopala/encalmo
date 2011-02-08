@@ -1,7 +1,7 @@
 package org.encalmo.printer.document
 
 import org.encalmo.common._
-import org.encalmo.expression.SymbolWithDescription
+import org.encalmo.expression.Symbol
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
@@ -202,7 +202,7 @@ extends Traveler[DocumentComponent] {
 						output.append(ch)
 					}
 					case ttt:TextToTranslate => {
-						output.append(output.translate(ttt.text))
+						output.append(Translator.translate(ttt.text,locale,ttt.dictionary))
 					}
 					case t:TextContent => {
 						if(t.myStyle!=null){
@@ -302,7 +302,6 @@ extends Traveler[DocumentComponent] {
 	)extends ExpressionPrintStrategy {
     	
     	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
-    		val doPrintDescription:Boolean = expr.isPrintDescription && ess.forall(es => es.headOption.exists(ept => ept.expression.isInstanceOf[SymbolWithDescription]))
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
     		val styleConfigOpt = expr.parentStylesConfig 
     		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor(_))
@@ -327,7 +326,7 @@ extends Traveler[DocumentComponent] {
 			for(es <- ess){
 				output.startb(TABLE_ROW)
 				val bullet = sc.map(_.current.mkString("",".",".")).getOrElse(null)
-				writeExpressionSeq(es, expr.style, doPrintDescription, bullet, tableRowStyle, false)
+				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle, false)
 				sc.foreach(_.next)
 				output.end(TABLE_ROW)
 			}
@@ -338,6 +337,10 @@ extends Traveler[DocumentComponent] {
     	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle:Option[Style], secondTableRow:Boolean){
 		    if(!se.isEmpty){
 	        	val etp1 = se.head
+	        	val isPrintDescription = printDescription && (etp1.expression match {
+	        		case s:Symbol => s.hasDescription
+	        		case _ => false
+	        	})
 	        	val paddingTop = tableRowStyle match {
 	        		case Some(x) => x.paragraph.spaceBefore 
 	        		case None => 3
@@ -348,14 +351,14 @@ extends Traveler[DocumentComponent] {
 	        	}
 	        	val indent:Int = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
 		    	val isCell1 = bullet!=null
-		        val isCell2 = printDescription && etp1.expression.isInstanceOf[SymbolWithDescription]
+		        val isCell2 = isPrintDescription
                 val descStyle = etp1.stylesConfig match {
 		            case Some(x) => x.expressions.symbolDescription.getOrElse(styleStack.top)
 		            case None => styleStack.top
 		        }
 	        	val leafs:Int = se.map(x => x.expression.countTreeLeafs).sum
 	        	val twoRows:Boolean = !secondTableRow && (leafs>15 || (etp1.expression match {
-	        		case sd:SymbolWithDescription => sd.description.size>150
+	        		case sd:Symbol if sd.hasDescription => sd.description.get.size>150
 	        		case _ => false
 	        	}))
 	        	val twoTableRows = !secondTableRow && (isCell2 && twoRows && leafs<15)
@@ -382,7 +385,9 @@ extends Traveler[DocumentComponent] {
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
 		        	output.attr("keep-together.within-page","always")
 			        output.body
-			        if(!secondTableRow) output.append(etp1.expression.asInstanceOf[SymbolWithDescription].description)
+			        if(!secondTableRow) {
+			        	output.append(etp1.expression.asInstanceOf[Symbol].description.get)
+			        }
 			        output.end(BLOCK)
 			        output.end(TABLE_CELL)
 		    	}
@@ -400,7 +405,7 @@ extends Traveler[DocumentComponent] {
 			        output.attr("margin-top",paddingTop,"pt")
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
 			        output.body
-			        output.append(etp1.expression.asInstanceOf[SymbolWithDescription].description)
+			        output.append(etp1.expression.asInstanceOf[Symbol].description.get)
 			        output.end(BLOCK)
 		        }
 				if(twoTableRows){

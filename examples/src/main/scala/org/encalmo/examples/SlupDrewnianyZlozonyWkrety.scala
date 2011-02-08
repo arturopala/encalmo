@@ -77,7 +77,7 @@ class SlupDrewnianyZlozonyWkrety {
     calc(deff) = 6.0
     val s1min = s|"1,min" is "minimalny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
     calc(s1min) = (5+5)*d
-    val s1 = s|"1" is "przyjęty rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
+    val s1 = s|"1" is "przyjęty rozstaw wkrętów w szeregu wzdłuż włókien " unit "mm"
     calc(s1) = 60
     val nh = n|"h" is "przyjęta ilość wkrętów w rzędzie na szerokości półki" unit "szt."
     calc(nh) = 1
@@ -85,7 +85,7 @@ class SlupDrewnianyZlozonyWkrety {
     calc(np) = 2
     val s1eff = s|"1,eff" is "efektywny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
     calc(s1eff) = s1/(nh*np)
-    val s2 = s|1 is "minimalny rozstaw wkrętów w poprzek włókien wg tablicy 8.2 [1]" unit "mm"
+    val s2 = s|"2" is "minimalny rozstaw wkrętów w poprzek włókien wg tablicy 8.2 [1]" unit "mm"
     calc(s2) = 5*d
     val s3c = s|"3,c" is "minimalna odległość wkręta od końca nieobciążonego" unit "mm"
     calc(s3c) = 10*d
@@ -205,23 +205,7 @@ class SlupDrewnianyZlozonyWkrety {
     val xiS = BasicSymbols.xi|"c" is "wytężenie słupa na ściskanie" unit "%"
     calc(xiS) = (Fcd*100)/Fmax
     val nosnoscObliczeniowa = Seq(lc,betac,Ief,lambdaeff,lambdarel,kmin,kc,sigmac0d,NRc,Fmax,xiS)
-    
-    val lambdac = lambda|"c" is "smukłość słupa"
-    calc2(lambdac) = lc/imin
-    val lambdarel2 = lambda|("rel","'") is "smukłość względna słupa"
-    calc2(lambdarel2) = (lambdac/PI)*sqrt(fc0k/E005)
-    val kmin2 = k|("min","'") is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego"
-    calc2(kmin2) = 0.5*(1+betac*(lambdarel2-0.3)+(lambdarel2^2))
-    val kc2 = k|("c","'") is "współczynnik wyboczeniowy"
-    calc2(kc2) = 1/(kmin2+sqrt((kmin2^2)-(lambdarel2^2)))
-    val NRc2 = N|("R,c","'") is "nośność obliczeniowa na ściskanie" unit "N"
-    calc2(NRc2) = fc0d*A
-    val Fmax2 = F|("max","'") is "maksymalna osiowa siła ściskająca" unit "N"
-    calc2(Fmax2) = kc2*NRc2
-    val deltaJW = delta|"1" is "strata nośności maksymalnej słupa spowodowana zastosowaniem łączników podatnych" unit "%"
-    calc2(deltaJW) = ((Fmax2-Fmax)/Fmax2)*100
-    val nosnoscSlupaNiepodatnie = Seq(lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,deltaJW)
-    
+
     val Vd = V|"d" is "siła ścinająca wg C.5 [1]" unit "N"
     calc(Vd) = Fcd/(120*kc) or (InRange(30,lambdaeff,60) then (Fcd/(3600*kc))) or (GreaterThan(lambdaeff,60) then (Fcd/(60*kc)))
     val tau2max = tau|"2,max" is "maksymalne naprężenia ścinające w środniku wg B.9 [1]" unit "Pa"
@@ -259,6 +243,23 @@ class SlupDrewnianyZlozonyWkrety {
     
     val nosnoscLacznikow = Seq(Fi,kef,betal,fhk,MyRk,FvRka,FvRkb,FvRkc,FvRkd,FvRke,FvRkf,FvRk,FvRd)
     
+    val lambdac = lambda|"c" is "smukłość słupa"
+    calc2(lambdac) = lc/imin
+    val lambdarel2 = lambda|("rel","'") is "smukłość względna słupa"
+    calc2(lambdarel2) = (lambdac/PI)*sqrt(fc0k/E005)
+    val kmin2 = k|("min","'") is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego"
+    calc2(kmin2) = 0.5*(1+betac*(lambdarel2-0.3)+(lambdarel2^2))
+    val kc2 = k|("c","'") is "współczynnik wyboczeniowy"
+    calc2(kc2) = 1/(kmin2+sqrt((kmin2^2)-(lambdarel2^2)))
+    val NRc2 = N|("R,c","'") is "nośność obliczeniowa na ściskanie" unit "N"
+    calc2(NRc2) = fc0d*A
+    val Fmax2 = F|("max","'") is "maksymalna osiowa siła ściskająca" unit "N"
+    calc2(Fmax2) = kc2*NRc2
+    val deltaJW = delta|"1" is "strata nośności maksymalnej słupa spowodowana zastosowaniem łączników podatnych" unit "%"
+    calc2(deltaJW) = ((Fmax2-Fmax)/Fmax2)*100
+    
+    val nosnoscSlupaNiepodatnie = Seq(lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,deltaJW)
+    
     val arec = a|"rec" is "długość boku słupa kwadratowego"
     val Sec2 = Kwadrat("rec",arec)
     val calc4 = Calculation("slup kwadratowy jednorodny")
@@ -275,9 +276,6 @@ class SlupDrewnianyZlozonyWkrety {
     calc4(delta2) = ((Aof1-Sec2.A)/Aof1)*100
     
     val przekrojKwadratowy = Seq(arec,Sec2.A,Sec2.Imin,Sec2.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)
-    
-    val LE = Character.LE
-    val ARROW = Character.RARROW
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,

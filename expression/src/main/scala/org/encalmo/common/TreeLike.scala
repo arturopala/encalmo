@@ -31,15 +31,15 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
 	 * @return fully tranformed structure or lasty transformed in case of max loop count overflow
 	 */
 	@tailrec
-	final def mapAll(f:A=>A, c:Int = 0):A = {
+	final def mapAll(f:A=>A, c:Int = 0, source:A = this):A = {
 		val e:A = map(f)
 		if(c>=MAX_MAP_ALL_LOOP_COUNT){
-			e
+			throw new CycleDetectedException[A](source,source.toString+" -> "+e.toString)
 		}else{
 			if(this.eq(e)) {
 				return e
 			}else{
-				e.mapAll(f, c+1)
+				e.mapAll(f, c+1, source)
 			}
 		}
 	}

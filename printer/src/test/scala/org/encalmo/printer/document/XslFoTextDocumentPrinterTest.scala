@@ -8,13 +8,13 @@ import org.encalmo.calculation._
 import org.encalmo.document._
 import org.encalmo.printer._
 import org.encalmo.fop.FOPHelper
-import org.encalmo.document.StylesConfigSymbols._
 
 class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	
 	@Test def test1() {
 		
 		import BasicSymbols._
+		import org.encalmo.document.StylesConfigSymbols._
 		
 		val font1 = DefaultFontStyle.++.makeBold
 		val font2 = DefaultFontStyle.makeItalic
@@ -40,11 +40,11 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		
 		calc1 put (d1 -> expr1)
 		
-		val a1 = Symbol1("Ar")
-		val a2 = Symbol2("Ar",BasicSymbols.a)
-		val a3 = Symbol3("Ar",BasicSymbols.a,BasicSymbols.beta)
-		val a4 = Symbol4("Ar",BasicSymbols.a,BasicSymbols.b,BasicSymbols.gamma)
-		val a5 = Symbol5("Ar",BasicSymbols.a,BasicSymbols.b,BasicSymbols.c,BasicSymbols.d)
+		val a1 = Symbol("Ar")
+		val a2 = Symbol("Ar",BasicSymbols.a)
+		val a3 = Symbol("Ar",BasicSymbols.a,BasicSymbols.beta)
+		val a4 = Symbol("Ar",BasicSymbols.a,BasicSymbols.b,BasicSymbols.gamma)
+		val a5 = Symbol("Ar",BasicSymbols.a,BasicSymbols.b,BasicSymbols.c,BasicSymbols.d)
 		val dd = alpha!z
 		val bb = a5|dd
 		val expr2 = (a1+a2+a3+a4+a5)*(bb-1.3)+(sqrt(c^(2-r))/(sin(4.126)+phiv))+root(l*k,f-1)/cbrt(.123^f)+max(a1,a2,a3,a4)
@@ -222,6 +222,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	@Test def test2() {
 		
 		import BasicSymbols._
+		import org.encalmo.document.StylesConfigSymbols._
 		
 		val c1 = Calculation("1") 
 		

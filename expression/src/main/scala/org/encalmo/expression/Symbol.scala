@@ -3,47 +3,59 @@ package org.encalmo.expression
 import scala.collection.immutable.StringOps
 
 /**
- * Symbol
+ * Symbol expression
  * @author artur.opala
  */
-trait Symbol extends Expression {
+class Symbol(
+		
+	val name:String,
+    val subscript:Option[Symbol] = None,
+    val superscript:Option[Symbol] = None,
+    val underscript:Option[Symbol] = None,
+    val overscript:Option[Symbol] = None,
+    val description:Option[String] = None,
+    val unit:Option[String] = None,
+    val dictionary:Option[String] = None,
+    val contextId:Option[Seq[String]] = None,
+    val localized:Boolean = false
 
-    def name:String
-    def subscript:Symbol = null
-    def superscript:Symbol = null
-    def underscript:Symbol = null
-    def overscript:Symbol = null
-    
-    def contextId:Option[Seq[String]] = None
+) extends Expression {
 
-    def |(sub:Symbol):Symbol
-    def |(sub:Symbol, sup:Symbol):Symbol
-    def !(sup:Symbol):Symbol
-    def +(n:String):Symbol
-    def under(under:Symbol):Symbol
-    def over(over:Symbol):Symbol
-    def at(id:String):Symbol
+	/** Sets subscript */
+    def |(sub:Symbol):Symbol = copy(subscript = Option(sub))
+    /** Sets subscript and superscript */
+    def |(sub:Symbol, sup:Symbol):Symbol = copy(subscript = Option(sub),superscript = Option(sup))
+    /** Sets superscript */
+    def !(sup:Symbol):Symbol = copy(superscript = Option(sup))
+    /** Adds string to the name */
+    def +(n:String):Symbol = copy(name = name+n)
+    /** Sets underscript */
+    def under(under:Symbol):Symbol = copy(underscript = Option(under))
+    /** Sets overscript */
+    def over(over:Symbol):Symbol = copy(overscript = Option(over))
 
     def !(int:Int):Symbol = this ! String.valueOf(int)
     def |(int:Int):Symbol = this | String.valueOf(int)
     def |(sub:Symbol,int2:Int):Symbol = this | (sub,String.valueOf(int2))
     def |(int1:Int,sup:Symbol):Symbol = this | (String.valueOf(int1),sup)
     def |(int1:Int,int2:Int):Symbol = this | (String.valueOf(int1),String.valueOf(int2))
-    def at(id:Option[String]):Symbol = id match {
-    	case Some(i) => this.at(i)
-    	case None => this
-    }
     
-    def hasSubscript:Boolean = subscript!=null
-    def hasSuperscript:Boolean = superscript!=null
+    def hasSubscript:Boolean = subscript.isDefined
+    def hasSuperscript:Boolean = superscript.isDefined
     def hasSubOrSupscript:Boolean = hasSubscript || hasSuperscript
     def hasSubAndSupscript:Boolean = hasSubscript && hasSuperscript
-    def hasUnderscript:Boolean = underscript!=null
-    def hasOverscript:Boolean = overscript!=null
+    def hasUnderscript:Boolean = underscript.isDefined
+    def hasOverscript:Boolean = overscript.isDefined
     def hasOverOrUnderscript:Boolean = hasUnderscript || hasOverscript
     def hasOverAndUnderscript:Boolean = hasUnderscript && hasOverscript
-
+    
+    def hasDescription:Boolean = description.isDefined
+    def hasUnit:Boolean = unit.isDefined
+    def hasDictionary:Boolean = dictionary.isDefined
+    
+    /** String representation of this Symbol  - first form*/
     lazy val face:String = name + forFace(subscript) + forFace(superscript) + forFace(underscript) + forFace(overscript)
+    /** String representation of this Symbol  - second form*/
     lazy val face2:String = new StringOps(name).filter(_ match {
             case ',' => false
             case '/' => false
@@ -51,55 +63,80 @@ trait Symbol extends Expression {
             case _ => true
         }) + forFace2(subscript) + forFace2(superscript) + forFace2(underscript) + forFace2(overscript)
     
-    private def forFace(script:Symbol) = if(script!=null) "{"+script.face+"}" else ""
-    private def forFace2(script:Symbol) = if(script!=null) script.face2 else ""
+    private def forFace(script:Option[Symbol]) = if(script.isDefined) "{"+script.get.face+"}" else ""
+    private def forFace2(script:Option[Symbol]) = if(script.isDefined) script.get.face2 else ""
 
-    def is(description:String):SymbolWithDescription = SymbolWithDescription(this,description)
-
-}
-
-/**
- * Symbol proxy abstract class
- * @author artur.opala
- */
-abstract class SymbolProxy(val symbol:Symbol) extends Symbol {
-    
-    override def name:String = symbol.name
-    override def subscript:Symbol = symbol.subscript
-    override def superscript:Symbol = symbol.superscript
-    override def underscript:Symbol = symbol.underscript
-    override def overscript:Symbol = symbol.overscript
-    override def contextId:Option[Seq[String]] = symbol.contextId
-}
-
-/**
- * Symbol with description and unit
- * @author artur.opala
- */
-case class SymbolWithDescription(override val symbol:Symbol, val description:String, val unit:String = "") extends SymbolProxy(symbol) {
-    
-    def unit(unit:String):SymbolWithDescription = SymbolWithDescription(symbol,description,unit)
-   
-    override def |(sub:Symbol):Symbol = copy(symbol = symbol | sub)
-    override def |(sub:Symbol, sup:Symbol):Symbol = copy(symbol = symbol | (sub,sup))
-    override def !(sup:Symbol):Symbol = copy(symbol = symbol | sup)
-    override def +(n:String):Symbol = copy(symbol = symbol + n)
-    override def under(under:Symbol):Symbol = copy(symbol = symbol.under(under))
-    override def over(over:Symbol):Symbol = copy(symbol = symbol.over(over))
-    override def at(id:String):Symbol = copy(symbol = symbol.at(id))
-    
-}
-
-case class SymbolLocalized(name:String, override val contextId:Option[Seq[String]] = None) extends Symbol {
-	
-	def |(sub:Symbol):Symbol = this
-    def |(sub:Symbol, sup:Symbol):Symbol = this
-    def !(sup:Symbol):Symbol = this
-    def +(n:String):Symbol = this
-    def under(under:Symbol):Symbol = this
-    def over(over:Symbol):Symbol = this
+    /** Adds id to the contextId sequence */
     def at(id:String):Symbol = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
-	
+    /** Sets description */
+    def is(description:String):Symbol = copy(description = Option(description))
+    /** Sets unit */
+    def unit(unit:String):Symbol = copy(unit = Option(unit))
+    /** Sets dictionary */
+    def dictionary(dict:String):Symbol = copy(dictionary = Option(dict))
+    /** Sets localized to true */
+    def makeLocalized:Symbol = copy(localized = true)
+    /** Copy entire symbol or selected attributes*/
+    def copy(
+		name:String = this.name,
+	    subscript:Option[Symbol] = this.subscript,
+	    superscript:Option[Symbol] = this.superscript,
+	    underscript:Option[Symbol] = this.underscript,
+	    overscript:Option[Symbol] = this.overscript,
+	    description:Option[String] = this.description,
+	    unit:Option[String] = this.unit,
+	    dictionary:Option[String] = this.dictionary,
+	    contextId:Option[Seq[String]] = this.contextId,
+	    localized:Boolean = this.localized) = {
+    		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,localized)
+    }
+    
+    override def equals(a:Any):Boolean = {
+    	a match {
+    		case s:Symbol => {
+    			s.name == name &&
+		    	(s.contextId == contextId) &&
+		    	(s.subscript == subscript) &&
+		    	(s.superscript == superscript) &&
+		    	(s.overscript == overscript) &&
+		    	(s.underscript == underscript)
+    		}
+    		case _ => false
+    	}
+    }
+    
+    override lazy val hashCode:Int = {
+		val prime = 31;
+		var result = 1;
+		result = prime * result + name.hashCode
+		subscript.map(x => result = prime * result + x.hashCode)
+		superscript.map(x => result = prime * result + x.hashCode)
+		underscript.map(x => result = prime * result + x.hashCode)
+		overscript.map(x => result = prime * result + x.hashCode)
+		contextId.map(x => result = prime * result + x.hashCode)
+		result
+	}
+    
+    override def toString:String = string
+    	
+	private lazy val string:String = {
+    	val sb = new StringBuilder
+    	sb.append("Symbol(name=\"")
+    	sb.append(name)
+    	sb.append("\"")
+    	subscript.map(x => {sb.append(",subscript=");sb.append(x.toString)})
+    	superscript.map(x => {sb.append(",superscript=");sb.append(x.toString)})
+    	underscript.map(x => {sb.append(",underscript=");sb.append(x.toString)})
+    	overscript.map(x => {sb.append(",overscript=");sb.append(x.toString)})
+    	description.map(x => {sb.append(",description=\"");sb.append(x.toString);sb.append("\"")})
+    	unit.map(x => {sb.append(",unit=\"");sb.append(x.toString);sb.append("\"")})
+    	dictionary.map(x => {sb.append(",dictionary=\"");sb.append(x.toString);sb.append("\"")})
+    	contextId.map(x => {sb.append(",contextId=");sb.append(x.toString)})
+    	if(localized)sb.append(",localized=true")
+		sb.append(")")
+		sb.toString
+    }
+
 }
 
 /**
@@ -108,66 +145,28 @@ case class SymbolLocalized(name:String, override val contextId:Option[Seq[String
  */
 object Symbol {
 	
-	def apply(char:Char):Symbol = new Symbol1(String.valueOf(char))
-	def apply(name:String):Symbol1 = new Symbol1(name)
-  	def apply(name:String,subscript:Symbol):Symbol2 = new Symbol2(name,subscript)
-	def apply(name:String,subscript:Symbol,superscript:Symbol):Symbol3 = new Symbol3(name,subscript,superscript)
-	def apply(name:String,subscript:Symbol,superscript:Symbol,underscript:Symbol):Symbol4 = new Symbol4(name,subscript,superscript,underscript)
-	def apply(name:String,subscript:Symbol,superscript:Symbol,underscript:Symbol,overscript:Symbol):Symbol5 = new Symbol5(name,subscript,superscript,underscript,overscript)
+	def apply(char:Char):Symbol = new Symbol(String.valueOf(char))
+	def apply(i:Int):Symbol = new Symbol(String.valueOf(i))
+	def apply(name:String):Symbol = new Symbol(name)
+  	def apply(name:String,subscript:Symbol):Symbol = new Symbol(name,Option(subscript))
+	def apply(name:String,subscript:Symbol,superscript:Symbol):Symbol = new Symbol(name,Option(subscript),Option(superscript))
+	def apply(name:String,subscript:Symbol,superscript:Symbol,underscript:Symbol):Symbol = new Symbol(name,Option(subscript),Option(superscript),Option(underscript))
+	def apply(name:String,subscript:Symbol,superscript:Symbol,underscript:Symbol,overscript:Symbol):Symbol = new Symbol(name,Option(subscript),Option(superscript),Option(underscript),Option(overscript))
   
+	def apply(
+		name:String,
+	    subscript:Option[Symbol] = None,
+	    superscript:Option[Symbol] = None,
+	    underscript:Option[Symbol] = None,
+	    overscript:Option[Symbol] = None,
+	    description:Option[String] = None,
+	    unit:Option[String] = None,
+	    dictionary:Option[String] = None,
+	    contextId:Option[Seq[String]] = None,
+	    localized:Boolean = false) = {
+			new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,localized)
+	}
+	
+	def unapply(s:Symbol) = Some(s.name,s.subscript,s.superscript)
+	
 }
-
-case class Symbol1(name:String, override val contextId:Option[Seq[String]] = None) extends Symbol {
-	override def toString = "Symbol("+name+")"
-	override def +(n:String):Symbol1 = this.copy(name = name+n)
-	override def |(s:Symbol):Symbol2 = Symbol2(name, s)
-	override def |(sub:Symbol,sup:Symbol):Symbol3 = Symbol3(name, sub, sup)
-	override def !(sup:Symbol):Symbol3 = Symbol3(name, null, sup)
-	override def under(under:Symbol):Symbol4 = Symbol4(name, null, null, under)
-	override def over(over:Symbol):Symbol5 = Symbol5(name, null, null, null, over)
-	override def at(id:String):Symbol1 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
-}
-
-case class Symbol2(name:String, override val subscript:Symbol, override val contextId:Option[Seq[String]] = None) extends Symbol {
-	override def toString = "Symbol("+name+","+subscript+")"
-	override def +(n:String):Symbol2 = this.copy(name = name+n)
-	override def |(s:Symbol):Symbol = Symbol2(name, s)
-	override def |(sub:Symbol,sup:Symbol):Symbol3 = Symbol3(name, sub, sup)
-	override def !(sup:Symbol):Symbol3 = Symbol3(name, subscript, sup)
-	override def under(under:Symbol):Symbol4 = Symbol4(name, subscript, null, under)
-	override def over(over:Symbol):Symbol5 = Symbol5(name, subscript, null, null, over)
-	override def at(id:String):Symbol2 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
-}
-
-case class Symbol3(name:String, override val subscript:Symbol, override val superscript:Symbol, override val contextId:Option[Seq[String]] = None) extends Symbol {
-	override def toString = "Symbol("+name+","+subscript+","+superscript+")"
-	override def +(n:String):Symbol3 = this.copy(name = name+n)
-	override def |(s:Symbol):Symbol3 = Symbol3(name, s, superscript)
-	override def |(sub:Symbol,sup:Symbol):Symbol3 = Symbol3(name, sub, sup)
-	override def !(sup:Symbol):Symbol3 = Symbol3(name, subscript, sup)
-	override def under(under:Symbol):Symbol4 = Symbol4(name, subscript, superscript, under)
-	override def over(over:Symbol):Symbol5 = Symbol5(name, subscript, superscript, null, over)
-	override def at(id:String):Symbol3 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
-}
-
-case class Symbol4(name:String, override val subscript:Symbol, override val superscript:Symbol, override val underscript:Symbol, override val contextId:Option[Seq[String]] = None) extends Symbol {
-	override def toString = "Symbol("+name+","+subscript+","+superscript+","+underscript+")"
-	override def +(n:String):Symbol4 = this.copy(name = name+n)
-	override def |(s:Symbol):Symbol4 = Symbol4(name, s, superscript, underscript)
-	override def |(sub:Symbol,sup:Symbol):Symbol4 = Symbol4(name, sub, sup, underscript)
-	override def !(sup:Symbol):Symbol4 = Symbol4(name, subscript, sup, underscript)
-	override def under(under:Symbol):Symbol4 = Symbol4(name, subscript, superscript, under)
-	override def over(over:Symbol):Symbol5 = Symbol5(name, subscript, superscript, underscript, over)
-	override def at(id:String):Symbol4 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
-} 
-
-case class Symbol5(name:String, override val subscript:Symbol, override val superscript:Symbol, override val underscript:Symbol, override val overscript:Symbol, override val contextId:Option[Seq[String]] = None) extends Symbol {
-	override def toString = "Symbol("+name+","+subscript+","+superscript+","+underscript+","+overscript+")"
-	override def +(n:String):Symbol5 = this.copy(name = name+n)
-	override def |(s:Symbol):Symbol5 = Symbol5(name, s, superscript, underscript, overscript)
-	override def |(sub:Symbol,sup:Symbol):Symbol5 = Symbol5(name, sub, sup, underscript, overscript)
-	override def !(sup:Symbol):Symbol5 = Symbol5(name, subscript, sup, underscript, overscript)
-	override def under(under:Symbol):Symbol4 = Symbol4(name, subscript, superscript, under)
-	override def over(over:Symbol):Symbol5 = Symbol5(name, subscript, superscript, underscript, over)
-	override def at(id:String):Symbol5 = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
-} 

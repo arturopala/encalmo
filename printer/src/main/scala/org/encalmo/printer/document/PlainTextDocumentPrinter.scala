@@ -1,7 +1,7 @@
 package org.encalmo.printer.document
 
 import org.encalmo.common._
-import org.encalmo.expression.SymbolWithDescription
+import org.encalmo.expression.Symbol
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
@@ -112,7 +112,7 @@ extends Traveler[DocumentComponent] {
 				write(ch.text)
 			}
 			case ttt:TextToTranslate => {
-				write(output.translate(ttt.text))
+				write(Translator.translate(ttt.text,locale,ttt.dictionary))
 			}
 			case tc:TextContent => {
 				if(tc.textContent!=null){
@@ -161,16 +161,23 @@ extends Traveler[DocumentComponent] {
 			    ess.foreach(es => {
 			        canNewLine = true;
 			        writeLineEnd;
-                    if(es.head.expression.isInstanceOf[SymbolWithDescription]){
-                        write(es.head.expression.asInstanceOf[SymbolWithDescription].description)
-                        plus
-                        canNewLine = true;
-                        writeLineEnd;
-                        writeExpression(es)
-                        minus
-                    }else{
-                    	writeExpression(es)
-                    }
+			        es.head.expression match {
+			        	case s:Symbol if s.hasDescription => {
+			        		if(s.hasDictionary){
+			        			write(Translator.translate(s.description.get,locale,s.dictionary.get))
+			        		}else{
+			        			write(s.description.get)
+			        		}
+	                        plus
+	                        canNewLine = true;
+	                        writeLineEnd;
+	                        writeExpression(es)
+	                        minus
+			        	}
+			        	case _ => {
+			        		writeExpression(es)
+			        	}
+			        }
 		        })
 			    //minus
 			    canNewLine = true

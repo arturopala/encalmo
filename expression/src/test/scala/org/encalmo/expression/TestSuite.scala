@@ -14,6 +14,7 @@ import org.junit.runners.Suite;
 	classOf[ExpressionUnitTest],
 	/*classOf[SelectionUnitTest],*/
 	classOf[OperationUnitTest],
-	classOf[TransformationsUnitTest]
+	classOf[TransformationsUnitTest],
+	classOf[ValueUnitTest]
 ))
 class TestSuite

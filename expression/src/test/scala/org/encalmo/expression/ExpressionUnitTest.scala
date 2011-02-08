@@ -117,21 +117,19 @@ class ExpressionUnitTest extends AssertionsForJUnit {
 	@Test def verify1() {
 		import Symbol._
 		val e1:Expression = 1/(r|1)
-		dumpRaw(e1)
-		assertEquals("Quot(Number(1.0),Symbol(r,Symbol(1)))", e1.toString)
+		assertEquals(Quot(Number(1.0),Symbol("r",Symbol("1"))), e1)
 	}
 	
 	@Test def verify2() {
 		import Symbol._
 		val e1:Expression = z-1/r
-		assertEquals("Diff(Symbol(z),Quot(Number(1.0),Symbol(r)))", e1.toString)
+		assertEquals(Diff(Symbol("z"),Quot(Number(1.0),Symbol("r"))), e1)
 	}
 	
 	@Test def verify3() {
 		import Symbol._
 		val e1:Expression = z-1/2d
-		//dumpRaw(e1)
-		assertEquals("Diff(Symbol(z),Number(0.5))", e1.toString)
+		assertEquals(Diff(Symbol("z"),Number(0.5)), e1)
 	}
 	
 }

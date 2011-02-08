@@ -4,7 +4,6 @@ package org.encalmo.document
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Symbol
 import org.encalmo.expression.Number
-import org.encalmo.expression.SymbolWithDescription
 import org.encalmo.calculation.Calculation
 
 /**
@@ -47,7 +46,7 @@ extends DocumentComponent(null){
 		val r2 = calc.evaluate(rightExpression)
 		val ob = assert(r1,r2)
 		if(text!=null){
-			seq += TextToTranslate(text)
+			seq += TextToTranslate(text,"document")
 			seq += Character.SPACE
 		}
 		seq += TextToTranslate(ob match {
@@ -56,7 +55,7 @@ extends DocumentComponent(null){
 				case false => "not_verified"
 			}
 			case None => "unknown"
-		})
+		},"document")
 		seq += Character.SPACE
 		seq += Symb(leftExpression)
 		seq += Character.SPACE

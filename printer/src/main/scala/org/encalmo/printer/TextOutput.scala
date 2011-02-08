@@ -9,8 +9,6 @@ import org.encalmo.document.Translator
  */
 class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val buffer:StringBuilder = new StringBuilder) extends Output[String] {
 	
-	lazy val translator = new Translator(locale)
-	
 	val CRLF = "\r\n"
 	
 	val asWriter:java.io.PrintWriter = new java.io.PrintWriter(new TextOutputWriter(buffer))
@@ -86,8 +84,6 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 			}
 		}
 	}
-	
-	def translate(s:String) = translator.translate(s)
 
 }
 

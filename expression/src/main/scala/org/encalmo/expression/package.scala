@@ -34,7 +34,6 @@ package object expression {
 	implicit def realFx2Expression(m:()=>Real):Expression = new RealFx(m)
 	
 	implicit def string2Symbol(string:String):Symbol = Symbol(string)
-	implicit def char2Symbol(char:Char):Symbol = Symbol(char)
 	
 	val console:java.io.PrintWriter = new java.io.PrintWriter(Console.out)
 	

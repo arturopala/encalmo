@@ -3,6 +3,7 @@ package org.encalmo.printer.expression
 import org.encalmo.printer._
 import org.encalmo.expression._
 import org.encalmo.common._
+import org.encalmo.document.Translator
 
 /**
  * Prints expressions as plain text 
@@ -38,7 +39,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
 	def writeSpace = w.write(' ');
 	def writeSymbol(s:Symbol) = {
 		s match {
-			case sl:SymbolLocalized => w.write(output.translate(s.face2))
+			case s:Symbol if (s.localized && s.hasDictionary) => w.write(Translator.translate(s.face2,locale,s.dictionary.get))
 			case _ => w.write(s.face2)
 		}
 	}

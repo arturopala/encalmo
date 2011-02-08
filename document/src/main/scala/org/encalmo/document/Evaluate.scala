@@ -7,7 +7,6 @@ import org.encalmo.expression.Transformations
 import org.encalmo.expression.Operation2
 import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
-import org.encalmo.expression.SymbolWithDescription
 import org.encalmo.calculation.Calculation
 
 /**
@@ -33,7 +32,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
 			}
 			e match {
-			    case sd:SymbolWithDescription => unit = sd.unit
+			    case s:Symbol if s.hasUnit => unit = s.unit.get
 			    case _ => 
 			}
 		}else{

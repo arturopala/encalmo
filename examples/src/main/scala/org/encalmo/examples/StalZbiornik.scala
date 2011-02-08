@@ -14,7 +14,7 @@ class StalZbiornik {
     
     import BasicSymbols._
     
-    val daneWejsciowe,daneMaterialowe,zestawienieObciazen,geometriaDzwigara,charakterystykiGeometryczne:Seq[Expression] = Seq()
+    val daneWejsciowe,daneMaterialowe,zestawienieObciazen,geometriaDzwigara,charakterystykiGeometryczne:Seq[Expression] = Seq.empty
     
     val calc = Calculation()
     

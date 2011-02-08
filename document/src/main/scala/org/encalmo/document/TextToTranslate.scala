@@ -3,7 +3,7 @@ package org.encalmo.document
 /**
  * TextToTranslate component class
  */
-class TextToTranslate(myStyle:Style, text:String) 
+class TextToTranslate(myStyle:Style, text:String, val dictionary:String) 
 extends Text(myStyle,text)
 
 /**
@@ -12,14 +12,14 @@ extends Text(myStyle,text)
  */
 object TextToTranslate{
 	
-	def apply(mystyle:Style, text:String) = {
-		new TextToTranslate(mystyle,text)
+	def apply(mystyle:Style, text:String, dictionary:String) = {
+		new TextToTranslate(mystyle,text,dictionary)
 	}
 	
-	def apply(text:String) = {
-		new TextToTranslate(null,text)
+	def apply(text:String, dictionary:String) = {
+		new TextToTranslate(null,text,dictionary)
 	}
 	
-	def unapply(t:TextToTranslate) = Some((t.myStyle,t.text))
+	def unapply(t:TextToTranslate) = Some((t.myStyle,t.text,t.dictionary))
 	
 }
