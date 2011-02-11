@@ -14,7 +14,9 @@ object Concrete extends LinkedHashMap[String,Concrete] {
 	
 	import BasicSymbols._
 	
-	val C_class = "concrete class"
+	val dictname = "concrete"
+	
+	val C_class = Symbol("concrete class").makeNonPrintable.dictionary(dictname)
 	val fck = f|"ck" is "charakterystyczna wytrzymałość walcowa na ściskanie betonu po 28 dniach" unit "Pa"
 	val fckcube = f|"ck,cube" is "charakterystyczna wytrzymałość na ściskanie betonu po 28 dniach oznaczona na próbkach sześciennych" unit "Pa"
 	val fcm = f|"cm" is "średnia wartość wytrzymałości walcowej betonu na ściskanie" unit "Pa"

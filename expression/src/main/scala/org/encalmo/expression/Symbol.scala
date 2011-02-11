@@ -1,5 +1,6 @@
 package org.encalmo.expression
 
+import org.encalmo.common.Translator
 import scala.collection.immutable.StringOps
 
 /**
@@ -17,7 +18,7 @@ class Symbol(
     val unit:Option[String] = None,
     val dictionary:Option[String] = None,
     val contextId:Option[Seq[String]] = None,
-    val localized:Boolean = false
+    override val printable:Boolean = true
 
 ) extends Expression {
 
@@ -53,19 +54,55 @@ class Symbol(
     def hasUnit:Boolean = unit.isDefined
     def hasDictionary:Boolean = dictionary.isDefined
     
-    /** String representation of this Symbol  - first form*/
-    lazy val face:String = name + forFace(subscript) + forFace(superscript) + forFace(underscript) + forFace(overscript)
-    /** String representation of this Symbol  - second form*/
+    /** Returns translated description 
+     * (if non strict than can return raw description)*/
+    def localizedDescription(locale:java.util.Locale, strict:Boolean = false):Option[String] = {
+    	dictionary match {
+			case Some(dict) => description match {
+	    		case Some(desc) => Translator.translate(desc,locale,dict).orElse(
+    				if(strict) None else description
+				)
+	    		case None => Translator.translate(face,locale,dict)
+			}
+			case None => if(strict) None else description
+    	}
+    }
+    /** Returns true if exists translated description of this Symbol 
+     * (if non strict than returns true for existing raw description) */
+    def hasLocalizedDescription(locale:java.util.Locale, strict:Boolean = false):Boolean = {
+    	dictionary match {
+			case Some(dict) => description match {
+	    		case Some(desc) => !strict || Translator.hasTranslation(desc,locale,dict)
+	    		case None => Translator.hasTranslation(face,locale,dictionary.get)
+			}
+			case None => !strict || hasDescription
+    	}
+    }
+    
+    /** Unique symbol face */
+    lazy val face:String = name + 
+    	Seq(forFace(overscript),forFace(underscript),forFace(superscript),forFace(subscript))
+    	.foldLeft[Option[String]](None)((l,r) => l match {
+    		case None => r
+    		case Some(sl) => r match {
+    			case None => Some("{}"+sl)
+    			case Some(sr) => Some(sr+sl)
+    		}
+    	}).getOrElse("")
+    	
+    /** Simplified symbol face */
     lazy val face2:String = new StringOps(name).filter(_ match {
             case ',' => false
             case '/' => false
             case '.' => false
             case _ => true
         }) + forFace2(subscript) + forFace2(superscript) + forFace2(underscript) + forFace2(overscript)
-    
-    private def forFace(script:Option[Symbol]) = if(script.isDefined) "{"+script.get.face+"}" else ""
+        
+    /** Unique symbol face */
+    private def forFace(script:Option[Symbol]):Option[String] = if(script.isDefined) Some("{"+script.get.face+"}") else None
+    /** Simplified symbol face */
     private def forFace2(script:Option[Symbol]) = if(script.isDefined) script.get.face2 else ""
-
+    	
     /** Adds id to the contextId sequence */
     def at(id:String):Symbol = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
     /** Sets description */
@@ -74,8 +111,6 @@ class Symbol(
     def unit(unit:String):Symbol = copy(unit = Option(unit))
     /** Sets dictionary */
     def dictionary(dict:String):Symbol = copy(dictionary = Option(dict))
-    /** Sets localized to true */
-    def makeLocalized:Symbol = copy(localized = true)
     /** Copy entire symbol or selected attributes*/
     def copy(
 		name:String = this.name,
@@ -87,9 +122,12 @@ class Symbol(
 	    unit:Option[String] = this.unit,
 	    dictionary:Option[String] = this.dictionary,
 	    contextId:Option[Seq[String]] = this.contextId,
-	    localized:Boolean = this.localized) = {
-    		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,localized)
+	    printable:Boolean = this.printable
+	) = {
+		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable)
     }
+    /** Sets this symbol as non printable */
+    def makeNonPrintable:Symbol = copy(printable = false)
     
     override def equals(a:Any):Boolean = {
     	a match {
@@ -132,7 +170,6 @@ class Symbol(
     	unit.map(x => {sb.append(",unit=\"");sb.append(x.toString);sb.append("\"")})
     	dictionary.map(x => {sb.append(",dictionary=\"");sb.append(x.toString);sb.append("\"")})
     	contextId.map(x => {sb.append(",contextId=");sb.append(x.toString)})
-    	if(localized)sb.append(",localized=true")
 		sb.append(")")
 		sb.toString
     }
@@ -163,8 +200,9 @@ object Symbol {
 	    unit:Option[String] = None,
 	    dictionary:Option[String] = None,
 	    contextId:Option[Seq[String]] = None,
-	    localized:Boolean = false) = {
-			new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,localized)
+	    printable:Boolean = true
+	) = {
+		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable)
 	}
 	
 	def unapply(s:Symbol) = Some(s.name,s.subscript,s.superscript)

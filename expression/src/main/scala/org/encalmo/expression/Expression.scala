@@ -116,6 +116,8 @@ trait Expression extends TreeLike[Expression] {
   def <= (e:Expression):Boolean = false
   def <> (e:Expression):Boolean = false
   
+  def printable = true
+  
 }
 
 object Expression {

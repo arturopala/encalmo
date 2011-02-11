@@ -1,4 +1,4 @@
-package org.encalmo.document
+package org.encalmo.common
 
 import java.util.Locale
 import java.util.ResourceBundle
@@ -32,18 +32,31 @@ object Translator {
 		cache.get((locale,dictionary)).getOrElse(init(locale,dictionary))
 	}
 	
-	def translate(text:String, locale:java.util.Locale, dictionary:String) = {
+	private def normalizedKey(key:String):String = new StringOps(key).map(x => x match {
+		case ' ' => '_'
+		case ',' => '_'
+		case ':' => '_'
+		case _ => x
+	})
+	
+	def translate(key:String, locale:java.util.Locale, dictionary:String):Option[String] = {
 		bundle(locale, dictionary) match {
 			case Some(rb) => {
-				get(rb,text).getOrElse({
-					val key2 = new StringOps(text).map(x => x match {
-						case ' ' => '_'
-						case _ => x
-					})
-					get(rb,key2).getOrElse(text)
-				})
+				get(rb,key) match {
+					case s:Some[String] => s
+					case None => get(rb,normalizedKey(key))
+				}
 			}
-			case None => text
+			case None => None
+		}
+	}
+	
+	def hasTranslation(key:String, locale:java.util.Locale, dictionary:String):Boolean = {
+		bundle(locale, dictionary) match {
+			case Some(rb) => {
+				rb.containsKey(key) || rb.containsKey(normalizedKey(key))
+			}
+			case None => false
 		}
 	}
 	

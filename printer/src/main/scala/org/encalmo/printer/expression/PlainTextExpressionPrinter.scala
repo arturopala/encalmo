@@ -3,7 +3,7 @@ package org.encalmo.printer.expression
 import org.encalmo.printer._
 import org.encalmo.expression._
 import org.encalmo.common._
-import org.encalmo.document.Translator
+import org.encalmo.common.Translator
 
 /**
  * Prints expressions as plain text 
@@ -37,12 +37,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
 	def writeOpeningBracket = w.write('(');
 	def writeClosingBracket = w.write(')');
 	def writeSpace = w.write(' ');
-	def writeSymbol(s:Symbol) = {
-		s match {
-			case s:Symbol if (s.localized && s.hasDictionary) => w.write(Translator.translate(s.face2,locale,s.dictionary.get))
-			case _ => w.write(s.face2)
-		}
-	}
+	def writeSymbol(s:Symbol) = w.write(s.face2)
 	def writeNumber(n:Number) = {
 		val nf:NumberFormatted = n.formatForPrint
 		if (nf.isNegative)w.write("-");

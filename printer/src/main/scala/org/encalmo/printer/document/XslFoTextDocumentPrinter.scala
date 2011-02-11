@@ -68,31 +68,33 @@ extends Traveler[DocumentComponent] {
 		w.write(s);
 	}
 	
-	def writeExpression(etp:ExpressionToPrint, style:Style) = {
-		val mc = mathOutput.mathStyle
-		if(etp.prefix!=null)mathOutput.prefix = etp.prefix
-		if(etp.suffix!=null)mathOutput.suffix = etp.suffix
-		output.start(INSTREAM_FOREIGN_OBJECT)
-        if (etp.style!=null){
-            output.attrNoZero("min-width",etp.style.paragraph.width,etp.style.paragraph.unit)
-            mathOutput.mathStyle = etp.style
-        }else{
-            if(style!=null) {
-                output.attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
-                mathOutput.mathStyle = style
-            }
-        }
-        output.body
-        mathOutput.open
-        etp.expression.travel(traveler = ept)
-        mathOutput.close
-        mathOutput.mathStyle = mc
-        output.end(INSTREAM_FOREIGN_OBJECT)
+	def writeExpression(etp:ExpressionToPrint, style:Style):Unit = {
+		if(etp.expression.printable){
+			val mc = mathOutput.mathStyle
+			if(etp.prefix!=null)mathOutput.prefix = etp.prefix
+			if(etp.suffix!=null)mathOutput.suffix = etp.suffix
+			output.start(INSTREAM_FOREIGN_OBJECT)
+	        if (etp.style!=null){
+	            output.attrNoZero("min-width",etp.style.paragraph.width,etp.style.paragraph.unit)
+	            mathOutput.mathStyle = etp.style
+	        }else{
+	            if(style!=null) {
+	                output.attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
+	                mathOutput.mathStyle = style
+	            }
+	        }
+	        output.body
+	        mathOutput.open
+	        etp.expression.travel(traveler = ept)
+	        mathOutput.close
+	        mathOutput.mathStyle = mc
+	        output.end(INSTREAM_FOREIGN_OBJECT)
+		}
 	}
 	
 	var isInFlow:Boolean = false
 	
-	def tryStartPageSequence(chapter:Chapter, style:Style) = {
+	def tryStartPageSequence(chapter:Chapter, style:Style):Unit = {
 		if(!isInFlow || chapter!=null){
 			if(isInFlow || chapter!=null){
 				endPageSequence
@@ -202,7 +204,7 @@ extends Traveler[DocumentComponent] {
 						output.append(ch)
 					}
 					case ttt:TextToTranslate => {
-						output.append(Translator.translate(ttt.text,locale,ttt.dictionary))
+						output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
 					}
 					case t:TextContent => {
 						if(t.myStyle!=null){
@@ -337,10 +339,12 @@ extends Traveler[DocumentComponent] {
     	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle:Option[Style], secondTableRow:Boolean){
 		    if(!se.isEmpty){
 	        	val etp1 = se.head
-	        	val isPrintDescription = printDescription && (etp1.expression match {
-	        		case s:Symbol => s.hasDescription
-	        		case _ => false
-	        	})
+	        	val description:Option[String] = etp1.expression match {
+	        		case s:Symbol => etp1.expression.asInstanceOf[Symbol].localizedDescription(locale)
+	        		case _ => None
+	        	}
+	        	val printable:Boolean = etp1.expression.printable
+	        	val isPrintDescription = printDescription && description.isDefined
 	        	val paddingTop = tableRowStyle match {
 	        		case Some(x) => x.paragraph.spaceBefore 
 	        		case None => 3
@@ -357,9 +361,9 @@ extends Traveler[DocumentComponent] {
 		            case None => styleStack.top
 		        }
 	        	val leafs:Int = se.map(x => x.expression.countTreeLeafs).sum
-	        	val twoRows:Boolean = !secondTableRow && (leafs>15 || (etp1.expression match {
-	        		case sd:Symbol if sd.hasDescription => sd.description.get.size>150
-	        		case _ => false
+	        	val twoRows:Boolean = !secondTableRow && (leafs>15 || (description match {
+	        		case Some(d) => d.size>150
+	        		case None => false
 	        	}))
 	        	val twoTableRows = !secondTableRow && (isCell2 && twoRows && leafs<15)
 		    	if(isCell1){
@@ -386,7 +390,7 @@ extends Traveler[DocumentComponent] {
 		        	output.attr("keep-together.within-page","always")
 			        output.body
 			        if(!secondTableRow) {
-			        	output.append(etp1.expression.asInstanceOf[Symbol].description.get)
+			        	output.append(description)
 			        }
 			        output.end(BLOCK)
 			        output.end(TABLE_CELL)
@@ -405,7 +409,7 @@ extends Traveler[DocumentComponent] {
 			        output.attr("margin-top",paddingTop,"pt")
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
 			        output.body
-			        output.append(etp1.expression.asInstanceOf[Symbol].description.get)
+			        output.append(description)
 			        output.end(BLOCK)
 		        }
 				if(twoTableRows){
@@ -418,7 +422,9 @@ extends Traveler[DocumentComponent] {
 				}else{
 			        output.start(BLOCK)
 			        output.appendInlineStyleAttributes(style,styleStack.top)
-			        output.attr("text-indent",-indent-3,"pt")
+			        if(printable){
+			        	output.attr("text-indent",-indent-3,"pt")
+			        }
 			        output.attr("margin-top",paddingTop,"pt")
 			        output.attr("margin-bottom",paddingBottom,"pt")
 			        output.attr("margin-left",indent+5,"pt")

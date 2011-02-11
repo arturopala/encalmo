@@ -1,6 +1,6 @@
 package org.encalmo.printer
 
-import org.encalmo.document.Translator
+import org.encalmo.common.Translator
 
 /**
  * Text printer output class
@@ -21,6 +21,13 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	def +(content:String):TextOutput = {
 		buffer.append(content)
 		this
+	}
+	
+	/**
+	 * Appends optional string to the buffer
+	 */
+	def append(opt:Option[String]):Unit = {
+		opt.map(buffer.append(_))
 	}
 	
 	/**

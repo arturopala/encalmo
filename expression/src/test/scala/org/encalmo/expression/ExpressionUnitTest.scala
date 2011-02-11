@@ -132,4 +132,22 @@ class ExpressionUnitTest extends AssertionsForJUnit {
 		assertEquals(Diff(Symbol("z"),Number(0.5)), e1)
 	}
 	
+	@Test def testSymbolFace() {
+		import Symbol._
+		val s1 = Symbol("a",b,c,d,e)
+		assertEquals("a{b}{c}{d}{e}",s1.face)
+		val s2 = Symbol("a",b,c,d)
+		assertEquals("a{b}{c}{d}",s2.face)
+		val s3 = Symbol("a",b,c)
+		assertEquals("a{b}{c}",s3.face)
+		val s4 = Symbol("a",b)
+		assertEquals("a{b}",s4.face)
+		val s5 = Symbol("a")
+		assertEquals("a",s5.face)
+		val s6 = Symbol("a") over "e"
+		assertEquals("a{}{}{}{e}",s6.face)
+		val s7 = Symbol("a")!c over "e"
+		assertEquals("a{}{c}{}{e}",s7.face)
+	}
+	
 }

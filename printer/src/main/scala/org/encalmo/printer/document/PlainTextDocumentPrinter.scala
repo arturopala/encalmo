@@ -62,9 +62,18 @@ extends Traveler[DocumentComponent] {
 		w.write(ch);
 		canNewLine = true
 	}
+	
+	def write(os:Option[String]) = {
+		os.map(s => {
+			w.write(s);
+		})
+		canNewLine = true
+	}
 		
-	def write(s:String) = {
-		w.write(s);
+	def write(sq:String*) = {
+		for(s <- sq){
+			w.write(s);
+		}
 		canNewLine = true
 	}
 	
@@ -87,16 +96,18 @@ extends Traveler[DocumentComponent] {
 	}
 	
 	def writeExpressionPart(etp:ExpressionToPrint){
-	    if(etp.prefix!=null){
-	        w.write(SPACE)
-	        w.write(etp.prefix)
-	        w.write(SPACE)
-	    }
-		etp.expression.travel(traveler = ept)
-		if(etp.suffix!=null){
-		    w.write(SPACE)
-		    w.write(etp.suffix)
-		    w.write(SPACE)
+		if(etp.expression.printable){
+		    if(etp.prefix!=null){
+		        w.write(SPACE)
+		        w.write(etp.prefix)
+		        w.write(SPACE)
+		    }
+			etp.expression.travel(traveler = ept)
+			if(etp.suffix!=null){
+			    w.write(SPACE)
+			    w.write(etp.suffix)
+			    w.write(SPACE)
+			}
 		}
 	}
 	
@@ -112,7 +123,7 @@ extends Traveler[DocumentComponent] {
 				write(ch.text)
 			}
 			case ttt:TextToTranslate => {
-				write(Translator.translate(ttt.text,locale,ttt.dictionary))
+				write(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
 			}
 			case tc:TextContent => {
 				if(tc.textContent!=null){
@@ -162,15 +173,13 @@ extends Traveler[DocumentComponent] {
 			        canNewLine = true;
 			        writeLineEnd;
 			        es.head.expression match {
-			        	case s:Symbol if s.hasDescription => {
-			        		if(s.hasDictionary){
-			        			write(Translator.translate(s.description.get,locale,s.dictionary.get))
-			        		}else{
-			        			write(s.description.get)
-			        		}
+			        	case s:Symbol if s.hasLocalizedDescription(locale) => {
+			        		write(s.localizedDescription(locale))
 	                        plus
-	                        canNewLine = true;
-	                        writeLineEnd;
+	                        if(s.printable) {
+	                        	canNewLine = true;
+	                        	writeLineEnd;
+	                        }
 	                        writeExpression(es)
 	                        minus
 			        	}

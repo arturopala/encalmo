@@ -4,7 +4,7 @@ import org.encalmo.expression._
 import org.encalmo.document.Style
 import org.encalmo.document.FontStyle
 import org.encalmo.document.DefaultStyle
-import org.encalmo.document.Translator
+import org.encalmo.common.Translator
 import MathMLTags._
 
 /**
@@ -220,13 +220,9 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if (s.hasSubAndSupscript) startb(MSUBSUP)
 		else if (s.hasSuperscript) startb(MSUP)
 		else if (s.hasSubscript) startb(MSUB)
-		//core symbol
-		s match {
-			case s:Symbol if (s.localized && s.hasDictionary) => {
-				mi(BasicSymbols.toMathML(Translator.translate(s.name,locale,s.dictionary.get)))
-			}
-			case _ => mi(BasicSymbols.toMathML(s.name))
-		}
+		//core name
+		mi(BasicSymbols.toMathML(s.name))
+		//scripts
 		if (s.hasSubscript) symbol(s.subscript.get)
 		if (s.hasSuperscript) symbol(s.superscript.get)
 		if (s.hasSubAndSupscript) end(MSUBSUP)
