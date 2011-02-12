@@ -14,11 +14,11 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		val calc = Calculation()
 		val context1 = TestContext2("1",1)
 		val context2 = TestContext2("2",2)
-		calc += context1
-		calc += context2
-		calc.context put (x, 3)
-		calc.context put (y, 4)
-		calc.context put (z, 0)
+		calc add context1
+		calc add context2
+		calc(x) = 3
+		calc(y) = 4
+		calc(z) = 0
 		
 		val r_a1 = calc.resolve(context1.a).eval
 		assertEquals(Number(14),r_a1);
@@ -56,10 +56,10 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		val calc = Calculation()
 		val context1 = Context()
 		calc add context1
-		calc put (x, 3)
-		calc put (y, 4)
-		calc put (z, 0)
-		context1 put (a,a)
+		calc(x) = 3
+		calc(y) = 4
+		calc(z) = 0
+		context1(a) = a
 		
 		val r_a1 = calc.resolve(a)
 		assertEquals(a,r_a1);
@@ -69,13 +69,13 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		val calc = Calculation()
 		val context1 = Context()
 		calc add context1
-		calc put (x, 3)
-		calc put (y, 4)
-		calc put (z, 0)
-		context1 put (a,pi*b)
+		calc(x) = 3
+		calc(y) = 4
+		calc(z) = 0
+		context1(a) = pi*b
 		val r_a1 = calc.resolve(a)
 		assertEquals(pi*b,r_a1);
-		context1 put (b,2*c)
+		context1(b) = 2*c
 		val r_a2 = calc.resolve(a)
 		//assertEquals(pi*(2*c),r_a2);
 	}
@@ -85,12 +85,12 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		val calc = Calculation()
 		val context1 = MapContext()
 		calc add context1
-		calc put (x, 3)
-		calc put (y, 4)
-		calc put (z, 0)
-		context1 put (a,2*b)
-		context1 put (b,2*c)
-		context1 put (c,a/4)
+		calc(x) = 3
+		calc(y) = 4
+		calc(z) = 0
+		context1(a) = 2*b
+		context1(b) = 2*c
+		context1(c) = a/4
 		try{
 			val r_a3 = calc.resolve(a)
 			assertEquals(a,r_a3);
@@ -104,10 +104,10 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 	@Test def testContextSet5() {
 		val calc = Calculation()
 		val context1 = TestContext2("1",1)
-		calc += context1
-		calc.context put (x, 3)
-		calc.context put (y, 4)
-		calc.context put (z, 0)
+		calc add context1
+		calc(x) = 3
+		calc(y) = 4
+		calc(z) = 0
 		val r_a1 = calc.evaluate(context1.a)
 		assertEquals(Number(14),r_a1);
 		val r_a2 = calc.resolve(context1.a)
@@ -117,10 +117,10 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 	@Test def testContextSet6() {
 		val calc = Calculation()
 		val context1 = TestContext2("1",1)
-		calc += context1
-		calc.context put (x, 3)
-		calc.context put (y, 4)
-		calc.context put (z, 0)
+		calc add context1
+		calc(x) = 3
+		calc(y) = 4
+		calc(z) = 0
 		val r_a2 = calc.resolve(context1.a)
 		assertEquals(Sum(Prod(Number(2),Number(3)),Prod(Number(2),Number(4))),r_a2);
 		val r_a1 = calc.evaluate(context1.a)

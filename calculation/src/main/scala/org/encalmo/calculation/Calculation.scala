@@ -1,33 +1,39 @@
 package org.encalmo.calculation
 
-import scala.collection.Map
-import scala.collection.mutable.{LinkedHashSet,LinkedHashMap}
+import scala.collection.mutable.{Map,LinkedHashSet,LinkedHashMap}
 import org.encalmo.expression._
 
 /** 
  * Calculation
  */
-class Calculation(val id:Option[String] = None) extends LinkedHashSet[ExpressionResolver] with ContextSet {
+class Calculation(val id:Option[String] = None) extends ContextSet {
 	
-	val context = new MapContext(id)
-	val cache = new LinkedHashMap[Symbol,Expression]
+	override val set:LinkedHashSet[ExpressionResolver] = LinkedHashSet[ExpressionResolver]()
 	
-	this.add(context)
+	private val context = new MapContext(id)
+	private val cache = new LinkedHashMap[Symbol,Expression]
 	
-	/**
-	 * Maps the symbol to the expression in the internal context
-	 */
-	def put(s:Symbol,e:Expression):Option[Expression] = context.put(symbol(s),e)
+	set.add(context)
 	
-	def put(t:(Symbol,Expression)):Option[Expression] = put(t._1 ,t._2)
+	/** Maps symbol to the expression */
+	def update(s:Symbol,e:Expression):Unit = {
+		context(s) = e
+	}
 	
-	def update(s:Symbol,e:Expression) = put(s,e)
+	/** Maps symbols to the expressions */
+	def put(ts:(Symbol,Expression)*):Unit = {
+		for(t <- ts){
+			context(t._1) = t._2
+		}
+	}
 	
-	/**
-	 * Returns expression which will evaluate 
-	 * this expression in the context of this calculation in the future
-	 */
-	def future(s:Symbol):FutureEvaluation = FutureEvaluation(this,s)
+	/** Inserts new ExpressionResolver */
+	def add(er:ExpressionResolver):Unit = {
+		set.add(er)
+	}
+	
+	/** Returns future expression */
+	def apply(s:Symbol):FutureExpression = FutureExpression(this,s)
 	
 	/**
 	 * Resolves and evaluates all symbols to values
@@ -45,7 +51,7 @@ class Calculation(val id:Option[String] = None) extends LinkedHashSet[Expression
 	 * Returns expression mapped to that symbol or None
 	 */
 	override def getExpression(s:Symbol):Option[Expression] = {
-		cache.get(s).orElse(findExpression(s,this.elements))
+		cache.get(s).orElse(findExpression(s,set.elements))
 	}
 	
 	/**
@@ -63,7 +69,7 @@ class Calculation(val id:Option[String] = None) extends LinkedHashSet[Expression
 	 * Returns expression mapped to that symbol or None
 	 */
 	override def getRawExpression(s:Symbol):Option[Expression] = {
-		findRawExpression(s,this.elements)
+		findRawExpression(s,set.elements)
 	}
 	
 	/**
@@ -89,28 +95,7 @@ class Calculation(val id:Option[String] = None) extends LinkedHashSet[Expression
 	 * Returns true if exists expression mapped to that symbol
 	 */
 	override def hasExpression(s:Symbol):Boolean = {
-		cache.get(s).isDefined || this.find(c => c.hasExpression(s)).isDefined
-	}
-	
-	/**
-	 * Returns symbol with context index
-	 */
-	def symbol(s:Symbol):Symbol = {
-		id match {
-			case Some(i) => {
-				s.contextId match {
-					case Some(currId) => {
-						if(!currId.contains(i)){
-							s.at(i)
-						}else{
-							s
-						}
-					}
-					case None => s.at(i)
-				}
-			}
-			case None => s
-		}
+		cache.get(s).isDefined || set.find(c => c.hasExpression(s)).isDefined
 	}
 
 

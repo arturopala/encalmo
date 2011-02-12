@@ -5,6 +5,8 @@ import scala.collection.{Set}
 /** 
  * Context set
  */
-trait ContextSet extends Set[ExpressionResolver] with ExpressionResolver {
+trait ContextSet extends ExpressionResolver {
+	
+	def set:Set[ExpressionResolver]
 	
 }

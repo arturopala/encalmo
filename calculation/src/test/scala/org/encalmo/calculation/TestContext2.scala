@@ -20,11 +20,11 @@ class TestContext2(id:String,coeff:Double) extends MapContext() {
 	val e_d:Expression = 2*org.encalmo.expression.min(a,b,c)
 	val e_e:Expression = x*yy or (IsZero(z) then x^yy)
 	
-	put (a, e_a)
-	put (b, e_b)
-	put (c, e_c)
-	put (d, e_d)
-	put (e, e_e)
+	this(a) = e_a
+	this(b) = e_b
+	this(c) = e_c
+	this(d) = e_d
+	this(e) = e_e
 	
 }
 

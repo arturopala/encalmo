@@ -5,11 +5,11 @@ import org.encalmo.calculation._
 
 class Kwadrat(id:Option[String],a:Expression) extends Calculation(id) {
 	
-	val A = symbol(Kwadrat.A)
-    val Iz = symbol(Kwadrat.Iz)
-    val Iy = symbol(Kwadrat.Iy)
-    val Imin = symbol(Kwadrat.Imin)
-    val imin = symbol(Kwadrat.imin)
+	val A = Kwadrat.A
+    val Iz = Kwadrat.Iz
+    val Iy = Kwadrat.Iy
+    val Imin = Kwadrat.Imin
+    val imin = Kwadrat.imin
 	
 	this(A) = a*a
     this(Iz) = (a^4)/12

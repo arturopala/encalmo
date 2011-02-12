@@ -17,7 +17,7 @@ class BetonSprezonyDzwigarTypuI {
     val daneMaterialowe,zestawienieObciazen,geometriaDzwigara,charakterystykiGeometryczne:Seq[Expression] = Seq()
     
     val calc = Calculation()
-    val beton = Concrete("C50/60")
+    val beton = Concrete.C_50_60
     calc add beton
     
     val daneWejsciowe:Seq[Expression] = Seq(C_class,fck,Ecm)

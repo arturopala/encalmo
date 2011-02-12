@@ -268,8 +268,8 @@ class SlupDrewnianyZlozonyWkrety {
     calc4 add calc2
     calc4 add calc3
     calc4 add Sec2
-    val Aof1 = calc.future(A)
-    val Fmaxof1 = calc.future(Fmax)
+    val Aof1 = calc(A)
+    val Fmaxof1 = calc(Fmax)
     val xi2 = xi|"2" is "stosunek nośności na ściskanie słupa kwadratowego i zaprojektowanego" unit "%"
     calc4(xi2) = (Fmax2/Fmaxof1)*100
     val delta2 = delta|"2" is "zmiana pola przekroju słupa wielogałęziowego w stosunku do słupa kwadratowego o zbliżonej niegorszej nośności" unit "%"

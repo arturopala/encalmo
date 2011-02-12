@@ -12,9 +12,9 @@ class ContextUnitTest extends AssertionsForJUnit {
 	
 	@Test def testContext1() {
 		val context = TestContext("1")
-		context put (context.p1, 3)
-		context put (context.p2, 4)
-		context put (context.p3, 0)
+		context(context.p1) = 3
+		context(context.p2) = 4
+		context(context.p3) = 0
 		val r_a = context.resolve(a).eval
 		assertEquals(Number(14),r_a);
 		val r_b = context.resolve(b).eval
@@ -31,9 +31,9 @@ class ContextUnitTest extends AssertionsForJUnit {
 	
 	@Test def testContext2() {
 		val context = TestContext("1")
-		context put (context.p1, 3)
-		context put (context.p2, 4)
-		context put (context.p3, 0)
+		context(context.p1) = 3
+		context(context.p2) = 4
+		context(context.p3) = 0
 		val r_b = context.resolve(a);
 		val r_a = context.evaluate(a);
 		assertEquals(Number(14),r_a);
@@ -42,9 +42,9 @@ class ContextUnitTest extends AssertionsForJUnit {
 	
 	@Test def testContext3() {
 		val context = TestContext("1")
-		context put (context.p1, 3)
-		context put (context.p2, 4)
-		context put (context.p3, 0)
+		context(context.p1) = 3
+		context(context.p2) = 4
+		context(context.p3) = 0
 		val r_a = context.evaluate(a);
 		val r_b = context.resolve(a);
 		assertEquals(Number(14),r_a);

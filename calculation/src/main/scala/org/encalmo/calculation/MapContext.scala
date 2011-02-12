@@ -6,7 +6,9 @@ import org.encalmo.expression._
 /** 
  * Base {@link org.encalmo.calculation.Context} implementation
  */
-class MapContext(val id:Option[String] = None) extends LinkedHashMap[Symbol,Expression] with Context {
+class MapContext(val id:Option[String] = None) extends Context {
+	
+	override val map:LinkedHashMap[Symbol,Expression] = LinkedHashMap[Symbol,Expression]()
 	
 	override def equals(a:Any) = {
 		a match {

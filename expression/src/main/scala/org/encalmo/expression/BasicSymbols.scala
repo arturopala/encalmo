@@ -60,56 +60,106 @@ object BasicSymbols {
 	val Y:Symbol = Symbol("Y")
 	val Z:Symbol = Symbol("Z")
 	
-	val alpha:Symbol = Symbol("α")
-	val beta:Symbol = Symbol("β")
-	val gamma:Symbol = Symbol("γ")
-	val delta:Symbol = Symbol("δ")
-	val epsi:Symbol = Symbol("ϵ")
-	val epsiv:Symbol = Symbol("ε")
-	val zeta:Symbol = Symbol("ζ")
-	val eta:Symbol = Symbol("η")
-	val theta:Symbol = Symbol("θ")
-	val thetav:Symbol = Symbol("ϑ")
-	val iota:Symbol = Symbol("ι")
-	val kappa:Symbol = Symbol("κ")
-	val lambda:Symbol = Symbol("λ")
-	val mu:Symbol = Symbol("μ")
-	val nu:Symbol = Symbol("ν")
-	val xi:Symbol = Symbol("ξ")
-	val pi:Symbol = Symbol("π")
-	val piv:Symbol = Symbol("ϖ")
-	val rho:Symbol = Symbol("ρ")
-	val rhov:Symbol = Symbol("ϱ")
-	val sigma:Symbol = Symbol("σ")
-	val sigmav:Symbol = Symbol("ς")
+	val alpha:Symbol = Symbol("alpha")
+	val beta:Symbol = Symbol("beta")
+	val gamma:Symbol = Symbol("gamma")
+	val delta:Symbol = Symbol("delta")
+	val epsi:Symbol = Symbol("epsi")
+	val epsiv:Symbol = Symbol("epsiv")
+	val zeta:Symbol = Symbol("zeta")
+	val eta:Symbol = Symbol("eta")
+	val theta:Symbol = Symbol("theta")
+	val thetav:Symbol = Symbol("thetav")
+	val iota:Symbol = Symbol("iota")
+	val kappa:Symbol = Symbol("kappa")
+	val lambda:Symbol = Symbol("lambda")
+	val mu:Symbol = Symbol("mu")
+	val nu:Symbol = Symbol("nu")
+	val xi:Symbol = Symbol("xi")
+	val pi:Symbol = Symbol("pi")
+	val piv:Symbol = Symbol("piv")
+	val rho:Symbol = Symbol("rho")
+	val rhov:Symbol = Symbol("rhov")
+	val sigma:Symbol = Symbol("sigma")
+	val sigmav:Symbol = Symbol("sigmav")
 	val isin:Symbol = Symbol("isin")
-	val tau:Symbol = Symbol("τ")
-	val upsi:Symbol = Symbol("υ")
-	val phi:Symbol = Symbol("ϕ")
-	val phiv:Symbol = Symbol("φ")
-	val chi:Symbol = Symbol("χ")
-	val psi:Symbol = Symbol("ψ")
-	val omega:Symbol = Symbol("ω")
+	val tau:Symbol = Symbol("tau")
+	val upsi:Symbol = Symbol("upsi")
+	val phi:Symbol = Symbol("phi")
+	val phiv:Symbol = Symbol("phiv")
+	val chi:Symbol = Symbol("chi")
+	val psi:Symbol = Symbol("psi")
+	val omega:Symbol = Symbol("omega")
 	
-	val Gamma:Symbol = Symbol("Γ")
-	val Delta:Symbol = Symbol("Δ")
-	val Theta:Symbol = Symbol("Θ")
-	val Lambda:Symbol = Symbol("Λ")
-	val Xi:Symbol = Symbol("Ξ")
-	val Pi:Symbol = Symbol("Π")
-	val Sigma:Symbol = Symbol("Σ")
-	val Upsi:Symbol = Symbol("ϒ")
-	val Phi:Symbol = Symbol("Φ")
-	val Psi:Symbol = Symbol("Ψ")
-	val Omega:Symbol = Symbol("Ω")
+	val Gamma:Symbol = Symbol("Gamma")
+	val Delta:Symbol = Symbol("Delta")
+	val Theta:Symbol = Symbol("Theta")
+	val Lambda:Symbol = Symbol("Lambda")
+	val Xi:Symbol = Symbol("Xi")
+	val Pi:Symbol = Symbol("Pi")
+	val Sigma:Symbol = Symbol("Sigma")
+	val Upsi:Symbol = Symbol("Upsi")
+	val Phi:Symbol = Symbol("Phi")
+	val Psi:Symbol = Symbol("Psi")
+	val Omega:Symbol = Symbol("Omega")
 	val nabla:Symbol = Symbol("nabla")
 	
 	val mi = mu
 	val ni = nu
 	
-	val eul:Symbol = Symbol("e")
+	val eul:Symbol = Symbol("eul")
 	
-	val BasicSymbols2MathMLMap:Map[Symbol,String] = Map(
+	lazy val BasicSymbols2PlainTextMap:Map[Symbol,String] = Map(
+			alpha 	-> "α",
+			beta 	-> "β",
+			gamma 	-> "γ",
+			delta 	-> "δ",
+			epsi 	-> "ϵ",
+			epsiv 	-> "ε",
+			zeta 	-> "ζ",
+			eta 	-> "η",
+			theta 	-> "θ",
+			thetav 	-> "ϑ",
+			iota 	-> "ι",
+			kappa 	-> "κ",
+			lambda 	-> "λ",
+			mu 		-> "μ",
+			nu 		-> "ν",
+			xi 		-> "ξ",
+			pi 		-> "π",
+			piv 	-> "ϖ",
+			rho 	-> "ρ",
+			rhov 	-> "ϱ",
+			sigma 	-> "σ",
+			sigmav 	-> "ς",
+			isin 	-> "isin",
+			tau 	-> "τ",
+			upsi 	-> "υ",
+			phi 	-> "ϕ",
+			phiv 	-> "φ",
+			chi 	-> "χ",
+			psi 	-> "ψ",
+			omega 	-> "ω",
+			Gamma 	-> "Γ",
+			Delta 	-> "Δ",
+			Theta 	-> "Θ",
+			Lambda 	-> "Λ",
+			Xi 		-> "Ξ",
+			Pi 		-> "Π",
+			Sigma 	-> "Σ",
+			Upsi 	-> "ϒ",
+			Phi 	-> "Φ",
+			Psi 	-> "Ψ",
+			Omega 	-> "Ω",
+			nabla 	-> "nabla",
+			eul		-> "e"
+	)
+	
+	lazy val String2PlainTextMap:Map[String,String] = BasicSymbols2PlainTextMap.map(a => (a._1.name,a._2))
+	
+	def toPlainText(s:String):String = String2PlainTextMap.get(s).getOrElse(s)
+	
+	lazy val BasicSymbols2MathMLMap:Map[Symbol,String] = Map(
 			alpha 	-> "&alpha;",
 			beta 	-> "&beta;",
 			gamma 	-> "&gamma;",
@@ -151,10 +201,11 @@ object BasicSymbols {
 			Phi 	-> "&Phi;",
 			Psi 	-> "&Psi;",
 			Omega 	-> "&Omega;",
-			nabla 	-> "&nabla;"
+			nabla 	-> "&nabla;",
+			eul		-> "e"
 	)
 	
-	val String2MathMLMap:Map[String,String] = BasicSymbols2MathMLMap.map(a => (a._1.name,a._2))
+	lazy val String2MathMLMap:Map[String,String] = BasicSymbols2MathMLMap.map(a => (a._1.name,a._2))
 	
 	def toMathML(s:String):String = String2MathMLMap.get(s).getOrElse(s)
 

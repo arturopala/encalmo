@@ -1,21 +1,47 @@
 package org.encalmo.calculation
 
 import annotation.tailrec
-import scala.collection.{Map}
+import scala.collection.mutable.Map
 import org.encalmo.expression._
 
 /** 
  * Context trait
  */
-trait Context extends Map[Symbol,Expression] with ExpressionResolver{
+trait Context extends ExpressionResolver{
 	
 	def id:Option[String]
+	def map:Map[Symbol,Expression]
+	
+	def update(s:Symbol, e:Expression) = {
+		map.put(symbol(s),e)
+	}
+	
+	/**
+	 * Returns symbol with context's index added
+	 */
+	def symbol(s:Symbol):Symbol = {
+		id match {
+			case Some(i) => {
+				s.contextId match {
+					case Some(currId) => {
+						if(!currId.contains(i)){
+							s.at(i)
+						}else{
+							s
+						}
+					}
+					case None => s.at(i)
+				}
+			}
+			case None => s
+		}
+	}
 	
 	/**
 	 * Returns expression mapped to that symbol or None
 	 */
 	override def getExpression(s:Symbol):Option[Expression] = {
-		val oe:Option[Expression] = this.get(s) 
+		val oe:Option[Expression] = map.get(s) 
 		oe match {
 			case Some(x) => oe
 			case None => {
@@ -42,7 +68,7 @@ trait Context extends Map[Symbol,Expression] with ExpressionResolver{
 	 * Returns expression mapped to that symbol or None
 	 */
 	override def getRawExpression(s:Symbol):Option[Expression] = {
-		val oe:Option[Expression] = this.get(s) 
+		val oe:Option[Expression] = map.get(s) 
 		oe match {
 			case Some(x) => oe
 			case None => {
@@ -69,16 +95,16 @@ trait Context extends Map[Symbol,Expression] with ExpressionResolver{
 	 * Returns true if exists expression mapped to that symbol
 	 */
 	override def hasExpression(s:Symbol):Boolean = {
-		this.contains(s) || (id.isDefined && (s.contextId match {
+		map.contains(s) || (id.isDefined && (s.contextId match {
 			case Some(currId) => {
 				if(!currId.contains(id.get)){
-					this.contains(s.at(id.get))
+					map.contains(s.at(id.get))
 				}else{
 					false
 				}
 			}
 			case None => {
-				this.contains(s.at(id.get))
+				map.contains(s.at(id.get))
 			}
 		}))
 	}

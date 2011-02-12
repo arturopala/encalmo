@@ -37,7 +37,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
 	def writeOpeningBracket = w.write('(');
 	def writeClosingBracket = w.write(')');
 	def writeSpace = w.write(' ');
-	def writeSymbol(s:Symbol) = w.write(s.face2)
+	def writeSymbol(s:Symbol) = w.write(s.simpleFace)
 	def writeNumber(n:Number) = {
 		val nf:NumberFormatted = n.formatForPrint
 		if (nf.isNegative)w.write("-");

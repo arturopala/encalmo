@@ -10,13 +10,13 @@ class Concrete(id:String) extends Calculation(Option(id)) {
 	
 }
 
-object Concrete extends LinkedHashMap[String,Concrete] {
+object Concrete {
 	
 	import BasicSymbols._
 	
 	val dictname = "concrete"
 	
-	val C_class = Symbol("concrete class").makeNonPrintable.dictionary(dictname)
+	val C_class = Symbol("concrete_class").makeNonPrintable.dictionary(dictname)
 	val fck = f|"ck" is "charakterystyczna wytrzymałość walcowa na ściskanie betonu po 28 dniach" unit "Pa"
 	val fckcube = f|"ck,cube" is "charakterystyczna wytrzymałość na ściskanie betonu po 28 dniach oznaczona na próbkach sześciennych" unit "Pa"
 	val fcm = f|"cm" is "średnia wartość wytrzymałości walcowej betonu na ściskanie" unit "Pa"
@@ -32,7 +32,7 @@ object Concrete extends LinkedHashMap[String,Concrete] {
 	val epsicu3 = epsiv|"cu3" is "" unit "‰"
 	val n = BasicSymbols.n is ""
 	
-	val C_50_60 = new Concrete("C50/60"){
+	lazy val C_50_60 = new Concrete("C50/60"){
 		this(fck) = 50E6
 		this(fckcube) = 60E6
 		this(fcm) = 58E6
@@ -48,7 +48,5 @@ object Concrete extends LinkedHashMap[String,Concrete] {
 		this(epsicu3) = 3.5
 		this(n) = 2.0
 	}
-	
-	this(C_50_60.id.get) = C_50_60
 	
 }

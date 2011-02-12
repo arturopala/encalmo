@@ -91,7 +91,7 @@ class Symbol(
     	}).getOrElse("")
     	
     /** Simplified symbol face */
-    lazy val face2:String = new StringOps(name).filter(_ match {
+    lazy val simpleFace:String = new StringOps(name).filter(_ match {
             case ',' => false
             case '/' => false
             case '.' => false
@@ -101,7 +101,7 @@ class Symbol(
     /** Unique symbol face */
     private def forFace(script:Option[Symbol]):Option[String] = if(script.isDefined) Some("{"+script.get.face+"}") else None
     /** Simplified symbol face */
-    private def forFace2(script:Option[Symbol]) = if(script.isDefined) script.get.face2 else ""
+    private def forFace2(script:Option[Symbol]) = if(script.isDefined) script.get.simpleFace else ""
     	
     /** Adds id to the contextId sequence */
     def at(id:String):Symbol = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
