@@ -189,9 +189,14 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		end(MI)
 	}
 
-	def mi(s:String, size: Int):Unit = {
+	def mi(s:String, size: Int = 0, variant:String=null):Unit = {
 		start(MI)
-		attr("mathsize",size,"%")
+		if(size>0){
+		    attr("mathsize",size,"%")
+		}
+		if(variant!=null){
+		    attr("mathvariant",variant)
+		}
 		body
 		append(s)
 		end(MI)
@@ -211,7 +216,12 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		end(MTEXT)
 	}
 	
-	def symbol(s:Symbol):Unit = {
+	def symbol(s:Symbol,script:Boolean=false):Unit = {
+	    if(!script){
+    	    start(MSTYLE)
+    	    attr("mathvariant","italic")
+    	    body
+	    }
 		//under-over script start
 		if (s.hasOverAndUnderscript) startb(MUNDEROVER)
 		else if (s.hasOverscript) startb(MOVER)
@@ -221,20 +231,25 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		else if (s.hasSuperscript) startb(MSUP)
 		else if (s.hasSubscript) startb(MSUB)
 		//core name
-		mi(BasicSymbols.toMathML(s.name))
+		if(!script){
+		    mi(BasicSymbols.toMathML(s.name))
+		}else{
+		    mi(BasicSymbols.toMathML(s.name))
+		}
 		//scripts
-		if (s.hasSubscript) symbol(s.subscript.get)
-		if (s.hasSuperscript) symbol(s.superscript.get)
+		if (s.hasSubscript) symbol(s.subscript.get,true)
+		if (s.hasSuperscript) symbol(s.superscript.get,true)
 		if (s.hasSubAndSupscript) end(MSUBSUP)
 		else if (s.hasSuperscript) end(MSUP)
 		else if (s.hasSubscript) end(MSUB)
 		//sub-super script end
-		if (s.hasUnderscript) symbol(s.underscript.get)
-		if (s.hasOverscript) symbol(s.overscript.get)
+		if (s.hasUnderscript) symbol(s.underscript.get,true)
+		if (s.hasOverscript) symbol(s.overscript.get,true)
 		if (s.hasOverAndUnderscript) end(MUNDEROVER)
 		else if (s.hasOverscript) end(MOVER)
 		else if (s.hasUnderscript) end(MUNDER)
 		//under-over script end
+		if(!script) end(MSTYLE)
 	}
 	
 	def appendStyleAttributes(style:Style) = {

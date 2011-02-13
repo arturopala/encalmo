@@ -2,42 +2,54 @@ package org.encalmo.examples
 
 import org.encalmo.expression._
 import org.encalmo.calculation.Calculation
-import scala.collection.mutable.LinkedHashMap
+import org.encalmo.calculation.SymbolConfigurator
+import org.encalmo.document._
 
-class Concrete(id:String) extends Calculation(Option(id)) {
+trait ConcreteSymbols extends SymbolConfigurator {
+
+	import BasicSymbols._
+	val dictionary, contextId = "concrete"
 	
-	this(Concrete.C_class) = text(id)
+	val CLASS = symbol("CLASS").makeNonPrintable
+	val fck = symbol(f|"ck") unit "Pa"
+	val fckcube = symbol(f|"ck,cube") unit "Pa"
+	val fcm = symbol(f|"cm") unit "Pa"
+	val fctm = symbol(f|"ctm") unit "Pa"
+	val fctk = symbol(f|"ctk") unit "Pa"
+	val fctk095 = symbol(f|"ctk, 0,95") unit "Pa"
+	val Ecm = symbol(E|"cm") unit "Pa"
+	val epsic1 = symbol(epsiv|"c1") unit "‰"
+	val epsicu1 = symbol(epsiv|"cu1") unit "‰"
+	val epsic2 = symbol(epsiv|"c2") unit "‰"
+	val epsicu2 = symbol(epsiv|"cu2") unit "‰"
+	val epsic3 = symbol(epsiv|"c3") unit "‰"
+	val epsicu3 = symbol(epsiv|"cu3") unit "‰"
+	val n = symbol(BasicSymbols.n)
+	val gammaC = symbol(gamma|"C")
+	val fcd = symbol(f|"cd") unit "Pa"
+	val fctd = symbol(f|"ctd") unit "Pa"
+}
+
+class Concrete(id:String) extends Calculation(Option(id)) with ConcreteSymbols {
+
+	def info = NumSection(TextToTranslate("Concrete",dictionary),id,
+		Evaluate(Seq(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1),this)
+	)
+	
+	this(CLASS) = text(id)
+	this(fcd) = fck/gammaC
+	this(fctd) = fctk/gammaC
 	
 }
 
-object Concrete {
-	
-	import BasicSymbols._
-	
-	val dictname = "concrete"
-	
-	val C_class = Symbol("concrete_class").makeNonPrintable.dictionary(dictname)
-	val fck = f|"ck" is "charakterystyczna wytrzymałość walcowa na ściskanie betonu po 28 dniach" unit "Pa"
-	val fckcube = f|"ck,cube" is "charakterystyczna wytrzymałość na ściskanie betonu po 28 dniach oznaczona na próbkach sześciennych" unit "Pa"
-	val fcm = f|"cm" is "średnia wartość wytrzymałości walcowej betonu na ściskanie" unit "Pa"
-	val fctm = f|"ctm" is "średnia wartość wytrzymałości betonu na rozciąganie osiowe" unit "Pa"
-	val fctk005 = f|"ctk, 0,05" is "" unit "Pa"
-	val fctk095 = f|"ctk, 0,95" is "" unit "Pa"
-	val Ecm = E|"cm" is "sieczny moduł sprężystości betonu" unit "Pa"
-	val epsic1 = epsiv|"c1" is "" unit "‰"
-	val epsicu1 = epsiv|"cu1" is "" unit "‰"
-	val epsic2 = epsiv|"c2" is "" unit "‰"
-	val epsicu2 = epsiv|"cu2" is "" unit "‰"
-	val epsic3 = epsiv|"c3" is "" unit "‰"
-	val epsicu3 = epsiv|"cu3" is "" unit "‰"
-	val n = BasicSymbols.n is ""
+object Concrete extends ConcreteSymbols {
 	
 	lazy val C_50_60 = new Concrete("C50/60"){
 		this(fck) = 50E6
 		this(fckcube) = 60E6
 		this(fcm) = 58E6
 		this(fctm) = 4.1E6
-		this(fctk005) = 2.9E6
+		this(fctk) = 2.9E6
 		this(fctk095) = 5.3E6
 		this(Ecm) = 37E9
 		this(epsic1) = 2.45

@@ -12,7 +12,6 @@ import org.encalmo.examples.Predefined._
 class ZespoloneStrop {
     
     import BasicSymbols._
-    import Steel._
     
     val plytaObciazenia,plytaMontaz,plytaEksploatacja,plytaWymiarowanie:Seq[Expression] = Seq()
     val belkaMaterialy,belkaObciazenia,belkaMontaz,belkaEksploatacja,belkaWymiarowanie:Seq[Expression] = Seq()
@@ -20,7 +19,7 @@ class ZespoloneStrop {
     val zadanie = Calculation()
     
     val plyta = Calculation()
-    val blacha = FLORSTROP.T59_Z
+    val blacha = FLORSTROP.T59_Z_075
     plyta add blacha
     val beton = Concrete.C_50_60
     plyta add beton
@@ -41,15 +40,14 @@ class ZespoloneStrop {
     //wlasciwo materialowe plyty
     blacha.steel(Steel.gammaM0) = 1.0
     blacha.steel(Steel.gammaM1) = 1.0
-    
-    val plytaMaterialy = Seq(blacha.ID,blacha.steel.CLASS,blacha.t)
+    beton(Concrete.gammaC) = 1.5
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,
         Chapter("",
         	Section(
-            	Section("Ćwiczenie projektowe z przedmiotu \"Kostrukcje Zespolone\". Semestr zimowy 2010/2011."),
-        		Section("Autor: Artur Opala, album nr 61315. Prowadzący: dr inż. Wojciech Lorenc, Instytut Budownictwa Politechiki Wrocławskiej.")
+            	Section("Ćwiczenie projektowe z przedmiotu \"Kostrukcje Zespolone\". Autor: Artur Opala, album 61315."),
+        		Section("Prowadzący: dr inż. Wojciech Lorenc, Instytut Budownictwa Politechniki Wrocławskiej. Semestr zimowy 2010/2011.")
         	),
             Section(""),
             NumSection("Zadanie",
@@ -60,8 +58,8 @@ class ZespoloneStrop {
                 NumSection("Dane wejściowe",Evaluate(daneWejsciowe,zadanie))
            ),
            NumSection("Wymiarowanie płyty stropowej",
-	           NumSection("Materiały konstrukcyjne i ich parametry",
-	               blacha.info
+               NumSection("Materiały konstrukcyjne i ich parametry",
+	               blacha.steel.info,blacha.info,beton.info
 	           ),
 	           NumSection("Obciążenia i schemat statyczny w fazie montażu",
 	               Evaluate(plytaObciazenia,plyta)

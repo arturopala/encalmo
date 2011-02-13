@@ -20,7 +20,7 @@ class BetonSprezonyDzwigarTypuI {
     val beton = Concrete.C_50_60
     calc add beton
     
-    val daneWejsciowe:Seq[Expression] = Seq(C_class,fck,Ecm)
+    val daneWejsciowe:Seq[Expression] = Seq(CLASS,fck,Ecm)
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,

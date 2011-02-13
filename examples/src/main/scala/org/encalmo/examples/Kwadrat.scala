@@ -3,13 +3,20 @@ package org.encalmo.examples
 import org.encalmo.expression._
 import org.encalmo.calculation._
 
-class Kwadrat(id:Option[String],a:Expression) extends Calculation(id) {
-	
-	val A = Kwadrat.A
-    val Iz = Kwadrat.Iz
-    val Iy = Kwadrat.Iy
-    val Imin = Kwadrat.Imin
-    val imin = Kwadrat.imin
+trait ShapeSymbols extends SymbolConfigurator {
+
+    import BasicSymbols._
+    val dictionary, contextId = "geometry"
+    
+    val A = symbol(BasicSymbols.A) is "pole powierzchni" unit "m²"
+    val Iz = symbol(BasicSymbols.I|"z") is "moduł bezwładności względem osi Z" unit "m4"
+    val Iy = symbol(BasicSymbols.I|"y") is "moduł bezwładności względem osi Y" unit "m4"
+    val Imin = symbol(BasicSymbols.I|"min") is "mniejszy z modułów bezwładności" unit "m4"
+    val imin = symbol(BasicSymbols.i|"min") is "promień bezwładności" unit "m"
+        
+}
+
+class Kwadrat(id:Option[String],a:Expression) extends Calculation(id) with ShapeSymbols {
 	
 	this(A) = a*a
     this(Iz) = (a^4)/12
@@ -22,11 +29,5 @@ class Kwadrat(id:Option[String],a:Expression) extends Calculation(id) {
 object Kwadrat {
 	
 	def apply(id:String,a:Expression) = new Kwadrat(Option(id),a)
-	
-	val A = BasicSymbols.A is "pole powierzchni" unit "m²"
-    val Iz = BasicSymbols.I|"z" is "moduł bezwładności względem osi Z" unit "m4"
-    val Iy = BasicSymbols.I|"y" is "moduł bezwładności względem osi Y" unit "m4"
-    val Imin = BasicSymbols.I|"min" is "mniejszy z modułów bezwładności" unit "m4"
-    val imin = BasicSymbols.i|"min" is "promień bezwładności" unit "m"
 	
 }

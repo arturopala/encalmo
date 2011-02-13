@@ -19,6 +19,12 @@ class SectionCounter(val enumerator:Enumerator) {
 		for(x <- 0 to currentLevel) yield enumerator(x,counters(x).item)
 	}
 	
+	def positions:Seq[Int] = {
+        for(x <- 0 to currentLevel) yield counters(x).item
+    }
+	
+	def string:String = enumerator.string(positions)
+	
 	/**
 	 * Increase curent level
 	 */

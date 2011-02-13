@@ -46,7 +46,9 @@ extends DocumentComponent(null){
 		val r2 = calc.evaluate(rightExpression)
 		val ob = assert(r1,r2)
 		if(text!=null){
-			seq += TextToTranslate(text,"document")
+			seq += TextToTranslate("requirement","document")
+			seq += Character.SPACE
+			seq += Text(text)
 			seq += Character.SPACE
 		}
 		seq += TextToTranslate(ob match {
@@ -56,15 +58,16 @@ extends DocumentComponent(null){
 			}
 			case None => "unknown"
 		},"document")
-		seq += Character.SPACE
+		seq += Text(":")
+		seq += Character.LONGSPACE
 		seq += Symb(leftExpression)
 		seq += Character.SPACE
 		seq += operator
 		seq += Character.SPACE
 		seq += Symb(rightExpression)
-		seq += Character.SPACE
+		seq += Character.LONGSPACE
 		seq += Character.RARROW
-		seq += Character.SPACE
+		seq += Character.LONGSPACE
 		seq += Result(calc,leftExpression)
 		seq += Character.SPACE
 		seq += operator
@@ -91,4 +94,18 @@ object AssertionLE {
 		}
 	}
 	
+}
+
+object AssertionGE {
+    
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,le,re){
+        def operator:Character = Character.GE
+        def assert(le:Expression,re:Expression):Option[Boolean] = (le,re) match {
+            case (n1:Number,n2:Number) => {
+                Some(n1 >= n2)
+            }
+            case _ => None
+        }
+    }
+    
 }

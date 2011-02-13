@@ -260,11 +260,12 @@ class SlupDrewnianyZlozonyWkrety {
     
     val nosnoscSlupaNiepodatnie = Seq(lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,deltaJW)
     
-    val arec = a|"rec" is "długość boku słupa kwadratowego"
+    val arec = a|"rec" is "długość boku słupa kwadratowego" unit "m"
     val Sec2 = Kwadrat("rec",arec)
     val calc4 = Calculation("slup kwadratowy jednorodny")
     calc4(arec) = 0.138
     calc4(A) = Sec2.A
+    calc4(imin) = Sec2.imin
     calc4 add calc2
     calc4 add calc3
     calc4 add Sec2
@@ -306,11 +307,11 @@ class SlupDrewnianyZlozonyWkrety {
            NumSection("Sprawdzenie stanów granicznych nośności wg PN-EN 1995-1-1",
                 NumSection("Obliczenie sztywności zastępczej",Evaluate(calc,sztywnoscZastepcza:_*)),
                 NumSection("Sprawdzenie nośności na ściskanie",Evaluate(calc,nosnoscObliczeniowa:_*)),
-                AssertionLE("Warunek C.1 [1]",calc,sigmac0d,kc*fc0d),
+                AssertionLE("C.1 [1]",calc,sigmac0d,kc*fc0d),
 				NumSection("Sprawdzenie nośności środnika na ścinanie",Evaluate(calc,nosnoscScinanie:_*)),
-				AssertionLE("Warunek 6.13 [1]",calc,tau2max,fvd),
+				AssertionLE("6.13 [1]",calc,tau2max,fvd),
 				NumSection("Sprawdzenie nośności łączników (wkrętów)",Evaluate(calc,nosnoscLacznikow:_*)),
-				AssertionLE("Warunek nośności wkręta",calc,Fi,FvRd)
+				AssertionLE("nośności wkręta",calc,Fi,FvRd)
 			),
 			NumSection("Badania porównawcze",
 				NumSection("Porównanie ze słupem wielogałęziowym z elementów połączonych niepodatnie (klejonych)",Evaluate(calc,nosnoscSlupaNiepodatnie:_*)),

@@ -6,8 +6,6 @@ package org.encalmo.document
  */
 trait Enumerator extends EnumeratorProvider {
 	
-	def apply(level:Int, item:Int):String
-	
 	/** Enumerator style */
 	def style:Style = null
 	
@@ -16,6 +14,12 @@ trait Enumerator extends EnumeratorProvider {
 	}
 	
 	def enumerator:Enumerator = this
+        
+    def apply(level:Int, item:Int):String = String.valueOf(item)
+    
+    def string(positions:Seq[Int]):String = {
+	    (for(i <- 0 to (positions.size-1)) yield this(i,positions(i))).mkString(".")
+    }
 	
 }
 
@@ -26,13 +30,11 @@ trait Enumerator extends EnumeratorProvider {
 object Enumerator {
 	
 	/** Standard numbers-only enumerator */
-	def apply():Enumerator = new Enumerator {
-		def apply(level:Int, item:Int):String = String.valueOf(item)
-	}
+	def apply():Enumerator = new Enumerator{}
 	
 	/** Standard numbers-only enumerator */
 	def apply(s:Style):Enumerator = new Enumerator {
-		def apply(level:Int, item:Int):String = String.valueOf(item)
+		
 		override def style:Style = s
 	}
 	
@@ -49,8 +51,4 @@ extends DocumentComponent(null) with EnumeratorProvider with NonVisualComponent
  * Default enumerator singleton
  * @author artur.opala
  */
-object DefaultEnumerator extends Enumerator(){
-	
-	def apply(level:Int, item:Int):String = String.valueOf(item)
-	
-}
+object DefaultEnumerator extends Enumerator

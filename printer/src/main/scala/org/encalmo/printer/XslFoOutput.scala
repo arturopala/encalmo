@@ -123,8 +123,10 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 	def append(ch:Character) = {
 		super.append(ch.text match {
 			case Character.SPACE.text => "&nbsp;"
+			case Character.LONGSPACE.text => "&nbsp;&nbsp;"
 			case Character.LE.text => "&le;"
-			case Character.RARROW.text => "&rArr;"
+			case Character.GE.text => "&geq;"
+			case Character.RARROW.text => "&rarr;"
 			case _ => ch.text
 		})
 	}

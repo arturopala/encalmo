@@ -111,6 +111,8 @@ extends Traveler[DocumentComponent] {
 					output.start(BLOCK)
                     output.attr("text-align","center")
                     output.attr("font-size","80%")
+                    output.attr("line-height","125%")
+                    output.attr("padding-bottom","0.5em")
                     output.attr("border-bottom","0.3pt solid black")
                     output.body
 					isInFlow = true
@@ -179,7 +181,7 @@ extends Traveler[DocumentComponent] {
 						output.start(BLOCK)
 						output.appendBlockStyleAttributes(ns.style,styleStack.top)
 						if(ns.isFirstBlockComponent){
-						    output.attr("keep-with-previous","always")
+						    //output.attr("keep-with-previous","always")
 						}
 						output.body
 						val ens = en.style
@@ -320,14 +322,14 @@ extends Traveler[DocumentComponent] {
 			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
 			}
     		output.body
-    		output.tableColumn("3","em")
+    		output.tableColumn("2.5","em")
     		output.tableColumn("proportional-column-width(35)","")
     		output.tableColumn("proportional-column-width(65)","")
     		output.start(TABLE_BODY)
 			output.body
 			for(es <- ess){
 				output.startb(TABLE_ROW)
-				val bullet = sc.map(_.current.mkString("",".",".")).getOrElse(null)
+				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
 				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle, false)
 				sc.foreach(_.next)
 				output.end(TABLE_ROW)
@@ -372,6 +374,8 @@ extends Traveler[DocumentComponent] {
 			        output.start(BLOCK)
 			        output.attr("padding-top",paddingTop,"pt")
 			        output.attr("padding-bottom",paddingBottom,"pt")
+			        output.attr("margin-right","0.7em")
+			        output.attr("text-align","right")
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
 			        output.body
 			        output.append(bullet)

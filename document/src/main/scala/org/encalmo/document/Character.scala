@@ -24,8 +24,12 @@ object Character{
 	
 	/** space */
 	val SPACE = Character(" ")
+	/** long space */
+    val LONGSPACE = Character("  ")
 	/** lower or equal character */
 	val LE = Character("≤")
+	/** greater or equal character */
+    val GE = Character("≥")
 	/** right arrow character */
     val RARROW = Character("→")
 	

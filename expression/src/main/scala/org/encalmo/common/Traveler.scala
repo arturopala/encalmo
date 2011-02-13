@@ -16,4 +16,5 @@ trait Traveler[A<:AnyRef] {
 	
 	def onExit(node:Node[A]):Unit = Unit
 
+	
 }
