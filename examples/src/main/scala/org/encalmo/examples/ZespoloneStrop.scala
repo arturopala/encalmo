@@ -12,14 +12,15 @@ import org.encalmo.examples.Predefined._
 class ZespoloneStrop {
     
     import BasicSymbols._
+    val CSS = CorrugatedSteelSheet
     
-    val plytaObciazenia,plytaMontaz,plytaEksploatacja,plytaWymiarowanie:Seq[Expression] = Seq()
+    val plytaMontaz,plytaEksploatacja,plytaWymiarowanie:Seq[Expression] = Seq()
     val belkaMaterialy,belkaObciazenia,belkaMontaz,belkaEksploatacja,belkaWymiarowanie:Seq[Expression] = Seq()
     
     val zadanie = Calculation()
     
     val plyta = Calculation()
-    val blacha = FLORSTROP.T59_Z_075
+    val blacha = FLORSTROP.T59_Z_100
     plyta add blacha
     val beton = Concrete.C_50_60
     plyta add beton
@@ -41,6 +42,9 @@ class ZespoloneStrop {
     blacha.steel(Steel.gammaM0) = 1.0
     blacha.steel(Steel.gammaM1) = 1.0
     beton(Concrete.gammaC) = 1.5
+    blacha(CSS.gammaG) = 1.35
+    
+    val plytaObciazenia = Seq(CSS.Qcck,CSS.gammaG,CSS.Qccd)
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,

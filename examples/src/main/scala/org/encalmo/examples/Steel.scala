@@ -17,6 +17,7 @@ trait SteelSymbols extends SymbolConfigurator {
 	val fypd = symbol(f|"yp,d") unit "Pa"
 	val gammaM0 = symbol(gamma|"M,0")
 	val gammaM1 = symbol(gamma|"M,1")
+	val gammas = symbol(gamma|"s") unit "N/m3"
 }
 
 /** Steel context */
@@ -28,6 +29,7 @@ class Steel(id:String) extends Calculation(Option(id)) with SteelSymbols {
 	
 	this(CLASS) = text(id)
 	this(fypd) = fyp/gammaM0
+	this(gammas) = 78.5E3
 }
 
 /** Steel library */

@@ -126,7 +126,7 @@ case class Number(r:Real) extends Value {
 						EmptyUnitOfValue
 					)
 				}else{
-					if(sf>2){
+					if(sf>1){
 						val nsf = (sf/3)*3+3
 						val nrif = analyze(rif._2*Math.pow(10,nsf))
 						NumberFormatted(
