@@ -12,8 +12,15 @@ trait Context extends ExpressionResolver{
 	def id:Option[String]
 	def map:Map[Symbol,Expression]
 	
+	protected var opened:Boolean = true
+	
+	/** Locks context content */
+	def lock = {opened = false}
+	
+	def throwException = throw new IllegalStateException("This context has been locked.")
+	
 	def update(s:Symbol, e:Expression) = {
-		map.put(symbol(s),e)
+		if(opened) map.put(symbol(s),e) else throwException
 	}
 	
 	/**
@@ -113,6 +120,8 @@ trait Context extends ExpressionResolver{
 
 object Context {
 	
-	def apply() = MapContext()
+	def apply() = new MapContext()
+	
+	def apply(id:String) = new MapContext(Option(id))
 	
 }

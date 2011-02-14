@@ -4,7 +4,7 @@ import org.encalmo.expression._
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
 
-trait ContinuousBeamSymbols extends SymbolConfigurator {
+object ContinuousBeamSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
 	val dictionary, contextId = "beam"
@@ -62,9 +62,9 @@ trait ContinuousBeamSymbols extends SymbolConfigurator {
 
 }
 
-object ContinuousBeam extends ContinuousBeamSymbols
-
-class ContinuousBeam(id:String, length:Expression, load:Expression, force:Expression) extends Calculation(Option(id)) with ContinuousBeamSymbols {
+class ContinuousBeam(id:String, length:Expression, load:Expression, force:Expression) extends Calculation(Option(id)) {
+	
+	import ContinuousBeamSymbols._
 	
 	this(p) = load
 	this(l) = length
@@ -75,6 +75,7 @@ class ContinuousBeam(id:String, length:Expression, load:Expression, force:Expres
 /** Continuous beam static analysis */
 class ContinuousBeam_5_LinearLoad(id:String, length:Expression, load:Expression) extends ContinuousBeam(id,length,load,0) {
 
+	import ContinuousBeamSymbols._
 	
 	this(lBA) = 0.2113*l
 	this(lBC) = 0.2*l

@@ -12,8 +12,12 @@ import org.encalmo.examples.Predefined._
 class ZespoloneStrop {
     
     import BasicSymbols._
-    import CompositeSlabWithProfiledSheeting._
-    import ProfiledSteelSheet._
+    import SteelSymbols._
+    import ConcreteSymbols._
+    import ActionsSymbols._
+    
+    import CompositeSlabWithProfiledSheetingSymbols._
+    import ProfiledSteelSheetSymbols._
     
     val zadanie1Statyka,zadanie1Eksploatacja,zadanie1Wymiarowanie:Seq[Expression] = Seq()
     val zadanie2Materialy,zadanie2Obciazenia,zadanie2Montaz,zadanie2Eksploatacja,zadanie2Wymiarowanie:Seq[Expression] = Seq()
@@ -35,7 +39,7 @@ class ZespoloneStrop {
     
     val blacha = FLORSTROP.T59_Z_100
     val beton = Concrete.C_50_60
-    val plyta = CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton)
+    val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton)
     val stal = Steel.S355
     
     zadanie1 add plyta
@@ -45,11 +49,11 @@ class ZespoloneStrop {
     plyta(Fk) = 10E3
     
     //wlasciwosci materialowe plyty
-    plyta(Actions.gammaG) = 1.35
-    plyta(Actions.gammaQ) = 1.5
-    blacha.steel(Steel.gammaM0) = 1.0
-    blacha.steel(Steel.gammaM1) = 1.0
-    beton(Concrete.gammaC) = 1.5
+    plyta(gammaG) = 1.35
+    plyta(gammaQ) = 1.5
+    blacha.steel(gammaM0) = 1.0
+    blacha.steel(gammaM1) = 1.0
+    beton(gammaC) = 1.5
     
     
     val doc1 = Document(Predefined.style1,"",
@@ -88,7 +92,7 @@ deskowania przyjęto jako belkę pięcioprzęsłową."""),
 	               plyta.LOAD2
 	           ),
 	           NumSection("Wymiarowanie płyty zespolonej w fazie eksploatacji",
-	               Evaluate(zadanie1Wymiarowanie,zadanie1)
+	               plyta.ULS2
 	           )
            ),
            NumSection("Wymiarowanie belki stropowej",

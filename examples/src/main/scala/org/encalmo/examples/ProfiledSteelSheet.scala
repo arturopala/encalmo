@@ -1,11 +1,13 @@
 package org.encalmo.examples
 
 import org.encalmo.expression._
+import org.encalmo.calculation.Context
+import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
 import org.encalmo.document._
 
-trait ProfiledSteelSheetSymbols extends SymbolConfigurator {
+object ProfiledSteelSheetSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
 	val dictionary, contextId = "profiledSteelSheet"
@@ -46,15 +48,35 @@ trait ProfiledSteelSheetSymbols extends SymbolConfigurator {
 
 }
 
-class ProfiledSteelSheet(id:String, val steel:Steel) 
-extends Calculation(Option(id)) with ProfiledSteelSheetSymbols {
+class ProfiledSteelSheet(id:String, val steel:Steel, data:Context) 
+extends Calculation(Option(id)) {
 
-	import Actions._
-	import Steel._
+	import ProfiledSteelSheetSymbols._
+	import ActionsSymbols._
+	import SteelSymbols._
 	
+	this add ProfiledSteelSheetExpressions
+	this add data
 	this add steel
 	
 	this(ID) = text(id)
+	
+    def info = NumSection(TextToTranslate("ProfiledSteelSheet",ProfiledSteelSheetSymbols.dictionary),id,
+		Evaluate(Seq(t,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,Wminus,Wplus),this)
+	)
+	
+	def web = Evaluate(Seq(Phi,sw,tcor,lambdaw),this)
+	
+	def shearForce = Evaluate(Seq(fyb,fbv,VbRd,VplRd,VwRd),this)
+	
+}
+
+object ProfiledSteelSheetExpressions extends MapContext {
+
+	import ProfiledSteelSheetSymbols._
+	import ActionsSymbols._
+	import SteelSymbols._
+	
 	this(Wminus) = Iminus/eminus
 	this(Wplus) = Iplus/eplus
 	this(MRdm) = Wminus*fypd
@@ -71,26 +93,16 @@ extends Calculation(Option(id)) with ProfiledSteelSheetSymbols {
 	this(VwRd) = (2*min(VbRd,VplRd))/bs
 	this(Rw1Rd) = alpha*(tcor^2)*sqrt(fyb*E)*(1-0.1*sqrt(r/tcor))*(0.5+sqrt((0.02*la)/tcor))*(2.4+((Phi/90)^2))*(1/gammaM1)
 	this(RwRd) = (2*Rw1Rd)/bs
-
-    def info = NumSection(TextToTranslate("ProfiledSteelSheet",dictionary),id,
-		Evaluate(Seq(t,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,Wminus,Wplus),this)
-	)
 	
-	def web = Evaluate(Seq(Phi,sw,tcor,lambdaw),this)
-	
-	def shearForce = Evaluate(Seq(fyb,fbv,VbRd,VplRd,VwRd),this)
-	
-}
-
-object ProfiledSteelSheet extends ProfiledSteelSheetSymbols {
-	
+	lock
 }
 
 object FLORSTROP {
 
-	import ProfiledSteelSheet._
+	import ProfiledSteelSheetSymbols._
 
-	def T59_Z_075 = new ProfiledSteelSheet("FLORSTROP T59 Z 0.75", Steel.S280GD){
+	def T59_Z_075 = new ProfiledSteelSheet("FLORSTROP T59 Z 0.75", Steel.S280GD, data_T59_Z_075)
+	private lazy val data_T59_Z_075 = new MapContext {
 		this(hp) = 59E-3
 		this(br) = 44.6E-3
 		this(bs) = 140E-3
@@ -105,9 +117,11 @@ object FLORSTROP {
         this(eplus) = 4.03E-2
         this(ep) = 3.64E-2
         this(Phi) = 75
+        lock
 	}
 	
-	def T59_Z_088 = new ProfiledSteelSheet("FLORSTROP T59 Z 0.88", Steel.S280GD){
+	def T59_Z_088 = new ProfiledSteelSheet("FLORSTROP T59 Z 0.88", Steel.S280GD, data_T59_Z_088)
+	private lazy val data_T59_Z_088 = new MapContext {
         this(hp) = 59E-3
         this(br) = 44.6E-3
         this(bs) = 140E-3
@@ -122,9 +136,11 @@ object FLORSTROP {
         this(eplus) = 4.06E-2
         this(ep) = 3.64E-2
         this(Phi) = 75
+        lock
     }
 	
-	def T59_Z_100 = new ProfiledSteelSheet("FLORSTROP T59 Z 1.0", Steel.S280GD){
+	def T59_Z_100 = new ProfiledSteelSheet("FLORSTROP T59 Z 1.0", Steel.S280GD, data_T59_Z_100)
+	private lazy val data_T59_Z_100 = new MapContext {
         this(hp) = 59E-3
         this(br) = 44.6E-3
         this(bs) = 140E-3
@@ -139,9 +155,11 @@ object FLORSTROP {
         this(eplus) = 4.06E-2
         this(ep) = 3.64E-2
         this(Phi) = 75
+        lock
     }
 	
-    def T59_Z_125 = new ProfiledSteelSheet("FLORSTROP T59 Z 1.25", Steel.S280GD){
+    def T59_Z_125 = new ProfiledSteelSheet("FLORSTROP T59 Z 1.25", Steel.S280GD, data_T59_Z_125)
+	private lazy val data_T59_Z_125 = new MapContext {
         this(hp) = 59E-3
         this(br) = 44.6E-3
         this(bs) = 140E-3
@@ -156,6 +174,7 @@ object FLORSTROP {
         this(eplus) = 4.06E-2
         this(ep) = 3.64E-2
         this(Phi) = 75
+        lock
     }
 
 }

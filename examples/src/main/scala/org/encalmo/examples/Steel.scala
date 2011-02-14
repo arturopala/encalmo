@@ -1,12 +1,14 @@
 package org.encalmo.examples
 
 import org.encalmo.expression._
+import org.encalmo.calculation.Context
+import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
 import org.encalmo.document._
 
 /** Steel symbols */
-trait SteelSymbols extends SymbolConfigurator {
+object SteelSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
 	val dictionary, contextId = "steel"
@@ -21,30 +23,48 @@ trait SteelSymbols extends SymbolConfigurator {
 	val gammas = symbol(gamma|"s") unit "N/m3"
 }
 
-/** Steel context */
-class Steel(id:String) extends Calculation(Option(id)) with SteelSymbols {
+/** Common steel expressions */
+object SteelExpressions extends MapContext {
+
+	import SteelSymbols._
+		
+	this(fypd) = fyp/gammaM0
+	this(fyb) = fyp
+	this(gammas) = 78.5E3
+	lock
+}
+
+/** Steel context class */
+class Steel(id:String,data:Context) extends Calculation(Option(id)) {
+
+	import SteelSymbols._
 	
 	def info = NumSection(TextToTranslate("Steel",dictionary),id,
 		Evaluate(Seq(fyp,gammaM0,fypd,E),this)
 	)
 	
+	this add SteelExpressions
+	this add data
 	this(CLASS) = text(id)
-	this(fypd) = fyp/gammaM0
-	this(fyb) = fyp
-	this(gammas) = 78.5E3
 }
 
 /** Steel library */
-object Steel extends SteelSymbols {
+object Steel {
 	
+	import SteelSymbols._
 
-	def S355 = new Steel("S355"){
+	def S355 = new Steel("S355",data_S355)
+	def S280GD = new Steel("S280 GD",data_S280GD)
+	
+	private lazy val data_S355 = new MapContext {
 		this(E) = 210E9
 		this(fyp) = 355E6
+		lock
 	}
 	
-	def S280GD = new Steel("S280 GD"){
+	private lazy val data_S280GD = new MapContext {
 		this(E) = 210E9
 		this(fyp) = 280E6
+		lock
 	}
 }

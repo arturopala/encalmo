@@ -72,6 +72,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
 	def isBracketNeeded(node:Node[Expression],o:Operation):Boolean = {
 		if(node.parent!=null){
 			node.parent.element match {
+				case o:abs => false
 				case po:Operation => po.precedence>o.precedence && (node.position>0 || po.precedence-o.precedence>5)
 				case _ => false
 			}
@@ -100,6 +101,9 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
     				case o:PrefixOperation => {
     					w.write(o.operator)
     				}
+    				case o:abs => {
+    					w.write('|')
+					}
     				case o:NamedOperation => {
     					w.write(o.operator)
     					if(!o.isInstanceOf[Operation1]){
@@ -162,6 +166,9 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
 				o match {
 					case o:PostfixOperation => {
 						w.write(o.operator)
+					}
+    				case o:abs => {
+    					w.write('|')
 					}
 					case o:NamedOperation => {
 						if(!o.isInstanceOf[Operation1]){

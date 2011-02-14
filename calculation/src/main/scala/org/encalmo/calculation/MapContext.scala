@@ -21,6 +21,8 @@ class MapContext(val id:Option[String] = None) extends Context {
 
 object MapContext {
 	
+	def apply(id:String) = new MapContext(Option(id))
+	
 	def apply(id:Option[String] = None) = new MapContext(id)
 	
 	def unapply(d:MapContext) = Some(d.id)

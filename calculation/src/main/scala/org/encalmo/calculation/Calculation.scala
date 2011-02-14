@@ -6,30 +6,27 @@ import org.encalmo.expression._
 /** 
  * Calculation
  */
-class Calculation(val id:Option[String] = None) extends ContextSet {
+class Calculation(val id:Option[String] = None) extends ContextSet with Context {
 	
 	override val set:LinkedHashSet[ExpressionResolver] = LinkedHashSet[ExpressionResolver]()
 	
 	private val context = new MapContext(id)
 	private val cache = new LinkedHashMap[Symbol,Expression]
 	
-	set.add(context)
+	val map = context.map
 	
-	/** Maps symbol to the expression */
-	def update(s:Symbol,e:Expression):Unit = {
-		context(s) = e
-	}
+	set.add(context)
 	
 	/** Maps symbols to the expressions */
 	def put(ts:(Symbol,Expression)*):Unit = {
-		for(t <- ts){
+		if(opened) for(t <- ts){
 			context(t._1) = t._2
-		}
+		} else throwException
 	}
 	
 	/** Inserts new ExpressionResolver */
 	def add(er:ExpressionResolver):Unit = {
-		set.add(er)
+		if(opened) set.add(er) else throwException
 	}
 	
 	/** Returns future expression */
@@ -86,7 +83,7 @@ class Calculation(val id:Option[String] = None) extends ContextSet {
 	/**
 	 * Adds resolved espresion to cache
 	 */
-	def addToCache(s:Symbol,e:Expression) = {
+	private def addToCache(s:Symbol,e:Expression) = {
 		cache.put(s,e)
 		e
 	}

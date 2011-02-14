@@ -1,11 +1,14 @@
 package org.encalmo.examples
 
 import org.encalmo.expression._
+import org.encalmo.calculation.Context
+import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
 import org.encalmo.document._
 
-trait ConcreteSymbols extends SymbolConfigurator {
+/** Concrete related symbols */
+object ConcreteSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
 	val dictionary, contextId = "concrete"
@@ -32,23 +35,40 @@ trait ConcreteSymbols extends SymbolConfigurator {
 	val gammacf = symbol(gamma|"c,f") unit "N/m3"
 }
 
-class Concrete(id:String) extends Calculation(Option(id)) with ConcreteSymbols {
+/** Common Concrete expressions */
+object ConcreteExpressions extends MapContext {
 
-	def info = NumSection(TextToTranslate("Concrete",dictionary),id,
-		Evaluate(Seq(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1),this)
-	)
+	import ConcreteSymbols._
 	
-	this(CLASS) = text(id)
 	this(fcd) = fck/gammaC
 	this(fctd) = fctk/gammaC
 	this(gammac) = 25000
 	this(gammacf) = gammac+1000
+}
+
+/** Concrete class */
+class Concrete(id:String,data:Context) extends Calculation(Option(id)) {
+
+	import ConcreteSymbols._
+
+	def info = NumSection(TextToTranslate("Concrete",ConcreteSymbols.dictionary),id,
+		Evaluate(Seq(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1),this)
+	)
+	
+	this add ConcreteExpressions
+	this add data
+	this(CLASS) = text(id)
 	
 }
 
-object Concrete extends ConcreteSymbols {
-	
-	def C_50_60 = new Concrete("C50/60"){
+/** Concrete classes library */
+object Concrete {
+
+	import ConcreteSymbols._
+
+	def C_50_60:Concrete = new Concrete("C50/60",data_C_50_60)
+
+	private lazy val data_C_50_60 = new MapContext{
 		this(fck) = 50E6
 		this(fckcube) = 60E6
 		this(fcm) = 58E6
@@ -63,6 +83,7 @@ object Concrete extends ConcreteSymbols {
 		this(epsic3) = 1.75
 		this(epsicu3) = 3.5
 		this(n) = 2.0
+		lock
 	}
 	
 }

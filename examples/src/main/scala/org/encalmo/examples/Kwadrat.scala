@@ -3,7 +3,7 @@ package org.encalmo.examples
 import org.encalmo.expression._
 import org.encalmo.calculation._
 
-trait ShapeSymbols extends SymbolConfigurator {
+object ShapeSymbols extends SymbolConfigurator {
 
     import BasicSymbols._
     val dictionary, contextId = "geometry"
@@ -16,7 +16,9 @@ trait ShapeSymbols extends SymbolConfigurator {
         
 }
 
-class Kwadrat(id:Option[String],a:Expression) extends Calculation(id) with ShapeSymbols {
+class Kwadrat(id:Option[String],a:Expression) extends Calculation(id) {
+
+	import ShapeSymbols._
 	
 	this(A) = a*a
     this(Iz) = (a^4)/12

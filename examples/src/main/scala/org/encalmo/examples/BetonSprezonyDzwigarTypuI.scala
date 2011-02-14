@@ -12,7 +12,8 @@ import org.encalmo.examples.Predefined._
 class BetonSprezonyDzwigarTypuI {
     
     import BasicSymbols._
-    import Concrete._
+    import ConcreteSymbols._
+    import ActionsSymbols._
     
     val daneMaterialowe,zestawienieObciazen,geometriaDzwigara,charakterystykiGeometryczne:Seq[Expression] = Seq()
     

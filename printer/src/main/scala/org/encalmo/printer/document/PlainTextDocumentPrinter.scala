@@ -149,7 +149,8 @@ extends Traveler[DocumentComponent] {
 			}
 			case ns:NumSection => {
 				val sc = counterFor(ns.enumerator)
-				for(x <- 0 to (2-ns.enumeratorLevel)){
+				val max = (2-ns.enumeratorLevel)
+				for(x <- 0 to (if(max>0) max else 1)){
 					writeLineEnd
 					canNewLine = true;
 				}
@@ -201,6 +202,7 @@ extends Traveler[DocumentComponent] {
 					case Some(b) if !b => throw new IllegalStateException("")
 					case _=>
 				}
+				canNewLine = true;
 			}
 			case _ =>
 		}
