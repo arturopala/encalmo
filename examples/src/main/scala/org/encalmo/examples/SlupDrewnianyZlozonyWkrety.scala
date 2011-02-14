@@ -207,7 +207,7 @@ class SlupDrewnianyZlozonyWkrety {
     val nosnoscObliczeniowa = Seq(lc,betac,Ief,lambdaeff,lambdarel,kmin,kc,sigmac0d,NRc,Fmax,xiS)
 
     val Vd = V|"d" is "siła ścinająca wg C.5 [1]" unit "N"
-    calc(Vd) = Fcd/(120*kc) or (InRange(30,lambdaeff,60) then (Fcd/(3600*kc))) or (GreaterThan(lambdaeff,60) then (Fcd/(60*kc)))
+    calc(Vd) = Fcd/(120*kc) or (InRangeLLE(30,lambdaeff,60) then (Fcd/(3600*kc))) or (GreaterThan(lambdaeff,60) then (Fcd/(60*kc)))
     val tau2max = tau|"2,max" is "maksymalne naprężenia ścinające w środniku wg B.9 [1]" unit "Pa"
     calc(tau2max) = E0mean*(gamma1SGN*A1*az+0.5*b2*(h^2))/(b2*EIeffSGN)*Vd
     val nosnoscScinanie = Seq(Vd,tau2max)

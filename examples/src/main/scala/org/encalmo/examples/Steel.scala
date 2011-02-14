@@ -15,6 +15,7 @@ trait SteelSymbols extends SymbolConfigurator {
 	val E = symbol(BasicSymbols.E) unit "Pa"
 	val fyp = symbol(f|"yp") unit "Pa"
 	val fypd = symbol(f|"yp,d") unit "Pa"
+	val fyb = symbol(f|"yb") unit "Pa"
 	val gammaM0 = symbol(gamma|"M,0")
 	val gammaM1 = symbol(gamma|"M,1")
 	val gammas = symbol(gamma|"s") unit "N/m3"
@@ -29,6 +30,7 @@ class Steel(id:String) extends Calculation(Option(id)) with SteelSymbols {
 	
 	this(CLASS) = text(id)
 	this(fypd) = fyp/gammaM0
+	this(fyb) = fyp
 	this(gammas) = 78.5E3
 }
 
@@ -36,12 +38,12 @@ class Steel(id:String) extends Calculation(Option(id)) with SteelSymbols {
 object Steel extends SteelSymbols {
 	
 
-	lazy val S355 = new Steel("S355"){
+	def S355 = new Steel("S355"){
 		this(E) = 210E9
 		this(fyp) = 355E6
 	}
 	
-	lazy val S280GD = new Steel("S280 GD"){
+	def S280GD = new Steel("S280 GD"){
 		this(E) = 210E9
 		this(fyp) = 280E6
 	}

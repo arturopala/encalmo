@@ -122,7 +122,7 @@ case class Equals(t1:Expression,t2:Expression) extends CaseTest {
 }
 
 /**
- * GreaterThan tests if first expression evals to number greater then the second
+ * GreaterThan test
  * @author artur.opala
  */
 case class GreaterThan(t1:Expression,t2:Expression) extends CaseTest {
@@ -149,21 +149,102 @@ case class GreaterThan(t1:Expression,t2:Expression) extends CaseTest {
 }
 
 /**
- * InRange tests if second expression after evaluation is between of the first and the third
+ * GreaterThan test
  * @author artur.opala
  */
-case class InRange(t1:Expression,t2:Expression,t3:Expression) extends CaseTest {
+case class GreaterOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
+
+    override def children = Seq(t1,t2)
+    
+    override def operator:Seq[String] = Seq("",">=","")
+
+    override def test:Boolean = {
+            val v1 = t1.eval
+            val v2 = t2.eval
+            (v1,v2) match {
+            case (n1:Number,n2:Number) => n1.r.d>=n2.r.d
+            case _ => throw new IllegalArgumentException
+            }
+    }
+
+    override def map(f:Transformation):Expression = {
+            val vl = t1.map(f); 
+            val vr = t2.map(f);
+            if(vl==t1 && vr==t2) f(this) else f(GreaterOrEqualThan(vl,vr))
+    }
+
+}
+
+/**
+ * LowerThan test
+ * @author artur.opala
+ */
+case class LowerThan(t1:Expression,t2:Expression) extends CaseTest {
+
+    override def children = Seq(t1,t2)
+    
+    override def operator:Seq[String] = Seq("","<","")
+
+    override def test:Boolean = {
+            val v1 = t1.eval
+            val v2 = t2.eval
+            (v1,v2) match {
+            case (n1:Number,n2:Number) => n1.r.d<=n2.r.d
+            case _ => throw new IllegalArgumentException
+            }
+    }
+
+    override def map(f:Transformation):Expression = {
+            val vl = t1.map(f); 
+            val vr = t2.map(f);
+            if(vl==t1 && vr==t2) f(this) else f(LowerThan(vl,vr))
+    }
+
+}
+
+/**
+ * LowerOrEqualThan test
+ * @author artur.opala
+ */
+case class LowerOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
+
+    override def children = Seq(t1,t2)
+    
+    override def operator:Seq[String] = Seq("","<=","")
+
+    override def test:Boolean = {
+            val v1 = t1.eval
+            val v2 = t2.eval
+            (v1,v2) match {
+            case (n1:Number,n2:Number) => n1.r.d<=n2.r.d
+            case _ => throw new IllegalArgumentException(""+v1+" "+v2)
+            }
+    }
+
+    override def map(f:Transformation):Expression = {
+            val vl = t1.map(f); 
+            val vr = t2.map(f);
+            if(vl==t1 && vr==t2) f(this) else f(LowerOrEqualThan(vl,vr))
+    }
+
+}
+
+/**
+ * InRangeLEL test
+ * @author artur.opala
+ */
+case class InRangeLEL(t1:Expression,t2:Expression,t3:Expression) extends CaseTest {
 
     override def children = Seq(t1,t2,t3)
     
-    override def operator:Seq[String] = Seq("",">=","<","")
+    override def operator:Seq[String] = Seq("","<=","<","")
 
     override def test:Boolean = {
             val v1 = t1.eval
             val v2 = t2.eval
             val v3 = t3.eval
             (v1,v2,v3) match {
-            case (n1:Number,n2:Number,n3:Number) => n2.r.d>=n1.r.d && n2.r.d<n3.r.d
+            case (n1:Number,n2:Number,n3:Number) => n1.r.d<=n2.r.d && n2.r.d<n3.r.d
             case _ => throw new IllegalArgumentException
             }
     }
@@ -172,7 +253,94 @@ case class InRange(t1:Expression,t2:Expression,t3:Expression) extends CaseTest {
             val v1 = t1.map(f); 
             val v2 = t2.map(f);
             val v3 = t3.map(f);
-            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRange(v1,v2,v3))
+            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLEL(v1,v2,v3))
+    }
+
+}
+
+/**
+ * InRangeLLE test
+ * @author artur.opala
+ */
+case class InRangeLLE(t1:Expression,t2:Expression,t3:Expression) extends CaseTest {
+
+    override def children = Seq(t1,t2,t3)
+    
+    override def operator:Seq[String] = Seq("","<","<=","")
+
+    override def test:Boolean = {
+            val v1 = t1.eval
+            val v2 = t2.eval
+            val v3 = t3.eval
+            (v1,v2,v3) match {
+            case (n1:Number,n2:Number,n3:Number) => n1.r.d<n2.r.d && n2.r.d<=n3.r.d
+            case _ => throw new IllegalArgumentException
+            }
+    }
+
+    override def map(f:Transformation):Expression = {
+            val v1 = t1.map(f); 
+            val v2 = t2.map(f);
+            val v3 = t3.map(f);
+            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLLE(v1,v2,v3))
+    }
+
+}
+
+/**
+ * InRangeLL test
+ * @author artur.opala
+ */
+case class InRangeLL(t1:Expression,t2:Expression,t3:Expression) extends CaseTest {
+
+    override def children = Seq(t1,t2,t3)
+    
+    override def operator:Seq[String] = Seq("","<","<","")
+
+    override def test:Boolean = {
+            val v1 = t1.eval
+            val v2 = t2.eval
+            val v3 = t3.eval
+            (v1,v2,v3) match {
+            case (n1:Number,n2:Number,n3:Number) => n1.r.d<n2.r.d && n2.r.d<n3.r.d
+            case _ => throw new IllegalArgumentException
+            }
+    }
+
+    override def map(f:Transformation):Expression = {
+            val v1 = t1.map(f); 
+            val v2 = t2.map(f);
+            val v3 = t3.map(f);
+            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLL(v1,v2,v3))
+    }
+
+}
+
+/**
+ * InRangeLELE test
+ * @author artur.opala
+ */
+case class InRangeLELE(t1:Expression,t2:Expression,t3:Expression) extends CaseTest {
+
+    override def children = Seq(t1,t2,t3)
+    
+    override def operator:Seq[String] = Seq("","<=","<=","")
+
+    override def test:Boolean = {
+            val v1 = t1.eval
+            val v2 = t2.eval
+            val v3 = t3.eval
+            (v1,v2,v3) match {
+            case (n1:Number,n2:Number,n3:Number) => n1.r.d<=n2.r.d && n2.r.d<=n3.r.d
+            case _ => throw new IllegalArgumentException
+            }
+    }
+
+    override def map(f:Transformation):Expression = {
+            val v1 = t1.map(f); 
+            val v2 = t2.map(f);
+            val v3 = t3.map(f);
+            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLELE(v1,v2,v3))
     }
 
 }

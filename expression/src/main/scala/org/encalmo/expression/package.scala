@@ -27,8 +27,6 @@ package object expression {
 	implicit def long2Number(l:Long):Number = l match{case _ if l==0 =>ZERO; case _ if l==1 =>ONE; case _=>Number(new Real(l))}
 	implicit def float2Number(f:Float):Number = f match{case _ if f==0 =>ZERO; case _ if f==1 =>ONE; case _=>Number(new Real(f))}
 	implicit def double2Number(d:Double):Number = d match{case _ if d==0 =>ZERO; case _ if d==1 =>ONE; case _=>Number(new Real(d))}
-	
-	def text(s:String):TextValue = TextValue(s)
 	  
 	implicit def exprFx2Expression(m:()=>Expression):Expression = new ExprFx(m)
 	implicit def realFx2Expression(m:()=>Real):Expression = new RealFx(m)
@@ -42,5 +40,25 @@ package object expression {
 			console.flush
 		}
 	)
+	
+	//helper functions
+	
+	def text(s:String):TextValue = TextValue(s)
+	
+	def rangeChoiceLLE(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
+		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerThan(e,lowerBound)),Case(CaseExpression(second),InRangeLEL(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterOrEqualThan(e,upperBound))))
+	}
+	
+	def rangeChoiceLEL(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
+		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerOrEqualThan(e,lowerBound)),Case(CaseExpression(second),InRangeLLE(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterThan(e,upperBound))))
+	}
+	
+	def rangeChoiceLL(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
+		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerThan(e,lowerBound)),Case(CaseExpression(second),InRangeLELE(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterThan(e,upperBound))))
+	}
+	
+	def rangeChoiceLELE(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
+		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerOrEqualThan(e,lowerBound)),Case(CaseExpression(second),InRangeLL(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterOrEqualThan(e,upperBound))))
+	}
 	
 }

@@ -135,3 +135,16 @@ case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Opera
   override def copy(x:Expression) = round(x,rm)
   override val operator = "round"
 }
+
+/**
+ * Absolute value operation
+ */
+case class abs(e:Expression) extends Operation1 with NamedOperation {
+	
+  override def calculate(v:Value):Expression = v match {
+	  case Number(r) => Number(r.abs)
+	  case _ => copy(v)
+  }
+  override def copy(e:Expression) = abs(e)
+  override val operator = "abs"
+}

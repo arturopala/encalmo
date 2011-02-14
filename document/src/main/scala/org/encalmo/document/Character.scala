@@ -26,6 +26,12 @@ object Character{
 	val SPACE = Character(" ")
 	/** long space */
     val LONGSPACE = Character("  ")
+    /** equal character */
+    val EQUAL = Character("=")
+    /** lower character */
+    val LOWER = Character("<")
+    /** greater character */
+    val GREATER = Character(">")
 	/** lower or equal character */
 	val LE = Character("≤")
 	/** greater or equal character */

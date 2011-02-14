@@ -323,8 +323,8 @@ extends Traveler[DocumentComponent] {
 			}
     		output.body
     		output.tableColumn("2.5","em")
-    		output.tableColumn("proportional-column-width(35)","")
-    		output.tableColumn("proportional-column-width(65)","")
+    		output.tableColumn("proportional-column-width(40)","")
+    		output.tableColumn("proportional-column-width(60)","")
     		output.start(TABLE_BODY)
 			output.body
 			for(es <- ess){

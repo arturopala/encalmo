@@ -15,15 +15,15 @@ case class Case(ce:CaseExpression,t:CaseTest) extends Expression with Auxiliary 
             val ev = ce eval; 
             if(ev.ne(ce.expr)) Case(CaseExpression(ev),t) else this
     }
-
+    
+    /** Maps only test expressions */
     final override def map(f:Transformation):Expression = {
-            val ve = ce.map(f);
             val vt = t.map(f);
-            if(ve==ce.expr && vt==t) f(this) else {
+            if(vt==t) f(this) else {
                 if(vt.isInstanceOf[CaseTest]){
-                    f(Case(CaseExpression(ve),vt.asInstanceOf[CaseTest]))
+                    f(Case(ce,vt.asInstanceOf[CaseTest]))
                 }else{
-                    f(Case(CaseExpression(ve),Never))
+                    f(Case(ce,Never))
                 }
             }
     }

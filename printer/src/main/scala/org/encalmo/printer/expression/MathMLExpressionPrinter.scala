@@ -47,6 +47,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 				case o:sqrt => false
 				case o:cbrt => false
 				case o:root => false
+				case o:abs => false
 				case po: Operation => po.precedence > o.precedence && (node.position > 0 || po.precedence - o.precedence > 5)
 				case _ => false
 			}
@@ -98,6 +99,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    				case hypot(l,r) => {
 	    					output.startb(MSQRT)
 	    				}
+	    				case o:abs => {
+	    					output.mo("|","infix","thinmathspace","thinmathspace")
+	    				}
 	    				case o: NamedOperation => {
 	    					o match {
 	    						case _ => {
@@ -112,11 +116,13 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    			}
 	    		}
 	            case s:Selection => {
-	                output.start(MFENCED)
-	                output.attr("open","{")
-	                output.attr("close","")
-	                output.attr("separators","")
-	                output.body
+	            	if(!s.isSingle){
+		                output.start(MFENCED)
+		                output.attr("open","{")
+		                output.attr("close","")
+		                output.attr("separators","")
+		                output.body
+	                }
 	                output.start(MTABLE)
 	                output.attr("columnalign","left")
 	                output.body
@@ -201,7 +207,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 				output.separator
 			}
 			case o: OperationN => {
-				output.separator
+				output.mo("|","infix","thickmathspace","thickmathspace")
 			}
             case ct:Case => {
                 output.startb(MTD)
@@ -291,6 +297,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 					case hypot(l,r) => {
 						output.end(MSQRT)
 					}
+    				case o:abs => {
+    					output.mo("|","infix","thinmathspace","thinmathspace")
+    				}
 					case o: NamedOperation => {
 						o match {
 							case _ => {
@@ -306,7 +315,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 			}
 	        case s:Selection => {
 	            output.end(MTABLE)
-	            output.end(MFENCED)
+	            if(!s.isSingle) output.end(MFENCED)
 	        }
 	        case ct:Case => {
 	            output.end(MTR)

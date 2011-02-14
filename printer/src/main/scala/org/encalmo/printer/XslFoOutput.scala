@@ -126,6 +126,9 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			case Character.LONGSPACE.text => "&nbsp;&nbsp;"
 			case Character.LE.text => "&le;"
 			case Character.GE.text => "&geq;"
+			case Character.LOWER.text => "&lt;"
+            case Character.GREATER.text => "&gt;"
+            case Character.EQUAL.text => "="
 			case Character.RARROW.text => "&rarr;"
 			case _ => ch.text
 		})

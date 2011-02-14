@@ -25,7 +25,7 @@ class MathMLExpressionPrinterTest extends AssertionsForJUnit {
 		o.close
 		o.printConsole
 		
-		val sel1 = 1 or (InRange(0.75,a3,1.4) then (1.56-(0.75*a3))) or (GreaterThan(a,1.4) then (1/(a3^2)))
+		val sel1 = 1 or (InRangeLLE(0.75,a3,1.4) then (1.56-(0.75*a3))) or (GreaterThan(a,1.4) then (1/(a3^2)))
 		val rel = a2*(5+sel1)
 		val o2:MathMLOutput = new MathMLOutput(new java.util.Locale("PL"))
 		o.open
@@ -38,7 +38,7 @@ class MathMLExpressionPrinterTest extends AssertionsForJUnit {
 	    val o:MathMLOutput = new MathMLOutput(new java.util.Locale("PL"))
         val a2 = Symbol("Ar",BasicSymbols.a)
         val a3 = Symbol("Ar",BasicSymbols.a,BasicSymbols.beta)
-        val sel1 = 1 or (InRange(0.75,a3,1.4) then (1.56-(0.75*a3))) or (GreaterThan(a,1.4) then (1/(a3^2)))
+        val sel1 = 1 or (InRangeLLE(0.75,a3,1.4) then (1.56-(0.75*a3))) or (GreaterThan(a,1.4) then (1/(a3^2)))
         val rel = a2*(5+sel1)
         o.open
         MathMLExpressionPrinter.print(rel,o)

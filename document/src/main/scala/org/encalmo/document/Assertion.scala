@@ -13,8 +13,7 @@ import org.encalmo.calculation.Calculation
 abstract class Assertion(
 		val text:String,
 		val calc:Calculation, 
-		val leftExpression:Expression,
-		val rightExpression:Expression
+		val expressions:Seq[Expression]
 ) 
 extends DocumentComponent(null){
 	
@@ -24,13 +23,12 @@ extends DocumentComponent(null){
 	lazy val falseStyle:Style= parentStylesConfig match {case Some(sc) => sc.assertions.iffalse.get; case None => DefaultStyle}
 	lazy val unknownStyle:Style = parentStylesConfig match {case Some(sc) => sc.assertions.unknown.get; case None => DefaultStyle}
 	
-	def operator:Character
-	def assert(r1:Expression,r2:Expression):Option[Boolean]
+	def operator:Seq[Character]
+	def assert(results:Seq[Expression]):Option[Boolean]
 	
 	override def myStyle:Style = {
-		val r1 = calc.evaluate(leftExpression)
-		val r2 = calc.evaluate(rightExpression)
-		val ob = assert(r1,r2)
+		val results = expressions.map(calc.evaluate(_))
+		val ob = assert(results)
 		ob match {
 			case Some(b) => b match {
 				case true => trueStyle
@@ -42,9 +40,8 @@ extends DocumentComponent(null){
 	
 	def evaluate:(Option[Boolean],Seq[DocumentComponent]) = {
 		val seq:ListBuffer[DocumentComponent] = ListBuffer()
-		val r1 = calc.evaluate(leftExpression)
-		val r2 = calc.evaluate(rightExpression)
-		val ob = assert(r1,r2)
+		val results = expressions.map(calc.evaluate(_))
+		val ob = assert(results)
 		if(text!=null){
 			seq += TextToTranslate("requirement","document")
 			seq += Character.SPACE
@@ -60,52 +57,132 @@ extends DocumentComponent(null){
 		},"document")
 		seq += Text(":")
 		seq += Character.LONGSPACE
-		seq += Symb(leftExpression)
-		seq += Character.SPACE
-		seq += operator
-		seq += Character.SPACE
-		seq += Symb(rightExpression)
+		seq += Symb(expressions.head)
+		for(i <-1 to expressions.tail.size){
+		    seq += Character.SPACE
+		    seq += operator(i-1)
+		    seq += Character.SPACE
+		    seq += Symb(expressions(i))
+		}
 		seq += Character.LONGSPACE
 		seq += Character.RARROW
 		seq += Character.LONGSPACE
-		seq += Result(calc,leftExpression)
-		seq += Character.SPACE
-		seq += operator
-		seq += Character.SPACE
-		seq += Result(calc,rightExpression)
+		seq += Symb(results.head)
+        for(i <-1 to results.tail.size){
+            seq += Character.SPACE
+            seq += operator(i-1)
+            seq += Character.SPACE
+            seq += Symb(results(i))
+        }
 		(ob,seq)
 	}
 	
 }
 
-/**
- * Assertion companion object
- * @author artur.opala
- */
 object AssertionLE {
-	
-	def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,le,re){
-		def operator:Character = Character.LE
-		def assert(le:Expression,re:Expression):Option[Boolean] = (le,re) match {
-			case (n1:Number,n2:Number) => {
+	def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
+		def operator:Seq[Character] = Seq(Character.LE)
+		def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number) => {
 				Some(n1 <= n2)
 			}
 			case _ => None
 		}
 	}
-	
 }
 
 object AssertionGE {
-    
-    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,le,re){
-        def operator:Character = Character.GE
-        def assert(le:Expression,re:Expression):Option[Boolean] = (le,re) match {
-            case (n1:Number,n2:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
+        def operator:Seq[Character] = Seq(Character.GE)
+        def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number) => {
                 Some(n1 >= n2)
             }
             case _ => None
         }
     }
-    
+}
+
+object AssertionG {
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
+        def operator:Seq[Character] = Seq(Character.GREATER)
+        def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number) => {
+                Some(n1 > n2)
+            }
+            case _ => None
+        }
+    }
+}
+
+object AssertionL {
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
+        def operator:Seq[Character] = Seq(Character.LOWER)
+        def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number) => {
+                Some(n1 < n2)
+            }
+            case _ => None
+        }
+    }
+}
+
+object AssertionE {
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
+        def operator:Seq[Character] = Seq(Character.EQUAL)
+        def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number) => {
+                Some(n1 == n2)
+            }
+            case _ => None
+        }
+    }
+}
+
+object AssertionRangeLLE {
+    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,Seq(le,e,re)){
+        def operator:Seq[Character] = Seq(Character.LOWER,Character.LE)
+        def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number,n3:Number) => {
+                Some(n1 < n2 && n2 <= n3)
+            }
+            case _ => None
+        }
+    }
+}
+
+object AssertionRangeLEL {
+    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,Seq(le,e,re)){
+        def operator:Seq[Character] = Seq(Character.LE,Character.LOWER)
+        def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number,n3:Number) => {
+                Some(n1 <= n2 && n2 < n3)
+            }
+            case _ => None
+        }
+    }
+}
+
+object AssertionRangeLL {
+    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,Seq(le,e,re)){
+        def operator:Seq[Character] = Seq(Character.LOWER,Character.LOWER)
+        def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number,n3:Number) => {
+                Some(n1 < n2 && n2 < n3)
+            }
+            case _ => None
+        }
+    }
+}
+
+object AssertionRangeLELE {
+    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,Seq(le,e,re)){
+        def operator:Seq[Character] = Seq(Character.LE,Character.LE)
+        def assert(results:Seq[Expression]):Option[Boolean] = results match {
+            case Seq(n1:Number,n2:Number,n3:Number) => {
+                Some(n1 <= n2 && n2 <= n3)
+            }
+            case _ => None
+        }
+    }
 }

@@ -28,6 +28,8 @@ trait ConcreteSymbols extends SymbolConfigurator {
 	val gammaC = symbol(gamma|"C")
 	val fcd = symbol(f|"cd") unit "Pa"
 	val fctd = symbol(f|"ctd") unit "Pa"
+	val gammac = symbol(gamma|"c") unit "N/m3"
+	val gammacf = symbol(gamma|"c,f") unit "N/m3"
 }
 
 class Concrete(id:String) extends Calculation(Option(id)) with ConcreteSymbols {
@@ -39,12 +41,14 @@ class Concrete(id:String) extends Calculation(Option(id)) with ConcreteSymbols {
 	this(CLASS) = text(id)
 	this(fcd) = fck/gammaC
 	this(fctd) = fctk/gammaC
+	this(gammac) = 25000
+	this(gammacf) = gammac+1000
 	
 }
 
 object Concrete extends ConcreteSymbols {
 	
-	lazy val C_50_60 = new Concrete("C50/60"){
+	def C_50_60 = new Concrete("C50/60"){
 		this(fck) = 50E6
 		this(fckcube) = 60E6
 		this(fcm) = 58E6

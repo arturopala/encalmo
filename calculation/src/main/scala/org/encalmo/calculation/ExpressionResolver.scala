@@ -96,6 +96,9 @@ trait ExpressionResolver {
 				case None => s
 			}
 			case sl:SymbolLike => sl.eval
+			case sel:Selection => {
+				sel.trim
+			}
 			case _ => e
 		}
 	}

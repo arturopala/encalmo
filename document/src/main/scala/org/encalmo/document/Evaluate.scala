@@ -7,6 +7,7 @@ import org.encalmo.expression.Transformations
 import org.encalmo.expression.Operation2
 import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
+import org.encalmo.expression.Selection
 import org.encalmo.calculation.Calculation
 
 /**
@@ -45,13 +46,16 @@ extends BlockExpr(myStyle,calc,expr:_*){
 			if(substituted!=ue && substituted!=evaluated){
 				se = se :+ ExpressionToPrint(substituted,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_SUBSTITUTED),"=",null,parentStylesConfig)
 				val depth = substituted.countTreeLeafs
-				if(depth>3){
+				if(depth>3 || substituted.isInstanceOf[Selection]){
     				val evaluation1 = substituted match { // partialy evaluated expression
                         case o:Operation2 => {
                             o.copy(calc.evaluate(o.l),calc.evaluate(o.r))
                         }
                         case o:OperationN => {
                             o.copy(o.args.map(calc.evaluate(_)):_*)
+                        }
+                        case sel:Selection => {
+                        	calc.substitute(sel.select)
                         }
                         case _ => calc.evaluate(substituted)
                     }
