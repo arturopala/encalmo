@@ -129,15 +129,28 @@ case class Number(r:Real) extends Value {
 					if(sf>1){
 						val nsf = (sf/3)*3+3
 						val nrif = analyze(rif._2*Math.pow(10,nsf))
-						NumberFormatted(
-							r.isNegative,
-							true,
-							nrif._1,
-							nrif._2,
-							-nsf,
-							3,
-							EmptyUnitOfValue
-						)
+						if(nrif._2==0 && sf%3d==0){
+							val n2rif = analyze(rif._2*Math.pow(10,nsf-3))
+							NumberFormatted(
+								r.isNegative,
+								true,
+								n2rif._1,
+								n2rif._2,
+								-(nsf-3),
+								3,
+								EmptyUnitOfValue
+							)
+						}else{
+							NumberFormatted(
+								r.isNegative,
+								true,
+								nrif._1,
+								nrif._2,
+								-nsf,
+								3,
+								EmptyUnitOfValue
+							)
+						}
 					}else{
 						NumberFormatted(
 							r.isNegative,

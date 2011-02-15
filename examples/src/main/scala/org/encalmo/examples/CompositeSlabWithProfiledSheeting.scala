@@ -76,6 +76,10 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val VRdc = symbol(BasicSymbols.V|"Rd,c") unit "N/m"
 	val VpRd = symbol(BasicSymbols.V|"p,Rd") unit "N"
 	val Qvd = symbol(BasicSymbols.Q|"v,d") unit "N"
+	val Asmin = symbol(BasicSymbols.A|"s,min") unit "m2/m"
+	val dmesh = symbol(BasicSymbols.d|"mesh") unit "mm"
+	val sd = symbol(BasicSymbols.s|"d") unit "m"
+	val sdmax = symbol(BasicSymbols.s|"d,max") unit "m"
 }
 
 /** Composite slab with profiled steel sheeting context */
@@ -83,7 +87,7 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 
 	import CompositeSlabWithProfiledSheetingSymbols._
 	import ProfiledSteelSheetSymbols._
-	import SteelSymbols._
+	import SteelSymbols.{E,fypd}
     import ConcreteSymbols._
     import ActionsSymbols._
 	
@@ -126,17 +130,17 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	//faza eksploatacji - ULS
 	this(MEdep) = (Qd2*(l^2))/8
 	this(MEdep) = (Qd2*(l^2))/8
-	this(xpl)=(Ap*fypd)/(0.85*fcd)
-	this(dp)=ep+hc
-	this(Np)=Ap*fypd
-	this(z)=dp-0.5*xpl
-	this(MplRd)=Np*z
-	this(VEde)=0.5*Qd2*l
-	this(mV)=103E6
-	this(kV)=0.19E6
-	this(Ls)=l/4
-	this(gammaVs)=1.25
-	this(V1Rd)=(dp*(((mV*Ap)/(Ls))+kV))/gammaVs
+	this(xpl) = (Ap*fypd)/(0.85*fcd)
+	this(dp) = ep+hc
+	this(Np) = Ap*fypd
+	this(z) = dp-0.5*xpl
+	this(MplRd) = Np*z
+	this(VEde) = 0.5*Qd2*l
+	this(mV) = 103E6
+	this(kV) = 0.19E6
+	this(Ls) = l/4
+	this(gammaVs) = 1.25
+	this(V1Rd) = (dp*(((mV*Ap)/(Ls))+kV))/gammaVs
 	//przebicie
 	this(ap) = 0.1
 	this(bp) = 0.1
@@ -147,6 +151,9 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	this(VpRd) = vmin*cp*dp
 	this(VRdc) = vmin*dv
 	this(Qvd) = Fd
+	
+	this(Asmin) = 0.002*hc*1
+	this(sdmax) = (PI*(dmesh^2))/(4*Asmin)*1E-6
 	
 	// end of context initialization
 	lock
@@ -209,9 +216,9 @@ extends Calculation {
 			AssertionLE("nośności na zginanie",this,abs(MEdmp/MRdp),1)
 		),
 		NumSection("Sprawdzenie nośności na ścinanie w fazie montażu",
-			Evaluate(Seq(VEdm,VEdm1,VEdm2),this),
-			//sheet.web,
-			//sheet.shearForce,
+			sheet.web,
+			sheet.shearForce,
+			Evaluate(Seq(VEdm,VwRd),this),
 			AssertionLE("nośności na ścinanie",this,abs(VEdm/VwRd),1),
 			AssertionLE("braku interakcji ścinania i zginania",this,abs(VEdm),0.5*VwRd)
 		),
@@ -219,7 +226,7 @@ extends Calculation {
 			AssertionL("6.1.7.3(1)",this,r/t,10),
 			AssertionL("6.1.7.3(1)",this,hw/t,200*sin(Phi)),
 			AssertionRangeLL("6.1.7.3(1)",this,45,Phi,90),
-			Evaluate(Seq(alpha,betav,ss,la,Rw1Rd,RwRd,FEdm),this),
+			Evaluate(Seq(VEdm1,VEdm2,alpha,betav,ss,la,Rw1Rd,RwRd,FEdm),this),
 			AssertionLE("nośności na miejscową siłą poprzeczną",this,abs(FEdm/RwRd),1)
 		),
 		NumSection("Sprawdzenie interakcji momentu zginającego i obciążenia lokalnego nad podporą wg PN-EN 1993-1-3",
@@ -255,6 +262,13 @@ extends Calculation {
 		NumSection("Sprawdzenie nośności na przebicie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.6(1) i PN-EN 1992-1-1 pkt.6.4.4",
 			Evaluate(Seq(ap,bp,cp,VpRd,Qvd),this),
 			AssertionLE("nośności na przebicie",this,abs(Qvd/VpRd),1)
+		)
+	)
+	
+	def SLS2 = NumSection(TextToTranslate("SLS","eurocode"),
+		NumSection("Kontrola zarysowania betonu na podporami wg PN-EN 1994-1-1 pkt. 9.8.1",
+			Evaluate(Seq(Asmin,dmesh,sd,sdmax),this),
+			AssertionLE("minimalnego zbrojenia na zarysowanie nad podporą",this,sd,sdmax)
 		)
 	)
 	

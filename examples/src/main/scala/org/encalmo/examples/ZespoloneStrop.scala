@@ -55,6 +55,9 @@ class ZespoloneStrop {
     blacha.steel(gammaM1) = 1.0
     beton(gammaC) = 1.5
     
+    plyta(dmesh) = 8
+    plyta(sd) = 0.2
+    
     
     val doc1 = Document(Predefined.style1,"",
         Predefined.stylesConfig,
@@ -84,15 +87,14 @@ class ZespoloneStrop {
 	               plyta.LOAD1
 	           ),
 	           NumSection("Blacha trapezowa jako deskowanie",
-	           	   Section(styleDescription,"""Schemat statyczny blachy trapezowej pełniącej funkcje 
-deskowania przyjęto jako belkę pięcioprzęsłową."""),
+	           	   Section(styleDescription,"""Schemat statyczny blachy trapezowej pełniącej funkcje deskowania przyjęto jako belkę pięcioprzęsłową. Siły wewnętrzne i reakcje obliczono korzystając z tablic w [6]."""),
 	              plyta.ULS1,plyta.SLS1
 	           ),
 	           NumSection("Obciążenia i schemat statyczny w fazie eksploatacji",
 	               plyta.LOAD2
 	           ),
 	           NumSection("Wymiarowanie płyty zespolonej w fazie eksploatacji",
-	               plyta.ULS2
+	               plyta.ULS2,plyta.SLS2
 	           )
            ),
            NumSection("Wymiarowanie belki stropowej",

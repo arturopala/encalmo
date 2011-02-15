@@ -135,4 +135,12 @@ class NumberUnitTest extends AssertionsForJUnit {
 		assertEquals(0,ffp10.fraction,0.000001)
 	}
 	
+	@Test def testFormatForPrint2 {
+	
+		val n:Number = (Number(122E-6)/Number(201.062E-9)).eval.asInstanceOf[Number]
+		val fn = n.formatForPrint
+		assertTrue(!fn.isNegative)
+	
+	}
+	
 }

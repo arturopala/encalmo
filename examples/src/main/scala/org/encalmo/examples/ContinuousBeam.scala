@@ -126,7 +126,7 @@ class ContinuousBeam_5_LinearLoad(id:String, length:Expression, load:Expression)
 	this(TRmax1) = -0.620*p*l
 	this(TRmax2) = 0.598*p*l
 	this(Rmin) = RCmin
-	this(Tmax) = T2Bmax
+	this(Tmax) = abs(TRmax1)
 	this(Tmin) = T2Cmin
 
 

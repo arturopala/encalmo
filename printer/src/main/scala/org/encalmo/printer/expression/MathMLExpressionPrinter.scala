@@ -105,7 +105,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    				case o: NamedOperation => {
 	    					o match {
 	    						case _ => {
-	    							output.mi(o.operator)
+	    							output.mo(o.operator,"prefix")
 	    							if (!o.isInstanceOf[Operation1]) {
 	    								output.leftBracket
 	    							}

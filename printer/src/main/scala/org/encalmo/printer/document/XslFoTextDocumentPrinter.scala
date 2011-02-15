@@ -49,6 +49,7 @@ extends Traveler[DocumentComponent] {
 	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
 	
 	private val styleStack:Stack[Style] = Stack()
+	styleStack.push(DefaultStyle)
 	
 	/** Returns counter linked to the enumerator */
 	private def counterFor(en:Enumerator):SectionCounter = {
@@ -167,7 +168,7 @@ extends Traveler[DocumentComponent] {
 			}
 			case nvc:NonVisualComponent => return
 			case d:Document => {
-				
+				return
 			}
 			case chapter:Chapter => {
 				tryStartPageSequence(chapter,chapter.style)
@@ -384,13 +385,14 @@ extends Traveler[DocumentComponent] {
 		    	}
 		        if(isCell2 && !twoRows){
 			        output.start(TABLE_CELL)
-			        if(!twoTableRows) output.attr("border-bottom","0.5pt dotted gray")
+			        if(!twoTableRows) output.attr("border-bottom","0.4pt dotted black")
 			        output.body
 			        output.start(BLOCK)
 			        output.attr("margin-right","3pt")
 			        output.attr("padding-top",paddingTop,"pt")
 			        output.attr("padding-bottom",paddingBottom,"pt")
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
+			        output.appendHyphenationStyleAttributes(descStyle,styleStack.top)
 		        	output.attr("keep-together.within-page","always")
 			        output.body
 			        if(!secondTableRow) {
@@ -404,7 +406,7 @@ extends Traveler[DocumentComponent] {
 		        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
 		        	output.attr("number-columns-spanned",ncs);
 		        }
-				if(!twoTableRows) output.attr("border-bottom","0.5pt dotted gray")
+				if(!twoTableRows) output.attr("border-bottom","0.4pt dotted black")
 			    output.attr("vertical-align","middle")
 		        output.body
 		        if(isCell2 && twoRows){

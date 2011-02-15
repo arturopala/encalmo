@@ -134,32 +134,37 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			}
 			body
 		}
-		if (nf.isNegative) {
-			mo("-", "prefix")
-		}
-		start(MN)
-		if(!nf.hasExponent && !nf.isNegative){
-			if(numberStyle!=null){
-				appendStyleAttributes(numberStyle)
+		val omit = !nf.isNegative && nf.integer==1 && nf.fraction==0 && nf.exponent!=0
+		if(!omit){
+			if (nf.isNegative) {
+				mo("-", "prefix")
 			}
-		}
-		body
-		append(integerFormat1.format(nf.integer))
-		if(nf.fraction>0){
-			nf.decimals match {
-				case 1 => append(fractionFormat1.format(nf.fraction))
-				case 2 => append(fractionFormat2.format(nf.fraction))
-				case 3 => append(fractionFormat3.format(nf.fraction))
-				case _ => append(fractionFormat4.format(nf.fraction))
+			start(MN)
+			if(!nf.hasExponent && !nf.isNegative){
+				if(numberStyle!=null){
+					appendStyleAttributes(numberStyle)
+				}
 			}
-		}
-		end(MN)
-		if(nf.hasExponent && nf.exponent!=0) {
-			start(MO)
-			attr("mathsize",resolveStyle.font.size-2)
 			body
-			append(ENTITY_CENTER_DOT)
-			end(MO)
+			append(integerFormat1.format(nf.integer))
+			if(nf.fraction>0){
+				nf.decimals match {
+					case 1 => append(fractionFormat1.format(nf.fraction))
+					case 2 => append(fractionFormat2.format(nf.fraction))
+					case 3 => append(fractionFormat3.format(nf.fraction))
+					case _ => append(fractionFormat4.format(nf.fraction))
+				}
+			}
+			end(MN)
+		}
+		if(nf.hasExponent && nf.exponent!=0) {
+			if(!omit){
+				start(MO)
+				attr("mathsize",resolveStyle.font.size-2)
+				body
+				append(ENTITY_CENTER_DOT)
+				end(MO)
+			}
 			start(MSUP)
 			attr("mathsize",resolveStyle.font.size-2)
 			body

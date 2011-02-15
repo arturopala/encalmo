@@ -34,7 +34,7 @@ object Predefined {
     stylesConfig(NUMSECT_LEVEL3) = style1.fontSmaller.useSpaceBefore(12)
     stylesConfig(NUMSECT_LEVEL4) = style1.fontSmaller.fontItalic.useSpaceBefore(8)
     
-    val styleWarunek:Style = style1.fontSmaller.marginTop(4).marginBottom(4).useBackground(YELLOW).paddings(4)
+    val styleWarunek:Style = style1.fontSmaller.fontSmaller.marginTop(4).marginBottom(4).useBackground(YELLOW).paddings(4).marginLeft(1).paddingLeft(24).paddingRight(0)
     stylesConfig(ASSERTION_TRUE) = styleWarunek
     stylesConfig(ASSERTION_FALSE) = styleWarunek.fontBold.useColor(java.awt.Color.RED)
     stylesConfig(ASSERTION_UNKNOWN) = styleWarunek.useBackground(java.awt.Color.ORANGE).useColor(java.awt.Color.RED)

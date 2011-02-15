@@ -62,7 +62,7 @@ extends Calculation(Option(id)) {
 	this(ID) = text(id)
 	
     def info = NumSection(TextToTranslate("ProfiledSteelSheet",ProfiledSteelSheetSymbols.dictionary),id,
-		Evaluate(Seq(t,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,Wminus,Wplus),this)
+		Evaluate(Seq(t,tcor,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,Wminus,Wplus),this)
 	)
 	
 	def web = Evaluate(Seq(Phi,sw,tcor,lambdaw),this)

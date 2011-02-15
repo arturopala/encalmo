@@ -70,10 +70,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			attrNoZero("margin-top",style.paragraph.margin.top,style.paragraph.unit)
 			attrNoZero("margin-bottom",style.paragraph.margin.bottom,style.paragraph.unit)
 			attrIfChanged("text-indent",currentStyle.text.indent,style.text.indent,style.text.unit)
-			if(attrIfChanged("hyphenate",currentStyle.text.hyphenate,style.text.hyphenate)){
-				attrNoZero("country",locale.getCountry)
-				attrNoZero("language",locale.getLanguage)
-			}
+			appendHyphenationStyleAttributes(style,currentStyle)
 		}
 	}
 	
@@ -100,6 +97,15 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			attrNoZero("padding-right",style.paragraph.padding.right,style.paragraph.unit)
 			attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
 			attrNoZero("min-height",style.paragraph.height,style.paragraph.unit)
+		}
+	}
+	
+	def appendHyphenationStyleAttributes(style:Style, currentStyle:Style):Unit = {
+		if(style!=null){
+			if(attrIfChanged("hyphenate",currentStyle.text.hyphenate,style.text.hyphenate)){
+				attrNoZero("country",locale.getCountry)
+				attrNoZero("language",locale.getLanguage)
+			}
 		}
 	}
 	
