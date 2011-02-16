@@ -80,6 +80,8 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val dmesh = symbol(BasicSymbols.d|"mesh") unit "mm"
 	val sd = symbol(BasicSymbols.s|"d") unit "m"
 	val sdmax = symbol(BasicSymbols.s|"d,max") unit "m"
+	val Eceff = symbol(BasicSymbols.E|"c,eff") unit "Pa"
+	val nE = symbol(BasicSymbols.n|"E")
 }
 
 /** Composite slab with profiled steel sheeting context */
@@ -151,9 +153,12 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	this(VpRd) = vmin*cp*dp
 	this(VRdc) = vmin*dv
 	this(Qvd) = Fd
-	
+	//zarysowanie betonu nad podpora
 	this(Asmin) = 0.002*hc*1
 	this(sdmax) = (PI*(dmesh^2))/(4*Asmin)*1E-6
+	//ugiecia w fazie eksploatacji
+	this(Eceff) = Ecm/2
+	this(nE) = E/Eceff
 	
 	// end of context initialization
 	lock

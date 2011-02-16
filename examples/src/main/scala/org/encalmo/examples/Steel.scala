@@ -27,10 +27,11 @@ object SteelSymbols extends SymbolConfigurator {
 object SteelExpressions extends MapContext {
 
 	import SteelSymbols._
-		
+	
+	this(E) = 210E9
+	this(gammas) = 78.5E3
 	this(fypd) = fyp/gammaM0
 	this(fyb) = fyp
-	this(gammas) = 78.5E3
 	lock
 }
 
@@ -57,7 +58,6 @@ object Steel {
 	def S280GD = new Steel("S280 GD",data_S280GD)
 	
 	private lazy val data_S355 = new MapContext {
-		this(E) = 210E9
 		this(fyp) = 355E6
 		lock
 	}
