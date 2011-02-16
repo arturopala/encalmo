@@ -14,7 +14,7 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "compositeSlabWithProfiledSheeting"
 	
 	val l = symbol(BasicSymbols.l) unit "m"
-	val n = symbol(BasicSymbols.n)
+	val nsp = symbol(BasicSymbols.n|"sp")
 	val h = symbol(BasicSymbols.h) unit "m"
 	val hc = symbol(BasicSymbols.h|c) unit "m"
 	val Qcfk1 = symbol(Q|"cf,k1") unit "N/m"
@@ -26,6 +26,8 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
     val Qd1 = symbol(Q|"d|m") unit "N/m2"
 	val deltasm = symbol(BasicSymbols.delta|"s|m") unit "m"
 	val deltam = symbol(BasicSymbols.delta|"m") unit "m"
+	val deltae = symbol(BasicSymbols.delta|"e") unit "m"
+	val deltamax = symbol(BasicSymbols.delta|"max") unit "m"
     val MEdmm = symbol(M|("Ed|m","-")) unit "Nm/m"
     val MEdmp = symbol(M|("Ed|m","+")) unit "Nm/m"
     val MEkm1 = symbol(M|("Ek,1|m")) unit "Nm/m"
@@ -82,6 +84,11 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val sdmax = symbol(BasicSymbols.s|"d,max") unit "m"
 	val Eceff = symbol(BasicSymbols.E|"c,eff") unit "Pa"
 	val nE = symbol(BasicSymbols.n|"E")
+	val e0 = symbol(BasicSymbols.e|"0") unit "m"
+	val I0 = symbol(BasicSymbols.I|"0") unit "m4/m"
+	val W0 = symbol(BasicSymbols.W|"0") unit "m3/m"
+	val Mk = symbol(BasicSymbols.M|"k") unit "Nm/m"
+	val sigmactplus = symbol(BasicSymbols.sigma|("ct","+")) unit "Pa"
 }
 
 /** Composite slab with profiled steel sheeting context */
@@ -126,8 +133,8 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	this(Qk2) = SigmaGk + SigmaQk
 	this(Qd2) = SigmaGd + SigmaQd
 	this(Fd) = Fk*gammaQ
-	this(DeltaQk) = Qk2-Qk1
-	this(DeltaQd) = Qd2-Qd1
+	this(DeltaQk) = Gsk+qk
+	this(DeltaQd) = Gsd+qd
 	
 	//faza eksploatacji - ULS
 	this(MEdep) = (Qd2*(l^2))/8
@@ -159,6 +166,13 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	//ugiecia w fazie eksploatacji
 	this(Eceff) = Ecm/2
 	this(nE) = E/Eceff
+	this(e0) = (Ap*(h-epd)+(1/nE)*1*hc*(hc/2)+(1/nE)*(bo/bs)*hp*(h-(hp/2)))/(Ap+((1*hc)/nE)+(1*bo*hp)/(bs*nE))
+	this(I0) = Iplus+Ap*((h-e0-epd)^2)+((1*(hc^3))/(nE*12))+((1*hc)/nE)*((e0-hc/2)^2)+(1*bo*(hp^3))/(nE*bs*12)+(1*bo*hp)/(nE*bs)*((h-e0-(hp/2))^2)
+	this(W0) = I0/(h-e0)
+	this(Mk) = (DeltaQk*(l^2))/8
+	this(sigmactplus) = Mk/(W0*nE)
+	this(deltae) = (5*DeltaQk*(l^4))/(384*I0*E)
+	this(deltamax) = deltasm+deltae
 	
 	// end of context initialization
 	lock
@@ -176,7 +190,7 @@ extends Calculation {
 
 	import CompositeSlabWithProfiledSheetingSymbols._
 	import ProfiledSteelSheetSymbols._
-    import ConcreteSymbols.{fcd,fck}
+    import ConcreteSymbols.{fcd,fck,fctm}
     import ActionsSymbols._
 
 	val Beam = ContinuousBeamSymbols
@@ -186,7 +200,7 @@ extends Calculation {
 	this add concrete
 	
 	this(l) = length
-	this(BasicSymbols.n) = spans
+	this(nsp) = spans
 	this(h) = height
 	
 	val beamULS = new ContinuousBeam_5_LinearLoad(null,l,Qd1)
@@ -204,7 +218,7 @@ extends Calculation {
 	this(MEkm2) = beamSLS1(Beam.Mmax)
 	
 	def info = NumSection(TextToTranslate("CompositeSlabWithProfiledSheeting",CompositeSlabWithProfiledSheetingSymbols.dictionary),
-		Evaluate(Seq(l,n,h,hc),this),
+		Evaluate(Seq(l,nsp,h,hc),this),
 		AssertionGE("EN 1994-1-1 3.5(2)",this,t,0.7E-3),
 		AssertionLE("EN 1994-1-1 9.1.1(2)",this,br/bs,0.6),
 		AssertionGE("EN 1994-1-1 9.2.1(2)",this,h,90E-3),
@@ -271,9 +285,17 @@ extends Calculation {
 	)
 	
 	def SLS2 = NumSection(TextToTranslate("SLS","eurocode"),
-		NumSection("Kontrola zarysowania betonu na podporami wg PN-EN 1994-1-1 pkt. 9.8.1",
+		NumSection("Sprawdzenie braku zarysowania betonu na podporami wg PN-EN 1994-1-1 pkt. 9.8.1",
 			Evaluate(Seq(Asmin,dmesh,sd,sdmax),this),
 			AssertionLE("minimalnego zbrojenia na zarysowanie nad podporą",this,sd,sdmax)
+		),
+		NumSection("Sprawdzenie braku zarysowania betonu w przęśle od obciążeń przyłożonych po zespoleniu wg PN-EN 1994-1-1 pkt. 9.8.2(3)",
+			Evaluate(Seq(Eceff,nE,e0,I0,W0,Mk,sigmactplus),this),
+			AssertionLE("braku zarysowania przekroju",this,sigmactplus,fctm)
+		),
+		NumSection("Sprawdzenie ugięcia całkowitego",
+			Evaluate(Seq(deltae,deltamax),this),
+			AssertionLE("ugięcia całkowitego",this,deltamax,l/250)
 		)
 	)
 	

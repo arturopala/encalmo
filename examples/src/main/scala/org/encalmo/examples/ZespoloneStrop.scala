@@ -38,7 +38,7 @@ class ZespoloneStrop {
     val height:Expression = 0.12
     
     val blacha = FLORSTROP.T59_Z_100
-    val beton = Concrete.C_50_60
+    val beton = Concrete.C_20_25
     val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton)
     val stal = Steel.S355
     

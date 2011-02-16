@@ -29,6 +29,7 @@ object ProfiledSteelSheetSymbols extends SymbolConfigurator {
 	val eminus = symbol(e!"-") unit "m"
 	val eplus = symbol(e!"+") unit "m"
 	val ep = symbol(e|p) unit "m"
+	val epd = symbol(e|("p","d")) unit "m"
 	val Gcck = symbol(G|"cc,k") unit "N/m2"
 	val Gccd = symbol(G|"cc,d") unit "N/m2"
 	val lambdaw = symbol(lambda|w) over "─"
@@ -62,7 +63,7 @@ extends Calculation(Option(id)) {
 	this(ID) = text(id)
 	
     def info = NumSection(TextToTranslate("ProfiledSteelSheet",ProfiledSteelSheetSymbols.dictionary),id,
-		Evaluate(Seq(t,tcor,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,Wminus,Wplus),this)
+		Evaluate(Seq(t,tcor,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,epd,Wminus,Wplus),this)
 	)
 	
 	def web = Evaluate(Seq(Phi,sw,tcor,lambdaw),this)
@@ -77,6 +78,7 @@ object ProfiledSteelSheetExpressions extends MapContext {
 	import ActionsSymbols._
 	import SteelSymbols._
 	
+	this(epd) = hp-ep
 	this(Wminus) = Iminus/eminus
 	this(Wplus) = Iplus/eplus
 	this(MRdm) = Wminus*fypd
