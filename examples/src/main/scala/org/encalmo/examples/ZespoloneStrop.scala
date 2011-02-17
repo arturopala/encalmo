@@ -28,7 +28,7 @@ class ZespoloneStrop {
     
     //dane wejsciowe zadania
     val L1 = L|1 is "Rozpiętośc belki" unit "m"
-    zadanie(L1) = 14
+    zadanie(L1) = 15.9
     val L2 = L|2 is "Rozstaw belek" unit "m"
     zadanie(L2) = 2.5
     val pc = p!c is "Obciążenie charakterystyczne" unit "N/m2"
@@ -40,7 +40,7 @@ class ZespoloneStrop {
     val blacha = FLORSTROP.T59_Z_100
     val beton = Concrete.C_20_25
     val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton)
-    val stal = Steel.S355
+    val stal = Steel.S235
     
     zadanie1 add plyta
     
