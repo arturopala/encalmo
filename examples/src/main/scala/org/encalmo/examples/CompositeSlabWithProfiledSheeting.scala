@@ -96,7 +96,7 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 
 	import CompositeSlabWithProfiledSheetingSymbols._
 	import ProfiledSteelSheetSymbols._
-	import SteelSymbols.{E,fypd}
+	import SteelSymbols.{E,fyd}
     import ConcreteSymbols._
     import ActionsSymbols._
 	
@@ -139,9 +139,9 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	//faza eksploatacji - ULS
 	this(MEdep) = (Qd2*(l^2))/8
 	this(MEdep) = (Qd2*(l^2))/8
-	this(xpl) = (Ap*fypd)/(0.85*fcd)
+	this(xpl) = (Ap*fyd)/(0.85*fcd)
 	this(dp) = ep+hc
-	this(Np) = Ap*fypd
+	this(Np) = Ap*fyd
 	this(z) = dp-0.5*xpl
 	this(MplRd) = Np*z
 	this(VEde) = 0.5*Qd2*l

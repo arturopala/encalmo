@@ -24,7 +24,6 @@ class ZespoloneStrop {
     
     val zadanie = Calculation()
     val zadanie1 = Calculation()
-    val zadanie2 = Calculation()
     
     //dane wejsciowe zadania
     val L1 = L|1 is "Rozpiętośc belki" unit "m"
@@ -57,6 +56,14 @@ class ZespoloneStrop {
     
     plyta(dmesh) = 8
     plyta(sd) = 0.2
+    
+    val zadanie2 = Calculation()
+    val belka = new BeamOfCompositeSlab(zadanie(L1),IBeamSection.IPE500,Steel.S235,plyta)
+    belka(gammaG) = 1.35
+    belka(gammaQ) = 1.5
+    belka.steel(gammaM0) = 1.0
+    belka.steel(gammaM1) = 1.0
+    zadanie2 add belka
     
     
     val doc1 = Document(Predefined.style1,"",
@@ -98,20 +105,18 @@ class ZespoloneStrop {
 	           )
            ),
            NumSection("Wymiarowanie belki stropowej",
-	           NumSection("Materiały i przekrój poprzeczny",
-	               Evaluate(zadanie2Materialy,zadanie2)
-	           ),
+	           belka.info,
 	           NumSection("Obciążenia i schemat statyczny w fazie montażu",
-	               Evaluate(zadanie2Obciazenia,zadanie2)
+	               belka.LOAD1
 	           ),
 	           NumSection("Wymiarowanie belki w fazie montażu",
-	               Evaluate(zadanie2Montaz,zadanie2)
+	               belka.ULS1,belka.SLS1
 	           ),
 	           NumSection("Obciążenia i schemat statyczny w fazie eksploatacji",
-	               Evaluate(zadanie2Eksploatacja,zadanie2)
+	               belka.LOAD2
 	           ),
 	           NumSection("Wymiarowanie belki w fazie eksploatacji",
-	               Evaluate(zadanie2Wymiarowanie,zadanie2)
+	               belka.ULS2,belka.SLS2
 	           )
            ),
 			Section(style1.marginTop(20),""),

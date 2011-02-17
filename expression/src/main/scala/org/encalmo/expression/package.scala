@@ -45,6 +45,14 @@ package object expression {
 	
 	def text(s:String):TextValue = TextValue(s)
 	
+	def rangeChoiceLE(e:Expression,first:Expression,bound:Expression,second:Expression):Expression = {
+		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerOrEqualThan(e,bound)),Case(CaseExpression(second),GreaterThan(e,bound))))
+	}
+	
+	def rangeChoiceGE(e:Expression,first:Expression,bound:Expression,second:Expression):Expression = {
+		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerThan(e,bound)),Case(CaseExpression(second),GreaterOrEqualThan(e,bound))))
+	}
+	
 	def rangeChoiceLLE(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
 		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerThan(e,lowerBound)),Case(CaseExpression(second),InRangeLEL(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterOrEqualThan(e,upperBound))))
 	}
@@ -59,6 +67,10 @@ package object expression {
 	
 	def rangeChoiceLELE(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
 		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerOrEqualThan(e,lowerBound)),Case(CaseExpression(second),InRangeLL(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterOrEqualThan(e,upperBound))))
+	}
+	
+	def rangeChoice4LE(e:Expression,first:Expression,bound1:Expression,second:Expression,bound2:Expression,third:Expression,bound3:Expression,fourth:Expression):Expression = {
+		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerOrEqualThan(e,bound1)),Case(CaseExpression(second),InRangeLLE(bound1,e,bound2)),Case(CaseExpression(third),InRangeLLE(bound2,e,bound3)),Case(CaseExpression(fourth),GreaterThan(e,bound3))))
 	}
 	
 }

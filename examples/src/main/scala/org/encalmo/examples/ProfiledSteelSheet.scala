@@ -46,6 +46,7 @@ object ProfiledSteelSheetSymbols extends SymbolConfigurator {
 	val RwRd = symbol(R|"w,Rd") unit "N/m"
 	val alpha = symbol(BasicSymbols.alpha)
 	val la = symbol(BasicSymbols.l|"a") unit "m"
+	val fyb = symbol(BasicSymbols.f|"yb") unit "m"
 
 }
 
@@ -54,13 +55,14 @@ extends Calculation(Option(id)) {
 
 	import ProfiledSteelSheetSymbols._
 	import ActionsSymbols._
-	import SteelSymbols._
+	import SteelSymbols.{fy}
 	
 	this add ProfiledSteelSheetExpressions
 	this add data
 	this add steel
 	
 	this(ID) = text(id)
+	this(fyb) = fy
 	
     def info = NumSection(TextToTranslate("ProfiledSteelSheet",ProfiledSteelSheetSymbols.dictionary),id,
 		Evaluate(Seq(t,tcor,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,epd,Wminus,Wplus),this)
@@ -76,13 +78,13 @@ object ProfiledSteelSheetExpressions extends MapContext {
 
 	import ProfiledSteelSheetSymbols._
 	import ActionsSymbols._
-	import SteelSymbols._
+	import SteelSymbols.{fyd,E,gammaM0,gammaM1,gammas}
 	
 	this(epd) = hp-ep
 	this(Wminus) = Iminus/eminus
 	this(Wplus) = Iplus/eplus
-	this(MRdm) = Wminus*fypd
-	this(MRdp) = Wplus*fypd
+	this(MRdm) = Wminus*fyd
+	this(MRdp) = Wplus*fyd
 	this(hw) = hp-t
 	this(sw) = hp/sin(Phi)
 	this(tcor) = t - 8E-5

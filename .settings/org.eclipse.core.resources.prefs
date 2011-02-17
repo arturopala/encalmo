@@ -1,11 +1,13 @@
-#Wed Feb 16 21:15:09 CET 2011
+#Thu Feb 17 18:15:50 CET 2011
 eclipse.preferences.version=1
 encoding//document/src/main/resources/dictionary/document_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/actions_pl.properties=UTF-8
+encoding//examples/src/main/resources/dictionary/beamOfCompositeSlab_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/compositeSlabWithProfiledSheeting_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/concrete_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/eurocode_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/profiledSteelSheet_pl.properties=UTF-8
-encoding//examples/src/main/resources/dictionary/shape_pl.properties=UTF-8
+encoding//examples/src/main/resources/dictionary/section_ibeam_pl.properties=UTF-8
+encoding//examples/src/main/resources/dictionary/section_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/steel_pl.properties=UTF-8
 encoding/<project>=UTF-8

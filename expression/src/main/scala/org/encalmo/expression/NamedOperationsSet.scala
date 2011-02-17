@@ -133,7 +133,7 @@ case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Opera
 	  case _ => copy(v)
   }
   override def copy(x:Expression) = round(x,rm)
-  override val operator = "round"
+  override val operator = "~"
 }
 
 /**
