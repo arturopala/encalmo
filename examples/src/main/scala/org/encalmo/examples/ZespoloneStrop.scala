@@ -12,12 +12,12 @@ import org.encalmo.examples.Predefined._
 class ZespoloneStrop {
     
     import BasicSymbols._
-    import SteelSymbols._
-    import ConcreteSymbols._
-    import ActionsSymbols._
+    import SteelSymbols.{gammaM0,gammaM1}
+    import ConcreteSymbols.{gammaC}
+    import ActionsSymbols.{gammaG,gammaQ}
     
-    import CompositeSlabWithProfiledSheetingSymbols._
-    import ProfiledSteelSheetSymbols._
+    import CompositeSlabWithProfiledSheetingSymbols.{Gsk,qk,Fk,dmesh,sd}
+    //import ProfiledSteelSheetSymbols
     
     val zadanie1Statyka,zadanie1Eksploatacja,zadanie1Wymiarowanie:Seq[Expression] = Seq()
     val zadanie2Materialy,zadanie2Obciazenia,zadanie2Montaz,zadanie2Eksploatacja,zadanie2Wymiarowanie:Seq[Expression] = Seq()
