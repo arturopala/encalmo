@@ -4,7 +4,7 @@ import org.encalmo.common.Translator
 import scala.collection.immutable.StringOps
 
 /**
- * Symbol expression
+ * Symbol of expression
  * @author artur.opala
  */
 class Symbol(
@@ -28,8 +28,10 @@ class Symbol(
     def |(sub:Symbol, sup:Symbol):Symbol = copy(subscript = Option(sub),superscript = Option(sup))
     /** Sets superscript */
     def !(sup:Symbol):Symbol = copy(superscript = Option(sup))
-    /** Adds string to the name */
+    /** Append string to the name */
     def +(n:String):Symbol = copy(name = name+n)
+    /** Prepend string to the name */
+    def +:(n:String):Symbol = copy(name = n+name)
     /** Sets underscript */
     def under(under:Symbol):Symbol = copy(underscript = Option(under))
     /** Sets overscript */

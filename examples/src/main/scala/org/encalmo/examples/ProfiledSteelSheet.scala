@@ -47,6 +47,7 @@ object ProfiledSteelSheetSymbols extends SymbolConfigurator {
 	val alpha = symbol(BasicSymbols.alpha)
 	val la = symbol(BasicSymbols.l|"a") unit "m"
 	val fyb = symbol(BasicSymbols.f|"yb") unit "m"
+	val fypd = symbol(BasicSymbols.f|"yp,d") unit "m"
 
 }
 
@@ -55,14 +56,15 @@ extends Calculation(Option(id)) {
 
 	import ProfiledSteelSheetSymbols._
 	import ActionsSymbols._
-	import SteelSymbols.{fy}
+	import SteelSymbols.{fy,fyd}
 	
 	this add ProfiledSteelSheetExpressions
 	this add data
 	this add steel
 	
 	this(ID) = text(id)
-	this(fyb) = fy
+	this(fyb) = steel(fy)
+	this(fypd) = steel(fyd)
 	
     def info = NumSection(TextToTranslate("ProfiledSteelSheet",ProfiledSteelSheetSymbols.dictionary),id,
 		Evaluate(Seq(t,tcor,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,epd,Wminus,Wplus),this)

@@ -89,6 +89,7 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val W0 = symbol(BasicSymbols.W|"0") unit "m3/m"
 	val Mk = symbol(BasicSymbols.M|"k") unit "Nm/m"
 	val sigmactplus = symbol(BasicSymbols.sigma|("ct","+")) unit "Pa"
+	val fyrd = symbol(BasicSymbols.f|"yr,d") unit "Pa"
 }
 
 /** Composite slab with profiled steel sheeting context */
@@ -184,7 +185,8 @@ class CompositeSlabWithProfiledSheeting(
 	length:Expression,
 	spans:Expression, 
 	sheet:ProfiledSteelSheet, 
-	concrete:Concrete
+	concrete:Concrete,
+	meshSteel:Steel
 )
 extends Calculation {
 

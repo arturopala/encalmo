@@ -21,6 +21,7 @@ object SteelSymbols extends SymbolConfigurator {
 	val fu = symbol(f|"u") unit "Pa"
 	val gammaM0 = symbol(gamma|"M,0")
 	val gammaM1 = symbol(gamma|"M,1")
+	val gammaV = symbol(gamma|"V")
 	val gammas = symbol(gamma|"s") unit "N/m3"
 	val epsiy = symbol(BasicSymbols.epsiv|"y")
 	val epsiu = symbol(BasicSymbols.epsiv|"u")
@@ -51,7 +52,11 @@ class Steel(id:String,data:Context) extends Calculation(Option(id)) {
 	
 	this add SteelExpressions
 	this add data
+	
 	this(CLASS) = text(id)
+	this(gammaM0) = 1
+	this(gammaM1) = 1
+	this(gammaV) = 1.25
 }
 
 /** Steel library */

@@ -38,11 +38,11 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
     val ΔMEd = symbol("ΔM"|("Ed")) unit "Nm"
     val ΔVEd = symbol("ΔV"|("Ed")) unit "N"
     val sigmamplus = symbol(BasicSymbols.sigma|("m","+")) unit "Pa"
-    val MEdm1 = symbol(M|("Ed,m,1")) unit "Nm"
-    val Mkm = symbol(M|("k|m")) unit "Nm"
-    val Mkm1 = symbol(M|("k|m,1")) unit "Nm"
+    val MEdm1 = symbol(BasicSymbols.M|("Ed|m,1")) unit "Nm"
+    val Mkm = symbol(BasicSymbols.M|("k|m")) unit "Nm"
+    val Mkm1 = symbol(BasicSymbols.M|("k|m,1")) unit "Nm"
     val ΔMk = symbol("ΔM"|("k")) unit "Nm"
-    val Mke = symbol(M|("k|e")) unit "Nm"
+    val Mke = symbol(BasicSymbols.M|("k|e")) unit "Nm"
     val sigmadm1 = symbol(BasicSymbols.sigma|("d|m,1")) unit "Pa"
     val sigmakm1 = symbol(BasicSymbols.sigma|("k|m,1")) unit "Pa"
     val deltam0 = symbol(BasicSymbols.delta|"m,0") unit "m"
@@ -57,21 +57,49 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
     val Npla = symbol(BasicSymbols.N|"pl,a") unit "N"
     val N1pla = symbol(BasicSymbols.N|("pl,a","'")) unit "N"
     val x = symbol(BasicSymbols.x) unit "m"
-    
+    val MplRd = symbol(BasicSymbols.M|"pl,Rd") unit "Nm"
+    val bn = symbol(BasicSymbols.b|"E") unit "m"
+    val Sy = symbol(BasicSymbols.S|"y") unit "m3"
+    val z0 = symbol(BasicSymbols.z|"0") unit "m"
+    val I1 = symbol(BasicSymbols.I|"1") unit "m4"
+    val Wel = symbol(BasicSymbols.W|"el") unit "m3"
+    val sigmake = symbol(BasicSymbols.sigma|"k|e") unit "Pa"
+    val sigmamax = symbol(BasicSymbols.sigma|"max") unit "Pa"
+	val PRd = symbol(BasicSymbols.P|"Rd") unit "N"
+	val alpha = symbol(BasicSymbols.alpha)
+	val kt = symbol(BasicSymbols.k|"t")
+	val ktmax = symbol(BasicSymbols.k|"t,max")
+	val nr = symbol(BasicSymbols.n|"r") unit "szt."
+	val VEdr = symbol(BasicSymbols.V|"Ed,r") unit "N"
+	val Ls = symbol(BasicSymbols.L|"s") unit "m"
+	val nf = symbol(BasicSymbols.n|"f")
+	val nfprim = symbol(BasicSymbols.n|("f","'")) unit "szt."
+	val s = symbol(BasicSymbols.s) unit "m"
+	val smax = symbol(BasicSymbols.s|"max") unit "m"
+	val smin = symbol(BasicSymbols.s|"min") unit "m"
+	val MaRd = symbol(BasicSymbols.M|"a,Rd") unit "Nm"
+	val VEdc = symbol(BasicSymbols.V|"Ed,c") unit "N"
+	val kphi = symbol(BasicSymbols.k|BasicSymbols.phi)
+	val PpbRd = symbol(BasicSymbols.P|"pb,Rd") unit "N"
+	val VRdf = symbol(BasicSymbols.V|"Rd,f") unit "N"
+	val thetat = symbol(BasicSymbols.theta|"t") unit "°"
 }
 
 /** Composite slab with profiled steel sheeting context */
 object BeamOfCompositeSlabExpressions extends MapContext {
 
+	val SHEET = ProfiledSteelSheetSymbols
 	val SLAB = CompositeSlabWithProfiledSheetingSymbols
+	val STUD = HeadedStudSymbols
 
 	import BeamOfCompositeSlabSymbols._
-	import SteelSymbols.{E,fyd,fy,gammaM0}
-	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd}
-	import ProfiledSteelSheetSymbols.{Gcck,Gccd}
+	import ConcreteSymbols.{fck,fcd,Ecm}
+	import SteelSymbols.{E,fyd,fy,fu,gammaM0,gammaV}
+	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,hc,Eceff,nE,dmesh,sd,fyrd}
+	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,t,bo,bs,fypd}
     import ActionsSymbols.{gammaG,gammaQ}
-    import SectionSymbols.{m,Wy,A,Iy}
-    import IBeamSectionSymbols.{ctw,ctf,AV}
+    import SectionSymbols.{m,Wy,A,Iy,b,h,Wypl}
+    import IBeamSectionSymbols.{ctw,ctf,AV,bf,tf}
     
     //obciazenia i schemat statyczny w fazie montazu
     this(gk) = 10*m
@@ -94,10 +122,11 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	this(MEdm1) = ((Qd1-(Qmd*SLAB.l))*(l^2))/8
 	this(Mkm) = (Qk1*(l^2))/8
 	this(Mkm1) = ((Qk1-(Qmk*SLAB.l))*(l^2))/8
+	this(ΔMk) = (ΔQk*(l^2))/8
 	//naprezenia
 	this(sigmamplus) = MEdm/Wy
-	this(sigmakm1) = MEdm1/Wy
-	this(sigmadm1) = Mkm1/Wy
+	this(sigmadm1) = MEdm1/Wy
+	this(sigmakm1) = Mkm1/Wy
 	//ugiecia
 	this(deltam) = (5*Qk1*(l^4))/(384*Iy*E)
 	this(deltam1) = (5*(Qk1-(Qmk*SLAB.l))*(l^4))/(384*Iy*E)
@@ -112,10 +141,43 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	this(ΔVEd) = (ΔQd*l)/2
 	this(MEde) = (Qd2*(l^2))/8
 	this(VEde) = (Qd2*l)/2
+	//szerokosc wspolpracujaca
 	this(b0) = 0
 	this(bei) = min(l/8,SLAB.l/2)
 	this(beff) = b0+2*bei
-	
+	//rownowaga sil w przekroju
+	this(Ncf) = 0.85*fcd*beff*hc
+	this(Npla) = A*fy
+	this(N1pla) = (A-2*b*tf)*fy
+	this(x) = rangeChoiceLE(Ncf,SLAB.h+(Npla-Ncf)/(2*b*fy),Npla,Npla/(beff*fcd))
+	this(MplRd) = rangeChoiceLE(x,Npla*(h/2+(SLAB.h-(x/2))),SLAB.h,Npla*(h/2)+Ncf*(hp+(hc/2))-2*(x-SLAB.h)*b*fy*((x-SLAB.h)/2))
+	this(bn) = beff/nE
+	this(Sy) = bn*hc*(h/2+hp+hc/2)
+	this(z0) = Sy/(A+bn*hc)
+	this(I1) = Iy+A*(z0^2)+(bn*(hc^3))/12+bn*hc*((hc/2+hp+h/2-z0)^2)
+	this(Wel) = I1/(z0+h/2)
+	//naprezenia
+	this(sigmake) = ΔMk/Wel
+	this(sigmamax) = sigmakm1+sigmake
+	//nosnosc sworznia
+	this(s) = bs
+	this(alpha) = rangeChoiceLELE(STUD.hsc/STUD.d,0,3,0.2*((STUD.hsc/STUD.d)+1),4,1)
+	this(PRd) = min((0.8*fu*(PI*square(STUD.d))/4)/gammaV,(0.29*alpha*square(STUD.d)*sqrt(fck*Ecm))/gammaV)
+	this(ktmax) = rangeChoiceLE(t,0.85,1,1)
+	this(kt) = min(ktmax, (0.7*bo)/(sqrt(nr)*hp)*(STUD.hsc/hp-1))
+	this(VEdr) = Ncf
+	this(Ls) = 0.5*l
+	this(nf) = VEdr/(kt*PRd)
+	this(nfprim) = floor(Ls/s)
+	this(smin) = min(5*STUD.d)
+	this(smax) = min(6*SLAB.h,0.8)
+	this(MaRd) = (Wypl*fy)/gammaM0
+	//sciananie podluzne w plycie zespolonej
+	this(VEdc) = (kt*PRd)/s
+	this(kphi) = min(1+max(b/2,1.5*1.1*STUD.d)/(1.1*STUD.d),6)
+	this(PpbRd) = kphi*1.1*STUD.d*SHEET.t*fypd
+	this(thetat) = 45
+	this(VRdf) = cot(45)*(((PI*square(dmesh))/4*fyrd)/sd)
 	
 	// end of context initialization
 	lock
@@ -126,16 +188,18 @@ class BeamOfCompositeSlab(
 	val length:Expression,
 	val section:Section, 
 	val steel:Steel,
-	val slab:CompositeSlabWithProfiledSheeting
+	val slab:CompositeSlabWithProfiledSheeting,
+	val stud:HeadedStud
 )
 extends Calculation {
 
 	val SLAB = CompositeSlabWithProfiledSheetingSymbols
+	val STUD = HeadedStudSymbols
 
 	import BeamOfCompositeSlabSymbols._
 	import SteelSymbols.{E,fyd,epsi,fy}
-	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd}
-	import ProfiledSteelSheetSymbols.{Gcck,Gccd}
+	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff,nE}
+	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,bo,bs}
     import ActionsSymbols.{gammaG,gammaQ}
     import IBeamSectionSymbols.{hw,tw,ctf,ctw,AV}
 
@@ -143,15 +207,17 @@ extends Calculation {
 	this add section
 	this add steel
 	this add slab
+	this add stud
 	
 	this(l) = length
-	
+	this(nr) = 1
 	
 	def info = NumSection(TextToTranslate("BeamOfCompositeSlab",BeamOfCompositeSlabSymbols.dictionary),
 		Text(section.id.get),
 		Evaluate(Seq(l,SLAB.l,SLAB.h),this),
 		section.info,
-		steel.info
+		steel.info,
+		stud.info
 	)
 	
 	def LOAD1 = Evaluate(Seq(gammaG,gammaQ,gk,gd,Gcck,Gccd,Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Qk1,Qd1),this)
@@ -176,7 +242,7 @@ extends Calculation {
 			AssertionLE("nośności na ścinanie",this,VEdm/VplRd,1)
 		),
 		NumSection("Naprężenia pozostające w belce po fazie montażu",
-			Evaluate(Seq(MEdm1,Mkm1,sigmadm1,sigmakm1),this)
+			Evaluate(Seq(MEdm1,Mkm1,Mkm,sigmadm1,sigmakm1),this)
 		)
 	)
 	
@@ -194,11 +260,32 @@ extends Calculation {
 			Evaluate(Seq(ΔMEd,ΔVEd,MEde,VEde),this),
 			AssertionLE("braku interakcji zginania i ścinania",this,VEde,0.5*VplRd)
 		),
-		NumSection("Szerokość współpracująca i położenie osi obojętnej",
-			Evaluate(Seq(b0,bei,beff),this)
+		NumSection("Szerokość współpracująca i położenie osi obojętnej wg PN-EN 1994-1-1 pkt. 5.4.1.2(5)",
+			Evaluate(Seq(b0,bei,beff,Ncf,Npla,N1pla,x),this)
 		),
-		NumSection("Sprawdzenie nośności belki na zginanie ze ścinaniem poprzecznym",
-			Evaluate(Seq(),this)
+		NumSection("Sprawdzenie nośności belki na zginanie bez uwzględniania zwichrzenia zgodnie z PN-EN 1994-1-1 pkt. 6.4.1(1)",
+			Evaluate(Seq(MplRd),this),
+			AssertionLE("nośności na zginanie",this,MEde/MplRd,1)
+		),
+		NumSection("Sprawdzenie naprężeń we włóknach skrajnych belki",
+			Evaluate(Seq(Eceff,nE,bn,Sy,z0,I1,Wel,ΔMk,sigmake,sigmamax),this),
+			AssertionLE("naprężeń dopuszczalnych we włóknach skrajnych",this,sigmamax,1.02*fy)
+		),
+		NumSection("Sprawdzenie łączników na ścinanie wg PN-EN 1994-1-1 pkt. 6.6",
+			Evaluate(Seq(MaRd),this),
+			AssertionL("PN-EN 1994-1-1 pkt. 6.6.1.3(3)",this,MplRd/MaRd,2.5),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.7(1)",this,STUD.hsc/STUD.d,3),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(1)",this,STUD.hsc,hp+2*STUD.d),			
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(2)",this,bo,50E-3),			
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,bo,hp),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,hp,85E-5),
+			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,STUD.d,20E-3),
+			Evaluate(Seq(s,alpha,PRd,ktmax,kt,VEdr,Ls,nf,nfprim,smin,smax),this),
+			AssertionL("maksymalnego rozstawu łączników",this,bs,smax),
+			AssertionG("minimanego rozstawu łączników",this,bs,smin)
+		),
+		NumSection("Sprawdzenie ścinania podłużnego w płycie zespolonej wg pkt. 6.6.6",
+			Evaluate(Seq(VEdc,kphi,PpbRd),this)
 		)
 	)
 	

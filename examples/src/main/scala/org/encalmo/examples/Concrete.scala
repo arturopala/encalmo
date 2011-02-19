@@ -57,7 +57,9 @@ class Concrete(id:String,data:Context) extends Calculation(Option(id)) {
 	
 	this add ConcreteExpressions
 	this add data
+	
 	this(CLASS) = text(id)
+	this(gammaC) = 1.5
 	
 }
 

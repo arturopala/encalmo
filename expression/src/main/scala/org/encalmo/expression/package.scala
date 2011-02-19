@@ -44,6 +44,14 @@ package object expression {
 	//helper functions
 	
 	def text(s:String):TextValue = TextValue(s)
+	// Power with exponent 2
+	def square(e:Expression):Power = Power(e,Number(2))
+	// Power with exponent 3
+	def cube(e:Expression):Power = Power(e,Number(3))
+	// Rounding down with accuracy
+	def floor(e:Expression,accuracy:Double = 1) = round(e,RoundingMode.Step(false,accuracy))
+	// Rounding up with accuracy
+	def ceil(e:Expression,accuracy:Double = 1) = round(e,RoundingMode.Step(true,accuracy))
 	
 	def rangeChoiceLE(e:Expression,first:Expression,bound:Expression,second:Expression):Expression = {
 		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerOrEqualThan(e,bound)),Case(CaseExpression(second),GreaterThan(e,bound))))

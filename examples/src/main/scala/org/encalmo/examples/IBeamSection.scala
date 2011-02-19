@@ -49,7 +49,7 @@ class IBeamSection(id:String) extends Section(id) {
 	this(ID) = text(id)
 	
 	def info = NumSection(TextToTranslate("BeamSection",SectionSymbols.dictionary),id,
-		Evaluate(Seq(h,b,tw,tf,A,Iy,Iz,Wy,Wz,Wypl,Wzpl,m),this)
+		Evaluate(Seq(h,b,tw,tf,hw,bf,A,Iy,Iz,Wy,Wz,Wypl,Wzpl,m),this)
 	)
 	
 
