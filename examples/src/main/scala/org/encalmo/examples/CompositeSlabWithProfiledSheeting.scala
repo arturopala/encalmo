@@ -185,8 +185,7 @@ class CompositeSlabWithProfiledSheeting(
 	length:Expression,
 	spans:Expression, 
 	sheet:ProfiledSteelSheet, 
-	concrete:Concrete,
-	meshSteel:Steel
+	concrete:Concrete
 )
 extends Calculation {
 
