@@ -38,7 +38,8 @@ class ZespoloneStrop {
     
     val blacha = FLORSTROP.T59_Z_100
     val beton = Concrete.C_20_25
-    val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton)
+    val stalZbrojeniowa = ReinforcingSteel.B500SP
+    val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton,stalZbrojeniowa)
     val stal = Steel.S235
     
     zadanie1 add plyta
@@ -55,7 +56,7 @@ class ZespoloneStrop {
     beton(gammaC) = 1.5
     
     plyta(dmesh) = 8
-    plyta(sd) = 0.2
+    plyta(sd) = 0.15
     
     val zadanie2 = Calculation()
     val belka = new BeamOfCompositeSlab(zadanie(L1),IBeamSection.IPE500,Steel.S235,plyta,HeadedStud.NELSON_S3L_19_100)

@@ -1,4 +1,4 @@
-#Sat Feb 19 07:53:49 CET 2011
+#Mon Feb 21 14:44:45 CET 2011
 eclipse.preferences.version=1
 encoding//document/src/main/resources/dictionary/document_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/actions_pl.properties=UTF-8
@@ -8,6 +8,8 @@ encoding//examples/src/main/resources/dictionary/concrete_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/eurocode_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/headedstud_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/profiledSteelSheet_pl.properties=UTF-8
+encoding//examples/src/main/resources/dictionary/reinforcing_steel.properties=UTF-8
+encoding//examples/src/main/resources/dictionary/reinforcing_steel_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/section_ibeam_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/section_pl.properties=UTF-8
 encoding//examples/src/main/resources/dictionary/steel_pl.properties=UTF-8

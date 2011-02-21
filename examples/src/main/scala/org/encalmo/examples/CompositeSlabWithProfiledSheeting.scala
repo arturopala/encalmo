@@ -185,7 +185,8 @@ class CompositeSlabWithProfiledSheeting(
 	length:Expression,
 	spans:Expression, 
 	sheet:ProfiledSteelSheet, 
-	concrete:Concrete
+	concrete:Concrete,
+	reinforcingSteel:ReinforcingSteel
 )
 extends Calculation {
 
@@ -199,10 +200,12 @@ extends Calculation {
 	this add CompositeSlabWithProfiledSheetingExpressions
 	this add sheet
 	this add concrete
+	this add reinforcingSteel
 	
 	this(l) = length
 	this(nsp) = spans
 	this(h) = height
+	this(fyrd) = reinforcingSteel(ReinforcingSteelSymbols.fyd)
 	
 	val beamULS = new ContinuousBeam_5_LinearLoad(null,l,Qd1)
 	val beamSLS1 = new ContinuousBeam_5_LinearLoad(null,l,Qk1)

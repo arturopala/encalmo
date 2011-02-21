@@ -33,6 +33,7 @@ object ConcreteSymbols extends SymbolConfigurator {
 	val fctd = symbol(f|"ctd") unit "Pa"
 	val gammac = symbol(gamma|"c") unit "N/m3"
 	val gammacf = symbol(gamma|"c,f") unit "N/m3"
+	val v = symbol(BasicSymbols.v)
 }
 
 /** Common Concrete expressions */
@@ -44,6 +45,7 @@ object ConcreteExpressions extends MapContext {
 	this(fctd) = fctk/gammaC
 	this(gammac) = 25000
 	this(gammacf) = gammac+1000
+	this(v) = 0.6*(1-fck/250E6)
 }
 
 /** Concrete class */
