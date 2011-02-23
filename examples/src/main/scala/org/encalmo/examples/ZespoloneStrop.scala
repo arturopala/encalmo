@@ -59,7 +59,7 @@ class ZespoloneStrop {
     plyta(sd) = 0.15
     
     val zadanie2 = Calculation()
-    val belka = new BeamOfCompositeSlab(zadanie(L1),IPE.IPE_500,Steel.S235,plyta,HeadedStud.NELSON_S3L_19_100)
+    val belka = new BeamOfCompositeSlab(zadanie(L1),IPESection.IPE_500,Steel.S235,plyta,HeadedStud.NELSON_S3L_19_100)
     belka(gammaG) = 1.35
     belka(gammaQ) = 1.5
     belka.steel(gammaM0) = 1.0

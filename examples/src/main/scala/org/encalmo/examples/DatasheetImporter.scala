@@ -14,7 +14,13 @@ import java.io.FileReader
 class DatasheetImporter {
 
 	@Test
-	def importIPE = doImport("IPE","ipe")
+	def importIPE = doImport("IPESection","ipe")
+	
+	@Test
+	def importHE = doImport("HESection","he")
+	
+	@Test
+	def importIPN = doImport("IPNSection","ipn")
 	
 	def readCSV(file:String, fx:(String,String) => Unit) {
 		 val reader:CSVReader = new CSVReader(new FileReader(file));
@@ -40,6 +46,8 @@ class DatasheetImporter {
 	def doImport(clazz:String, file:String) {
 		val b1 = new StringBuilder
 		val b2 = new StringBuilder
+		b2.append("\r\n\tdef apply(s:String):"+clazz+" = map.get(s).map(x => x()).getOrElse(throw new IllegalStateException)")
+		b2.append("\r\n")
 		b2.append("\r\n\tval map = Map[String,()=>"+clazz+"](\r\n\t\t")
 		var counter:Int = 0
 		readCSV("examples/src/main/resources/datasheet/"+file+".csv", (id,params) => {

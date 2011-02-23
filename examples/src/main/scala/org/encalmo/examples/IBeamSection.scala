@@ -14,6 +14,7 @@ object IBeamSectionSymbols extends SymbolConfigurator {
     val tw = symbol(BasicSymbols.t|BasicSymbols.w) unit "m"
     val tf = symbol(BasicSymbols.t|BasicSymbols.f) unit "m"
     val r = symbol(BasicSymbols.r) unit "m"
+    val r2 = symbol(BasicSymbols.r|2) unit "m"
     val hw = symbol(BasicSymbols.h|BasicSymbols.w) unit "m"
     val bf = symbol(BasicSymbols.b|BasicSymbols.f) unit "m"
     val hd = symbol(BasicSymbols.h|BasicSymbols.d) unit "m"
