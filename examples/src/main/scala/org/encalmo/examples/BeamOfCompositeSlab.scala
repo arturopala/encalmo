@@ -108,8 +108,8 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,hc,Eceff,nE,dmesh,sd,fyrd}
 	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,t,bo,bs,fypd}
     import ActionsSymbols.{gammaG,gammaQ}
-    import SectionSymbols.{m,Wy,A,Iy,b,h,Wypl}
-    import IBeamSectionSymbols.{ctw,ctf,AV,bf,tf}
+    import SectionSymbols.{m,Wy,A,Iy,b,h,Wypl,AVz}
+    import IBeamSectionSymbols.{ctw,ctf,bf,tf}
     
     //obciazenia i schemat statyczny w fazie montazu
     this(gk) = 10*m
@@ -124,7 +124,7 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	this(C) = max(Cf1,Cw1)
 	//nosnosci
 	this(MelRd) = (Wy*fy)/gammaM0
-	this(VplRd) = (AV*(fy/sqrt(3)))/gammaM0
+	this(VplRd) = (AVz*(fy/sqrt(3)))/gammaM0
 	this(NcRd) = (A*fy)/gammaM0
 	//sily wewnetrzne w fazie montazu
 	this(MEdm) = (Qd1*(l^2))/8
@@ -224,7 +224,8 @@ extends Calculation {
 	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff,nE}
 	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,bo,bs}
     import ActionsSymbols.{gammaG,gammaQ}
-    import IBeamSectionSymbols.{hw,tw,ctf,ctw,AV}
+    import SectionSymbols.{AVz}
+    import IBeamSectionSymbols.{hw,tw,ctf,ctw}
 
 	this add BeamOfCompositeSlabExpressions
 	this add section
@@ -261,7 +262,7 @@ extends Calculation {
 			AssertionLE("braku uplastycznienia",this,sigmamplus,fy)
 		),
 		NumSection("Sprawdzenie nośności belki na ścinanie w fazie montażu",
-			Evaluate(Seq(AV,VplRd,VEdm),this),
+			Evaluate(Seq(AVz,VplRd,VEdm),this),
 			AssertionLE("nośności na ścinanie",this,VEdm/VplRd,1)
 		),
 		NumSection("Naprężenia pozostające w belce po fazie montażu",

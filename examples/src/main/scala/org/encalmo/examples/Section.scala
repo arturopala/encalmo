@@ -10,9 +10,16 @@ object SectionSymbols extends SymbolConfigurator {
     import BasicSymbols._
     val dictionary, contextId = "section"
     
-    val A = symbol(BasicSymbols.A) unit "m²"
+    //Dimensions
     val h = symbol("h") unit "m"
     val b = symbol("b") unit "m"
+    //Area
+    val A = symbol(BasicSymbols.A) unit "m²"
+    val AVz = symbol(BasicSymbols.A|"Vz") unit "m²"
+    //Surface
+    val AL = symbol(BasicSymbols.A|"L") unit "m2/m"
+    val AG = symbol(BasicSymbols.A|"G") unit "m2/kg"
+    //Section properties
     val Iz = symbol(BasicSymbols.I|"z") unit "m4"
     val Iy = symbol(BasicSymbols.I|"y") unit "m4"
     val iz = symbol(BasicSymbols.i|"z") unit "m"
@@ -29,9 +36,14 @@ object SectionSymbols extends SymbolConfigurator {
     val Wypl = symbol(BasicSymbols.W|"y,pl") unit "m4"
     val Iomega = symbol(BasicSymbols.I|BasicSymbols.omega) unit "m6"
     val It = symbol(BasicSymbols.I|BasicSymbols.t) unit "m4"
+    //Mass
     val m = symbol(BasicSymbols.m) unit "kg/m"
-    val u = symbol(BasicSymbols.u) unit "m2/m"
-        
+    //Fire resistance coefficients
+    val f1 = symbol(BasicSymbols.f|1)
+    val f2 = symbol(BasicSymbols.f|2)
+    val f3 = symbol(BasicSymbols.f|3)
+    val f4 = symbol(BasicSymbols.f|4)
+    
 }
 
 object SectionExpressions extends MapContext {
@@ -50,6 +62,7 @@ abstract class Section(id:String) extends Calculation(Option(id)){
 	
 	this add SectionExpressions
 	
+	def descriptionRef:String = ""
 	def info:DocumentComponent
 
 }
