@@ -27,20 +27,21 @@ class ZespoloneStrop {
     
     //dane wejsciowe zadania
     val L1 = L|1 is "Rozpiętośc belki" unit "m"
-    zadanie(L1) = 15.9
+    zadanie(L1) = 18
     val L2 = L|2 is "Rozstaw belek" unit "m"
-    zadanie(L2) = 2.5
+    zadanie(L2) = 2.8
     val pc = p!c is "Obciążenie charakterystyczne" unit "N/m2"
-    zadanie(pc) = 2500
+    zadanie(pc) = 3000
     val daneWejsciowe = Seq(L1,L2,pc)
-    
+    //przyjete materialy i wymiary
     val height:Expression = 0.12
-    
-    val blacha = FLORSTROP.T59_Z_100
-    val beton = Concrete.C_20_25
+    val blacha = FLORSTROP.T59_Z_125
+    val beton = Concrete.C_25_30
     val stalZbrojeniowa = ReinforcingSteel.B500SP
+    val stal = Steel.S355
+    val profil = IPESection.IPE_600
+    
     val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton,stalZbrojeniowa)
-    val stal = Steel.S235
     
     zadanie1 add plyta
     
@@ -59,7 +60,7 @@ class ZespoloneStrop {
     plyta(sd) = 0.15
     
     val zadanie2 = Calculation()
-    val belka = new BeamOfCompositeSlab(zadanie(L1),IPESection.IPE_500,Steel.S235,plyta,HeadedStud.NELSON_S3L_19_100)
+    val belka = new BeamOfCompositeSlab(zadanie(L1),profil,stal,plyta,HeadedStud.NELSON_S3L_19_100)
     belka(gammaG) = 1.35
     belka(gammaQ) = 1.5
     belka.steel(gammaM0) = 1.0
@@ -71,7 +72,7 @@ class ZespoloneStrop {
         Predefined.stylesConfig,
         Chapter("",
         	Section(
-            	Section("Ćwiczenie projektowe z przedmiotu \"Kostrukcje Zespolone\". Autor: Artur Opala, album 61315."),
+            	Section("Ćwiczenie projektowe z przedmiotu \"Konstrukcje Zespolone\". Autor: Artur Opala, album 61315."),
         		Section("Prowadzący: dr inż. Wojciech Lorenc, Instytut Budownictwa Politechniki Wrocławskiej. Semestr zimowy 2010/2011.")
         	),
             Section(""),
@@ -119,6 +120,9 @@ class ZespoloneStrop {
 	           NumSection("Wymiarowanie belki w fazie eksploatacji",
 	               belka.ULS2,belka.SLS2
 	           )
+           ),
+           NumSection("Podsumowanie",
+           		Evaluate(belka,BeamOfCompositeSlabSymbols.mS)
            ),
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),

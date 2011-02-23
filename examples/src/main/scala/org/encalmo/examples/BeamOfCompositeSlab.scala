@@ -93,6 +93,7 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
     val I2 = symbol(BasicSymbols.I|"2") unit "m4"
 	val yw = symbol(BasicSymbols.y|"w") unit "m"
 	val f = symbol(BasicSymbols.f) unit "Hz"
+	val mS = symbol(BasicSymbols.m|"S") unit "kg/m2"
 }
 
 /** Composite slab with profiled steel sheeting context */
@@ -200,6 +201,8 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	this(I2) = Iy+A*(z2^2)+(bn2*(hc^3))/12+bn2*hc*((hc/2+hp+h/2-z2)^2)
 	this(yw) = (5*Gk*(l^4))/(384*I2*E)
 	this(f) = 18/sqrt(yw*1000)
+	//unit mass
+	this(mS) = Gk/SLAB.l
 	
 	// end of context initialization
 	lock
