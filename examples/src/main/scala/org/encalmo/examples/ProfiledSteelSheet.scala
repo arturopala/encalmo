@@ -66,6 +66,8 @@ extends Calculation(Option(id)) {
 	this(fyb) = steel(fy)
 	this(fypd) = steel(fyd)
 	
+	override def label = this(ID)
+	
     def info = NumSection(TextToTranslate("ProfiledSteelSheet",ProfiledSteelSheetSymbols.dictionary),id,
 		Evaluate(Seq(t,tcor,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,epd,Wminus,Wplus),this)
 	)

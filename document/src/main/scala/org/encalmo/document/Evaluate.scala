@@ -7,8 +7,10 @@ import org.encalmo.expression.Transformations
 import org.encalmo.expression.Operation2
 import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
+import org.encalmo.expression.SymbolLike
 import org.encalmo.expression.Selection
 import org.encalmo.calculation.Calculation
+import org.encalmo.calculation.FutureExpression
 
 /**
  * Evaluate: symbol = resolved = evaluated
@@ -23,24 +25,42 @@ extends BlockExpr(myStyle,calc,expr:_*){
 		var ue = e // unresolved expression
 		var unit:String = null
 		val evaluated = calc.evaluate(e) // evaluated expression
-		if(e.isInstanceOf[Symbol]){
-			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
-			ue = calc.getRawExpression(e.asInstanceOf[Symbol]) match {
-				case Some(x) => x
-				case None => e
+		e match {
+			case future:FutureExpression => {
+				se = se :+ ExpressionToPrint(future.symbol,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
+				ue = future.er.getRawExpression(future.symbol) match {
+					case Some(x) => x
+					case None => e
+				}
+				if(ue!=e && ue!=evaluated){
+					se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
+				}
+				future match {
+				    case s:SymbolLike if s.symbol.hasUnit => unit = s.symbol.unit.get
+				    case _ => 
+				}
 			}
-			if(ue!=e && ue!=evaluated){
-				se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
+			case symbol:Symbol => {
+				se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
+				ue = calc.getRawExpression(symbol) match {
+					case Some(x) => x
+					case None => e
+				}
+				if(ue!=e && ue!=evaluated){
+					se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
+				}
+				symbol match {
+				    case s:Symbol if s.hasUnit => unit = s.unit.get
+				    case _ => 
+				}
 			}
-			e match {
-			    case s:Symbol if s.hasUnit => unit = s.unit.get
-			    case _ => 
-			}
-		}else{
-			if(ue!=evaluated){
-				se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,StylesConfigSymbols.EXPR_UNRESOLVED),null,null,parentStylesConfig)
+			case _ => {
+				if(ue!=evaluated){
+					se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,StylesConfigSymbols.EXPR_UNRESOLVED),null,null,parentStylesConfig)
+				}
 			}
 		}
+		
 		if(evaluated!=e){
 			val substituted = calc.substitute(ue) // expression with substituted symbols
 			if(substituted!=ue && substituted!=evaluated){

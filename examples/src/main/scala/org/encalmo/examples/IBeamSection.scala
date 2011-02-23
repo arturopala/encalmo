@@ -55,6 +55,8 @@ class IBeamSection(id:String, val name:String = "IBeamSection") extends Section(
 	
 	this(ID) = text(id)
 	
+	override def label = this(ID)
+	
 	def info = NumSection(TextToTranslate(name,IBeamSectionSymbols.dictionary),id,
 		Evaluate(Seq(h,b,tw,tf,hw,bf,A,Iy,Iz,Wy,Wz,Wypl,Wzpl,m),this)
 	)

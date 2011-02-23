@@ -20,7 +20,9 @@ class Symbol(
     val contextId:Option[Seq[String]] = None,
     override val printable:Boolean = true
 
-) extends Expression {
+) extends Expression with SymbolLike {
+
+	override def symbol:Symbol = this
 
 	/** Sets subscript */
     def |(sub:Symbol):Symbol = copy(subscript = Option(sub))

@@ -38,6 +38,8 @@ class HeadedStud(id:String) extends Calculation(Option(id)) {
 	
 	this(ID) = text(id)
 	
+	override def label = this(ID)
+	
 	def info = NumSection(TextToTranslate("HeadedStud",dictionary),id,
 		Evaluate(Seq(d,hsc,dh,a),this)
 	)

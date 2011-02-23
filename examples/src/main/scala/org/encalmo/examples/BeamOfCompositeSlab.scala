@@ -202,7 +202,7 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	this(yw) = (5*Gk*(l^4))/(384*I2*E)
 	this(f) = 18/sqrt(yw*1000)
 	//unit mass
-	this(mS) = Gk/SLAB.l
+	this(mS) = round(((SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk)/(GRAV*SLAB.l))
 	
 	// end of context initialization
 	lock

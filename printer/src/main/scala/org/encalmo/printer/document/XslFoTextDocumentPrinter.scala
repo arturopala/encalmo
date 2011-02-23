@@ -1,7 +1,7 @@
 package org.encalmo.printer.document
 
 import org.encalmo.common._
-import org.encalmo.expression.Symbol
+import org.encalmo.expression.SymbolLike
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
@@ -343,7 +343,7 @@ extends Traveler[DocumentComponent] {
 		    if(!se.isEmpty){
 	        	val etp1 = se.head
 	        	val description:Option[String] = etp1.expression match {
-	        		case s:Symbol => etp1.expression.asInstanceOf[Symbol].localizedDescription(locale)
+	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
 	        		case _ => None
 	        	}
 	        	val printable:Boolean = etp1.expression.printable

@@ -94,6 +94,8 @@ class Calculation(val id:Option[String] = None) extends ContextSet with Context 
 	override def hasExpression(s:Symbol):Boolean = {
 		cache.get(s).isDefined || set.find(c => c.hasExpression(s)).isDefined
 	}
+	
+	def label:Expression = id.map(text(_)).getOrElse(null)
 
 
 }

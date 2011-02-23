@@ -57,6 +57,8 @@ class Steel(id:String,data:Context) extends Calculation(Option(id)) {
 	this(gammaM0) = 1
 	this(gammaM1) = 1
 	this(gammaV) = 1.25
+	
+	override def label = this(CLASS)
 }
 
 /** Steel library */

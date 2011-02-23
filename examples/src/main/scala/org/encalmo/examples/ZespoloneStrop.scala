@@ -33,13 +33,15 @@ class ZespoloneStrop {
     val pc = p!c is "Obciążenie charakterystyczne" unit "N/m2"
     zadanie(pc) = 3000
     val daneWejsciowe = Seq(L1,L2,pc)
+    
     //przyjete materialy i wymiary
     val height:Expression = 0.12
     val blacha = FLORSTROP.T59_Z_125
-    val beton = Concrete.C_25_30
+    val beton = Concrete.C_20_25
     val stalZbrojeniowa = ReinforcingSteel.B500SP
     val stal = Steel.S355
     val profil = IPESection.IPE_600
+    val sworzen = HeadedStud.NELSON_S3L_19_100
     
     val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton,stalZbrojeniowa)
     
@@ -60,7 +62,7 @@ class ZespoloneStrop {
     plyta(sd) = 0.15
     
     val zadanie2 = Calculation()
-    val belka = new BeamOfCompositeSlab(zadanie(L1),profil,stal,plyta,HeadedStud.NELSON_S3L_19_100)
+    val belka = new BeamOfCompositeSlab(zadanie(L1),profil,stal,plyta,sworzen)
     belka(gammaG) = 1.35
     belka(gammaQ) = 1.5
     belka.steel(gammaM0) = 1.0
@@ -86,7 +88,8 @@ class ZespoloneStrop {
                 	Section(styleDescription," [4] Norma PN-EN 1993-1-3:2006 \"Eurokod 3. Projektowanie konstrukcji stalowych. Część 1-3: Reguły ogólne. Reguły uzupełniające dla konstrukcji z kształtowników i blach profilowanych na zimno.\""),
                 	Section(styleDescription," [5] Norma PN-EN 1992-1-1:2008 \"Eurokod 2. Projektowanie konstrukcji z betonu. Część 1-1: Reguły ogólne i reguły dla budynków\"")
                 ),
-                NumSection("Dane wejściowe",Evaluate(daneWejsciowe,zadanie))
+                NumSection("Dane wejściowe",Evaluate(daneWejsciowe,zadanie),Evaluate(zadanie,stal.label)),
+                NumSection("Przyjęto do obliczeń",Evaluate(zadanie,plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label))
            ),
            NumSection("Wymiarowanie płyty stropowej",
                NumSection("Przyjęte wymiary i właściwości materiałowe",

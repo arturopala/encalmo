@@ -2,6 +2,7 @@ package org.encalmo.printer.document
 
 import org.encalmo.common._
 import org.encalmo.expression.Symbol
+import org.encalmo.expression.SymbolLike
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
@@ -174,10 +175,10 @@ extends Traveler[DocumentComponent] {
 			        canNewLine = true;
 			        writeLineEnd;
 			        es.head.expression match {
-			        	case s:Symbol if s.hasLocalizedDescription(locale) => {
-			        		write(s.localizedDescription(locale))
+			        	case s:SymbolLike if s.symbol.hasLocalizedDescription(locale) => {
+			        		write(s.symbol.localizedDescription(locale))
 	                        plus
-	                        if(s.printable) {
+	                        if(s.symbol.printable) {
 	                        	canNewLine = true;
 	                        	writeLineEnd;
 	                        }

@@ -8,7 +8,7 @@ case class Constant[t<:Expression](s:Symbol,e:t) extends Expression with SymbolL
 	
   override def eval():t = e
   
-  def symbol:Symbol = s
+  val symbol:Symbol = s
   
 }
 
@@ -23,3 +23,9 @@ object PI extends Constant[Number](BasicSymbols.pi,Number(Real.pi))
  * @author artur.opala
  */
 object EUL extends Constant[Number](BasicSymbols.eul,Number(Real.e))
+
+/**
+ * gravity constant
+ * @author artur.opala
+ */
+object GRAV extends Constant[Number](BasicSymbols.grav,Number(9.81))

@@ -63,6 +63,8 @@ class Concrete(id:String,data:Context) extends Calculation(Option(id)) {
 	this(CLASS) = text(id)
 	this(gammaC) = 1.5
 	
+	override def label = this(CLASS)
+	
 }
 
 class NormalConcrete extends MapContext {
