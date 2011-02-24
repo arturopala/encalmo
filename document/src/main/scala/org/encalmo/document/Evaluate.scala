@@ -9,6 +9,7 @@ import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
 import org.encalmo.expression.SymbolLike
 import org.encalmo.expression.Selection
+import org.encalmo.expression.UnitOfValue
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.FutureExpression
 
@@ -23,7 +24,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		var se = Seq[ExpressionToPrint]()
 		var ue = e // unresolved expression
-		var unit:String = null
+		var unit:UnitOfValue = null
 		val evaluated = calc.evaluate(e) // evaluated expression
 		e match {
 			case future:FutureExpression => {
@@ -84,7 +85,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
                     }
 				}
 			}
-			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",unit,parentStylesConfig)
+			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",/*unit*/null,parentStylesConfig)
 		}
 		se
 	}

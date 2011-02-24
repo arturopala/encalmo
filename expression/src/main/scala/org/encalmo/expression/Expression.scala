@@ -14,12 +14,8 @@ trait Expression extends TreeLike[Expression] {
    */
   def eval():Expression = this
   
-  /**
-   * Assigns this expression to the symbol s
-   * @param s symbol
-   * @return new definition of s
-   */
-  def as(s:Symbol):Expression = Definition(s,this)
+  /** Unit of expression */
+  def unit:Option[UnitOfValue] = None
   
   def or(c:Case):Selection = Selection(CaseExpression(this),Seq(c))
   

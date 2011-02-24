@@ -15,7 +15,7 @@ class Symbol(
     val underscript:Option[Symbol] = None,
     val overscript:Option[Symbol] = None,
     val description:Option[String] = None,
-    val unit:Option[String] = None,
+    override val unit:Option[UnitOfValue] = None,
     val dictionary:Option[String] = None,
     val contextId:Option[Seq[String]] = None,
     override val printable:Boolean = true
@@ -112,7 +112,8 @@ class Symbol(
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Sets unit */
-    def unit(unit:String):Symbol = copy(unit = Option(unit))
+    def unit(unit:String):Symbol = copy(unit = Option(new BaseUnitOfValue(unit,0,1,SI)))
+    def unit(unit:UnitOfValue):Symbol = copy(unit = Option(unit))
     /** Sets dictionary */
     def dictionary(dict:String):Symbol = copy(dictionary = Option(dict))
     /** Copy entire symbol or selected attributes*/
@@ -123,7 +124,7 @@ class Symbol(
 	    underscript:Option[Symbol] = this.underscript,
 	    overscript:Option[Symbol] = this.overscript,
 	    description:Option[String] = this.description,
-	    unit:Option[String] = this.unit,
+	    unit:Option[UnitOfValue] = this.unit,
 	    dictionary:Option[String] = this.dictionary,
 	    contextId:Option[Seq[String]] = this.contextId,
 	    printable:Boolean = this.printable
@@ -201,7 +202,7 @@ object Symbol {
 	    underscript:Option[Symbol] = None,
 	    overscript:Option[Symbol] = None,
 	    description:Option[String] = None,
-	    unit:Option[String] = None,
+	    unit:Option[UnitOfValue] = None,
 	    dictionary:Option[String] = None,
 	    contextId:Option[Seq[String]] = None,
 	    printable:Boolean = true

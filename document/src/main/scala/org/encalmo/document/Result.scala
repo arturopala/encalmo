@@ -21,7 +21,7 @@ extends InlineExpr(rStyle,calc,expr:_*){
 		val evaluated = calc.evaluate(e)
 		e match {
 			case s:Symbol if s.hasUnit => {
-				Seq[ExpressionToPrint](ExpressionToPrint(evaluated,style,null,s.unit.getOrElse(null),parentStylesConfig))
+				Seq[ExpressionToPrint](ExpressionToPrint(evaluated,style,null,/*s.unit.getOrElse(null)*/null,parentStylesConfig))
 			}
 			case _ => {
 				Seq[ExpressionToPrint](ExpressionToPrint(evaluated,style,null,null,parentStylesConfig))
