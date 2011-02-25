@@ -7,6 +7,7 @@ import org.encalmo.expression.Transformations
 import org.encalmo.expression.Operation2
 import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
+import org.encalmo.expression.Envelope
 import org.encalmo.expression.SymbolLike
 import org.encalmo.expression.Selection
 import org.encalmo.expression.UnitOfValue
@@ -24,7 +25,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		var se = Seq[ExpressionToPrint]()
 		var ue = e // unresolved expression
-		var unit:UnitOfValue = null
+		val unit:Option[UnitOfValue] = e.unit
 		val evaluated = calc.evaluate(e) // evaluated expression
 		e match {
 			case future:FutureExpression => {
@@ -36,10 +37,6 @@ extends BlockExpr(myStyle,calc,expr:_*){
 				if(ue!=e && ue!=evaluated){
 					se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
 				}
-				future match {
-				    case s:SymbolLike if s.symbol.hasUnit => unit = s.symbol.unit.get
-				    case _ => 
-				}
 			}
 			case symbol:Symbol => {
 				se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
@@ -49,10 +46,6 @@ extends BlockExpr(myStyle,calc,expr:_*){
 				}
 				if(ue!=e && ue!=evaluated){
 					se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
-				}
-				symbol match {
-				    case s:Symbol if s.hasUnit => unit = s.unit.get
-				    case _ => 
 				}
 			}
 			case _ => {
@@ -85,7 +78,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
                     }
 				}
 			}
-			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",/*unit*/null,parentStylesConfig)
+			se = se :+ ExpressionToPrint(Envelope(evaluated,unit),resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",null,parentStylesConfig)
 		}
 		se
 	}

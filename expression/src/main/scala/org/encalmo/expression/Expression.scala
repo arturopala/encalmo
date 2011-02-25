@@ -14,7 +14,6 @@ trait Expression extends TreeLike[Expression] {
    */
   def eval():Expression = this
   
-  /** Unit of expression */
   def unit:Option[UnitOfValue] = None
   
   def or(c:Case):Selection = Selection(CaseExpression(this),Seq(c))
