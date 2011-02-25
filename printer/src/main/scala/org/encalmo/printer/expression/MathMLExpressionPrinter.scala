@@ -140,6 +140,10 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	               //output.attr("rowalign","left")
 	               output.body
 	            }
+	            case bu:BaseUnitOfValue => {
+	            	output.append(ENTITY_THICK_SPACE)
+	            	output.mtext(bu.name,90)
+	            }
 	    		case _ => Unit
 		    }
 	    }else{

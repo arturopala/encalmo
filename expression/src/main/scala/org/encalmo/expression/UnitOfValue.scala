@@ -31,6 +31,8 @@ case class BaseUnitOfValue (
 	def dim(exp:Int):BaseUnitOfValue = copy(dimension=dimension*exp)
 	def exp(sca:Int):BaseUnitOfValue = copy(scale=scale+sca)
 	
+	val name = system(scale).map(_.prefix).getOrElse("")+symbol
+	
 }
 
 /**

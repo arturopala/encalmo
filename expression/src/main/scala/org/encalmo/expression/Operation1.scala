@@ -12,7 +12,7 @@ trait Operation1 extends Operation {
   def e:Expression
   
   /** Children expressions */
-  override def children:Seq[Expression] = Seq(e)
+  override val children:Seq[Expression] = Seq(e)
   
   /**
    * Returns resulting Real value

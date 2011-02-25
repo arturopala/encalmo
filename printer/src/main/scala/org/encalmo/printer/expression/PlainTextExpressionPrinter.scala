@@ -122,6 +122,16 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
             case ct:CaseTest => {
                 w.write("(")
             }
+            case bu:BaseUnitOfValue => {
+            	w.write(bu.name)
+            	if(bu.dimension!=1){
+            		bu.dimension match {
+            			case 2 => w.write("²")
+            			case 3 => w.write("²")
+            			case _ => w.write(bu.dimension)
+            		}
+            	}
+            }
     		case _ => Unit
 	    }
 	}

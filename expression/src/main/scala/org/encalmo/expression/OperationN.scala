@@ -12,7 +12,7 @@ trait OperationN extends Operation {
   def args:Seq[Expression]
   
   /** Children expressions */
-  override def children:Seq[Expression] = args
+  override val children:Seq[Expression] = args
 	
   /**
    * Real operation execution

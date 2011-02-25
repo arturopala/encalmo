@@ -23,6 +23,6 @@ case class Envelope(
 		}
 	}
 	
-	override def children = Seq(expression)
+	override val children:Seq[Expression] = if(unit.isDefined) Seq(expression,unit.get) else Seq(expression)
 
 }

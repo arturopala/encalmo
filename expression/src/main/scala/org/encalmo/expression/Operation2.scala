@@ -12,7 +12,7 @@ trait Operation2 extends Operation {
   def r:Expression
   
   /** Children expressions */
-  override def children:Seq[Expression] = Seq(l,r)
+  override val children:Seq[Expression] = Seq(l,r)
   
   def calculate(lv:Value,rv:Value):Expression
   def copy(l:Expression,r:Expression):Operation2
