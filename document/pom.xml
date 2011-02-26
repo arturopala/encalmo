@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.encalmo</groupId>
+    <artifactId>encalmo</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <groupId>org.encalmo</groupId>
+  <artifactId>encalmo-document</artifactId>
+  <name>document</name>
+  
+  <dependencies>
+    <dependency>
+	    <groupId>org.scala-lang</groupId>
+	    <artifactId>scala-library</artifactId>
+    </dependency>
+    <dependency>
+	    <groupId>org.encalmo</groupId>
+	    <artifactId>encalmo-calculation</artifactId>
+	    <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <scalaVersion>${scala.version}</scalaVersion>
+          <args>
+            <arg>-target:jvm-1.5</arg>
+          </args>
+        </configuration>
+      </plugin>
+     </plugins>
+  </build>
+  
+</project>

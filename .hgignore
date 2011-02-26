@@ -1,0 +1,6 @@
+glob:.git
+glob:.bzr
+glob:target
+
+syntax: regexp
+^bin$
