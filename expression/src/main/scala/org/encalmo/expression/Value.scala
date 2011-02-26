@@ -11,6 +11,17 @@ trait Value extends Expression {
 	
 	override final def eval():Expression = this
 	
+	/** 
+	 * Calculates result of the operation with single argument. 
+	 */
+	def calculate(operator:String, v:Value):Option[Value]
+	
+	/** 
+	 * Calculates result of the operation with two arguments. 
+	 */
+	def calculate(operator:String, v1:Value,v2:Value):Option[Value]
+	
+	
 }
 
 object Value {

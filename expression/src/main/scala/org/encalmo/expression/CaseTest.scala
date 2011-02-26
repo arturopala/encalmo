@@ -135,8 +135,8 @@ case class GreaterThan(t1:Expression,t2:Expression) extends CaseTest {
             val v1 = t1.eval
             val v2 = t2.eval
             (v1,v2) match {
-            case (n1:Number,n2:Number) => n1.r.d>n2.r.d
-            case _ => throw new IllegalArgumentException
+            case (n1:Number,n2:Number) => n1>n2
+                case _ => throw new IllegalArgumentException
             }
     }
 
@@ -162,7 +162,7 @@ case class GreaterOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
             val v1 = t1.eval
             val v2 = t2.eval
             (v1,v2) match {
-            case (n1:Number,n2:Number) => n1.r.d>=n2.r.d
+            case (n1:Number,n2:Number) => n1>=n2
             case _ => throw new IllegalArgumentException
             }
     }
@@ -189,7 +189,7 @@ case class LowerThan(t1:Expression,t2:Expression) extends CaseTest {
             val v1 = t1.eval
             val v2 = t2.eval
             (v1,v2) match {
-            case (n1:Number,n2:Number) => n1.r.d<=n2.r.d
+            case (n1:Number,n2:Number) => n1<=n2
             case _ => throw new IllegalArgumentException
             }
     }
@@ -216,7 +216,7 @@ case class LowerOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
             val v1 = t1.eval
             val v2 = t2.eval
             (v1,v2) match {
-            case (n1:Number,n2:Number) => n1.r.d<=n2.r.d
+            case (n1:Number,n2:Number) => n1<=n2
             case _ => throw new IllegalArgumentException("LowerOrEqualThan("+v1+","+v2+")")
             }
     }
@@ -244,7 +244,7 @@ case class InRangeLEL(t1:Expression,t2:Expression,t3:Expression) extends CaseTes
             val v2 = t2.eval
             val v3 = t3.eval
             (v1,v2,v3) match {
-            case (n1:Number,n2:Number,n3:Number) => n1.r.d<=n2.r.d && n2.r.d<n3.r.d
+            case (n1:Number,n2:Number,n3:Number) => n1<=n2 && n2<n3
             case _ => throw new IllegalArgumentException("InRangeLEL("+v1+","+v2+","+v3+")")
             }
     }
@@ -273,7 +273,7 @@ case class InRangeLLE(t1:Expression,t2:Expression,t3:Expression) extends CaseTes
             val v2 = t2.eval
             val v3 = t3.eval
             (v1,v2,v3) match {
-            case (n1:Number,n2:Number,n3:Number) => n1.r.d<n2.r.d && n2.r.d<=n3.r.d
+            case (n1:Number,n2:Number,n3:Number) => n1<n2 && n2<=n3
             case _ => throw new IllegalArgumentException("InRangeLLE("+v1+","+v2+","+v3+")")
             }
     }
@@ -302,7 +302,7 @@ case class InRangeLL(t1:Expression,t2:Expression,t3:Expression) extends CaseTest
             val v2 = t2.eval
             val v3 = t3.eval
             (v1,v2,v3) match {
-            case (n1:Number,n2:Number,n3:Number) => n1.r.d<n2.r.d && n2.r.d<n3.r.d
+            case (n1:Number,n2:Number,n3:Number) => n1<n2 && n2<n3
             case _ => throw new IllegalArgumentException("InRangeLL("+v1+","+v2+","+v3+")")
             }
     }
@@ -331,7 +331,7 @@ case class InRangeLELE(t1:Expression,t2:Expression,t3:Expression) extends CaseTe
             val v2 = t2.eval
             val v3 = t3.eval
             (v1,v2,v3) match {
-            case (n1:Number,n2:Number,n3:Number) => n1.r.d<=n2.r.d && n2.r.d<=n3.r.d
+            case (n1:Number,n2:Number,n3:Number) => n1<=n2 && n2<=n3
             case _ => throw new IllegalArgumentException("InRangeLELE("+v1+","+v2+","+v3+")")
             }
     }

@@ -11,7 +11,7 @@ class ValueUnitTest extends AssertionsForJUnit {
     @Test def test1 = {
         
         def sum(n1:Value,n2:Value) = (n1,n2) match {
-            case (n1:Number,n2:Number) => Number(n1.r+n2.r)
+            case (n1:Number,n2:Number) => n1.calculate("+",n1,n2).get
             case _ => throw new UnsupportedOperationException
         }
         
@@ -29,7 +29,7 @@ class ValueUnitTest extends AssertionsForJUnit {
     @Test def test2 = {
         
         def sin(v1:Value) = v1 match {
-            case n1:Number => Number(n1.r.rad.sin)
+            case n1:Number => n1.calculate("sin",n1).get
             case _ => throw new UnsupportedOperationException
         }
         

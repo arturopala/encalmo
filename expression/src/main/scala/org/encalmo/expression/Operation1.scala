@@ -15,12 +15,6 @@ trait Operation1 extends Operation {
   override val children:Seq[Expression] = Seq(e)
   
   /**
-   * Returns resulting Real value
-   * @param r number
-   */
-  def calculate(v:Value):Expression
-  
-  /**
    * Operation copy with exchanged parameters
    * @param e
    */
@@ -29,10 +23,15 @@ trait Operation1 extends Operation {
   final override def eval():Expression = {
 	  val ev = e eval; 
 	  ev match {
-	 	  case _ if(ev.isInstanceOf[Value]) => calculate(ev.asInstanceOf[Value]);
-	 	  case _ if(ev!=e) => copy(ev);
+	 	  case v:Value => calculate(v)
+	 	  case _ if(ev!=e) => copy(ev)
 	 	  case _ if(ev==e)=> this
 	  }
+  }
+  
+  /** Default calculate implementation invokes Value#calculate */ 
+  def calculate(v:Value):Expression = {
+      v.calculate(operator,v).getOrElse(copy(v))
   }
   
   final override def map(f:Transformation):Expression = {

@@ -141,8 +141,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	               output.body
 	            }
 	            case bu:BaseUnitOfValue => {
-	            	output.append(ENTITY_THICK_SPACE)
-	            	output.mtext(bu.name,90)
+	            	output.unit(bu)
 	            }
 	    		case _ => Unit
 		    }

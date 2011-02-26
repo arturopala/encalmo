@@ -215,10 +215,31 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 
 	def mtext(s:String, size: Int):Unit = {
 		start(MTEXT)
-		attr("mathsize",size,"%")
+		if(size>0) attr("mathsize",size,"%")
 		body
 		append(s)
 		end(MTEXT)
+	}
+	
+	def mtext2(s:String, lspace:String=null,rspace:String=null, size: Int = 0):Unit = {
+		start(MTEXT)
+		if(size>0) attr("mathsize",size,"%")
+		body
+		if (lspace != null) append(lspace)
+		append(s)
+		if (rspace != null) append(rspace)
+		end(MTEXT)
+	}
+	
+	def msup(s1:String,s2:String,lspace:String=null,rspace:String=null,size:Int = 0){
+		start(MSUP)
+		if(size>0) attr("mathsize",size,"%")
+		body
+		if (lspace != null) append(lspace)
+		mtext(s1)
+		mtext(s2)
+		if (rspace != null) append(rspace)
+		end(MSUP)
 	}
 	
 	def symbol(s:Symbol,script:Boolean=false):Unit = {
@@ -255,6 +276,15 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		else if (s.hasUnderscript) end(MUNDER)
 		//under-over script end
 		if(!script) end(MSTYLE)
+	}
+	
+	def unit(bu:BaseUnitOfValue) = {
+		start(MSUP)
+		attr("mathsize","85%")
+		body
+		mtext(ENTITY_THIN_SPACE,bu.name)
+		if(bu.dimension!=1) mtext(bu.dimension.toString)
+		end(MSUP)
 	}
 	
 	def appendStyleAttributes(style:Style) = {

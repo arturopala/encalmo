@@ -14,17 +14,22 @@ trait Operation2 extends Operation {
   /** Children expressions */
   override val children:Seq[Expression] = Seq(l,r)
   
-  def calculate(lv:Value,rv:Value):Expression
+  /** Makes copy of this operation type with provided arguments */
   def copy(l:Expression,r:Expression):Operation2
   
   final override def eval():Expression = {
 	  val le = l eval;
 	  val re = r eval;
 	  (le,re) match {
-	 	  case _ if (le.isInstanceOf[Value] && re.isInstanceOf[Value]) => calculate(le.asInstanceOf[Value],re.asInstanceOf[Value]);
-	 	  case _ if (le!=l || re!=r) => copy(le,re);
+	 	  case (v1:Value,v2:Value) => calculate(v1,v2) 
+	 	  case _ if (le!=l || re!=r) => copy(le,re)
 	 	  case _ => this;
 	  }
+  }
+  
+  /** Default calculate implementation invokes Value#calculate(v1,v2) */ 
+  def calculate(v1:Value,v2:Value):Expression = {
+      v1.calculate(operator,v1,v2).getOrElse(v2.calculate(operator,v1,v2).getOrElse(copy(v1,v2)))
   }
   
   final override def map(f:Transformation):Expression = {

@@ -13,22 +13,13 @@ trait OperationN extends Operation {
   
   /** Children expressions */
   override val children:Seq[Expression] = args
-	
-  /**
-   * Real operation execution
-   * @param r number
-   * @return
-   */
-  def calculate(v:Value*):Expression
   
-  /**
-   * Operation copy with exchanged parameters
-   */
+  /** Makes copy of this operation type with provided arguments */
   def copy(e:Expression*):OperationN
 	
   final override def eval():Expression = {
 	  val ps = args.map(_.eval).partition(_.isInstanceOf[Value])
-	  if(ps._1.isEmpty){
+	  if(ps._1.isEmpty){ // if there is not a single Value
 	 	  if(args.sameElements(ps._2)){
 	 	 	  this // returns this if none argument has been transformed by eval
 	 	  }else{
@@ -36,8 +27,8 @@ trait OperationN extends Operation {
 	 	  }
 	  }else{
 		  val result:Expression = calculate(ps._1.map(_.asInstanceOf[Value]):_*)
-		  if(ps._2.isEmpty){
-		 	  result // returns only evaluation
+		  if(ps._2.isEmpty){ //if only Value
+		 	  result // returns calculated result
 		  } else {
 		 	  val newargs = ps._2.+:(result)
 		 	  if(args.sameElements(newargs)){
@@ -47,6 +38,11 @@ trait OperationN extends Operation {
 		 	  }
 		  }
 	  }
+  }
+  
+  /** Default calculate implementation invokes reduceLeft with Value#calculate(left,right) */ 
+  def calculate(v:Value*):Expression = {
+      v.reduceLeft[Value]((v1,v2) => v1.calculate(operator,v1,v2).getOrElse(v2.calculate(operator,v1,v2).getOrElse(throw new IllegalArgumentException("("+v1+","+v2+")"))))
   }
   
   final override def map(f:Transformation):Expression = {

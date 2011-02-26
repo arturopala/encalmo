@@ -91,7 +91,6 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
     	    }
 	    }
 	    node.element match {
-    		case s:Symbol => writeSymbol(s)
     		case sl: SymbolLike => writeSymbol(sl.symbol)
     		case n:Number => writeNumber(n)
     		case tv: TextValue => w.write(tv.text)
@@ -123,11 +122,12 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
                 w.write("(")
             }
             case bu:BaseUnitOfValue => {
+            	w.write("\u2009")
             	w.write(bu.name)
             	if(bu.dimension!=1){
             		bu.dimension match {
             			case 2 => w.write("²")
-            			case 3 => w.write("²")
+            			case 3 => w.write("³")
             			case _ => w.write(bu.dimension)
             		}
             	}

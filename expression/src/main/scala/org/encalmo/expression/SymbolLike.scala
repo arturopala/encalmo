@@ -1,7 +1,7 @@
 package org.encalmo.expression
 
 /**
- * Trait for expressions presented with Symbol
+ * Trait for expressions behaving as Symbol
  * @author artur.opala
  */
 trait SymbolLike extends Expression {

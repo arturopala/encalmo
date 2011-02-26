@@ -136,8 +136,8 @@ class OperationUnitTest extends AssertionsForJUnit {
 		val args = oN match {
 			case OperationN(args,o) => args
 		}
-		assertTrue(testArgs.zip(args).forall(x => (x._1 == x._2.asInstanceOf[Number].r.d)))
-		assertFalse(testArgs.zip(args).forall(x => (x._1 != x._2.asInstanceOf[Number].r.d)))
+		assertTrue(testArgs.zip(args).forall(x => (Number(x._1) == x._2.asInstanceOf[Number])))
+		assertFalse(testArgs.zip(args).forall(x => (Number(x._1) != x._2.asInstanceOf[Number])))
 	}
 	
 	

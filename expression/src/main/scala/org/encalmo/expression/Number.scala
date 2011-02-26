@@ -6,69 +6,105 @@ import java.io.PrintWriter
  * Real number expression
  * @author artur.opala
  */
-case class Number(r:Real) extends Value {
+case class Number(
 
-	def format:String = Real.format(r)
-
-	def format(format:java.text.NumberFormat):String = Real.format(r, format);
-
-	def format(locale:java.util.Locale):String = Real.format(r,locale)
-
-	def format(pattern:String,locale:java.util.Locale):String = Real.format(r,pattern,locale)
-
-	override def + (e:Expression):Expression = e match {
-	case _ => super.+(e)
+		private val r:Real
+		
+	) extends Value {
+	
+	/** 
+	 * Calculates result of the operation with two arguments. 
+	 * Supports arguments of the Number type. 
+	 */
+	override def calculate(operator:String, v1:Value, v2:Value):Option[Value] = {
+		val r = (v1,v2) match {
+			case (Number(r1),Number(r2)) => {
+				Option(operator match {
+					case "+" => Number(r1+r2)
+					case "-" => Number(r1-r2)
+					case "*" => Number(r1*r2)
+					case "/" => Number(r1/r2)
+					case "%" => Number(r1%r2)
+					case "^" => Number(r1^r2)
+					case "root" => Number(r1.root(r2))
+					case "min" => Number(Real(Math.min(r1.d,r2.d)))
+					case "max" => Number(Real(Math.max(r1.d,r2.d)))
+					case "hypot" => Number(Real(java.lang.Math.hypot(r1.d,r2.d)))
+					case _ => null
+				})
+			}
+			case _ => None
+		}
+		r
 	}
-
-	override def - (e:Expression):Expression = e match {
-	case _ => super.-(e)
-	}
-
-	override def * (e:Expression):Expression = e match {
-	case _ => super.*(e)
-	}
-
-	override def / (e:Expression):Expression = e match {
-	case _ => super./(e)
-	}
-
-	override def % (e:Expression):Expression = e match {
-	case _ => super.%(e)
+	
+	/** 
+	 * Calculates result of the operation with two arguments. 
+	 * Supports arguments of the Number type. 
+	 */
+	override def calculate(operator:String, v:Value):Option[Value] = {
+		v match {
+			case Number(r) => {
+				Option(operator match {
+					case "-" => Number(-r)
+					case "sqrt" => Number(r.sqrt)
+					case "cbrt" => Number(r.cbrt)
+					case "exp" => Number(r.exp)
+					case "ln" => Number(r.ln)
+					case "log" => Number(r.log)
+					case "abs" => Number(r.abs)
+					case "sin" => Number(r.rad.sin)
+					case "cos" => Number(r.rad.cos)
+					case "tan" => Number(r.rad.tan)
+					case "cot" => Number(r.rad.cot)
+					case "arcsin" => Number(r.arcsin.deg)
+					case "arccos" => Number(r.arccos.deg)
+					case "arctan" => Number(r.arctan.deg)
+					case "arccot" => Number(r.arccot.deg)
+					case "sinh" => Number(r.rad.sinh)
+					case "cosh" => Number(r.rad.cosh)
+					case "tanh" => Number(r.rad.tanh)
+					case "coth" => Number(r.rad.coth)
+					case _ => null
+				})
+			}
+			case _ => None
+		}
 	}
 
 	override def ^ (e:Expression):Expression = e match {
-	case Number(r2) if r2==Real.zero => ONE
-	case Number(r2) if r2==Real.one => this
-	case _ => super.^(e)
+		case Number(r2) if r2==Real.zero => ONE
+		case Number(r2) if r2==Real.one => this
+		case _ => super.^(e)
 	}
 
 	override def unary_-():Expression = Number(-r)
 
 	override def +- (e:Expression):Expression = e match {
-	case Number(r2) if r2==Real.zero => this
-	case _ => super.+-(e)
+		case Number(r2) if r2==Real.zero => this
+		case _ => super.+-(e)
 	}
 
 	override def *- (e:Expression):Expression = e match {
-	case Number(r2) if r2==Real.zero => ZERO
-	case Number(r2) if r2==Real.one => Number(-r)
-	case _ => super.*-(e)
+		case Number(r2) if r2==Real.zero => ZERO
+		case Number(r2) if r2==Real.one => Number(-r)
+		case _ => super.*-(e)
 	}
 
 	override def /- (e:Expression):Expression = e match {
-	case Number(r2) if r2==Real.one => Number(-r)
-	case _ => super./-(e)
+		case Number(r2) if r2==Real.one => Number(-r)
+		case _ => super./-(e)
 	}
 
 	override def %- (e:Expression):Expression = e match {
-	case Number(r2) => Number(r%(-r2))
-	case _ => super.%-(e)
+		case Number(r2) => Number(r%(-r2))
+		case _ => super.%-(e)
 	}
 
 	override def ^- (e:Expression):Expression = e match {
-	case Number(r2) if r2==Real.zero => ONE
-	case Number(r2) if r2==Real.one => this
-	case _ => super.^-(e)
+		case Number(r2) if r2==Real.zero => ONE
+		case Number(r2) if r2==Real.one => this
+		case _ => super.^-(e)
 	}
 
 	override def < (e:Expression):Boolean = e match {case Number(r1) => r<r1; case _ => false}
@@ -76,15 +112,23 @@ case class Number(r:Real) extends Value {
 	override def >= (e:Expression):Boolean = e match {case Number(r1) => r>=r1; case _ => false}
 	override def <= (e:Expression):Boolean = e match {case Number(r1) => r<=r1; case _ => false}
 	override def <> (e:Expression):Boolean = e match {case Number(r1) => r<>r1; case _ => false}
-
+	
 	def isInt = r.isInt
 
 	override def equals(a:Any):Boolean = a match {	
-	case Number(r) => this.r==r
-	case _ => false
+		case Number(r) => this.r==r
+		case _ => false
 	}
 	
-	final def analyze(d:Double):(Long,Double) = {
+	def format:String = Real.format(r)
+
+	def format(format:java.text.NumberFormat):String = Real.format(r, format);
+
+	def format(locale:java.util.Locale):String = Real.format(r,locale)
+
+	def format(pattern:String,locale:java.util.Locale):String = Real.format(r,pattern,locale)
+	
+	private final def analyze(d:Double):(Long,Double) = {
 		val ad = Math.abs(d)
 		val fd = Math.floor(ad).toLong
 		val fr = ad-fd
@@ -200,8 +244,8 @@ object ZERO extends Number(Real.zero){
 	override def + (e:Expression):Expression = e
 	override def - (e:Expression):Expression = -e
 	override def ^ (e:Expression):Expression = e match {
-	case _ if ZERO.eq(e) => ONE; 
-	case _=> ZERO
+		case _ if ZERO.eq(e) => ONE; 
+		case _ => ZERO
 	}
 
 	override def unary_-():Expression = this

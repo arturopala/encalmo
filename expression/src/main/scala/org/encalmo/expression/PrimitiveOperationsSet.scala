@@ -5,7 +5,7 @@ package org.encalmo.expression
  */
 case class Sum(args:Expression*) extends MultipleInfixOperation {
 	
-	override def calculate(v:Value*):Expression = {
+	/*override def calculate(v:Value*):Expression = {
 			val ps = v.partition(_.isInstanceOf[Number])
 			if(ps._1.isEmpty){
 				this
@@ -17,7 +17,7 @@ case class Sum(args:Expression*) extends MultipleInfixOperation {
 					Sum((ps._2.:+(result)):_*)
 				}
 			}
-	}
+	}*/
 	
 	override def toString = "Sum("+args.mkString(",")+")"
 	
@@ -40,7 +40,7 @@ case class Sum(args:Expression*) extends MultipleInfixOperation {
  */
 case class Prod(args:Expression*) extends MultipleInfixOperation {
 	
-	override def calculate(v:Value*):Expression = {
+	/*override def calculate(v:Value*):Expression = {
 			val ps = v.partition(_.isInstanceOf[Number])
 			if(ps._1.isEmpty){
 				this
@@ -52,7 +52,7 @@ case class Prod(args:Expression*) extends MultipleInfixOperation {
 					Prod((ps._2.:+(result)):_*)
 				}
 			}
-	}
+	}*/
 	
 	override def toString = "Prod("+args.mkString(",")+")"
 	
@@ -73,10 +73,10 @@ case class Prod(args:Expression*) extends MultipleInfixOperation {
  * Difference operation
  */
 case class Diff(l: Expression, r: Expression) extends InfixOperation {
-	override def calculate(lv: Value, rv: Value): Expression = (lv, rv) match {
-	case (Number(lr), Number(rr)) => Number(lr - rr)
-	case _ => copy(lv, rv)
-	}
+	/*override def calculate(lv: Value, rv: Value): Expression = (lv, rv) match {
+		case (Number(lr), Number(rr)) => Number(lr - rr)
+		case _ => copy(lv, rv)
+	}*/
 	override def copy(l: Expression, r: Expression) = Diff(l, r)
 	override val operator = "-"
 	override val precedence = 2
@@ -86,10 +86,10 @@ case class Diff(l: Expression, r: Expression) extends InfixOperation {
  * Division operation
  */
 case class Quot(l: Expression, r: Expression) extends InfixOperation {
-	override def calculate(lv: Value, rv: Value): Expression = (lv, rv) match {
-	case (Number(lr), Number(rr)) => Number(lr / rr)
-	case _ => copy(lv, rv)
-	}
+	/*override def calculate(lv: Value, rv: Value): Expression = (lv, rv) match {
+		case (Number(lr), Number(rr)) => Number(lr / rr)
+		case _ => copy(lv, rv)
+	}*/
 	override def copy(l: Expression, r: Expression) = Quot(l, r)
 	override val operator = "/"
 	override val precedence = 11
@@ -99,10 +99,10 @@ case class Quot(l: Expression, r: Expression) extends InfixOperation {
  * Modulo operation
  */
 case class Modulo(l: Expression, r: Expression) extends InfixOperation {
-	override def calculate(lv: Value, rv: Value): Expression = (lv, rv) match {
-	case (Number(lr), Number(rr)) => Number(lr % rr)
-	case _ => copy(lv, rv)
-	}
+	/*override def calculate(lv: Value, rv: Value): Expression = (lv, rv) match {
+		case (Number(lr), Number(rr)) => Number(lr % rr)
+		case _ => copy(lv, rv)
+	}*/
 	override def copy(l: Expression, r: Expression) = Modulo(l, r)
 	override val operator = "%"
 		override val precedence = 12
@@ -112,10 +112,10 @@ case class Modulo(l: Expression, r: Expression) extends InfixOperation {
  * Negation operation
  */
 case class Neg(e: Expression) extends PrefixOperation {
-	override def calculate(v: Value): Expression = v match {
-	case Number(r) => Number(-r)
-	case _ => copy(v)
-	}
+	/*override def calculate(v: Value): Expression = v match {
+		case Number(r) => Number(-r)
+		case _ => copy(v)
+	}*/
 	override def copy(e: Expression) = Neg(e)
 	override val operator = "-"
 	override val precedence = 50
@@ -125,10 +125,10 @@ case class Neg(e: Expression) extends PrefixOperation {
  * Power operation
  */
 case class Power(l: Expression, r: Expression) extends InfixOperation {
-	override def calculate(lv: Value, rv: Value): Expression = (lv, rv) match {
+	/*override def calculate(lv: Value, rv: Value): Expression = (lv, rv) match {
 		case (Number(lr), Number(rr)) => Number(lr ^ rr)
 		case _ => copy(lv, rv)
-	}
+	}*/
 	override def copy(l: Expression, r: Expression) = Power(l, r)
 	override def operator = "^"
 	override val precedence = 50
