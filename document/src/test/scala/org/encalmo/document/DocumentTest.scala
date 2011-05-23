@@ -335,9 +335,9 @@ class DocumentTest extends AssertionsForJUnit {
 	@Test def testTranslator1() {
 		val locale = new java.util.Locale("PL")
 		val dict = "document"
-		assertEquals("jest spełniony",Translator.translate("verified",locale,dict).get)
-		assertEquals("NIE JEST spełniony",Translator.translate("not verified",locale,dict).get)
-		assertEquals("nieokreślony",Translator.translate("unknown",locale,dict).get)
+		assertEquals("spełniony",Translator.translate("verified",locale,dict).get)
+		assertEquals("NIE spełniony",Translator.translate("not verified",locale,dict).get)
+		assertEquals("NIEOKREŚLONY",Translator.translate("unknown",locale,dict).get)
 	}
     
 }
