@@ -30,8 +30,6 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		assertEquals(Number(10),r_d1);
 		val r_11 = calc.resolve(context1.a*context1.b+context1.d).eval
 		assertEquals(Number(178),r_11);
-		val r_e1 = calc.resolve(context1.e).eval
-		assertEquals(Number(81),r_e1);
 		
 		val r_a2 = calc.resolve(context2.a).eval
 		assertEquals(Number(10),r_a2);
@@ -43,8 +41,6 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		assertEquals(Number(7.211102550),r_d2);
 		val r_12 = calc.resolve(context2.a*context2.b+context2.d).eval
 		assertEquals(Number(67.21110255),r_12);
-		val r_e2 = calc.resolve(context2.e).eval
-		assertEquals(Number(9),r_e2);
 		
 		assertEquals(Number(14),calc.resolve(context1.a).eval);
 		assertEquals(Number(12),calc.resolve(context1.b).eval);

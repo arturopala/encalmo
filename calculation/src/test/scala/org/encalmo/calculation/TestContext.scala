@@ -15,7 +15,7 @@ class TestContext(id:String) extends MapContext() {
 	val e_b:Expression = p1*p2
 	val e_c:Expression = hypot(p1,p2)
 	val e_d:Expression = 2*org.encalmo.expression.min(a,b,c)
-	val e_e:Expression = p1*p2 or (IsZero(p3) then p1^p2)
+	val e_e:Expression = p1^p2
 	
 	this(a) = e_a
 	this(b) = e_b
