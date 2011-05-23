@@ -20,9 +20,9 @@ class ZbiornikZelbetowyProstopadloscienny {
     calc(b1) = 5.7
     val b2 = BasicSymbols.b|2 is "Szerokość prostokątnej podstawy silosu" unit "m"
     calc(b2) = 6.0
-    val h1 = BasicSymbols.b|2 is "Wysokość ścian silosu" unit "m"
+    val h1 = BasicSymbols.h|1 is "Wysokość ścian silosu" unit "m"
     calc(h1) = 12.0
-    val h2 = BasicSymbols.b|2 is "Wysokość słupów wsporczych silosu" unit "m"
+    val h2 = BasicSymbols.h|2 is "Wysokość słupów wsporczych silosu" unit "m"
     calc(h2) = 4.2
     val daneGeometryczne = Seq(b1,b2,h1,h2)
     
