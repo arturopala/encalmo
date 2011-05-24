@@ -81,4 +81,8 @@ package object expression {
 		Selection(CaseExpression(),Seq(Case(CaseExpression(first),LowerOrEqualThan(e,bound1)),Case(CaseExpression(second),InRangeLLE(bound1,e,bound2)),Case(CaseExpression(third),InRangeLLE(bound2,e,bound3)),Case(CaseExpression(fourth),GreaterThan(e,bound3))))
 	}
 	
+	def mapChoice(e:Expression,map:Map[Expression,Expression]):Expression = {
+		Selection(CaseExpression(),map.toSeq.map(x => Case(CaseExpression(x._2),Equals(e,x._1))))
+	}
+	
 }
