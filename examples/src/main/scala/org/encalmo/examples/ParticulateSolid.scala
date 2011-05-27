@@ -19,33 +19,33 @@ object ParticulateSolidSymbols extends SymbolConfigurator {
 	// particulate solid properties
 	
 	/** Bulk unit weight (lower) */
-	val gammal = symbol(BasicSymbols.gamma|"l") unit "kN/m3"
+	lazy val gammal = symbol(BasicSymbols.gamma|"l") unit "kN/m3"
 	/** Bulk unit weight (upper) */
-    val gammau = symbol(BasicSymbols.gamma|"u") unit "kN/m3"
-    /** Angle of internal friction */
-    val fic = symbol(BasicSymbols.phi|"c") unit "°"
+    lazy val gammau = symbol(BasicSymbols.gamma|"u") unit "kN/m3"
+    /** angle of repose of a particulate solid (conical pile) */
+    lazy val fir = symbol(BasicSymbols.phi|"r") unit "°"
     /** Angle of internal friction (mean) */
-    val fiim = symbol(BasicSymbols.phi|"im") unit "°"
+    lazy val fiim = symbol(BasicSymbols.phi|"im") unit "°"
     /** Angle of internal friction (factor) */
-    val afi = symbol(BasicSymbols.a|BasicSymbols.phi) 
+    lazy val afi = symbol(BasicSymbols.a|BasicSymbols.phi) 
     /** Lateral pressure ratio (mean) */
-    val Km = symbol(BasicSymbols.K|"m") 
+    lazy val Km = symbol(BasicSymbols.K|"m") 
     /** Lateral pressure ratio (factor) */
-    val aK = symbol(BasicSymbols.a|BasicSymbols.K) 
+    lazy val aK = symbol(BasicSymbols.a|BasicSymbols.K) 
     /** Coefficient of wall friction (D1) */
-    val mum1 = symbol(BasicSymbols.mu|("m","D1")) 
+    lazy val mum1 = symbol(BasicSymbols.mu|("m","D1")) 
     /** Coefficient of wall friction (D2) */
-    val mum2 = symbol(BasicSymbols.mu|("m","D2")) 
+    lazy val mum2 = symbol(BasicSymbols.mu|("m","D2")) 
     /** Coefficient of wall friction (D3) */
-    val mum3 = symbol(BasicSymbols.mu|("m","D3")) 
+    lazy val mum3 = symbol(BasicSymbols.mu|("m","D3")) 
     /** Coefficient of wall friction */
-    val mum = symbol(BasicSymbols.mu|"m") 
+    lazy val mum = symbol(BasicSymbols.mu|"m") 
     /** Coefficient of wall friction (factor) */
-    val amu = symbol(BasicSymbols.a|BasicSymbols.mu) 
+    lazy val amu = symbol(BasicSymbols.a|BasicSymbols.mu) 
     /** Patch load solid reference factor */
-    val Cop = symbol(BasicSymbols.C|"op") 
+    lazy val Cop = symbol(BasicSymbols.C|"op") 
     /** Wall type (1,2,3) */
-    val D = symbol(BasicSymbols.D)
+    lazy val D = symbol(BasicSymbols.D)
     
     // characteristic values
     
@@ -92,7 +92,7 @@ class ParticulateSolid(
     id:String,
 	v_gammal:Expression,
 	v_gammau:Expression,
-	v_fic:Expression, 
+	v_fir:Expression, 
 	v_fiim:Expression,
 	v_afi:Expression,
 	v_Km:Expression, 
@@ -111,7 +111,7 @@ extends Calculation(Option(id)) {
 	
 	this(gammal) = v_gammal
 	this(gammau) = v_gammau
-	this(fic) = v_fic
+	this(fir) = v_fir
 	this(fiim) = v_fiim
 	this(afi) = v_afi
 	this(Km) = v_Km
@@ -123,7 +123,7 @@ extends Calculation(Option(id)) {
 	this(Cop) = v_Cop
 	
 	def properties = NumSection(TextToTranslate("_properties",ParticulateSolidSymbols.dictionary),"(",TextToTranslate(id,ParticulateSolidSymbols.dictionary),")",
-		Evaluate(Seq(gammal,gammau,fic,fiim,afi,Km,aK,mum1,mum2,mum3,amu,Cop),this)
+		Evaluate(Seq(gammal,gammau,fir,fiim,afi,Km,aK,mum1,mum2,mum3,amu,Cop),this)
 	)
 	
 	def characteristicValues = NumSection(TextToTranslate("_characteristicValues",ParticulateSolidSymbols.dictionary),
