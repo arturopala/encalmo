@@ -38,6 +38,10 @@ class Symbol(
     def under(under:Symbol):Symbol = copy(underscript = Option(under))
     /** Sets overscript */
     def over(over:Symbol):Symbol = copy(overscript = Option(over))
+    /** Append string to the subscript */
+    def |+(n:String):Symbol = copy(subscript = Option(subscript match { case Some(s) => s+(","+n); case None => n}))
+     /** Append string to the superscript */
+    def !+(n:String):Symbol = copy(superscript = Option(superscript match { case Some(s) => s+(","+n); case None => n}))
 
     def !(int:Int):Symbol = this ! String.valueOf(int)
     def |(int:Int):Symbol = this | String.valueOf(int)

@@ -1,13 +1,13 @@
 package org.encalmo.calculation
 
 import annotation.tailrec
-import scala.collection.mutable.Map
+import scala.collection.Map
 import org.encalmo.expression._
 
 /** 
  * Context trait
  */
-trait Context extends ExpressionResolver{
+trait Context extends ExpressionResolver {
 	
 	def id:Option[String]
 	def map:Map[Symbol,Expression]
@@ -17,10 +17,21 @@ trait Context extends ExpressionResolver{
 	/** Locks context content */
 	def lock = {opened = false}
 	
-	def throwException = throw new IllegalStateException("This context has been locked.")
+	protected def throwException = throw new IllegalStateException("This context has been locked.")
 	
-	def update(s:Symbol, e:Expression) = {
-		if(opened) map.put(symbol(s),e) else throwException
+	/** Returns future expression */
+	def apply(s:Symbol):FutureExpression = FutureExpression(this,s)
+	
+	/** Returns function evaluation for some arguments */
+	def apply(expr:Expression, args:(Symbol,Expression)*):Eval = {
+	    if(args.size>0){
+		    val c = Calculation()
+		    c add this
+		    c put (args:_*)
+		    Eval(expr, c)
+	    }else{
+	        Eval(expr, this)
+	    }
 	}
 	
 	/**
@@ -115,6 +126,8 @@ trait Context extends ExpressionResolver{
 			}
 		}))
 	}
+	
+	override def toSeq = map.toSeq
   
 }
 
@@ -123,5 +136,15 @@ object Context {
 	def apply() = new MapContext()
 	
 	def apply(id:String) = new MapContext(Option(id))
+	
+	def apply(vmap:Map[Symbol,Expression]) = new Context(){
+		val id = None
+		val map = vmap
+	}
+	
+	def apply(entry:(Symbol,Expression)*) = new Context(){
+		val id = None
+		val map = Map(entry:_*)
+	}
 	
 }

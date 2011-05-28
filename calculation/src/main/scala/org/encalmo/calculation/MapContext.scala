@@ -1,14 +1,14 @@
 package org.encalmo.calculation
 
-import scala.collection.mutable.{LinkedHashMap}
+import scala.collection.mutable.{Map,LinkedHashMap}
 import org.encalmo.expression._
 
 /** 
  * Base {@link org.encalmo.calculation.Context} implementation
  */
-class MapContext(val id:Option[String] = None) extends Context {
+class MapContext(val id:Option[String] = None) extends MutableContext {
 	
-	override val map:LinkedHashMap[Symbol,Expression] = LinkedHashMap[Symbol,Expression]()
+	override val map:Map[Symbol,Expression] = LinkedHashMap[Symbol,Expression]()
 	
 	override def equals(a:Any) = {
 		a match {
