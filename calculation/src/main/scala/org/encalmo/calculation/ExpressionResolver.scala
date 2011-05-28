@@ -6,6 +6,26 @@ import org.encalmo.expression._
  * Expression resolver trait
  */
 trait ExpressionResolver {
+  
+	/**
+	 * Should return expression mapped to that symbol or None
+	 */
+	def getExpression(s:Symbol):Option[Expression]
+	
+	/**
+	 * Should return unresolved expression mapped to that symbol or None
+	 */
+	def getRawExpression(s:Symbol):Option[Expression]
+	
+	/**
+	 * Should return true if exists expression mapped to that symbol
+	 */
+	def hasExpression(s:Symbol):Boolean
+	
+	/**
+	 * Should return sequence of used mappings
+	 */
+	def toSeq:Seq[(Symbol,Expression)]
 	
 	val MAX_MAP_ALL_LOOP_COUNT:Int = 256
 	
@@ -28,7 +48,7 @@ trait ExpressionResolver {
 	 * Substitutes symbols with their evaluations
 	 */
 	def substitute(e:Expression):Expression = {
-		e match {
+		(e match {
 			case s:Symbol => {
 				getRawExpression(s) match {
 					case Some(x) => map(x,substitutor)
@@ -36,6 +56,9 @@ trait ExpressionResolver {
 				}
 			}
 			case _ => map(e,substitutor)
+		}) match {
+		    case ev:Eval => substitute(ev.substitute)
+		    case x => x
 		}
 	}
 	
@@ -103,18 +126,7 @@ trait ExpressionResolver {
 		}
 	}
 	
-	/**
-	 * Should return expression mapped to that symbol or None
-	 */
-	def getExpression(s:Symbol):Option[Expression]
-	
-	/**
-	 * Should return unresolved expression mapped to that symbol or None
-	 */
-	def getRawExpression(s:Symbol):Option[Expression]
-	
-	/**
-	 * Should return true if exists expression mapped to that symbol
-	 */
-	def hasExpression(s:Symbol):Boolean
+	def evaluateWithAndReturnCopy(er:ExpressionResolver):ExpressionResolver = {
+	    Context(toSeq.map(x => (x._1,er.evaluate(x._2))):_*)
+	}
 }

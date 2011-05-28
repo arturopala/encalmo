@@ -4,9 +4,9 @@ import scala.collection.mutable.{Map,LinkedHashSet,LinkedHashMap}
 import org.encalmo.expression._
 
 /** 
- * Calculation
+ * Calculation. Mutable context with cache.
  */
-class Calculation(val id:Option[String] = None) extends ContextSet with Context {
+class Calculation(val id:Option[String] = None) extends ContextSet with MutableContext {
 	
 	override val set:LinkedHashSet[ExpressionResolver] = LinkedHashSet[ExpressionResolver]()
 	
@@ -28,9 +28,6 @@ class Calculation(val id:Option[String] = None) extends ContextSet with Context 
 	def add(er:ExpressionResolver):Unit = {
 		if(opened) set.add(er) else throwException
 	}
-	
-	/** Returns future expression */
-	def apply(s:Symbol):FutureExpression = FutureExpression(this,s)
 	
 	/**
 	 * Resolves and evaluates all symbols to values
@@ -100,9 +97,25 @@ class Calculation(val id:Option[String] = None) extends ContextSet with Context 
 
 }
 
+/** 
+ * Calculation factory. 
+ */
 object Calculation{
 	
 	def apply():Calculation = new Calculation()
+	
 	def apply(index:String):Calculation = new Calculation(Option(index))
+	
+	def apply(vmap:Map[Symbol,Expression]) = {
+	    val c = new Calculation()
+	    c.put(vmap.toSeq:_*)
+	    c
+	}
+	
+	def apply(entries:(Symbol,Expression)*) = {
+		val c = new Calculation()
+	    c.put(entries:_*)
+	    c
+	}
 	
 }

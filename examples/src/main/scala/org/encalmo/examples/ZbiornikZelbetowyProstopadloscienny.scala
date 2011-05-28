@@ -15,7 +15,7 @@ class ZbiornikZelbetowyProstopadloscienny {
     import BasicSymbols._
     
     val calc = Calculation()
-    
+   
     val solid = ParticulateSolid.Flyash
     val concrete = Concrete.C_20_25
     val reinforcement = ReinforcingSteel.B500SP
@@ -44,7 +44,8 @@ class ZbiornikZelbetowyProstopadloscienny {
             solid.properties,
             silos.calculatedGeometry,
             solid.characteristicValues,
-            silos.volumes
+            silos.volumes,
+            silos.fillingLoads
            /*,
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),

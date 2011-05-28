@@ -2,6 +2,7 @@ package org.encalmo.printer.expression
 
 import org.encalmo.printer._
 import org.encalmo.expression._
+import org.encalmo.calculation.Eval
 import org.encalmo.common._
 import org.encalmo.common.Translator
 
@@ -197,6 +198,23 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
             }
             case ct:CaseTest => {
                 w.write(ct.operator.last)
+                w.write(")")
+            }
+            case ev:Eval => {
+                w.write("(")
+                val s = ev.er.toSeq
+                if(s.size<=5){
+                    var ic = 0
+                    s.foreach(
+                        x => {
+                           if(ic>0) w.write(", ")
+                           x._1.travel(traveler = this)
+                           w.write("=")
+                           ev.er.evaluate(x._2).travel(traveler = this)
+                           ic = ic + 1
+                        }
+                    )
+                }
                 w.write(")")
             }
 			case _ => Unit

@@ -5,6 +5,7 @@ import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
+import org.encalmo.calculation.Eval
 import org.encalmo.document._
 
 /** RectangularSilos symbols */
@@ -38,11 +39,31 @@ object RectangularSilosSymbols extends SymbolConfigurator {
     lazy val hc = symbol(BasicSymbols.h|"c") unit "m"
     lazy val hb = symbol(BasicSymbols.h|"b") unit "m"
     lazy val hcdc = symbol("hc/dc")
+    
     //volumes
     lazy val V = symbol(BasicSymbols.V) unit "m3"
     lazy val Vh = symbol(BasicSymbols.V|BasicSymbols.h) unit "m3"
     lazy val Vc = symbol(BasicSymbols.V|BasicSymbols.c) unit "m3"
     lazy val Vf = symbol(BasicSymbols.V|BasicSymbols.f) unit "m3"
+    
+    //weights
+    lazy val W = symbol(BasicSymbols.W) unit "t"
+    
+    //filling loads
+    lazy val phf = symbol(BasicSymbols.p|"hf") unit "kPa"
+    lazy val pwf = symbol(BasicSymbols.p|"wf") unit "kPa"
+    lazy val pvf = symbol(BasicSymbols.p|"vf") unit "kPa"
+    lazy val pvft = symbol(BasicSymbols.p|"vft") unit "kPa"
+    lazy val pho = symbol(BasicSymbols.p|"ho") unit "kPa"
+    lazy val YR = symbol(BasicSymbols.Y|"R")
+    lazy val zo = symbol(BasicSymbols.z|"o") unit "m"
+    lazy val n = symbol(BasicSymbols.n)
+    lazy val z = symbol(BasicSymbols.z) unit "m"
+    lazy val phf1 = symbol(phf|+"1") unit "kPa"
+    lazy val phf2 = symbol(phf|+"2") unit "kPa"
+    lazy val phf3 = symbol(phf|+"3") unit "kPa"
+    lazy val phf4 = symbol(phf|+"4") unit "kPa"
+    lazy val zV = symbol(BasicSymbols.z|BasicSymbols.V) unit "m"
 	
 }
 
@@ -63,16 +84,33 @@ object RectangularSilosExpressions extends MapContext {
 	this(beta) = 90-(fir+5)
 	this(hh) = max(b3,b4)/(2*tan(beta))
 	this(htp) = dc/(2*tan(fir))
-	this(ho) = htp/3
+	this(ho) = (dc*tan(fir))/4
 	this(he) = be/(2*tan(beta))
-	this(hc) = h1-(ts+hh-he)
+	this(hc) = h3-hh+he
 	this(hb) = hc+hh
 	this(hcdc) = hc/dc
+	
 	//volumes
 	this(Vc) = b3*b4*hc
 	this(Vh) = (A*(h3-hc)-(be*be*he))/3
 	this(V) = Vc+Vh
 	this(Vf) = A*(hh-he)-Vh
+	this(W) = V*gammau/GRAV
+	
+	//filling loads
+	this(zo) = 1/(Km*mum)*AU
+	this(n) = -(1+tan(fir))*(1-ho/zo)
+	this(pho) = gammau/mu_l*AU
+	this(YR) = 1-(((z-ho)/(zo-ho)+1)^n) 
+	this(phf) = pho*YR 
+	this(phf1) = Eval(phf, z -> (ho+((hc-ho)/4)))
+	this(phf2) = Eval(phf, z -> (ho+((hc-ho)/2)))
+	this(phf3) = Eval(phf, z -> (ho+(3*(hc-ho)/4)))
+	this(phf4) = Eval(phf, z -> hc)
+	this(pwf) = mu_u * phf
+	this(zV) = ho - ((1/(n+1))*(zo-ho-(((z+zo-2*ho)^(n+1))/((z-ho)^n))))
+	this(pvf) = gammau*zV
+	this(pvft) = Eval(pvf, z -> hc)
 	
 	// end of context initialization
 	lock
@@ -127,7 +165,12 @@ extends Calculation {
 	
 	//volumes
 	def volumes = NumSection(TextToTranslate("_volumes",RectangularSilosSymbols.dictionary),
-		Evaluate(Seq(Vc,Vh,V,Vf),this)
+		Evaluate(Seq(Vc,Vh,V,Vf,W),this)
+	)
+	
+	//filling loads
+	def fillingLoads = NumSection(TextToTranslate("_fillingLoads",RectangularSilosSymbols.dictionary),
+		Evaluate(Seq(zo,n,pho,YR,phf,phf1,phf2,phf3,phf4,pwf,zV,pvf,pvft),this)
 	)
 	
 }	

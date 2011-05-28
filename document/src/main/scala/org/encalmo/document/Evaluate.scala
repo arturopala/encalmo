@@ -13,6 +13,7 @@ import org.encalmo.expression.Selection
 import org.encalmo.expression.UnitOfValue
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.FutureExpression
+import org.encalmo.calculation.Eval
 
 /**
  * Evaluate: symbol = resolved = evaluated
@@ -40,12 +41,12 @@ extends BlockExpr(myStyle,calc,expr:_*){
 			}
 			case symbol:Symbol => {
 				se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
-				ue = calc.getRawExpression(symbol) match {
+				ue = tryEvaluateEval(calc.getRawExpression(symbol) match {
 					case Some(x) => x
 					case None => e
-				}
+				})
 				if(ue!=e && ue!=evaluated){
-					se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
+				    se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
 				}
 			}
 			case _ => {
@@ -81,6 +82,13 @@ extends BlockExpr(myStyle,calc,expr:_*){
 			se = se :+ ExpressionToPrint(Envelope(evaluated,unit),resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",null,parentStylesConfig)
 		}
 		se
+	}
+	
+	def tryEvaluateEval(e:Expression) = {
+	    e match {
+	        case ev:Eval => Eval(ev.expr, ev.er.evaluateWithAndReturnCopy(calc))
+	        case _ => e
+	    }
 	}
 }
 

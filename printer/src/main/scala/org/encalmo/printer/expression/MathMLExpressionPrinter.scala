@@ -4,6 +4,7 @@ import org.encalmo.common._
 import org.encalmo.printer._
 import org.encalmo.expression._
 import MathMLTags._
+import org.encalmo.calculation.Eval
 
 /**
  * Prints expressions as MathML
@@ -329,6 +330,34 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	        case ct:CaseExpression => {
 	           output.end(MTD)
 	        }
+            case ev:Eval => {
+                output.startb(MTEXT)
+                output.append("(")
+                output.end(MTEXT)
+                val s = ev.er.toSeq
+                if(s.size<=5){
+                    var ic = 0
+                    s.foreach(
+                        x => {
+                           if(ic>0) {
+                               output.startb(MTEXT)
+                               output.append(",")
+                               output.startb(ENTITY_THIN_SPACE)
+                               output.end(MTEXT)
+                           }
+                           x._1.travel(traveler = this)
+                           output.startb(MTEXT)
+                           output.append("=")
+                           output.end(MTEXT)
+                           ev.er.evaluate(x._2).travel(traveler = this)
+                           ic = ic + 1
+                        }
+                    )
+                }
+                output.startb(MTEXT)
+                output.append(")")
+                output.end(MTEXT)
+            }
 			case _ => Unit
 			}
 		}
