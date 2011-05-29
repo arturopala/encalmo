@@ -274,6 +274,24 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if (s.hasOverAndUnderscript) end(MUNDEROVER)
 		else if (s.hasOverscript) end(MOVER)
 		else if (s.hasUnderscript) end(MUNDER)
+		if(s.args.isDefined && !s.args.get.isEmpty){
+		    startb(MTEXT)
+		    append("(")
+		    end(MTEXT)
+		    var ic = 0
+		    s.args.get.foreach(s => {
+		        if(ic>0){
+		            startb(MTEXT)
+		            append(",")
+		            end(MTEXT)
+		        }
+		        symbol(s)
+		        ic = ic+1
+		    })
+		    startb(MTEXT)
+		    append(")")
+		    end(MTEXT)
+		}
 		//under-over script end
 		if(!script) end(MSTYLE)
 	}
