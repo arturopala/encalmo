@@ -11,6 +11,7 @@ import org.encalmo.expression.Envelope
 import org.encalmo.expression.SymbolLike
 import org.encalmo.expression.Selection
 import org.encalmo.expression.UnitOfValue
+import org.encalmo.expression.Function
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.FutureExpression
 import org.encalmo.calculation.Eval
@@ -40,11 +41,11 @@ extends BlockExpr(myStyle,calc,expr:_*){
 				}
 			}
 			case symbol:Symbol => {
-				se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
-				ue = tryEvaluateEval(calc.getRawExpression(symbol) match {
+				ue = prepareUnresolved(symbol, calc.getRawExpression(symbol) match {
 					case Some(x) => x
 					case None => e
 				})
+				se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
 				if(ue!=e && ue!=evaluated){
 				    se = se :+ ExpressionToPrint(ue,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_UNRESOLVED),"=",null,parentStylesConfig)
 				}
@@ -84,7 +85,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 		se
 	}
 	
-	def tryEvaluateEval(e:Expression) = {
+	def prepareUnresolved(symbol:Symbol,e:Expression) = {
 	    e match {
 	        case ev:Eval => Eval(ev.expr, ev.er.evaluateWithAndReturnCopy(calc))
 	        case _ => e

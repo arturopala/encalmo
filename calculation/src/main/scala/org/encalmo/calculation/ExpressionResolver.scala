@@ -88,7 +88,9 @@ trait ExpressionResolver {
 	 */
 	private val resolver:Transformation = {
 		e => e match {
-			case s:Symbol => this.getRawExpression(s).getOrElse(s)
+			case s:Symbol => this.getRawExpression(s).getOrElse(s) match {
+			    case x => x
+			}
 			case _ => e
 		}
 	}
@@ -110,7 +112,7 @@ trait ExpressionResolver {
 	
 	/**
 	 * Single-pass substituting transformation. 
-	 * Replaces symbols with values
+	 * Replaces symbols with their values
 	 */
 	private val substitutor:Transformation = {
 		e => e match {

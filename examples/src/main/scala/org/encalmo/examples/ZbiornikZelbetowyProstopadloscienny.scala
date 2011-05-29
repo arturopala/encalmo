@@ -32,7 +32,7 @@ class ZbiornikZelbetowyProstopadloscienny {
         	),
             Section(""),
             NumSection("Zadanie projektowe",
-                Section(styleComment,"Silos żelbetowy jednokomorowy na popiół lotny usytuowany wewnątrz hali przemysłowej we Wrocławiu przy ul. Oś Inkubacji 1.")
+                Section(styleComment,"Silos żelbetowy jednokomorowy na popiół lotny usytuowany wewnątrz hali przemysłowej we Wrocławiu przy ul. Oś Inkubacji 1. Beton C20/25, stal zbrojeniowa B500SP, klasa ekspozycji XC1.")
             ),
             NumSection("Wykaz materiałów źródłowych",
             	NumSection(styleComment," Norma PN-EN 1991-4 \"Eurokod 1. Oddziaływania na konstrukcje. Część 4: Silosy i zbiorniki.\""),
@@ -42,10 +42,16 @@ class ZbiornikZelbetowyProstopadloscienny {
             ),
             silos.inputGeometry,
             solid.properties,
+            concrete.info,
+            reinforcement.info,
             silos.calculatedGeometry,
             solid.characteristicValues,
             silos.volumes,
-            silos.fillingLoads
+            silos.fillingSymmetricalLoad,
+            silos.fillingPatchLoad,
+            silos.dischargeSymmetricalLoad,
+            silos.dischargePatchLoad,
+            silos.loadsOnSiloHoppers
            /*,
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),

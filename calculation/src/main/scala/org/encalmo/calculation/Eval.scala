@@ -3,7 +3,7 @@ package org.encalmo.calculation
 import org.encalmo.expression._
 
 /**
- * Expression evaluating other expression with expression resolver
+ * Expression evaluating other expression with provided expression resolver
  * @author artur.opala
  */
 class Eval(val expr:Expression, val er:ExpressionResolver) extends Expression {
