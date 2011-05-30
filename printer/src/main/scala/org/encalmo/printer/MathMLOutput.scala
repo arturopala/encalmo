@@ -242,7 +242,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		end(MSUP)
 	}
 	
-	def symbol(s:Symbol,script:Boolean=false):Unit = {
+	def symbol(s:Symbol,script:Boolean=false,printArgs:Boolean=true):Unit = {
 	    if(!script){
     	    start(MSTYLE)
     	    attr("mathvariant","italic")
@@ -253,9 +253,9 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		else if (s.hasOverscript) startb(MOVER)
 		else if (s.hasUnderscript) startb(MUNDER)
 		//sub-super script start
-		if (s.hasSubAndSupscript) startb(MSUBSUP)
+		if (s.hasSubAndSupscript || (s.hasSuperscript && s.hasIndexes)) startb(MSUBSUP)
 		else if (s.hasSuperscript) startb(MSUP)
-		else if (s.hasSubscript) startb(MSUB)
+		else if (s.hasSubscript || s.hasIndexes) startb(MSUB)
 		//core name
 		if(!script){
 		    mi(BasicSymbols.toMathML(s.name))
@@ -263,19 +263,41 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		    mi(BasicSymbols.toMathML(s.name))
 		}
 		//scripts
+		if(s.hasSubscript && s.hasIndexes) startb(MROW)
 		if (s.hasSubscript) symbol(s.subscript.get,true)
+		if(s.hasIndexes) {
+		    start(MTEXT)
+		    attr("mathsize","70%")
+		    attr("mathvariant","italic")
+		    body
+            append("[")
+            var ic = 0
+            s.indexes.get.foreach(i => {
+                if(ic>0){
+                    append(",")
+                }
+                 append(i.toString)
+                ic = ic+1
+            })
+            append("]")
+            end(MTEXT)
+		}
+		if(s.hasSubscript && s.hasIndexes) end(MROW)
 		if (s.hasSuperscript) symbol(s.superscript.get,true)
-		if (s.hasSubAndSupscript) end(MSUBSUP)
+		if (s.hasSubAndSupscript || (s.hasSuperscript && s.hasIndexes)) end(MSUBSUP)
 		else if (s.hasSuperscript) end(MSUP)
-		else if (s.hasSubscript) end(MSUB)
+		else if (s.hasSubscript || s.hasIndexes) end(MSUB)
 		//sub-super script end
 		if (s.hasUnderscript) symbol(s.underscript.get,true)
 		if (s.hasOverscript) symbol(s.overscript.get,true)
 		if (s.hasOverAndUnderscript) end(MUNDEROVER)
 		else if (s.hasOverscript) end(MOVER)
 		else if (s.hasUnderscript) end(MUNDER)
-		if(s.args.isDefined && !s.args.get.isEmpty){
-		    startb(MTEXT)
+		if(printArgs && s.hasArgs){
+		    start(MROW)
+		    attr("mathsize","85%")
+		    body
+            startb(MTEXT)
 		    append("(")
 		    end(MTEXT)
 		    var ic = 0
@@ -291,6 +313,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		    startb(MTEXT)
 		    append(")")
 		    end(MTEXT)
+		    end(MROW)
 		}
 		//under-over script end
 		if(!script) end(MSTYLE)

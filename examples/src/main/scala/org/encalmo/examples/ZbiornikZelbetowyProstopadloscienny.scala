@@ -19,7 +19,7 @@ class ZbiornikZelbetowyProstopadloscienny {
     val solid = ParticulateSolid.Flyash
     val concrete = Concrete.C_20_25
     val reinforcement = ReinforcingSteel.B500SP
-    val silos = new RectangularSilos(5.7,6.0,12,4.2,0.2,0.4,0.25,solid,3,concrete,reinforcement)
+    val silos = new RectangularSlenderSilosFlatBottom(5.7,6.0,12,4.2,0.2,0.4,0.25,solid,3,concrete,reinforcement)
     
     calc add silos
     
@@ -51,7 +51,7 @@ class ZbiornikZelbetowyProstopadloscienny {
             silos.fillingPatchLoad,
             silos.dischargeSymmetricalLoad,
             silos.dischargePatchLoad,
-            silos.loadsOnSiloHoppers
+            silos.loadsOnSiloBottom
            /*,
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),

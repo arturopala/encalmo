@@ -92,7 +92,16 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
     	    }
 	    }
 	    node.element match {
-    		case sl: SymbolLike => writeSymbol(sl.symbol)
+    		case sl: SymbolLike => {
+    		    if(node.parent!=null){
+        		    node.parent.element match {
+        		        case ev:Eval =>   w.write(sl.symbol.simpleFaceNoArgs)
+        		        case _ =>  w.write(sl.symbol.simpleFace)
+        		    }
+    		    }else{
+    		        w.write(sl.symbol.simpleFace)
+    		    }
+    		}
     		case n:Number => writeNumber(n)
     		case tv: TextValue => w.write(tv.text)
     		case o:Operation => {
