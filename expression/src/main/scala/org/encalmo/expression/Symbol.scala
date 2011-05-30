@@ -19,7 +19,8 @@ class Symbol(
     val dictionary:Option[String] = None,
     val contextId:Option[Seq[String]] = None,
     override val printable:Boolean = true,
-    val args:Option[Seq[Symbol]] = None
+    val args:Option[Seq[Symbol]] = None,
+    val indexes:Option[Seq[Int]] = None
 
 ) extends Expression with SymbolLike {
 
@@ -43,8 +44,10 @@ class Symbol(
     def |+(n:String):Symbol = copy(subscript = Option(subscript match { case Some(s) => s+(","+n); case None => n}))
      /** Append string to the superscript */
     def !+(n:String):Symbol = copy(superscript = Option(superscript match { case Some(s) => s+(","+n); case None => n}))
-    /** Append arguments */
+    /** Sets arguments */
     def args (symbols:Symbol*):Symbol = copy(args = Option(symbols))
+    /** Sets indexes */
+    def apply(indexes:Int*):Symbol = copy(indexes = Option(indexes))
 
     def !(int:Int):Symbol = this ! String.valueOf(int)
     def |(int:Int):Symbol = this | String.valueOf(int)
@@ -60,6 +63,8 @@ class Symbol(
     def hasOverscript:Boolean = overscript.isDefined
     def hasOverOrUnderscript:Boolean = hasUnderscript || hasOverscript
     def hasOverAndUnderscript:Boolean = hasUnderscript && hasOverscript
+    def hasArgs:Boolean = args.isDefined && !args.get.isEmpty
+    def hasIndexes:Boolean = indexes.isDefined && !indexes.get.isEmpty
     
     def hasDescription:Boolean = description.isDefined
     def hasUnit:Boolean = unit.isDefined
@@ -92,14 +97,14 @@ class Symbol(
     
     /** Unique symbol face */
     lazy val face:String = name + 
-    	Seq(forFace(overscript),forFace(underscript),forFace(superscript),forFace(subscript))
+    	Seq(toFace(overscript),toFace(underscript),toFace(superscript),toFace(subscript))
     	.foldLeft[Option[String]](None)((l,r) => l match {
     		case None => r
     		case Some(sl) => r match {
     			case None => Some("{}"+sl)
     			case Some(sr) => Some(sr+sl)
     		}
-    	}).getOrElse("") + forArgsFace(args)
+    	}).getOrElse("") + toArgsFace(args)
     	
     /** Simplified symbol face */
     lazy val simpleFace:String = new StringOps(name).filter(_ match {
@@ -107,19 +112,30 @@ class Symbol(
             case '/' => false
             case '.' => false
             case _ => true
-        }) + forFace2(subscript) + forFace2(superscript) + forFace2(underscript) + forFace2(overscript) + forArgsFace2(args)
+        }) + toFace2(subscript) + toFace2(superscript) + toFace2(underscript) + toFace2(overscript) + toArgsFace2(args)  + toIndexesFace2(indexes)
+        
+    lazy val simpleFaceNoArgs:String = new StringOps(name).filter(_ match {
+            case ',' => false
+            case '/' => false
+            case '.' => false
+            case _ => true
+        }) + toFace2(subscript) + toFace2(superscript) + toFace2(underscript) + toFace2(overscript) + toIndexesFace2(indexes)
         
     /** Unique symbol face */
-    private def forFace(s:Option[Symbol]):Option[String] = if(s.isDefined) Some("{"+s.get.face+"}") else None
+    private def toFace(s:Option[Symbol]):Option[String] = if(s.isDefined) Some("{"+s.get.face+"}") else None
     /** Simplified symbol face */
-    private def forFace2(s:Option[Symbol]) = if(s.isDefined) s.get.simpleFace else ""
-        
-    private def forArgsFace(s:Option[Seq[Symbol]]) =  if(s.isDefined && !s.get.isEmpty) {
+    private def toFace2(s:Option[Symbol]) = if(s.isDefined) s.get.simpleFace else ""
+    /** Unique args face */
+    private def toArgsFace(s:Option[Seq[Symbol]]) =  if(s.isDefined && !s.get.isEmpty) {
         "(" + s.get.foldLeft[String]("")((l,r) => if(l.isEmpty) r.face else l+","+r.face) + ")"
     } else ""    
-        
-    private def forArgsFace2(s:Option[Seq[Symbol]]) =  if(s.isDefined && !s.get.isEmpty) {
+    /** Simplified args face */ 
+    private def toArgsFace2(s:Option[Seq[Symbol]]) =  if(s.isDefined && !s.get.isEmpty) {
         "(" + s.get.foldLeft[String]("")((l,r) => if(l.isEmpty) r.simpleFace else l+","+r.simpleFace) + ")"
+    } else ""
+    /** Simplified indexes face */     
+    private def toIndexesFace2(s:Option[Seq[Int]]) =  if(s.isDefined && !s.get.isEmpty) {
+        "[" + s.get.foldLeft[String]("")((l,r) => if(l.isEmpty) r.toString else l+","+r) + "]"
     } else ""
     	
     /** Adds id to the contextId sequence */
@@ -143,9 +159,10 @@ class Symbol(
 	    dictionary:Option[String] = this.dictionary,
 	    contextId:Option[Seq[String]] = this.contextId,
 	    printable:Boolean = this.printable,
-	    args:Option[Seq[Symbol]] = this.args
+	    args:Option[Seq[Symbol]] = this.args,
+	    indexes:Option[Seq[Int]] = this.indexes
 	) = {
-		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable,args)
+		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable,args,indexes)
     }
     /** Sets this symbol as non printable */
     def makeNonPrintable:Symbol = copy(printable = false)
@@ -159,8 +176,8 @@ class Symbol(
 		    	(s.superscript == superscript) &&
 		    	(s.overscript == overscript) &&
 		    	(s.underscript == underscript) &&
-		    	(s.args == args)
-		    	
+		    	(s.args == args) &&
+		    	(s.indexes == indexes)
     		}
     		case _ => false
     	}
@@ -175,6 +192,8 @@ class Symbol(
 		underscript.map(x => result = prime * result + x.hashCode)
 		overscript.map(x => result = prime * result + x.hashCode)
 		contextId.map(x => result = prime * result + x.hashCode)
+		args.map(x => result = prime * result + x.hashCode)
+		indexes.map(x => result = prime * result + x.hashCode)
 		result
 	}
     
@@ -223,9 +242,11 @@ object Symbol {
 	    unit:Option[UnitOfValue] = None,
 	    dictionary:Option[String] = None,
 	    contextId:Option[Seq[String]] = None,
-	    printable:Boolean = true
+	    printable:Boolean = true,
+	    args:Option[Seq[Symbol]] = None,
+        indexes:Option[Seq[Int]] = None
 	) = {
-		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable)
+		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable,args,indexes)
 	}
 	
 	def unapply(s:Symbol) = Some(s.name,s.subscript,s.superscript)

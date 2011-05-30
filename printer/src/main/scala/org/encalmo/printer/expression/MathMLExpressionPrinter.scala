@@ -70,8 +70,16 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
         }
 	    if(node.element.printable){
 		    node.element match {
-	    		case s: Symbol => output.symbol(s)
-	    		case sl: SymbolLike => output.symbol(sl.symbol)
+	    		case sl: SymbolLike => {
+	    		    if(node.parent!=null){
+                        node.parent.element match {
+                            case ev:Eval =>  output.symbol(sl.symbol,false,false)
+                            case _ =>  output.symbol(sl.symbol)
+                        }
+                    }else{
+                        output.symbol(sl.symbol)
+                    }
+	    		}
 	    		case n: Number => output.mn(n)
 	    		case tv: TextValue => output.mtext(tv.text)
 	    		case o: Operation => {
@@ -331,6 +339,10 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	           output.end(MTD)
 	        }
             case ev:Eval => {
+                output.start(MROW)
+                output.attr("mathsize","85%")
+                output.attr("mathvariant","italic")
+                output.body
                 output.startb(MTEXT)
                 output.append("(")
                 output.end(MTEXT)
@@ -347,7 +359,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
                            }
                            x._1.travel(traveler = this)
                            output.startb(MTEXT)
-                           output.append("=")
+                           output.mo("=","infix","thinmathspace","thinmathspace")
                            output.end(MTEXT)
                            ev.er.evaluate(x._2).travel(traveler = this)
                            ic = ic + 1
@@ -357,6 +369,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
                 output.startb(MTEXT)
                 output.append(")")
                 output.end(MTEXT)
+                output.end(MROW)
             }
 			case _ => Unit
 			}
