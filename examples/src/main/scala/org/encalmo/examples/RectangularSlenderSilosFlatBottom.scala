@@ -231,7 +231,7 @@ extends Calculation {
 	
 	//input geometry
 	def inputGeometry = NumSection(TextToTranslate("_inputGeometry",RectangularSilosSymbols.dictionary),
-		Evaluate(Seq(b1,b2,h1,h2,t),this)
+		Evaluate(Seq(b1,b2,h1,h2,t,ts),this)
 	)
 	//input assertions
 	
