@@ -4,7 +4,7 @@ import org.encalmo.fea.Vector
 
 object MeshBuilder {
     
-    def buildPlateStructureFromRectangle(w:Double,h:Double,t:Double,mat:Material,mx:Int,my:Int):Structure[Plate20] = {
+    def buildPlateStructureFromRectangle(w:Double,h:Double,t:Double,mat:Material,mx:Int,my:Int):Mesh[Plate20] = {
         
         val cx = mx*2
         val cy = my*2
@@ -25,7 +25,7 @@ object MeshBuilder {
         val r = ((0 to (cx-2) by 2) flatMap (x => (0 to (cy-2) by 2).map(y => (x,y))))
         val s = r.map(p => plate(p._1,p._2))
                 
-        Structure[Plate20](s)
+        Mesh[Plate20](s)
     }
     
     def buildNodeSeq(base:Node,v:Vector,c:Int):Seq[Node] = {

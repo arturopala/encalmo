@@ -8,7 +8,6 @@
   <groupId>org.encalmo</groupId>
   <artifactId>encalmo-fea</artifactId>
   <name>fea</name>
-  <version>1.0.0-SNAPSHOT</version>
   
   <dependencies>
     <dependency>
