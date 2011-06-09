@@ -29,15 +29,12 @@ trait Mesh[A <: FiniteElement] {
     /** All nodes sequence */
     val nodes:Seq[Node] = {
         val ns = elements.flatMap(_.nodes).toSet.toSeq.sorted
-        renumber(ns)
-        renumber(elements.sorted[FiniteElement])
+        Mesh.renumber(ns)
+        Mesh.renumber(elements.sorted[FiniteElement])
         ns
     } 
     /** Map of elements grouped by materials */
     lazy val matgroups:Map[Material,Seq[A]] = elements.groupBy(e => e.material)
-    
-    /** Assigns numbers */
-    def renumber(s:Seq[Numbered]) = s.foldLeft[Int](-1)((p,a) => {a.no = p + 1; a.no})
     
 }
 
@@ -46,7 +43,11 @@ trait Mesh[A <: FiniteElement] {
  */
 object Mesh {
     
+    /** New mesh from sequence of finite elements */
     def apply[A <: FiniteElement](elements:Seq[A]):Mesh[A] = new MeshImpl[A](elements);
+    
+     /** Utility function: assigns numbers */
+    def renumber(s:Seq[Numbered]) = s.foldLeft[Int](-1)((p,a) => {a.no = p + 1; a.no})
     
 }
 
