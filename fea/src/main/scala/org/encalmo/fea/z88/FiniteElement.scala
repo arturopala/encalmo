@@ -8,8 +8,9 @@ trait FiniteElement extends Ordered[FiniteElement] with Numbered {
     /** Finite element type atrtibutes */
     val attr:FiniteElementAttr
     
-    /** Element number */
+    /** Element's number */
     var no:Int = -1
+    def no_(i:Int) = {if(no<0 && i>0) no = i}
     /** Element's nodes */
     def nodes:Seq[Node]
     /** Material */

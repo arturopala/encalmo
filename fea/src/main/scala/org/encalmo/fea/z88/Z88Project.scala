@@ -23,10 +23,12 @@ case class Z88Project[A <: FiniteElement](mesh:Mesh[A], directory:Path) {
         Z88I1.createFile(true,false)
         Z88I1.write("")
         // 1st input group: General data in the first line, contains general structure data
-        writeLine (Z88I1, mesh.dimension, mesh.size, mesh.dof, mesh.matlines, mesh.KFLAG, mesh.IBFLAG, mesh.IPFLAG, mesh.IQFLAG)
+        writeLine (Z88I1, mesh.dimension, mesh.size, mesh.dof, mesh.matlines, mesh.KFLAG, mesh.IBFLAG, mesh.IPFLAG, mesh.IQFLAG,"Z88I1.TXT written by ENCALMO")
         // 2nd input group: Starting with line 2, contains coordinates of nodes, 
         // one line per node, node numbers strictly ascending.
-        
+        mesh.nodes foreach ( n =>
+            writeLine (Z88I1, n.no, n.c.x, n.c.y, n.c.z, "Vertex #"+n.no)
+        )
 
     }
     

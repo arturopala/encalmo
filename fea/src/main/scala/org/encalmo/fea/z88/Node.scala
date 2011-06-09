@@ -22,8 +22,9 @@ case class Node(
     /** Simple constructor */
     def this(x:Double,y:Double,z:Double) = this(Vector(x,y,z))
     
-    /** Node number */
+    /** Node's number */
     var no:Int = -1
+    def no_(i:Int) = {if(no<0 && i>0) no = i}
     /** Real node's coordinates */
     lazy val coordinates:Vector = if(!base.isDefined) {d} else {d+base.get.coordinates}
     /** Coordinates shorthand */
