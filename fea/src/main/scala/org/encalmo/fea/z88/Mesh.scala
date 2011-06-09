@@ -26,8 +26,18 @@ trait Mesh[A <: FiniteElement] {
     /** Surface and pressure loads flag IQFLAG (0 or 1) */
     def IQFLAG:Int
     
-    /** Elements grouped by their materials */
+    /** All nodes sequence */
+    val nodes:Seq[Node] = {
+        val ns = elements.flatMap(_.nodes).toSet.toSeq.sorted
+        renumber(ns)
+        renumber(elements.sorted[FiniteElement])
+        ns
+    } 
+    /** Map of elements grouped by materials */
     lazy val matgroups:Map[Material,Seq[A]] = elements.groupBy(e => e.material)
+    
+    /** Assigns numbers */
+    def renumber(s:Seq[Numbered]) = s.foldLeft[Int](-1)((p,a) => {a.no = p + 1; a.no})
     
 }
 

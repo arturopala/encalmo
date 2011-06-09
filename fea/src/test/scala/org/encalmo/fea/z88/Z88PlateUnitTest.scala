@@ -31,7 +31,7 @@ class Z88PlateUnitTest {
 		    assertEquals(p.nodes(5).c.y, p.nodes(7).c.y, 0);
 		    assertEquals(p.nodes(2).c.y, p.nodes(3).c.y, 0)
 	    })
-	    val p = Z88Project(mesh, Path("/target/z88"))
+	    val p = Z88Project(mesh, Path("target/z88"))
 	    p.createInputFiles
     }
 

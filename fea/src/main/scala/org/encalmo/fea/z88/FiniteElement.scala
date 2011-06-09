@@ -3,17 +3,29 @@ package org.encalmo.fea.z88
 /**
  * Finite Element trait
  */
-trait FiniteElement {
+trait FiniteElement extends Ordered[FiniteElement] with Numbered {
     
     /** Finite element type atrtibutes */
     val attr:FiniteElementAttr
     
     /** Element number */
-    var no:Option[Long] = None
+    var no:Int = -1
     /** Element's nodes */
     def nodes:Seq[Node]
     /** Material */
     def material:Material
+    
+    override def compare(elem:FiniteElement) = {
+        if(no>=0 && elem.no>=0){
+            no compare elem.no
+        } else {
+            (nodes,elem.nodes) match {
+                case (Seq(),Seq()) => 0
+                case (Seq(), _ ) => -1
+                case _ => nodes.first compare elem.nodes.first 
+            }
+        }
+    }
 
 }
 
