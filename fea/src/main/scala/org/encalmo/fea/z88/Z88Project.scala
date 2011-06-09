@@ -1,7 +1,7 @@
 package org.encalmo.fea.z88
 
 import java.io.File
-import scalax.io.{Output,Resource}
+import scalax.io.{Output,Resource,Seekable}
 import scalax.file.{Path}
 
 /**
@@ -9,30 +9,37 @@ import scalax.file.{Path}
  */
 case class Z88Project[A <: FiniteElement](mesh:Mesh[A], directory:Path) {
     
-    val SPACE = ""
+    val SPACE = " "
     val CRLF = "\r\n"
 
     def createInputFiles:Unit = {
+        Console.println("Creating Z88 project at "+directory.toURL)
         createInputFile_Z88I1
     }
     
     /** In Z88I1.TXT the geometry and material data of the structure are deposited */
     def createInputFile_Z88I1:Unit = {
         val Z88I1 = directory / "Z88I1.TXT"
-        //1st input group: General data in the first line, contains general structure data
+        Z88I1.createFile(true,false)
+        Z88I1.write("")
+        // 1st input group: General data in the first line, contains general structure data
         writeLine (Z88I1, mesh.dimension, mesh.size, mesh.dof, mesh.matlines, mesh.KFLAG, mesh.IBFLAG, mesh.IPFLAG, mesh.IQFLAG)
+        // 2nd input group: Starting with line 2, contains coordinates of nodes, 
+        // one line per node, node numbers strictly ascending.
+        
+
     }
     
-    private def writeLine(out:Output,data:Any*) = {
+    private def writeLine(out:Seekable,data:Any*) = {
         if(!data.isEmpty){
-	        out.write(data.head.toString)
+	        out.append(data.head.toString)
 	        if(!data.tail.isEmpty){
 	        	data.tail.foreach(d => {
-	        	    out.write(SPACE)
-	        	    out.write(d.toString)
+	        	    out.append(SPACE)
+	        	    out.append(d.toString)
 	        	})
 	        }
-	        out.write(CRLF)
+	        out.append(CRLF)
         }
     }
     
