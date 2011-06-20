@@ -8,23 +8,23 @@ trait Mesh[A <: FiniteElement] {
     /** Finite elements sequence */
     def elements:Seq[A]
     /** First element */
-    private val e:A = elements.first
+    val e:A = elements.first
     /** Dimension of the structure (2 or 3) */
     def dimension:Int = e.attr.dimension
     /** Number of finite elements */
-    def size = elements.size
+    def size:Int = elements.size
     /** Number of degrees of freedom */
-    def dof = size*e.attr.dof
+    def dof:Int = nodes.size*e.attr.dof
     /** Number of material information lines */
-    def matlines = matgroups.size
+    def matlines:Int = matgroups.size
     /** Beam flag IBFLAG (0 or 1) */
-    def IBFLAG = e.attr.IBFLAG
+    def IBFLAG:Int = e.attr.IBFLAG
     /** Plate flag IPFLAG (0 or 1) */
-    def IPFLAG = e.attr.IPFLAG
+    def IPFLAG:Int = e.attr.IPFLAG
     /** Coordinate flag KFLAG (0 or 1) */
     def KFLAG:Int
     /** Surface and pressure loads flag IQFLAG (0 or 1) */
-    def IQFLAG:Int
+    def IQFLAG:Int 
     
     /** All nodes sequence */
     val nodes:Seq[Node] = {
@@ -32,9 +32,20 @@ trait Mesh[A <: FiniteElement] {
         Mesh.renumber(ns)
         Mesh.renumber(elements.sorted[FiniteElement])
         ns
-    } 
+    }
     /** Map of elements grouped by materials */
-    lazy val matgroups:Map[Material,Seq[A]] = elements.groupBy(e => e.material)
+    lazy val matgroups:Seq[(Int, Seq[Any], Seq[A])] = {
+        var c = 0
+        elements.sorted[FiniteElement]
+         .groupBy(_.matinfo)
+         .flatMap(e => {val s = groupStrictAscending(c,e._1,e._2); c=c+s.size; s})
+         .toSeq.sortWith((l,r) => (l._3.head.no<r._3.head.no))
+    }
+    
+    private def groupStrictAscending(cpos:Int,info:Seq[Any],elems:Seq[A]):Seq[(Int, Seq[Any], Seq[A])]  = {
+        var p = elems.head; var i = cpos
+        elems.groupBy(e1 => { if(e1.no-p.no>1) i = i+1; p = e1; i}).map(e2 => (e2._1,info,e2._2)).toSeq
+    }
     
 }
 
@@ -47,7 +58,7 @@ object Mesh {
     def apply[A <: FiniteElement](elements:Seq[A]):Mesh[A] = new MeshImpl[A](elements);
     
      /** Utility function: assigns numbers */
-    def renumber(s:Seq[Numbered]) = s.foldLeft[Int](-1)((p,a) => {a.no = p + 1; a.no})
+    def renumber(s:Seq[Numbered]) = s.foldLeft[Int](0)((p,a) => {a.no = p + 1; a.no})
     
 }
 

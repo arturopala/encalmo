@@ -11,6 +11,8 @@ case class Vector(x:Double,y:Double,z:Double){
     def * (v:Vector):Vector = Vector(x*v.x,y*v.y,z*v.z)
     /** Vector as Sequence */
     lazy val seq = Seq(x,y,z)
+    /** Middle point between two points */
+    def middle(v:Vector) = Vector(x+(v.x-x)/2,y+(v.y-y)/2,z+(v.z-z)/2)
 
 }
 
