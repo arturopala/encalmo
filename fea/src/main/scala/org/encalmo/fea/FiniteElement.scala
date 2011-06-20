@@ -1,6 +1,4 @@
-package org.encalmo.fea.z88
-
-import org.encalmo.fea.Vector
+package org.encalmo.fea
 
 /**
  * Finite Element trait
@@ -9,16 +7,11 @@ trait FiniteElement extends Ordered[FiniteElement] with Numbered {
     
     /** Finite element type atrtibutes */
     val attr:FiniteElementAttr
-    
     /** Element's number */
     var no:Int = -1
     def no_(i:Int) = {if(no<0 && i>0) no = i}
     /** Element's nodes */
     def nodes:Seq[Node]
-    /** Material */
-    def material:Material
-    /** Full material info, depends on element */
-    def matinfo:Seq[Any]
     /** Compares two finite elements */
     override def compare(elem:FiniteElement) = {
         if(no>=0 && elem.no>=0){
@@ -37,6 +30,8 @@ trait FiniteElement extends Ordered[FiniteElement] with Numbered {
     def nodesPositionDescription:String = nodes.foldLeft[String]("")((l,r) => l+" "+r.positionDescription)
     /** Verbal node's position symbols */
     def nodesPositionSymbol:String = nodes.foldLeft[String]("")((l,r) => l+" "+r.positionSymbol)
+    /** abstract: Creates matinfo data sequence */
+    def createMatinfo(material:Material,thickness:Double,load:OptDoubleSeq):Seq[Any]
 
 }
 

@@ -1,4 +1,4 @@
-package org.encalmo.fea.z88
+package org.encalmo.fea
 
 /**
  * Numbered objects

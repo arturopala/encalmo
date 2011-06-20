@@ -1,4 +1,4 @@
-package org.encalmo.fea.z88
+package org.encalmo.fea
 
 /**
  * Mesh trait
@@ -8,19 +8,17 @@ trait Mesh[A <: FiniteElement] {
     /** Finite elements sequence */
     def elements:Seq[A]
     /** First element */
-    val e:A = elements.first
+    val attr:FiniteElementAttr = elements.first.attr
     /** Dimension of the structure (2 or 3) */
-    def dimension:Int = e.attr.dimension
+    def dimension:Int = attr.dimension
     /** Number of finite elements */
     def size:Int = elements.size
     /** Number of degrees of freedom */
-    def dof:Int = nodes.size*e.attr.dof
-    /** Number of material information lines */
-    def matlines:Int = matgroups.size
+    def dof:Int = nodes.size*attr.dof
     /** Beam flag IBFLAG (0 or 1) */
-    def IBFLAG:Int = e.attr.IBFLAG
+    def IBFLAG:Int = attr.IBFLAG
     /** Plate flag IPFLAG (0 or 1) */
-    def IPFLAG:Int = e.attr.IPFLAG
+    def IPFLAG:Int = attr.IPFLAG
     /** Coordinate flag KFLAG (0 or 1) */
     def KFLAG:Int
     /** Surface and pressure loads flag IQFLAG (0 or 1) */
@@ -32,19 +30,6 @@ trait Mesh[A <: FiniteElement] {
         Mesh.renumber(ns)
         Mesh.renumber(elements.sorted[FiniteElement])
         ns
-    }
-    /** Map of elements grouped by materials */
-    lazy val matgroups:Seq[(Int, Seq[Any], Seq[A])] = {
-        var c = 0
-        elements.sorted[FiniteElement]
-         .groupBy(_.matinfo)
-         .flatMap(e => {val s = groupStrictAscending(c,e._1,e._2); c=c+s.size; s})
-         .toSeq.sortWith((l,r) => (l._3.head.no<r._3.head.no))
-    }
-    
-    private def groupStrictAscending(cpos:Int,info:Seq[Any],elems:Seq[A]):Seq[(Int, Seq[Any], Seq[A])]  = {
-        var p = elems.head; var i = cpos
-        elems.groupBy(e1 => { if(e1.no-p.no>1) i = i+1; p = e1; i}).map(e2 => (e2._1,info,e2._2)).toSeq
     }
     
 }

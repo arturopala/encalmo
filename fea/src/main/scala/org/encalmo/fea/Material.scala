@@ -1,7 +1,7 @@
-package org.encalmo.fea.z88
+package org.encalmo.fea
 
 /**
- * Material information
+ * Finite element material properties
  */
 trait Material {
     

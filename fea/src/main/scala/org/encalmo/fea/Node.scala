@@ -1,6 +1,5 @@
-package org.encalmo.fea.z88
+package org.encalmo.fea
 
-import org.encalmo.fea.Vector
 import scala.annotation.tailrec
 
 /**
@@ -13,11 +12,7 @@ case class Node(
         /** Optional base node */
         base:Option[Node] = None,
         /** Node position: 0-inside, 1-surface, 2-edge, 3-corner  **/
-        position:Int = 0,
-        /** Node displacement vector */
-        displacement:Option[Seq[Option[Double]]] = None,
-        /** Nodal forces vector */
-        force:Option[Seq[Option[Double]]] = None
+        position:Int = 0
         
 ) extends Ordered[Node] with Numbered {
     
@@ -66,10 +61,6 @@ case class Node(
             }
         }
     }
-    /** Sets boundary conditions: displacements and forces */
-    def applyConditions(displacementFx:(Node)=>Option[Seq[Option[Double]]], forceFx:(Node)=>Option[Seq[Option[Double]]]):Node = {
-        copy(displacement = displacementFx(this), force = forceFx(this))
-    }
     
     /** True if node is in the corner */
     def inCorner:Boolean = position==3
@@ -94,7 +85,7 @@ case class Node(
         case 0 => "I"
     }
     /** String representation */
-    override def toString:String = "Node #"+no+" "+coordinates+" "+positionDescription+" "+displacement+" "+force
+    override def toString:String = "Node #"+no+" "+coordinates+" "+positionDescription
     
 }
 
