@@ -1,6 +1,5 @@
-package org.encalmo.fea.z88
+package org.encalmo.fea
 
-import org.encalmo.fea.Vector
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
@@ -14,10 +13,10 @@ import scalax.file.{Path}
 class Z88PlateUnitTest {
     
     val concrete = Material(30000000d,0.3)
-    def materialFx(e:FiniteElement):Material = concrete
-    def thicknessFx(e:FiniteElement):Double = 0.2+e.center.y/50
-    def surfaceLoadFx(e:FiniteElement):Option[Seq[Option[Double]]] = Some(Seq(Some(e.center.y*10d)))
-    def forceFx(n:Node):Option[Seq[Option[Double]]] = None
+    def materialFx(e:Plate20):Material = concrete
+    def thicknessFx(e:Plate20):Double = 0.2+e.center.y/50
+    def surfaceLoadFx(e:Plate20):OptDoubleSeq = Some(Seq(Some(e.center.y*2d)))
+    def forceFx(n:Node):OptDoubleSeq = None
     
     @Test def test1 = {
        val base = Node((0d,0d,0d))
@@ -28,14 +27,14 @@ class Z88PlateUnitTest {
     @Test def test2 = {
         val w:Double = 10
         val h:Double = 15
-        def displacementFx(n:Node):Option[Seq[Option[Double]]] = Some(Seq(n match {
+        def displacementFx(n:Node):OptDoubleSeq = n match {
             case n if n.onEdge => n.y match {
                 case x if x==h => None
-                case _ => Some(0d)
+                case _ => OptDoubleSeq(0d,0d,0d)
             }
             case _ => None
-        }))
-	    val mesh:Mesh[Plate20] = MeshBuilder.buildPlateStructureFromRectangle(w,h,10,10, materialFx _,thicknessFx _,surfaceLoadFx _, forceFx _, displacementFx _)
+        }
+	    val mesh:Mesh[Plate20] = MeshBuilder.buildPlateStructureFromRectangle(w,h,10,10)
 	    mesh.elements foreach (p => {
 		    assertEquals(p.nodes(0).x, p.nodes(3).x, 0);
 		    assertEquals(p.nodes(1).x, p.nodes(2).x, 0);
@@ -45,7 +44,8 @@ class Z88PlateUnitTest {
 		    assertEquals(p.nodes(5).y, p.nodes(7).y, 0);
 		    assertEquals(p.nodes(2).y, p.nodes(3).y, 0)
 	    })
-	    val p = Z88Project(mesh, Path("target/z88"))
+        val loadCase:LoadCase[Plate20] = LoadCase[Plate20](mesh,materialFx _,thicknessFx _,surfaceLoadFx _,forceFx _,displacementFx _)
+	    val p = Z88Project(loadCase, Path("target/z88"))
 	    p.createInputFiles
     }
 

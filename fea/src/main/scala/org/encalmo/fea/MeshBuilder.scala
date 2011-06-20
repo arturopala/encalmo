@@ -1,22 +1,15 @@
-package org.encalmo.fea.z88
+package org.encalmo.fea
 
-import org.encalmo.fea.Vector
-
+/** Mesh builder */
 object MeshBuilder {
     
-    def buildPlateStructureFromRectangle(w:Double,h:Double,mx:Int,my:Int,
-            materialFx:FiniteElement=>Material,
-            thicknessFx:FiniteElement=>Double,
-            surfaceLoadFx:FiniteElement=>Option[Seq[Option[Double]]],
-            nodalForceFx:Node=>Option[Seq[Option[Double]]],
-            nodalDisplacementFx:Node=>Option[Seq[Option[Double]]]):Mesh[Plate20] = {
-        val cx:Int = mx*2
-        val cy:Int = my*2
+    def buildPlateStructureFromRectangle(w:Double,h:Double,mx:Int,my:Int):Mesh[Plate20] = {
+        val cx:Int = mx*2; val cy:Int = my*2
         val base:Node = Node(0d,0d,0d,3)
-        val grid:Seq[Seq[Node]] = buildNodeGrid(base,(w/cx,0d,0d),(0d,h/cy,0d),cx,cy).map(_.map(_.applyConditions(nodalForceFx,nodalDisplacementFx)))
+        val grid:Seq[Seq[Node]] = buildNodeGrid(base,(w/cx,0d,0d),(0d,h/cy,0d),cx,cy)
         def plate(x:Int,y:Int):Plate20 = {
             val nodes = Seq(grid(x+0)(y+0),grid(x+2)(y+0), grid(x+2)(y+2),grid(x+0)(y+2),grid(x+1)(y+0),grid(x+2)(y+1),grid(x+1)(y+2),grid(x+0)(y+1))
-            Plate20(nodes)(materialFx,thicknessFx,surfaceLoadFx)
+            Plate20(nodes)
         }
         val r = ((0 to (cx-2) by 2) flatMap (x => (0 to (cy-2) by 2) map (y => (x,y))))
         val elements = r.map(p => plate(p._1,p._2))

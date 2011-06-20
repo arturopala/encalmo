@@ -1,36 +1,26 @@
-package org.encalmo.fea.z88
-
-import org.encalmo.fea.Vector
+package org.encalmo.fea
 
 /**
  * Finite element type
  * PLATE NO.20 WITH 8 NODES
  */
 case class Plate20(
-        override val nodes:Seq[Node],
-        override val material:Material = null,
-        thickness:Double = 0,
-        load:Option[Seq[Option[Double]]] = None
+        override val nodes:Seq[Node]
 ) extends FiniteElement {
     
     /** Finite element type atrtibutes */
     override val attr = Plate20Attr
-    /** Applies material, thickness and surface load functions */
-    def apply(materialFx:FiniteElement=>Material,
-            thicknessFx:FiniteElement=>Double,
-            surfaceLoadFx:FiniteElement=>Option[Seq[Option[Double]]]):Plate20 = {
-        copy(material = materialFx(this),thickness = thicknessFx(this), load = surfaceLoadFx(this))
-    }
-    /** Full material info, depends on element */
-    override lazy val matinfo:Seq[Any] = Seq(material.E,material.P,attr.intorder,thickness) :+ (takeLoad)
     /** Center of gravity */
     override lazy val center:Vector = nodes(0).c middle nodes(3).c
     
     def printout = {
         nodes.foreach(n => {n.printout; Console.println})
     }
-    /** Helper function */
-    private def takeLoad:Double = load.map(_ match {case Seq(x) => x.getOrElse(0d); case _ => 0d}).getOrElse(0d)
+    /** Creates matinfo data sequence */
+    def createMatinfo(material:Material,thickness:Double,load:OptDoubleSeq):Seq[Any] = {
+        Seq(material.E,material.P,attr.intorder,thickness) :+ load.map(_ match {case Seq(x) => x.getOrElse(0d); case _ => 0d}).getOrElse(0d)
+    }
+
 }
 
 /**

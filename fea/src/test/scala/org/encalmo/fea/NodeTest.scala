@@ -1,4 +1,4 @@
-package org.encalmo.fea.z88
+package org.encalmo.fea
 
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
