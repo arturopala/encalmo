@@ -18,7 +18,7 @@ case class Plate20(
     }
     /** Creates matinfo data sequence */
     def createMatinfo(material:Material,thickness:Double,load:OptDoubleSeq):Seq[Any] = {
-        Seq(material.E,material.P,attr.intorder,thickness) :+ load.map(_ match {case Seq(x) => x.getOrElse(0d); case _ => 0d}).getOrElse(0d)
+        Seq[Any](material.E,material.P,attr.intorder,thickness) :+ (load.map(_ match {case Seq(x) => x.getOrElse(0d); case _ => 0d}).getOrElse(0d))
     }
 
 }

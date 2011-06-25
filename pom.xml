@@ -54,13 +54,13 @@
 	</dependency>
 	<dependency>
 		 <groupId>com.github.scala-incubator.io</groupId>
-		 <artifactId>core_2.9.0</artifactId>
-		 <version>0.1.1</version>
+		 <artifactId>core_2.9.0-1</artifactId>
+		 <version>0.1.2</version>
 	</dependency>
 	<dependency>
 		 <groupId>com.github.scala-incubator.io</groupId>
-		 <artifactId>file_2.9.0</artifactId>
-		 <version>0.1.1</version>
+		 <artifactId>file_2.9.0-1</artifactId>
+		 <version>0.1.2</version>
 	</dependency>
   </dependencies>
   

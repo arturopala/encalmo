@@ -28,13 +28,13 @@ class Z88PlateUnitTest {
         val w:Double = 10
         val h:Double = 15
         def displacementFx(n:Node):OptDoubleSeq = n match {
-            case n if n.onEdge => n.y match {
-                case x if x==h => None
+            case n if (n.onEdge || n.inCorner) => n.y match {
+                case v if (n.onEdge && v==h) => None
                 case _ => OptDoubleSeq(0d,0d,0d)
             }
             case _ => None
         }
-	    val mesh:Mesh[Plate20] = MeshBuilder.buildPlateStructureFromRectangle(w,h,10,10)
+	    val mesh:Mesh[Plate20] = MeshBuilder.buildPlateStructureFromRectangle(w,h,1,1)
 	    mesh.elements foreach (p => {
 		    assertEquals(p.nodes(0).x, p.nodes(3).x, 0);
 		    assertEquals(p.nodes(1).x, p.nodes(2).x, 0);
