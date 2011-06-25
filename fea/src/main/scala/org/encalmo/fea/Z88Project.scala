@@ -19,7 +19,7 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
     val LEGEND = "Written by ENCALMO Legend: C - at the corner, E - on the edge, S - on the surface, I - inside solid"
 
     def createInputFiles:Unit = {
-        Console.println("Creating Z88 project at "+directory.toURL)
+        Console.println("Creating Z88 project at "+directory.toString)
         createInputFile_Z88I1
     }
     
@@ -102,9 +102,9 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         data match {
             case None => out.append(0)
             case Some(x) => append(out,x)
-            case d:Double => leftPad(out,12,Format.ShortDouble.format(d))
             case i:Integer => leftPad(out,6,i.toString)
             case l:Long => leftPad(out,6,l.toString)
+            case d:Double => leftPad(out,12,Format.ShortDouble.format(d))
             case _ => out.append(data.toString)
         }
     }
