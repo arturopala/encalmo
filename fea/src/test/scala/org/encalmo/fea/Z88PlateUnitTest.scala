@@ -34,7 +34,7 @@ class Z88PlateUnitTest {
             }
             case _ => None
         }
-	    val mesh:Mesh[Plate20] = MeshBuilder.buildPlateStructureFromRectangle(w,h,1,1)
+	    val mesh:Mesh[Plate20] = MeshBuilder.buildPlateStructureFromRectangle(w,h,10,10)
 	    mesh.elements foreach (p => {
 		    assertEquals(p.nodes(0).x, p.nodes(3).x, 0);
 		    assertEquals(p.nodes(1).x, p.nodes(2).x, 0);
@@ -47,6 +47,7 @@ class Z88PlateUnitTest {
         val loadCase:LoadCase[Plate20] = LoadCase[Plate20](mesh,materialFx _,thicknessFx _,surfaceLoadFx _,forceFx _,displacementFx _)
 	    val p = Z88Project(loadCase, Path("target/z88"))
 	    p.createInputFiles
+	    p.calculate
     }
 
 }

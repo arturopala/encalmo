@@ -19,8 +19,10 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
     val LEGEND = "Written by ENCALMO Legend: C - at the corner, E - on the edge, S - on the surface, I - inside solid"
 
     def createInputFiles:Unit = {
-        Console.println("Creating Z88 project at "+directory.toString)
+        Console.println("Creating Z88 project at "+directory.toURL)
         createInputFile_Z88I1
+        createInputFile_Z88I2
+        createInputFile_Z88I3
     }
     
     /** In Z88I1.TXT the geometry and material data of the structure are deposited */
@@ -50,6 +52,10 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
             write(Z88I1,s._3.head.no,s._3.last.no," ")
             writeLine(Z88I1,s._2:_*)
         })
+    }
+    
+    /** In Z88I2.TXT the boundary conditions and nodal forces are deposited */
+    def createInputFile_Z88I2:Unit = {
         // BOUNDARY CONDITIONS Z88I2.TXT
         val Z88I2 = directory / "z88i2.txt"
         Z88I2.createFile(true,false)
@@ -76,7 +82,50 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         // 1st input group: Number of the boundary conditions: loads and constraints
         writeLine (Z88I2, bclines.next, LEGEND)
         Z88I2.append(z88i2)
-
+    }
+    
+    /** In Z88I3.TXT stress calculation parameters are deposited */
+    def createInputFile_Z88I3:Unit = {
+        // STRESS PARAMETER FILE Z88I3.TXT
+        val Z88I3 = directory / "z88i3.txt"
+        Z88I3.createFile(true,false)
+        Z88I3.write("") // clear previous content
+        // File only consists of only one line: 
+        // 1st value: Value of the integration order INTORD, 
+        // 2nd value: For the plane stress elements No.3, 7, 11 and 14: KFLAG [Long] 
+        // 0 = standard stress calculation, 
+        // 1 = additional calculation of the radial and tangential stresses
+        // 3rd value: Choice of the reduced stress hypothesis: ISFLAG 
+        // 0 = no calculation of the reduced stresses
+        // 1 = von Mises stresses
+        // 2 = principal or Rankine stresses
+        // 3 = Tresca stresses
+        writeLine (Z88I3, mesh.attr.intorder, 0, 1)
+        
+    }
+    
+    /** Runs displacements, stresses and nodal forces calculations: z88f-c, z88d and z88e */
+    def calculate = {
+        import scala.collection.JavaConversions._
+        val dir = new File(directory.toURL.getFile)
+        // displacements calculation
+        val p1 = Runtime.getRuntime().exec("z88f -c",Array[String](), dir)
+        p1.waitFor
+        val p1log = Resource.fromInputStream(p1.getInputStream).slurpString
+        Console.println(p1log)
+        Console.println("displacements calculated ... ")
+        // stress calculation
+        val p2 = Runtime.getRuntime().exec("z88d",Array[String](), dir)
+        p2.waitFor
+        val p2log = Resource.fromInputStream(p2.getInputStream).slurpString
+        Console.println(p2log)
+        Console.println("stress calculated ... ")
+        // stress calculation
+        val p3 = Runtime.getRuntime().exec("z88e",Array[String](), dir)
+        p3.waitFor
+        val p3log = Resource.fromInputStream(p3.getInputStream).slurpString
+        Console.println(p3log)
+        Console.println("forces calculated ... ")
     }
     
     private def writeLine(out:Seekable,data:Any*) = {
