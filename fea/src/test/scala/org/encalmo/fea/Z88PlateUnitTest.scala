@@ -12,10 +12,10 @@ import scalax.file.{Path}
  */
 class Z88PlateUnitTest {
     
-    val concrete = Material(30000000d,0.3)
+    val concrete = Material(30E9d,0.3)
     def materialFx(e:Plate20):Material = concrete
-    def thicknessFx(e:Plate20):Double = 0.2+e.center.y/50
-    def surfaceLoadFx(e:Plate20):OptDoubleSeq = Some(Seq(Some(e.center.y*2d)))
+    def thicknessFx(e:Plate20):Double = 0.2/*+e.center.y/50*/
+    def surfaceLoadFx(e:Plate20):OptDoubleSeq = OptDoubleSeq(10E3)/*Some(Seq(Some(e.center.y*2d)))*/
     def forceFx(n:Node):OptDoubleSeq = None
     
     @Test def test1 = {
@@ -35,6 +35,7 @@ class Z88PlateUnitTest {
             case _ => None
         }
 	    val mesh:Mesh[Plate20] = MeshBuilder.buildPlateStructureFromRectangle(w,h,10,10)
+	    // assert valid nodes of elements
 	    mesh.elements foreach (p => {
 		    assertEquals(p.nodes(0).x, p.nodes(3).x, 0);
 		    assertEquals(p.nodes(1).x, p.nodes(2).x, 0);
@@ -45,9 +46,24 @@ class Z88PlateUnitTest {
 		    assertEquals(p.nodes(2).y, p.nodes(3).y, 0)
 	    })
         val loadCase:LoadCase[Plate20] = LoadCase[Plate20](mesh,materialFx _,thicknessFx _,surfaceLoadFx _,forceFx _,displacementFx _)
-	    val p = Z88Project(loadCase, Path("target/z88"))
-	    p.createInputFiles
-	    p.calculate
+	    val p:Z88Project[Plate20] = Z88Project(loadCase, Path("target/z88"))
+	    p.createInput
+	    p.runCalculations
+	    val loadResult:LoadResults[Plate20] = p.readOutput
+	    // assert boundary conditions
+	    loadResult.nodeResults.foreach(nr => {
+	        nr.conditions match {
+	            case Some(nc) => {
+	                assertEquals(nc.displacements,nr.displacements)
+	            }
+	            case _ =>
+	        }
+	    })
+	    val nr1:NodeResults = loadResult.maxD1
+	    Console.println("Max D1 node: "+nr1.explain)
+	    val nr2:NodeResults = loadResult.minD1
+	    Console.println("Min D1 node: "+nr2.explain)
+	    
     }
 
 }

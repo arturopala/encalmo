@@ -18,11 +18,13 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
     val CRLF = "\r\n"
     val LEGEND = "Written by ENCALMO Legend: C - at the corner, E - on the edge, S - on the surface, I - inside solid"
 
-    def createInputFiles:Unit = {
+    def createInput:Unit = {
         Console.println("Creating Z88 project at "+directory.toURL)
         createInputFile_Z88I1
         createInputFile_Z88I2
         createInputFile_Z88I3
+        val is = classOf[Z88Project[A]].getResourceAsStream("/z88.dyn")
+        Resource.fromInputStream(is).copyData(directory / "z88.dyn")
     }
     
     /** In Z88I1.TXT the geometry and material data of the structure are deposited */
@@ -63,16 +65,16 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         // 2nd input group: Boundary conditions and loads. 
         // For every boundary condition and for every load respectively one line.
         val bclines = Iterator.from(0)
-        loadCase.nodeCases foreach ( nc => {
+        loadCase.nodeBCs foreach ( nc => {
             // boundary conditions
             val dit = Iterator.from(1)
-            nc.displacement.map(_.foreach (di => di match {
+            nc.displacements.map(_.foreach (di => di match {
                 case Some(d) => { writeLine (Z88I2, nc.node.no, dit.next, 2, d, nc.node.positionSymbol); bclines.next }
                 case None => dit.next
             }))
             // nodal forces
             val fit = Iterator.from(1)
-            nc.force.map(_.foreach (fi => fi match {
+            nc.forces.map(_.foreach (fi => fi match {
                 case Some(f) => { writeLine (Z88I2, nc.node.no, fit.next, 1, f, nc.node.positionSymbol); bclines.next }
                 case None => fit.next
             }))
@@ -105,7 +107,7 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
     }
     
     /** Runs displacements, stresses and nodal forces calculations: z88f-c, z88d and z88e */
-    def calculate = {
+    def runCalculations = {
         import scala.collection.JavaConversions._
         val dir = new File(directory.toURL.getFile)
         // displacements calculation
@@ -113,19 +115,43 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         p1.waitFor
         val p1log = Resource.fromInputStream(p1.getInputStream).slurpString
         Console.println(p1log)
-        Console.println("displacements calculated ... ")
+        Console.println("displacements calculated.")
         // stress calculation
         val p2 = Runtime.getRuntime().exec("z88d",Array[String](), dir)
         p2.waitFor
         val p2log = Resource.fromInputStream(p2.getInputStream).slurpString
         Console.println(p2log)
-        Console.println("stress calculated ... ")
+        Console.println("stress calculated.")
         // stress calculation
         val p3 = Runtime.getRuntime().exec("z88e",Array[String](), dir)
         p3.waitFor
         val p3log = Resource.fromInputStream(p3.getInputStream).slurpString
         Console.println(p3log)
-        Console.println("forces calculated ... ")
+        Console.println("forces calculated.")
+    }
+    
+    /** Reads analysis results */
+    def readOutput:LoadResults[A] = {
+        val displacements = readOutputFile_Z88O2.toMap
+        val nodeResults = mesh.nodes.map(node => NodeResults(node,loadCase.nodeBC(node.no),displacements.get(node.no),None,None))
+        LoadResults[A](loadCase,nodeResults)
+    }
+    
+    /** Reads calculated displacements from Z88O2.TXT */
+    def readOutputFile_Z88O2 = {
+        val Z88O2 = directory / "z88o2.txt"
+        if(Z88O2.exists){
+            val lines = Z88O2.lines().dropWhile(s => !(s.trim.startsWith("1")))
+            val displacements = lines.map(line => {
+	                val l = line.trim.replaceAll("\\s+"," ").split(" ")
+	                (l.head.toInt,l.tail.map(x => Option(x.toDouble)).toSeq)
+            }).toSeq
+            Console.println("displacements read.")
+            displacements
+        } else {
+            Console.println("displacements output file z88o2.txt not found!")
+            Seq()
+        }
     }
     
     private def writeLine(out:Seekable,data:Any*) = {
