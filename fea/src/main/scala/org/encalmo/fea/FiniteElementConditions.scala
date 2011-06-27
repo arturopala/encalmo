@@ -3,7 +3,7 @@ package org.encalmo.fea
 /** Element material, thickness and surface load case
  * @author opala.artur
  */
-case class ElementCase[A <: FiniteElement] (
+case class FiniteElementConditions[A <: FiniteElement] (
         /** Referenced element */
         element:A,
         /** Material properties */
