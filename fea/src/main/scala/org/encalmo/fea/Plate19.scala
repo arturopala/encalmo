@@ -2,16 +2,16 @@ package org.encalmo.fea
 
 /**
  * Finite element
- * PLATE NO.20 WITH 8 NODES
+ * Z88 PLATE NO.19 WITH 16 NODES
  */
-case class Plate20(
+case class Plate19(
         override val nodes:Seq[Node]
 ) extends FiniteElement {
     
     /** Finite element type atrtibutes */
-    override val attr = Plate20Type
+    override val attr = Plate19Type
     /** Center of gravity */
-    override lazy val center:Vector = nodes(0).c middle nodes(3).c
+    override lazy val center:Vector = nodes(0).c middle nodes(15).c
     
     def printout = {
         nodes.foreach(n => {n.printout; Console.println})
@@ -25,20 +25,20 @@ case class Plate20(
 
 /**
  * Finite element type attributes
- * PLATE NO.20 WITH 8 NODES
+ * Z88 PLATE NO.19 WITH 16 NODES
  */
-object Plate20Type extends FiniteElementType { 
-    
+object Plate19Type extends FiniteElementType {
+
     /** Type of element */
-    override def elemtype:Int = 20
+    override def elemtype:Int = 19
     /** Dimension of the structure (2 or 3) */
     override def dimension:Int = 2
     /** Number of element's nodes */
-    override def nodes:Int = 8
+    override def nodes:Int = 16
     /** Number of element's corners */
     override def corners:Int = 4
     /** Number of element's gausspoints */
-    override def gausspoints:Int = 4
+    override def gausspoints:Int = 16
     /** Number of degrees of freedom */
     override def dof:Int = 3
     /** Beam flag IBFLAG (0 or 1) */
@@ -46,6 +46,6 @@ object Plate20Type extends FiniteElementType {
     /** Plate flag IPFLAG (0 or 1) */
     override def IPFLAG:Int = 1
     /** Integration order */
-    override def intorder:Int = 2
+    override def intorder:Int = 4
     
 }

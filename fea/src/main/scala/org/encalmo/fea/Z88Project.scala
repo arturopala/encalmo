@@ -10,7 +10,7 @@ import java.util.Locale
 /**
  * Z88(R) software project (www.z88.de)
  */
-case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) {
+case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:LoadCase[A], directory:Path) {
     
     val mesh = loadCase.mesh
     
@@ -22,7 +22,7 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         Console.println("Creating Z88 project at "+directory.toURL)
         createInputFile_Z88I1
         createInputFile_Z88I2
-        createInputFile_Z88I3
+        createInputFile_Z88I3(0)
         val is = classOf[Z88Project[A]].getResourceAsStream("/z88.dyn")
         Resource.fromInputStream(is).copyData(directory / "z88.dyn")
     }
@@ -65,16 +65,16 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         // 2nd input group: Boundary conditions and loads. 
         // For every boundary condition and for every load respectively one line.
         val bclines = Iterator.from(0)
-        loadCase.nodeBCs foreach ( nc => {
+        loadCase.nodesConditions foreach ( nc => {
             // boundary conditions
             val dit = Iterator.from(1)
-            nc.displacements.map(_.foreach (di => di match {
+            nc.displacement.map(disp => convertToInputDisplacement(disp).foreach (di => di match {
                 case Some(d) => { writeLine (Z88I2, nc.node.no, dit.next, 2, d, nc.node.positionSymbol); bclines.next }
                 case None => dit.next
             }))
             // nodal forces
             val fit = Iterator.from(1)
-            nc.forces.map(_.foreach (fi => fi match {
+            nc.forces.map( force => force.seq.foreach (fi => fi match {
                 case Some(f) => { writeLine (Z88I2, nc.node.no, fit.next, 1, f, nc.node.positionSymbol); bclines.next }
                 case None => fit.next
             }))
@@ -86,8 +86,9 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         Z88I2.append(z88i2)
     }
     
-    /** In Z88I3.TXT stress calculation parameters are deposited */
-    def createInputFile_Z88I3:Unit = {
+    /** In Z88I3.TXT stress calculation parameters are deposited
+     *  Modes: 0 - corner nodes, 1 - gauss points */
+    def createInputFile_Z88I3(mode:Int):Unit = {
         // STRESS PARAMETER FILE Z88I3.TXT
         val Z88I3 = directory / "z88i3.txt"
         Z88I3.createFile(true,false)
@@ -102,43 +103,72 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         // 1 = von Mises stresses
         // 2 = principal or Rankine stresses
         // 3 = Tresca stresses
-        writeLine (Z88I3, mesh.attr.intorder, 0, 1)
-        
+        mode match {
+            case 0 => writeLine (Z88I3, 0, 1, 0)
+            case _ => writeLine (Z88I3, elemtype.intorder, 1, 1)
+        }
     }
     
     /** Runs displacements, stresses and nodal forces calculations: z88f-c, z88d and z88e */
-    def runCalculations = {
+    def runCalculations(debug:Boolean = false) = {
         import scala.collection.JavaConversions._
         val dir = new File(directory.toURL.getFile)
         // displacements calculation
         val p1 = Runtime.getRuntime().exec("z88f -c",Array[String](), dir)
         p1.waitFor
-        val p1log = Resource.fromInputStream(p1.getInputStream).slurpString
-        Console.println(p1log)
-        Console.println("displacements calculated.")
-        // stress calculation
-        val p2 = Runtime.getRuntime().exec("z88d",Array[String](), dir)
-        p2.waitFor
-        val p2log = Resource.fromInputStream(p2.getInputStream).slurpString
-        Console.println(p2log)
-        Console.println("stress calculated.")
+        if(debug) {
+            val p1log = Resource.fromInputStream(p1.getInputStream).slurpString
+            Console.println(p1log)
+        }
+        Console.println("Displacements calculated.")
+        // stress calculation in the corners
+        val p2c = Runtime.getRuntime().exec("z88d",Array[String](), dir)
+        p2c.waitFor
+        if(debug) {
+            val p2clog = Resource.fromInputStream(p2c.getInputStream).slurpString
+            Console.println(p2clog)
+        }
+        Console.println("Stresses in the corners calculated.")
+        (directory / "z88o3.txt").moveTo(directory / "z88o3_c.txt",true)
+        createInputFile_Z88I3(1)
+        // stress calculation at gauss points
+        val p2g = Runtime.getRuntime().exec("z88d",Array[String](), dir)
+        p2g.waitFor
+        if(debug) {
+            val p2glog = Resource.fromInputStream(p2g.getInputStream).slurpString
+            Console.println(p2glog)
+        }
+        Console.println("Stresses at the gauss points calculated.")
         // stress calculation
         val p3 = Runtime.getRuntime().exec("z88e",Array[String](), dir)
         p3.waitFor
-        val p3log = Resource.fromInputStream(p3.getInputStream).slurpString
-        Console.println(p3log)
-        Console.println("forces calculated.")
+        if(debug) {
+            val p3log = Resource.fromInputStream(p3.getInputStream).slurpString
+            Console.println(p3log)
+        }
+        Console.println("Nodal forces calculated.")
     }
     
-    /** Reads analysis results */
+    /** Reads all calculation's results */
     def readOutput:LoadResults[A] = {
         val displacements = readOutputFile_Z88O2.toMap
-        val nodeResults = mesh.nodes.map(node => NodeResults(node,loadCase.nodeBC(node.no),displacements.get(node.no),None,None))
-        LoadResults[A](loadCase,nodeResults)
+        val cornerStresses = readOutputFile_Z88O3(0).toMap
+        mesh.elements.map(e => (e,cornerStresses(e.no))).map(p => p._2.map(seq => {
+            val node = p._1.findNode(seq(0),seq(1))
+        }))
+        val gaussPointsStresses = readOutputFile_Z88O3(1).toMap
+        val forces = readOutputFile_Z88O4.toMap
+        val nodeResult = mesh.nodes.map(
+            node => NodeResult(node,
+                    loadCase.conditionsForNode(node.no),
+                    convertFromOutputDisplacement(displacements.get(node.no)),
+                    NodeForce(forces.get(node.no)))
+        )
+        LoadResults[A](loadCase,nodeResult)
     }
     
     /** Reads calculated displacements from Z88O2.TXT */
-    def readOutputFile_Z88O2 = {
+    def readOutputFile_Z88O2:Seq[(Int, Seq[Option[Double]])] = {
         val Z88O2 = directory / "z88o2.txt"
         if(Z88O2.exists){
             val lines = Z88O2.lines().dropWhile(s => !(s.trim.startsWith("1")))
@@ -146,10 +176,50 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
 	                val l = line.trim.replaceAll("\\s+"," ").split(" ")
 	                (l.head.toInt,l.tail.map(x => Option(x.toDouble)).toSeq)
             }).toSeq
-            Console.println("displacements read.")
+            Console.println("Node's displacements read ("+displacements.size+").")
             displacements
         } else {
-            Console.println("displacements output file z88o2.txt not found!")
+            Console.println("Displacements output file "+Z88O2.toURL.toExternalForm+" not found!")
+            Seq()
+        }
+    }
+    
+    /** Reads calculated stresses from Z88O3.TXT. 
+     *  Modes: 0 - corner nodes, 1 - gauss points */
+    def readOutputFile_Z88O3(mode:Int) = {
+        val Z88O3 = directory / ("z88o3"+(mode match {case 0 => "_c"; case _ => ""})+".txt")
+        if(Z88O3.exists){
+            val stresses = Z88O3.lines().dropWhile(s => !(s.trim.startsWith("element # = ")))
+                .grouped((mode match {case 0 => elemtype.corners; case _ => elemtype.gausspoints}) + 2)
+                .map(seq => {
+                    val elemno = seq.head.drop(12).split(" ")(0).toInt
+                    val stresses = seq.drop(2).take(elemtype.corners).map(line => {
+                        val l = line.trim.replaceAll("\\s+"," ").split(" ")
+                        l.map(x => Option(x.toDouble)).toSeq
+                    })
+                    (elemno,stresses)
+            }).toSeq
+            Console.println("Element's stresses "+(mode match {case 0 => "in the corners"; case _ => "at the gauss points"})+" read ("+stresses.size+").")
+            stresses
+        } else {
+            Console.println("Stresses output file "+Z88O3.toURL.toExternalForm+" not found!")
+            Seq()
+        }
+    }
+    
+    /** Reads calculated nodal forces from Z88O4.TXT */
+    def readOutputFile_Z88O4:Seq[(Int, Seq[Option[Double]])] = {
+        val Z88O4 = directory / "z88o4.txt"
+        if(Z88O4.exists){
+            val lines = Z88O4.lines().dropWhile(s => !(s.trim.startsWith("now the nodal sums for each node")))
+            val forces = lines.drop(3).map(line => {
+                    val l = line.trim.replaceAll("\\s+"," ").split(" ")
+                    (l.head.toInt,l.tail.take(3).map(x => Option(x.toDouble)).toSeq)
+            }).toSeq
+            Console.println("Nodal forces read ("+forces.size+").")
+            forces
+        } else {
+            Console.println("Nodal forces output file "+Z88O4.toURL.toExternalForm+" not found!")
             Seq()
         }
     }
@@ -179,7 +249,7 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
             case Some(x) => append(out,x)
             case i:Integer => leftPad(out,6,i.toString)
             case l:Long => leftPad(out,6,l.toString)
-            case d:Double => leftPad(out,12,Format.ShortDouble.format(d))
+            case d:Double => leftPad(out,12,DoubleFormat.short(d))
             case _ => out.append(data.toString)
         }
     }
@@ -192,10 +262,27 @@ case class Z88Project[A <: FiniteElement](loadCase:LoadCase[A], directory:Path) 
         out.append(text)
     }
     
-}
-
-object Format {
-    
-    lazy val ShortDouble = new DecimalFormat("0.000000", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
+    /** Converts output displacement to node displacement */
+    def convertFromOutputDisplacement(disp:OptDoubleSeq):NodeDisplacement = {
+        elemtype match {
+            case Plate19Type => disp match {
+                case None => NodeDisplacement()
+                case Some(seq) => NodeDisplacement.forPlate(seq)
+            }
+            case Plate20Type => disp match {
+                case None => NodeDisplacement()
+                case Some(seq) => NodeDisplacement.forPlate(seq)
+            }
+            case _ => null
+        }
+    }
+    /** Converts node displacement to input displacement */
+    def convertToInputDisplacement(nd:NodeDisplacement):Seq[Option[Double]] = {
+        elemtype match {
+            case Plate19Type => Seq(nd.dz,nd.rx,nd.ry)
+            case Plate20Type => Seq(nd.dz,nd.rx,nd.ry)
+            case _ => null
+        }
+    }
     
 }
