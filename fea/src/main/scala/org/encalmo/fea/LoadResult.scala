@@ -5,28 +5,30 @@ case class LoadResults[A <: FiniteElement](
         /** Calculated load case */
         loadCase:LoadCase[A],
         /** Results at nodes */
-        nodeResults:Seq[NodeResults] = Seq()
+        nodeResults:Seq[NodeResult] = Seq(),
+        /** Results in elements */
+        elementResults:Seq[ElementResult[A]] = Seq()
 ) {
     
-    lazy val maxD1:NodeResults = findMax(_.D1)
-    lazy val maxD2:NodeResults = findMax(_.D2)
-    lazy val maxD3:NodeResults = findMax(_.D3)
-    lazy val maxD4:NodeResults = findMax(_.D4)
-    lazy val maxD5:NodeResults = findMax(_.D5)
-    lazy val maxD6:NodeResults = findMax(_.D6)
+    lazy val maxDX:NodeResult = findMax(_.displacement.dx)
+    lazy val maxDY:NodeResult = findMax(_.displacement.dy)
+    lazy val maxDZ:NodeResult = findMax(_.displacement.dz)
+    lazy val maxRX:NodeResult = findMax(_.displacement.rx)
+    lazy val maxRY:NodeResult = findMax(_.displacement.ry)
+    lazy val maxRZ:NodeResult = findMax(_.displacement.rz)
     
-    lazy val minD1:NodeResults = findMin(_.D1)
-    lazy val minD2:NodeResults = findMin(_.D2)
-    lazy val minD3:NodeResults = findMin(_.D3)
-    lazy val minD4:NodeResults = findMin(_.D4)
-    lazy val minD5:NodeResults = findMin(_.D5)
-    lazy val minD6:NodeResults = findMin(_.D6)
+    lazy val minDX:NodeResult = findMin(_.displacement.dx)
+    lazy val minDY:NodeResult = findMin(_.displacement.dy)
+    lazy val minDZ:NodeResult = findMin(_.displacement.dz)
+    lazy val minRX:NodeResult = findMin(_.displacement.rx)
+    lazy val minRY:NodeResult = findMin(_.displacement.ry)
+    lazy val minRZ:NodeResult = findMin(_.displacement.rz)
        
-    private def find(compare:(Double,Double)=>Boolean)(get:(NodeResults)=>Option[Double]) = 
+    private def find(compare:(Double,Double)=>Boolean)(get:(NodeResult)=>Option[Double]) = 
         nodeResults.tail.foldLeft(nodeResults.head)((p,nr) => if(get(p).isDefined && get(nr).isDefined && compare(get(p).get,get(nr).get)) nr else p)
 
-    private def findMax:((NodeResults)=>Option[Double])=>NodeResults = find((p,c) => c > p)
+    private def findMax:((NodeResult)=>Option[Double])=>NodeResult = find((p,c) => c > p)
     
-    private def findMin:((NodeResults)=>Option[Double])=>NodeResults = find((p,c) => c < p)
+    private def findMin:((NodeResult)=>Option[Double])=>NodeResult = find((p,c) => c < p)
 
 }

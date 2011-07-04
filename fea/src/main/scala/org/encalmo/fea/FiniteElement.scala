@@ -6,7 +6,7 @@ package org.encalmo.fea
 trait FiniteElement extends Ordered[FiniteElement] with Numbered {
     
     /** Finite element type atrtibutes */
-    val attr:FiniteElementAttr
+    val attr:FiniteElementType
     /** Element's number */
     var no:Int = -1
     def no_(i:Int) = {if(no<0 && i>0) no = i}
@@ -32,10 +32,12 @@ trait FiniteElement extends Ordered[FiniteElement] with Numbered {
     def nodesPositionSymbol:String = nodes.foldLeft[String]("")((l,r) => l+" "+r.positionSymbol)
     /** abstract: Creates matinfo data sequence */
     def createMatinfo(material:Material,thickness:Double,load:OptDoubleSeq):Seq[Any]
+    /** Finds node at given position */
+    def findNode(x:Double = 0, y:Double = 0, z:Double = 0):Option[Node] = nodes.find(n => n.isAt(x,y,z))
 
 }
 
-trait FiniteElementAttr {
+trait FiniteElementType{
     
     /** Type of element */
     def elemtype:Int
@@ -43,6 +45,12 @@ trait FiniteElementAttr {
     def dimension:Int
     /** Number of degrees of freedom */
     def dof:Int
+    /** Number of element's nodes */
+    def nodes:Int
+    /** Number of element's corners */
+    def corners:Int
+    /** Number of element's gausspoints */
+    def gausspoints:Int
     /** Beam flag IBFLAG (0 or 1) */
     def IBFLAG:Int
     /** Plate flag IPFLAG (0 or 1) */

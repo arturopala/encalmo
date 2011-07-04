@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psf version="2.0">
+<provider id="com.vectrace.MercurialEclipse.team.MercurialTeamProvider">
+<project reference="MercurialEclipseProjectSet|encalmo|/home/artur/workspace/encalmo"/>
+</provider>
+<workingSets editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" id="1290867975803_6" label="encalmo" name="encalmo">
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/encalmo-printer" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/encalmo-calculation" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/encalmo-expression" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/encalmo-examples" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/encalmo-fop" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/encalmo" type="4"/>
+<item factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/encalmo-document" type="4"/>
+</workingSets>
+</psf>

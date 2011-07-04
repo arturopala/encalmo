@@ -8,7 +8,7 @@ trait Mesh[A <: FiniteElement] {
     /** Finite elements sequence */
     def elements:Seq[A]
     /** First element */
-    val attr:FiniteElementAttr = elements.first.attr
+    val attr:FiniteElementType = elements.first.attr
     /** Dimension of the structure (2 or 3) */
     def dimension:Int = attr.dimension
     /** Number of finite elements */

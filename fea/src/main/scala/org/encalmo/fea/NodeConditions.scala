@@ -1,21 +1,21 @@
 package org.encalmo.fea
 
-/** Nodal forces and displacements */
+/** Node's boundary conditions: force and displacement */
 case class NodeConditions(
         /** Referenced node */
         node:Node,
-        /** Node displacement case, data size depends on node's DOF */
-        displacements:OptDoubleSeq = None,
-        /** Nodal forces case, data size depends on node's DOF */
-        forces:OptDoubleSeq = None
+        /** Established node displacement */
+        displacement:Option[NodeDisplacement] = None,
+        /** Established node force */
+        forces:Option[NodeForce] = None
 ) {
 
 }
 
 object NodeConditionsOption {
     
-    def apply(node:Node,displacement:OptDoubleSeq = None,force:OptDoubleSeq = None):Option[NodeConditions] = {
-        if((!displacement.isDefined || allNone(displacement.get)) && (!force.isDefined || allNone(force.get))) {
+    def apply(attr:FiniteElementType,node:Node,displacement:Option[NodeDisplacement] = None,force:Option[NodeForce] = None):Option[NodeConditions] = {
+        if((!displacement.isDefined || !displacement.get.isDefined) && (!force.isDefined || !force.get.isDefined)) {
             None
         } else {
             Some(NodeConditions(node,displacement,force))
