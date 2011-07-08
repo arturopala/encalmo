@@ -34,6 +34,8 @@ trait FiniteElement extends Ordered[FiniteElement] with Numbered {
     def createMatinfo(material:Material,thickness:Double,load:OptDoubleSeq):Seq[Any]
     /** Finds node at given position */
     def findNode(x:Double = 0, y:Double = 0, z:Double = 0):Option[Node] = nodes.find(n => n.isAt(x,y,z))
+    /** Finds node at given position */
+    def findNode(v:Vector):Option[Node] = nodes.find(n => n.isAt(v))
 
 }
 

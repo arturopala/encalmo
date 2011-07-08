@@ -151,7 +151,7 @@ class Z88PlateUnitTest {
         val loadCase:LoadCase[Plate19] = LoadCase[Plate19](mesh,materialFx _,thicknessFx _,surfaceLoadFx _,forceFx _,displacementFx _)
         val p:Z88Project[Plate19] = Z88Project(Plate19Type, loadCase, Path("target/z88_19"))
         p.createInput
-        p.runCalculations()
+        //p.runCalculations()
         val loadResult:LoadResults[Plate19] = p.readOutput
         // assert boundary conditions
         loadResult.nodeResults.foreach(nr => {
@@ -169,9 +169,19 @@ class Z88PlateUnitTest {
         val qb4D = ((q*w*w*w*w)/D)
         Console.println("qb4/D="+qb4D)
         Console.println("k="+(nr1.displacement.dz.get/qb4D))
-        Console.println("Max D1 node: "+nr1.explain)
-        val nr2:NodeResult = loadResult.minDZ
-        Console.println("Min D1 node: "+nr2.explain)
+        Console.println("Max Z node: "+nr1.explain)
+        val nr2:NodeResult = loadResult.maxMXX
+        Console.println("Max MXX node: "+nr2.explain)
+        val nr3:NodeResult = loadResult.minMXX
+        Console.println("Min MXX node: "+nr3.explain)
+        val nr4:NodeResult = loadResult.maxMYY
+        Console.println("Max MYY node: "+nr4.explain)
+        val nr5:NodeResult = loadResult.minMYY
+        Console.println("Min MYY node: "+nr5.explain)
+        val nr6:NodeResult = loadResult.maxFZ
+        Console.println("Max FZ node: "+nr6.explain)
+        val nr7:NodeResult = loadResult.minFZ
+        Console.println("Min FZ node: "+nr7.explain)
         
     }
 
