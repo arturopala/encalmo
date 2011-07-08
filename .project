@@ -14,7 +14,6 @@
 	<natures>
 		<nature>org.scala-ide.sdt.core.scalanature</nature>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
-		<nature>ch.epfl.lamp.sdt.core.scalanature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>
