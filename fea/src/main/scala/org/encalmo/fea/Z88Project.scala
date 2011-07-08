@@ -153,9 +153,9 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     def readOutput:LoadResults[A] = {
         val displacements = readOutputFile_Z88O2.toMap
         val cornerStresses = readOutputFile_Z88O3(0).toMap
-        mesh.elements.map(e => (e,cornerStresses(e.no))).map(p => p._2.map(seq => {
+        /*mesh.elements.map(e => (e,cornerStresses(e.no))).map(p => p._2.map(seq => {
             val node = p._1.findNode(seq(0),seq(1))
-        }))
+        }))*/
         val gaussPointsStresses = readOutputFile_Z88O3(1).toMap
         val forces = readOutputFile_Z88O4.toMap
         val nodeResult = mesh.nodes.map(
