@@ -88,6 +88,8 @@ case class Node(
     override def toString:String = "Node #"+no+" "+coordinates+" "+positionDescription
     /** Test if node is at given position */
     def isAt(x:Double = 0, y:Double = 0, z:Double = 0) = coordinates.equals(x,y,z)
+    /** Test if node is at given position */
+    def isAt(v:Vector) = coordinates == v
     
 }
 

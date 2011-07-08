@@ -153,15 +153,26 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     def readOutput:LoadResults[A] = {
         val displacements = readOutputFile_Z88O2.toMap
         val cornerStresses = readOutputFile_Z88O3(0).toMap
-        /*mesh.elements.map(e => (e,cornerStresses(e.no))).map(p => p._2.map(seq => {
-            val node = p._1.findNode(seq(0),seq(1))
-        }))*/
-        val gaussPointsStresses = readOutputFile_Z88O3(1).toMap
+        val nodeStressesMap = mesh.elements.map(e => (e,cornerStresses(e.no)))
+        	.flatMap(p => p._2.map(seq => {
+	            p._1.findNode(extractCoordinatesFromStressesOutput(seq)) match {
+	              case Some(node) => (node.no,convertFromOutputCornerStress(seq))
+	              case None => (-1,null)
+	            }
+		     }))
+		     .groupBy(_._1)
+		     .mapValues[NodeStress](seq => seq.size match {
+		       	case 0 => NodeStress()
+		       	case 1 => seq(0)._2
+		       	case _ => NodeStress.aggregate(seq.map(_._2))
+		     })
+	    val gaussPointsStresses = readOutputFile_Z88O3(1).toMap
         val forces = readOutputFile_Z88O4.toMap
         val nodeResult = mesh.nodes.map(
             node => NodeResult(node,
                     loadCase.conditionsForNode(node.no),
                     convertFromOutputDisplacement(displacements.get(node.no)),
+                    nodeStressesMap.get(node.no),
                     NodeForce(forces.get(node.no)))
         )
         LoadResults[A](loadCase,nodeResult)
@@ -273,7 +284,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
                 case None => NodeDisplacement()
                 case Some(seq) => NodeDisplacement.forPlate(seq)
             }
-            case _ => null
+            case _ => throw new IllegalStateException("Not implemented")
         }
     }
     /** Converts node displacement to input displacement */
@@ -281,8 +292,22 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         elemtype match {
             case Plate19Type => Seq(nd.dz,nd.rx,nd.ry)
             case Plate20Type => Seq(nd.dz,nd.rx,nd.ry)
-            case _ => null
+            case _ => throw new IllegalStateException("Not implemented")
         }
+    }
+    
+    /** Converts output stress sequence to node coordinates */
+    def extractCoordinatesFromStressesOutput(seq:Seq[Option[Double]]):Vector = elemtype match {
+  		case Plate19Type => Vector(seq(0).get,seq(1).get,0)
+        case Plate20Type => Vector(seq(0).get,seq(1).get,0)
+        case _ => throw new IllegalStateException("Not implemented")
+    }
+    
+    /** Converts output stress sequence to NodeStress */
+    def convertFromOutputCornerStress(seq:Seq[Option[Double]]):NodeStress = elemtype match {
+  		case Plate19Type => NodeStress.forPlateElementCorners(seq.drop(2))
+        case Plate20Type => NodeStress.forPlateElementCorners(seq.drop(2))
+        case _ => throw new IllegalStateException("Not implemented")
     }
     
 }
