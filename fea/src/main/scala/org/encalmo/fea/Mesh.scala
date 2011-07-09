@@ -26,7 +26,7 @@ trait Mesh[A <: FiniteElement] {
     
     /** All nodes sequence */
     val nodes:Seq[Node] = {
-        val ns = elements.flatMap(_.nodes).toSet.toSeq.sorted
+        val ns:Seq[Node] = elements.flatMap(_.nodes).toSet.toSeq.sorted
         Mesh.renumber(ns)
         Mesh.renumber(elements.sorted[FiniteElement])
         ns

@@ -1,6 +1,6 @@
 package org.encalmo.fea
 
-/** Final element node forces */
+/** Final element node's force components */
 case class NodeForce(
         /** Force along X axis */
         fx:Option[Double] = None,

@@ -4,8 +4,10 @@ package org.encalmo.fea
 case class ElementResult[A <: FiniteElement] (
         /** Referenced element */
         element:A,
-        /** cornerStresses */
-        gaussPointsStresses:Seq[Seq[Option[Double]]] = Seq()
+        /** Corner nodes results */
+        nodeResults:Seq[NodeResult] = Seq(),
+        /** Gauss points stresses */
+        gaussPointsStresses:Seq[StressAtPoint] = Seq()
 ){
     
 }

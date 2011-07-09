@@ -5,7 +5,7 @@ package org.encalmo.fea
  * PLATE NO.20 WITH 8 NODES
  */
 case class Plate20(
-        override val nodes:Seq[Node]
+        override val nodes:IndexedSeq[Node]
 ) extends FiniteElement {
     
     /** Finite element type atrtibutes */

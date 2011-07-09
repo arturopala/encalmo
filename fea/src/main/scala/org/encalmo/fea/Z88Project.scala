@@ -54,6 +54,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
             write(Z88I1,s._3.head.no,s._3.last.no," ")
             writeLine(Z88I1,s._2:_*)
         })
+        Console.println("Geometry and material data file (z88i1.txt) created.")
     }
     
     /** In Z88I2.TXT the boundary conditions and nodal forces are deposited */
@@ -84,6 +85,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         // 1st input group: Number of the boundary conditions: loads and constraints
         writeLine (Z88I2, bclines.next, LEGEND)
         Z88I2.append(z88i2)
+        Console.println("Boundary conditions file (z88i2.txt) created.")
     }
     
     /** In Z88I3.TXT stress calculation parameters are deposited
@@ -107,6 +109,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
             case 0 => writeLine (Z88I3, 0, 1, 0)
             case _ => writeLine (Z88I3, elemtype.intorder, 1, 1)
         }
+        Console.println("Stress calculation parameters file (z88i3.txt) created.")
     }
     
     /** Runs displacements, stresses and nodal forces calculations: z88f-c, z88d and z88e */
@@ -114,6 +117,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         import scala.collection.JavaConversions._
         val dir = new File(directory.toURL.getFile)
         // displacements calculation
+        Console.println("Running z88f solver ...")
         val p1 = Runtime.getRuntime().exec("z88f -c",Array[String](), dir)
         p1.waitFor
         if(debug) {
@@ -149,13 +153,13 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         Console.println("Nodal forces calculated.")
     }
     
-    /** Reads all calculation's results */
+    /** Reads and converts calculation's results */
     def readOutput:LoadResults[A] = {
         val displacements = readOutputFile_Z88O2.toMap
         val cornerStresses = readOutputFile_Z88O3(0).toMap
         val nodeStressesMap = mesh.elements.map(e => (e,cornerStresses(e.no)))
         	.flatMap(p => p._2.map(seq => {
-	            p._1.findNode(extractCoordinatesFromStressesOutput(seq)) match {
+	            p._1.findNode(extractCoordinatesFromStressOutput(seq)) match {
 	              case Some(node) => (node.no,convertFromOutputCornerStress(seq))
 	              case None => (-1,null)
 	            }
@@ -166,16 +170,24 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
 		       	case 1 => seq(0)._2
 		       	case _ => NodeStress.aggregate(seq.map(_._2))
 		     })
+		Console.println("Nodes stresses map prepared.")
 	    val gaussPointsStresses = readOutputFile_Z88O3(1).toMap
         val forces = readOutputFile_Z88O4.toMap
-        val nodeResult = mesh.nodes.map(
-            node => NodeResult(node,
+        val nodeResultsMap:Map[Int,NodeResult] = mesh.nodes.map(
+            node => (node.no, NodeResult(node,
                     loadCase.conditionsForNode(node.no),
                     convertFromOutputDisplacement(displacements.get(node.no)),
                     nodeStressesMap.get(node.no),
-                    NodeForce(forces.get(node.no)))
-        )
-        LoadResults[A](loadCase,nodeResult)
+                    convertFromOutputForce(forces(node.no))))
+        ).toMap
+        Console.println("Nodes results prepared.")
+        val elementsResultsMap:Map[Int,ElementResult[A]]  = mesh.elements.map(
+            element => (element.no, ElementResult(element,
+                    element.nodesnumbers.map(nodeResultsMap(_)),
+                    gaussPointsStresses(element.no).map(convertFromOutputGaussPointStress(_))))
+        ).toMap
+        Console.println("Elements results prepared.")
+        LoadResults[A](loadCase,nodeResultsMap,elementsResultsMap)
     }
     
     /** Reads calculated displacements from Z88O2.TXT */
@@ -278,11 +290,11 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         elemtype match {
             case Plate19Type => disp match {
                 case None => NodeDisplacement()
-                case Some(seq) => NodeDisplacement.forPlate(seq)
+                case Some(seq) => nodeDisplacementForPlate(seq)
             }
             case Plate20Type => disp match {
                 case None => NodeDisplacement()
-                case Some(seq) => NodeDisplacement.forPlate(seq)
+                case Some(seq) => nodeDisplacementForPlate(seq)
             }
             case _ => throw new IllegalStateException("Not implemented")
         }
@@ -297,7 +309,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     }
     
     /** Converts output stress sequence to node coordinates */
-    def extractCoordinatesFromStressesOutput(seq:Seq[Option[Double]]):Vector = elemtype match {
+    def extractCoordinatesFromStressOutput(seq:Seq[Option[Double]]):Vector = elemtype match {
   		case Plate19Type => Vector(seq(0).get,seq(1).get,0)
         case Plate20Type => Vector(seq(0).get,seq(1).get,0)
         case _ => throw new IllegalStateException("Not implemented")
@@ -305,9 +317,32 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     
     /** Converts output stress sequence to NodeStress */
     def convertFromOutputCornerStress(seq:Seq[Option[Double]]):NodeStress = elemtype match {
-  		case Plate19Type => NodeStress.forPlateElementCorners(seq.drop(2))
-        case Plate20Type => NodeStress.forPlateElementCorners(seq.drop(2))
+  		case Plate19Type => nodeStressForPlateElementCorner(seq.drop(2))
+        case Plate20Type => nodeStressForPlateElementCorner(seq.drop(2))
         case _ => throw new IllegalStateException("Not implemented")
     }
     
+    def convertFromOutputGaussPointStress(seq:Seq[Option[Double]]):StressAtPoint = elemtype match {
+        case Plate19Type => stressAtPointForPlateElementGaussPoint(seq)
+        case Plate20Type => stressAtPointForPlateElementGaussPoint(seq)
+        case _ => throw new IllegalStateException("Not implemented")
+    }
+    
+    /** Converts output stress sequence to NodeStress */
+    def convertFromOutputForce(seq:Seq[Option[Double]]):NodeForce = elemtype match {
+        case Plate19Type => NodeForce(seq(2),seq(0),seq(1))
+        case Plate20Type => NodeForce(seq(2),seq(0),seq(1))
+        case _ => throw new IllegalStateException("Not implemented")
+    }
+    
+    /** Plate corner stresses: MXX MYY MXY QYZ QZX SIGXX SIGYY TAUXY TAUXZ(Z=0) TAUYZ(Z=0) */
+    def nodeStressForPlateElementCorner(seq:Seq[Option[Double]]):NodeStress = NodeStress(seq(5),seq(6),None,seq(7),seq(8),seq(9),None,seq(0),seq(1),seq(2),seq(3),seq(4))
+    
+    /** Plate gauss points stresses: MXX MYY MXY QYZ QZX SIGXX SIGYY TAUXY TAUXZ(Z=0) TAUYZ(Z=0) SIGV */
+    def stressAtPointForPlateElementGaussPoint(seq:Seq[Option[Double]]):StressAtPoint = StressAtPoint(Vector(seq(0).get,seq(1).get,0),NodeStress(seq(7),seq(8),None,seq(9),seq(10),seq(11),seq(12),seq(2),seq(3),seq(4),seq(5),seq(6)))
+    
+    /** Plate node displacement: dz,rx,ry */
+    def nodeDisplacementForPlate(dz:Double,rx:Double,ry:Double) = NodeDisplacement(None,None,Some(dz),Some(rx),Some(ry),None)
+    def nodeDisplacementForPlate(dz:Option[Double] = None,rx:Option[Double] = None, ry:Option[Double] = None) = NodeDisplacement(None,None,dz,rx,ry,None)
+    def nodeDisplacementForPlate(seq:Seq[Option[Double]]) = NodeDisplacement(None,None,seq(0),seq(1),seq(2),None)
 }
