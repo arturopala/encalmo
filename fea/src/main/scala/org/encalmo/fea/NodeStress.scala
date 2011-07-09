@@ -1,6 +1,6 @@
 package org.encalmo.fea
 
-/** Final element node stress */
+/** Final element node's stress components */
 case class NodeStress(
         /** Normal stress along X axis */
         sigxx:Option[Double] = None,
@@ -58,9 +58,5 @@ object NodeStress {
 	/** Aggregates */
 	def aggregate(seq:Seq[NodeStress]):NodeStress = seq.tail.foldLeft[NodeStress](seq.head)((l,r) => l aggregate r)
     
-    /** Plate corner stresses: MXX MYY MXY QYZ QZX SIGXX SIGYY TAUXY TAUXZ(Z=0) TAUYZ(Z=0) */
-    def forPlateElementCorners(seq:Seq[Option[Double]]):NodeStress = NodeStress(seq(5),seq(6),None,seq(7),seq(8),seq(9),None,seq(0),seq(1),seq(2),seq(3),seq(4))
-    /** Plate gauss points stresses: MXX MYY MXY QYZ QZX SIGXX SIGYY TAUXY TAUXZ(Z=0) TAUYZ(Z=0) SIGV */
-    def forPlateGaussPoints(seq:Seq[Option[Double]]):NodeStress = NodeStress(seq(5),seq(6),None,seq(7),seq(8),seq(9),seq(10),seq(0),seq(1),seq(2),seq(3),seq(4))
     
 }

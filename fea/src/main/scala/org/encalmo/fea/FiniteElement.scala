@@ -11,7 +11,9 @@ trait FiniteElement extends Ordered[FiniteElement] with Numbered {
     var no:Int = -1
     def no_(i:Int) = {if(no<0 && i>0) no = i}
     /** Element's nodes */
-    def nodes:Seq[Node]
+    def nodes:IndexedSeq[Node]
+    /** Element's node numbers */
+    lazy val nodesnumbers:Seq[Int] = nodes.map(_.no)
     /** Compares two finite elements */
     override def compare(elem:FiniteElement) = {
         if(no>=0 && elem.no>=0){

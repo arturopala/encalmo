@@ -1,6 +1,6 @@
 package org.encalmo.fea
 
-/** Final element node's displacement */
+/** Final element node's displacement components */
 case class NodeDisplacement(
         /** Translation along X axis */
         dx:Option[Double] = None,
@@ -23,14 +23,6 @@ case class NodeDisplacement(
     def explainseq = Seq(("dx",dx),("dy",dy),("dz",dz),("rx",rx),("ry",ry),("rz",rz))
     /** Verbose explanation of displacement */
     def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) (s + p._1+"="+DoubleFormat.short(p._2.get)+" ") else s})
-}
-
-/** Node displacement factory */
-object NodeDisplacement {
-    
-    /** Plate node displacement: dz,rx,ry */
-    def forPlate(dz:Double,rx:Double,ry:Double) = NodeDisplacement(None,None,Some(dz),Some(rx),Some(ry),None)
-    def forPlate(dz:Option[Double] = None,rx:Option[Double] = None, ry:Option[Double] = None) = NodeDisplacement(None,None,dz,rx,ry,None)
-    def forPlate(seq:Seq[Option[Double]]) = NodeDisplacement(None,None,seq(0),seq(1),seq(2),None)
-    
+    /** Returns true if this displacement meets argument's displacement conditions */
+    def meets(nd:NodeDisplacement) = nd.seq.zip(seq).forall(p => p._1 match {case None => true; case _ => p._1 == p._2})
 }

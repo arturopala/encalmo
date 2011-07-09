@@ -5,9 +5,9 @@ case class LoadResults[A <: FiniteElement](
         /** Calculated load case */
         loadCase:LoadCase[A],
         /** Results at nodes */
-        nodeResults:Seq[NodeResult] = Seq(),
+        nodeResults:Map[Int,NodeResult] = Map(),
         /** Results in elements */
-        elementResults:Seq[ElementResult[A]] = Seq()
+        elementResults:Map[Int,ElementResult[A]] = Map()
 ) {
     
     lazy val maxDX:NodeResult = findMax(_.displacement.dx)(hasDisplacement)
@@ -41,7 +41,7 @@ case class LoadResults[A <: FiniteElement](
     lazy val minMXY:NodeResult = findMin(_.stress.get.mxy)(hasStress)
        
     private def find(compare:(Double,Double)=>Boolean)(get:(NodeResult)=>Option[Double])(filter:(NodeResult)=>Boolean) = {
-      val nr = nodeResults.filter(filter)
+      val nr = nodeResults.values.filter(filter)
       nr.tail.foldLeft(nr.head)((p,nr) => if(get(p).isDefined && get(nr).isDefined && compare(get(p).get,get(nr).get)) nr else p)
     }
 
