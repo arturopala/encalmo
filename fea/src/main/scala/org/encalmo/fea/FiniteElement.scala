@@ -45,6 +45,8 @@ trait FiniteElementType{
     
     /** Type of element */
     def elemtype:Int
+    /** Name of type*/
+    def name:String
     /** Dimension of the structure (2 or 3) */
     def dimension:Int
     /** Number of degrees of freedom */

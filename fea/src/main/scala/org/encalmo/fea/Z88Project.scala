@@ -6,6 +6,7 @@ import scalax.file.{Path}
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import java.io.InputStreamReader
 
 /**
  * Z88(R) software project (www.z88.de)
@@ -75,7 +76,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
             }))
             // nodal forces
             val fit = Iterator.from(1)
-            nc.forces.map( force => force.seq.foreach (fi => fi match {
+            nc.force.map( force => force.seq.foreach (fi => fi match {
                 case Some(f) => { writeLine (Z88I2, nc.node.no, fit.next, 1, f, nc.node.positionSymbol); bclines.next }
                 case None => fit.next
             }))
@@ -117,40 +118,36 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         import scala.collection.JavaConversions._
         val dir = new File(directory.toURL.getFile)
         // displacements calculation
-        Console.println("Running z88f solver ...")
-        val p1 = Runtime.getRuntime().exec("z88f -c",Array[String](), dir)
-        p1.waitFor
-        if(debug) {
-            val p1log = Resource.fromInputStream(p1.getInputStream).slurpString
-            Console.println(p1log)
-        }
+        execute("z88f -c",dir)
         Console.println("Displacements calculated.")
         // stress calculation in the corners
-        val p2c = Runtime.getRuntime().exec("z88d",Array[String](), dir)
-        p2c.waitFor
-        if(debug) {
-            val p2clog = Resource.fromInputStream(p2c.getInputStream).slurpString
-            Console.println(p2clog)
-        }
+        execute("z88d",dir)
         Console.println("Stresses in the corners calculated.")
         (directory / "z88o3.txt").moveTo(directory / "z88o3_c.txt",true)
         createInputFile_Z88I3(1)
         // stress calculation at gauss points
-        val p2g = Runtime.getRuntime().exec("z88d",Array[String](), dir)
-        p2g.waitFor
-        if(debug) {
-            val p2glog = Resource.fromInputStream(p2g.getInputStream).slurpString
-            Console.println(p2glog)
-        }
+        execute("z88d",dir)
         Console.println("Stresses at the gauss points calculated.")
         // stress calculation
-        val p3 = Runtime.getRuntime().exec("z88e",Array[String](), dir)
-        p3.waitFor
-        if(debug) {
-            val p3log = Resource.fromInputStream(p3.getInputStream).slurpString
-            Console.println(p3log)
-        }
+        execute("z88e",dir)
         Console.println("Nodal forces calculated.")
+    }
+    
+    /** Executes system command */
+    private def execute(command:String,dir:File) = {
+        Console.println("Running "+command+" ...")
+        val p = Runtime.getRuntime().exec(command,Array[String](), dir)
+        var r = new InputStreamReader(p.getInputStream)
+        var ch:Int = 0
+        var sb = new StringBuilder
+        while({ch = r.read; ch} != -1){
+           sb.append(ch.asInstanceOf[Char])
+        }
+        val o = p.waitFor
+        if(o!=0){
+            Console.println(sb.toString)
+            throw new IllegalStateException("Error executing system command: "+command)
+        }
     }
     
     /** Reads and converts calculation's results */
@@ -330,8 +327,8 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     
     /** Converts output stress sequence to NodeStress */
     def convertFromOutputForce(seq:Seq[Option[Double]]):NodeForce = elemtype match {
-        case Plate19Type => NodeForce(seq(2),seq(0),seq(1))
-        case Plate20Type => NodeForce(seq(2),seq(0),seq(1))
+        case Plate19Type => NodeForce(seq(1),seq(2),seq(0))
+        case Plate20Type => NodeForce(seq(1),seq(2),seq(0))
         case _ => throw new IllegalStateException("Not implemented")
     }
     

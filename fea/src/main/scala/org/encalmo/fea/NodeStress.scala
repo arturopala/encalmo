@@ -24,15 +24,15 @@ case class NodeStress(
         mxy:Option[Double] = None,
         /** Shear force QYZ */
         qyz:Option[Double] = None,
-        /** Shear force QZX */
-        qzx:Option[Double] = None
+        /** Shear force QXZ */
+        qxz:Option[Double] = None
 ){
     /** Force component's sequence */
-    lazy val seq = Seq(sigxx,sigyy,sigzz,tauxy,tauxz,tauyz,sigv,mxx,myy,qyz,qzx)
+    lazy val seq = Seq(sigxx,sigyy,sigzz,tauxy,tauxz,tauyz,sigv,mxx,myy,mxy,qyz,qxz)
     /** Returns true if any of components is defined */
     def isDefined:Boolean = seq.exists(_.isDefined)
     /** Force component's sequence paired with labels*/
-    def explainseq = Seq("sigxx","sigyy","sigzz","tauxy","tauxz","tauyz","sigv","mxx","myy","qyz","qzx") zip seq
+    def explainseq = Seq("sigxx","sigyy","sigzz","tauxy","tauxz","tauyz","sigv","mxx","myy","mxy","qyz","qxz") zip seq
     /** Verbose explanation of force */
     def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) (s + p._1+"="+DoubleFormat.short(p._2.get)+" ") else s})
     /** Aggregates two NodeStress into one */
@@ -53,7 +53,7 @@ case class NodeStress(
 /** Node stress factory */
 object NodeStress {
   
-	def apply(s:Seq[Option[Double]]):NodeStress = NodeStress(s(0),s(1),s(2),s(3),s(4),s(5),s(6),s(7),s(8),s(9),s(10))
+	def apply(s:Seq[Option[Double]]):NodeStress = NodeStress(s(0),s(1),s(2),s(3),s(4),s(5),s(6),s(7),s(8),s(9),s(10),s(11))
   
 	/** Aggregates */
 	def aggregate(seq:Seq[NodeStress]):NodeStress = seq.tail.foldLeft[NodeStress](seq.head)((l,r) => l aggregate r)

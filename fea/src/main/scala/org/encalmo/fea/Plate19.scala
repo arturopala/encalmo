@@ -31,6 +31,8 @@ object Plate19Type extends FiniteElementType {
 
     /** Type of element */
     override def elemtype:Int = 19
+    /** Name of type*/
+    def name:String = "PLATE NO.19 WITH 16 NODES"
     /** Dimension of the structure (2 or 3) */
     override def dimension:Int = 2
     /** Number of element's nodes */

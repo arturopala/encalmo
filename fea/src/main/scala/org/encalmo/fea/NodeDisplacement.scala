@@ -24,5 +24,10 @@ case class NodeDisplacement(
     /** Verbose explanation of displacement */
     def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) (s + p._1+"="+DoubleFormat.short(p._2.get)+" ") else s})
     /** Returns true if this displacement meets argument's displacement conditions */
-    def meets(nd:NodeDisplacement) = nd.seq.zip(seq).forall(p => p._1 match {case None => true; case _ => p._1 == p._2})
+    def meets(nd:NodeDisplacement) = nd.seq.zip(seq).forall(_ match {
+        case (None,None) => true
+        case (None,Some(d)) => true
+        case (Some(d),None) => true
+        case (Some(d1),Some(d2)) => Vector.equals(d1,d2)
+    })
 }

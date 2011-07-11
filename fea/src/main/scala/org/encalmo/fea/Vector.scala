@@ -18,8 +18,20 @@ case class Vector(x:Double,y:Double,z:Double){
     /** Verbose explanation of vector */
     def explain:String = explainseq.foldLeft[String]("")((s,p) => s + p._1+"="+DoubleFormat.short(p._2)+" ")
     /** Test if equals with given coordinates */
-    def equals(ex:Double = 0, ey:Double = 0, ez:Double = 0):Boolean = (x==ex && y==ey && z==ez)
+    def equals(v:Vector):Boolean = Vector.equals(x,v.x) && Vector.equals(y,v.y) && Vector.equals(z,v.z)
+    /** Test if equals with given coordinates */
+    def equals(ex:Double = 0, ey:Double = 0, ez:Double = 0):Boolean = Vector.equals(x,ex) && Vector.equals(y,ey) && Vector.equals(z,ez)
 
+}
+
+object Vector {
+    
+    /** Matching accuracy */
+    val ACCURACY = 0.000001d
+    
+    /** Test if two doubles equals with ACCURACY */
+    def equals(d1:Double, d2:Double):Boolean = Math.abs(d1-d2)<ACCURACY
+    
 }
 
 /**
