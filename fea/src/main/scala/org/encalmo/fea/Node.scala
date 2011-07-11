@@ -66,10 +66,14 @@ case class Node(
     def inCorner:Boolean = position==3
     /** True if node is on the surface */
     def onEdge:Boolean = position==2
+    /** True if node is on the surface */
+    def onEdgeOrInCorner:Boolean = position==2 || position==3
     /** True if node is on the edge */
     def onSurface:Boolean = position==1
     /** True if node is inside the solid */
     def isInside:Boolean = position==0
+    /** True if node is on the edge */
+    def onSurfaceOrInside:Boolean = position==1 || position==0
     /** Verbal position description */
     def positionDescription:String = position match {
         case 3 => "corner"
@@ -89,7 +93,7 @@ case class Node(
     /** Test if node is at given position */
     def isAt(x:Double = 0, y:Double = 0, z:Double = 0) = coordinates.equals(x,y,z)
     /** Test if node is at given position */
-    def isAt(v:Vector) = coordinates == v
+    def isAt(v:Vector) = coordinates.equals(v)
     
 }
 
