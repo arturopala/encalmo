@@ -24,9 +24,11 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         createInputFile_Z88I1
         createInputFile_Z88I2
         createInputFile_Z88I3(0)
-        val is = classOf[Z88Project[A]].getResourceAsStream("/z88.dyn")
-        Resource.fromInputStream(is).copyData(directory / "z88.dyn")
-    }
+        Seq("z88.dyn","z88o.ogl").foreach { f =>
+	        val is = classOf[Z88Project[A]].getResourceAsStream("/"+f)
+	        Resource.fromInputStream(is).copyData(directory / f)
+        }
+}
     
     /** In Z88I1.TXT the geometry and material data of the structure are deposited */
     def createInputFile_Z88I1:Unit = {

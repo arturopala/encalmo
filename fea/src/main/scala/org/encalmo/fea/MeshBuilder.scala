@@ -27,21 +27,23 @@ object MeshBuilder {
     }
     
     def buildRectanglePlate[A <: FiniteElement](s:Int, plate:(Seq[Seq[Node]],Int,Int) => A)(w:Double,h:Double,mx:Int,my:Int):Mesh[A] = {
-        val cx:Int = mx*s; val cy:Int = my*s
-        val base:Node = Node(0d,0d,0d,3)
-        val grid:Seq[Seq[Node]] = buildNodeGrid2D(base,(w/cx,0d,0d),(0d,h/cy,0d),cx,cy)
-        val r = ((0 to (cx-s) by s) flatMap (x => (0 to (cy-s) by s) map (y => (x,y))))
-        val elements = r.map(p => plate(grid,p._1,p._2))
+    	val cw:Int = mx*s; val ch:Int = my*s
+    	val grid  = Grid.fromDiagonal(Vector(w/cw,h/ch,0d))
+        val nodeGrid:Seq[Seq[Node]] = buildNodeGrid2D(grid,cw,ch,Node(grid,0,0,0,3),1)
+        val r = ((0 to (cw-s) by s) flatMap (x => (0 to (ch-s) by s) map (y => (x,y))))
+        val elements = r.map(p => plate(nodeGrid,p._1,p._2))
         Mesh[A](elements)
     }
     
-    def buildNodeGrid2D(base:Node,v1:Vector,v2:Vector,c1:Int,c2:Int):IndexedSeq[Seq[Node]] = {
-        buildNodeGrid1D(base,v1,c1).map[IndexedSeq[Node],IndexedSeq[IndexedSeq[Node]]](buildNodeGrid1D(_,v2,c2))
+    def buildNodeGrid2D(grid:Grid,width:Int,length:Int,base:Node,d:Int):IndexedSeq[Seq[Node]] = {
+        buildNodeGrid1D(grid,width,base,d).map[IndexedSeq[Node],IndexedSeq[IndexedSeq[Node]]](n => buildNodeGrid1D(grid,length,n,d+1))
     }
     
-    def buildNodeGrid1D(base:Node,v:Vector,size:Int):IndexedSeq[Node] = {
-        (1 to size).map[Node,IndexedSeq[Node]](x => Node(v,(base.position-1)+oneIfLast(x,size))).scanLeft[Node,IndexedSeq[Node]](base)((l,r) => r join l)
+    def buildNodeGrid1D(grid:Grid,length:Int,base:Node,d:Int):IndexedSeq[Node] = {
+        (1 to length).map[Node,IndexedSeq[Node]](l => Node(grid,base.gx+l*ifDirection(d,1),base.gy+l*ifDirection(d,2),base.gz+l*ifDirection(d,3),(base.position-1)+oneIfLast(l,length))).+:(base)
     }
+    
+    def ifDirection(d1:Int,d2:Int):Int = if(d1==d2) 1 else 0
     
     def oneIfLast(x:Int,max:Int):Int = x match {case i if i==max => 1; case _ => 0}
     

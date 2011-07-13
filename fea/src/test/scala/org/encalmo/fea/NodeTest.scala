@@ -18,10 +18,11 @@ class NodeTest {
     def assertAscendingFalse(n:Node*) = assertAscending(assertFalse _)_
     
     @Test def test1:Unit = {
-        val n1 = Node(0d,0d,0d)
-        val n2 = Node(1d,1d,1d)
-        val n3 = Node(1d,1d,5d)
-        val n4 = Node(5d,1d,1d)
+        val grid  = Grid.fromDiagonal(Vector(1d,1d,1d))
+        val n1 = Node(grid,0,0,0)
+        val n2 = Node(grid,1,1,1)
+        val n3 = Node(grid,1,1,5)
+        val n4 = Node(grid,5,1,1)
         assertAscendingTrue(n1,n2,n3,n4)
         assertAscendingFalse(n4,n1,n2,n3)
         // test after renumbering
@@ -31,10 +32,11 @@ class NodeTest {
     }
     
     @Test def test2:Unit = {
-        val n1 = Node(0d,0d,0d)
-        val n2 = Node(1d,1d,1d)
-        val n3 = Node(1d,1d,5d)
-        val n4 = Node(5d,1d,1d)
+        val grid  = Grid.fromDiagonal(Vector(1d,1d,1d))
+        val n1 = Node(grid,0,0,0)
+        val n2 = Node(grid,1,1,1)
+        val n3 = Node(grid,1,1,5)
+        val n4 = Node(grid,5,1,1)
         assertAscendingTrue(n1,n2,n3,n4)
         assertAscendingFalse(n4,n1,n2,n3)
         // test after renumbering

@@ -7,35 +7,32 @@ import scala.annotation.tailrec
  */
 case class Node(
         
-        /** Offset from base vector */
-        d:Vector,
-        /** Optional base node */
-        base:Option[Node] = None,
+		/** Reference grid */
+        grid:Grid,
+        /** Location on grid's X axis */
+        gx:Int = 0,
+        /** Location on grid's Y axis */
+        gy:Int = 0,
+        /** Location on grid's Z axis */
+        gz:Int = 0,
         /** Node position: 0-inside, 1-surface, 2-edge, 3-corner  **/
         position:Int = 0
         
 ) extends Ordered[Node] with Numbered {
     
-    /** Simple constructor */
-    def this(x:Double,y:Double,z:Double) = this(Vector(x,y,z))
-    /** Simple constructor with position */
-    def this(x:Double,y:Double,z:Double,p:Int) = this(Vector(x,y,z),None,p)
-    
     /** Node's number */
     var no:Int = -1
     def no_(i:Int) = {if(no<0 && i>0) no = i}
     /** Computed node's coordinates */
-    lazy val coordinates:Vector = if(!base.isDefined) {d} else {d+base.get.coordinates}
+    lazy val coordinates:Vector = grid(gx,gy,gz)
+    /** Computed node's coordinates */
+    lazy val location:Vector = Vector(gx,gy,gz)
     /** X coordinate */
     def x:Double = coordinates.x
     /** Y coordinate */
     def y:Double = coordinates.y
     /** Z coordinate */
     def z:Double = coordinates.z
-    /** Coordinates shorthand */
-    def c = coordinates
-    /** Set that node as base */
-    def join(n:Node) = copy(base = Option(n))
     /** Print out node's coordinates */
     def printout = {
         val c = coordinates
@@ -89,7 +86,7 @@ case class Node(
         case 0 => "I"
     }
     /** String representation */
-    override def toString:String = "Node #"+no+" "+coordinates+" "+positionDescription
+    override def toString:String = "Node #"+no+" ["+gx+","+gy+","+gz+"] "+coordinates+" "+positionDescription
     /** Test if node is at given position */
     def isAt(x:Double = 0, y:Double = 0, z:Double = 0) = coordinates.equals(x,y,z)
     /** Test if node is at given position */
@@ -97,12 +94,7 @@ case class Node(
     
 }
 
-/** Node factory */
+/** Node's factory */
 object Node {
-    
-    def apply(x:Double,y:Double,z:Double):Node = new Node(Vector(x,y,z))
-    def apply(x:Double,y:Double,z:Double,p:Int):Node = new Node(Vector(x,y,z),None,p)
-    def apply(v:Vector):Node = new Node(v)
-    def apply(v:Vector,p:Int):Node  = new Node(v,None,p)
     
 }
