@@ -20,17 +20,37 @@ class Z88PlateUnitTest {
     val concrete = Material(E,v)
     
     @Test def testGrid1D = {
-       val base = Node(0d,0d,0d,3)
-	   val s:Seq[Node] = MeshBuilder.buildNodeGrid1D(base,(1d,0d,0d),10)
-	   0 until 10 foreach (i => {
-	         assertEquals(s(i+1).base.get,s(i))
+       val width:Int = 10
+       val diagonal = Vector(1d,1d,1d)
+       val grid  = Grid.fromDiagonal(diagonal)
+       val base = Node(grid,0,0,0,3)
+	   val s:Seq[Node] = MeshBuilder.buildNodeGrid1D(grid,width, base, 1)
+	   0 to width foreach (i => {
 	         i match {
-	             case 0 => assertEquals(3,s(i).position)
-	             case 10 => assertEquals(3,s(i).position)
+	             case x if x==0 || x==width => assertEquals(3,s(i).position)
 	             case _ => assertEquals(2,s(i).position)
 	         }
+	         assertTrue(s(i).coordinates == s(i).location*diagonal)
 	   })
     }
+    
+    @Test def testGrid2D = {
+       val width = 10
+       val length = 15
+       val diagonal = Vector(1d,1d,1d)
+       val grid  = Grid.fromDiagonal(diagonal)
+       val base = Node(grid,0,0,0,3)
+	   val s:IndexedSeq[Seq[org.encalmo.fea.Node]] = MeshBuilder.buildNodeGrid2D(grid,width,length, base, 1)
+	   for (i <- 0 to width; j <- 0 to length) {
+	     (i,j) match {
+             case (x,y) if (x==0 || x==width) && (y==0 || y==length) => assertEquals(i+","+j,3,s(i)(j).position)
+             case (x,y) if (x==0 || x==width) && y>0 && y<length => assertEquals(i+","+j,2,s(i)(j).position)
+             case (x,y) if (y==0 || y==length) && x>0 && x<width => assertEquals(i+","+j,2,s(i)(j).position)
+             case _ => assertEquals(i+","+j,1,s(i)(j).position)
+         }
+	     assertTrue(s(i)(j).coordinates == s(i)(j).location*diagonal)
+	  }
+}
     
     @Test def testLoadZ88O2:Unit = {
        val mesh:Mesh[Plate19] = MeshBuilder.buildRectanglePlate19(10d,10d,10,10)
@@ -86,24 +106,47 @@ class Z88PlateUnitTest {
 	    p.runCalculations()
 	    val loadResult:LoadResults[Plate20] = p.readOutput
 	    // assert boundary conditions
-	    loadResult.nodeResults.values.foreach(nr => {
-	        nr.conditions match {
-	            case Some(nc) => {
-	                assertEquals(nr.explain,nc.displacement.get,nr.displacement)
-	            }
-	            case _ =>
-	        }
-	    })
-	    val nr1:NodeResult = loadResult.maxDZ
-	    val D = ((concrete.E*t*t*t)/(12*(1-v*v)))
-	    Console.println("D="+D)
-	    Console.println("a/b="+(h/w))
-	    val qb4D = ((q*w*w*w*w)/D)
-	    Console.println("qb4/D="+qb4D)
-	    Console.println("k="+(nr1.displacement.dz.get/qb4D))
-	    Console.println("Max D1 node: "+nr1.explain)
-	    val nr2:NodeResult = loadResult.minDZ
-	    Console.println("Min D1 node: "+nr2.explain)
+        loadResult.nodeResults.values.foreach(nr => {
+            nr.conditions match {
+                case Some(nc) => {
+                    if(!(nr.displacement.meets(nc.displacement.get))){
+                        Console.println("Result of node #"+nr.node.no+" meets no required conditions: "+nr.explain)
+                    }
+                }
+                case _ =>
+            }
+        })
+        Console.println(loadResult.report)
+        val nr1:NodeResult = loadResult.maxDZ
+        val D = ((concrete.E*t*t*t)/(12*(1-v*v)))
+        Console.println("D="+D)
+        Console.println("a/b="+(h/w))
+        val qb4D = ((q*w*w*w*w)/D)
+        val qb2 = q*w*w
+        val qa2 = q*h*h
+        Console.println("qb4/D="+qb4D)
+        Console.println("qb2="+qb2)
+        val kdz = nr1.displacement.dz.get/qb4D
+        Console.println("kdz="+kdz)
+        /*assertEquals(akdz,kdz,Vector.ACCURACY)
+        val nr2:NodeResult = loadResult.maxMXXspan
+        if(nr2!=null){
+            val kmxx1 = nr2.stress.get.mxx.get/qb2
+            Console.println("kmxx(H1)="+kmxx1)
+            assertEquals(akmxx1,kmxx1,Vector.ACCURACY)
+        }
+        val nr3:NodeResult = loadResult.minMXXsupp
+        if(nr3!=null){
+            val kmxx2 = nr3.stress.get.mxx.get/qa2
+            Console.println("kmxx(C)="+kmxx2)
+            assertEquals(akmxx2,kmxx2,Vector.ACCURACY)
+        }
+        val nr5:NodeResult = loadResult.minMYYsupp
+        if(nr5!=null){
+            val kmyy1 = nr5.stress.get.myy.get/qa2
+            Console.println("kmyy(H2)="+kmyy1)
+            assertEquals(akmyy1,kmyy1,Vector.ACCURACY)
+        }*/
     }
     
     @Test def testPlate19a:Unit = {

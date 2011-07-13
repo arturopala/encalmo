@@ -11,7 +11,7 @@ case class Plate19(
     /** Finite element type atrtibutes */
     override val attr = Plate19Type
     /** Center of gravity */
-    override lazy val center:Vector = nodes(0).c middle nodes(15).c
+    override lazy val center:Vector = nodes(0).coordinates middle nodes(15).coordinates
     
     def printout = {
         nodes.foreach(n => {n.printout; Console.println})
