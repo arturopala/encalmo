@@ -5,7 +5,9 @@ import java.io.File
 import scalax.io.Resource
 import scalax.file.Path
 
-/** JOGL initializer */
+/** 
+ * JOGL native libraries initializer based on http://devblog.iscpif.fr/?p=76
+ */
 object JOGL {
    
    val libs = Seq("jogl_cg", "jogl_awt", "jogl", "gluegen-rt")
@@ -100,7 +102,10 @@ object JOGL {
 	        //Thread.sleep(1000)
         }
         catch {
-            case e => e.printStackTrace
+            case e => {
+                e.printStackTrace
+                throw e
+            }
         }
 	}
 
