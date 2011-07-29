@@ -105,7 +105,8 @@ object JOGL {
 	                // Accessibility technologies load JAWT themselves; safe to continue
 	                // as long as JAWT is loaded by any loader
 	                if (e.getMessage().indexOf("already loaded") == -1) {
-	                    Console.println("Impossible to load JAWT.")
+	                    Console.println("Impossible to load JAWT. "+e.getClass.getName+": "+e.getMessage)
+	                    throw e
 	                }
 	            }
 	        }
@@ -130,7 +131,8 @@ object JOGL {
             case ule:UnsatisfiedLinkError => {
 	            // should be safe to continue as long as the native is loaded by any loader
 	            if (ule.getMessage().indexOf("already loaded") == -1) {
-	                Console.println("Unable to load " + nativeLibName + ".");
+	                Console.println("Unable to load " + nativeLibName + ". "+ule.getClass.getName+": "+ule.getMessage);
+	                throw ule
 	            }
 	        }
         }

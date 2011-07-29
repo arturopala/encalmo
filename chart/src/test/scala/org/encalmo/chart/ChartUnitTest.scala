@@ -38,6 +38,7 @@ import scalax.file.Path
 /** Tests chart generation with jyz3d */
 class ChartUnitTest {
     
+    // JOGL initialization
     JOGL
     
     @Test def test1:Unit = {
@@ -69,7 +70,7 @@ class ChartUnitTest {
 		};
 		
 		// Create a chart 
-		val chart = new Chart(Quality.Advanced,"offscreen,800,800")
+		val chart = new Chart(Quality.Advanced,"offscreen,1200,1200")
 		chart.getView().setAxeBoxDisplayed(true);
 		chart.getView().setCameraMode(CameraMode.ORTHOGONAL);
 		chart.getView().setBoundMode(ViewBoundMode.AUTO_FIT);
