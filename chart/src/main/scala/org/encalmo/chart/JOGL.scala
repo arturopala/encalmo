@@ -69,14 +69,26 @@ object JOGL {
 	        if (info.mayNeedDRIHack) {
 	            // Run the DRI hack
 	            driHackClass = Class.forName("com.sun.opengl.impl.x11.DRIHack");
-	            driHackClass.getMethod("begin", null).invoke(null, null);
-	
+	            try{
+    	            val beginMethod = driHackClass.getMethod("begin")
+    	            if(beginMethod!=null){
+    	                beginMethod.invoke(null)
+    	            }
+	            }
+	            catch { case _ => }
+    	
 	        }
 	        // Load core JOGL native library
 	        loadLibrary(dir, "jogl", info);
 	        if (info.mayNeedDRIHack) {
 	            // End DRI hack
-	            driHackClass.getMethod("end", null).invoke(null, null);
+	            try{
+    	            val endMethod = driHackClass.getMethod("end")
+    	            if(endMethod!=null){
+    	                endMethod.invoke(null)
+    	            }
+    	        }
+	            catch { case _ => }
 	        }
 	        if (!info.isMacOS) {
 	            // borrowed from NativeLibLoader
