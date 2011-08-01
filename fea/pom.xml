@@ -14,6 +14,11 @@
 	    <groupId>org.scala-lang</groupId>
 	    <artifactId>scala-library</artifactId>
     </dependency>
+    <dependency>
+    	<artifactId>encalmo</artifactId>
+    	<groupId>org.encalmo.chart</groupId>
+    	<version>${project.version}</version>
+    </dependency>
   </dependencies>
   
   <build>
