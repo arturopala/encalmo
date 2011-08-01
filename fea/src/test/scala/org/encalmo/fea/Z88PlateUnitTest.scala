@@ -149,6 +149,7 @@ class Z88PlateUnitTest {
         }*/
     }
     
+    /** 3-side rigid mounting, constant surface load */
     @Test def testPlate19a:Unit = {
         val w:Double = 10
         val h:Double = 10
@@ -203,6 +204,7 @@ class Z88PlateUnitTest {
         testPlate19(w,h,r,materialFx _,thicknessFx _,surfaceLoadFx _,nodeForceFx _,nodeDisplacementFx _, 0.012019, 0.1089, -0.01067, -0.01065)
     }
     
+    /** Common Plate19 test's code */
     private def testPlate19( 
             w:Double, 
             h:Double, 

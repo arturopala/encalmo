@@ -11,13 +11,13 @@
   </properties>
   
   <modules>
-    <module>fop</module>
-    <module>chart</module>
     <module>expression</module>
     <module>calculation</module>
     <module>document</module>
+    <module>fop</module>
     <module>printer</module>
     <module>examples</module>
+    <module>chart</module>
     <module>fea</module>
   </modules>
   
