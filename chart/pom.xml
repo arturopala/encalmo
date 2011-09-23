@@ -5,9 +5,7 @@
     <groupId>org.encalmo</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.encalmo</groupId>
-  <artifactId>chart</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <artifactId>encalmo-chart</artifactId>
   <name>chart</name>
   
   <dependencies>
