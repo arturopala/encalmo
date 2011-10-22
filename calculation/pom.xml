@@ -5,11 +5,8 @@
     <artifactId>encalmo</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.encalmo</groupId>
   <artifactId>encalmo-calculation</artifactId>
   <name>calculation</name>
-  <version>1.0.0-SNAPSHOT</version>
-  
   <dependencies>
     <dependency>
 	    <groupId>org.scala-lang</groupId>
