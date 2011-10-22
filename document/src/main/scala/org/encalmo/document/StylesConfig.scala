@@ -70,6 +70,32 @@ case class StylesConfig(
         }
     }
 	
+	def all:Seq[Option[Style]] = Seq(
+	        expressions.expression,
+	        expressions.block,
+	        expressions.symbol,
+	        expressions.symbolDescription,
+	        expressions.unresolved,
+	        expressions.substituted,
+	        expressions.partiallyEvaluated,
+	        expressions.evaluated,
+	        expressions.numbers,
+	        numsections.numsection,
+	        numsections.level0,
+	        numsections.level1,
+	        numsections.level2,
+	        numsections.level3,
+	        numsections.level4,
+	        numsections.level5,
+	        numsections.level6,
+	        numsections.level7,
+	        numsections.level8,
+	        numsections.level9,
+	        assertions.iffalse,
+	        assertions.iftrue,
+	        assertions.unknown
+        )
+	
 }
 
 /**

@@ -50,7 +50,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 	}
 	
 	override def close = {
-		end("root")
+		end(ROOT)
 		super.close
 	}
 	

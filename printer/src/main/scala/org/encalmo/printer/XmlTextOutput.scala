@@ -1,4 +1,5 @@
 package org.encalmo.printer
+import org.encalmo.document.Style
 
 /**
  * XML text output
@@ -23,7 +24,7 @@ extends TextOutput(locale,buffer) {
 	 * @param name tag name
 	 */
 	private def appendTagName(name:String) = {
-		if(!namespace.isEmpty){
+		if(namespace!=null && !namespace.isEmpty){
 			buffer.append(namespace)
 			buffer.append(":")
 		}
@@ -49,6 +50,47 @@ extends TextOutput(locale,buffer) {
 	 */
 	def startb(name:String):Unit = {
 		start(name)
+		body
+	}
+	
+	/**
+	 * Appends element's start tag to the buffer
+	 */
+	def start(name:String, classIds:Option[String]*):Unit = {
+		start(name)
+		if(classIds.exists(_.isDefined)){
+		    startAttr("class")
+			classIds.foreach( classId =>
+				if(classId.isDefined){
+				    buffer.append(classId.get)
+				    buffer.append(" ")
+				}
+			)
+			endAttr()
+		}
+	}
+	
+	/**
+	 * Appends element's start tag to the buffer
+	 */
+	def start(name:String, classId:String):Unit = {
+		start(name)
+		attr("class",classId)
+	}
+	
+	/**
+	 * Appends element's start tag to the buffer
+	 */
+	def startb(name:String, classId:Option[String]*):Unit = {
+		start(name,classId:_*)
+		body
+	}
+	
+	/**
+	 * Appends element's start tag to the buffer
+	 */
+	def startb(name:String, classId:String):Unit = {
+		start(name,classId)
 		body
 	}
 	
@@ -93,19 +135,33 @@ extends TextOutput(locale,buffer) {
 	}
 	
 	/**
-	 * Appends attribute to the buffer
+	 * Appends attribute's start to the buffer
 	 */
-	def attr(name:String,value:Any*):Unit = {
+	def startAttr(name:String):Unit = {
 		buffer.append(" ")
 		buffer.append(name)
 		buffer.append("=\"")
-		value.foreach(buffer.append(_))
+	}
+	
+	/**
+	 * Appends attribute's end to the buffer
+	 */
+	def endAttr():Unit = {
 		buffer.append("\"")
 		attrCounter = attrCounter + 1
 		if(attrCounter>4){
 			attrCounter = 0
 			indent.append(buffer)
 		}
+	}
+	
+	/**
+	 * Appends attribute to the buffer
+	 */
+	def attr(name:String,value:Any*):Unit = {
+		startAttr(name)
+		value.foreach(buffer.append(_))
+		endAttr()
 	}
 	
 	/**
@@ -183,6 +239,20 @@ extends TextOutput(locale,buffer) {
 		buffer.append("=\"")
 		buffer.append(uri)
 		buffer.append("\"")
+	}
+	
+	/**
+	 * Appends style attribute to the buffer
+	 */
+	def style(attrs:(String,Any)*):Unit = {
+		startAttr("style")
+		attrs.foreach(attr => {
+		    buffer.append(attr._1)
+		    buffer.append(":")
+		    buffer.append(attr._2)
+		    buffer.append(";")
+	    })
+		endAttr()
 	}
 	
 }

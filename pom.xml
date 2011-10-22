@@ -93,4 +93,11 @@
 	  </dependencies>
 	</dependencyManagement>
 	
+	<scm>
+		<url>https://opala.artur@code.google.com/p/encalmo/ </url>
+		<developerConnection>artur.opala</developerConnection>
+	</scm>
+	<description>Library designed to facilitate the modeling and documenting of engineering calculations using symbolic expressions. </description>
+	<url>http://code.google.com/p/encalmo/</url>
+	<inceptionYear>2009</inceptionYear>
 </project>

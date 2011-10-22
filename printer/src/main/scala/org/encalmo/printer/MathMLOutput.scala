@@ -15,7 +15,10 @@ class MathMLOutput(
 	locale:java.util.Locale = java.util.Locale.getDefault, 
 	namespace:String = "ml", 
 	buffer:StringBuilder = new StringBuilder,
-	indent:Indent = new Indent(2)
+	indent:Indent = new Indent(2),
+	declare:Boolean = true,
+	displayType:Option[String] = None,
+	printStyles:Boolean = true
 ) 
 extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
@@ -32,7 +35,12 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	override def open = {
 		start(MATH)
-		declareNamespace("http://www.w3.org/1998/Math/MathML")
+		if(declare){
+		    declareNamespace("http://www.w3.org/1998/Math/MathML")
+		}
+		if(displayType.isDefined){
+		    attr("display",displayType.get)
+		}
 		//attr("displaystyle","true")
 		//attr("scriptlevel","0")
 		//attr("scriptsizemultiplier","0.5")
@@ -47,7 +55,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			append(ENTITY_THICK_SPACE)
 			end(MTEXT)
 		}
-		if(mathStyle!=null){
+		if(printStyles && mathStyle!=null){
 			start(MSTYLE)
 			appendStyleAttributes(mathStyle)
 			body
@@ -55,7 +63,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	}
 	
 	override def close = {
-		if(mathStyle!=null){
+		if(printStyles && mathStyle!=null){
 			end(MSTYLE)
 		}
 		if(suffix!=null & suffix!=""){
@@ -243,7 +251,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	}
 	
 	def symbol(s:Symbol,script:Boolean=false,printArgs:Boolean=true):Unit = {
-	    if(!script){
+	    if(printStyles && !script){
     	    start(MSTYLE)
     	    attr("mathvariant","italic")
     	    body
@@ -316,23 +324,30 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		    end(MROW)
 		}
 		//under-over script end
-		if(!script) end(MSTYLE)
+		if(printStyles && !script) end(MSTYLE)
 	}
 	
 	def unit(bu:BaseUnitOfValue) = {
-		start(MSUP)
-		attr("mathsize","85%")
-		body
-		mtext(ENTITY_THIN_SPACE,bu.name)
-		if(bu.dimension!=1) mtext(bu.dimension.toString)
-		end(MSUP)
+	    bu.dimension match {
+	        case 1 => mtext(ENTITY_THIN_SPACE,bu.name)
+	        case _ => {
+	            start(MSUP)
+				attr("mathsize","85%")
+				body
+				mtext(ENTITY_THIN_SPACE,bu.name)
+				mtext(bu.dimension.toString)
+				end(MSUP)
+	        }
+	    }
 	}
 	
 	def appendStyleAttributes(style:Style) = {
-		attr("mathcolor",style.hexColor)
-		attr("mathbackground",style.hexBackground)
-		attr("mathsize",style.font.size)
-		attr("mathvariant",resolveFontVariant(style.font))
+	    if(printStyles){
+			attr("mathcolor",style.hexColor)
+			attr("mathbackground",style.hexBackground)
+			attr("mathsize",style.font.size)
+			attr("mathvariant",resolveFontVariant(style.font))
+	    }
 	}
 	
 	private def resolveStyle = if(numberStyle!=null) numberStyle else mathStyle

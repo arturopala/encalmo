@@ -5,7 +5,7 @@
     <artifactId>encalmo</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <name>encalmo-structures</name>
+  <name>structures</name>
   <description>Encalmo for Eurocode-based structure's calculations</description>
   
   <dependencies>
@@ -45,5 +45,5 @@
      </plugins>
   </build>
   
-  <artifactId>structures</artifactId>
+  <artifactId>encalmo-structures</artifactId>
 </project>
