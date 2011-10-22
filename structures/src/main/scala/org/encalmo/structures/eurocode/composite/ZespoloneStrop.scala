@@ -1,4 +1,4 @@
-package org.encalmo.structures.eurocode.steel
+package org.encalmo.structures.eurocode.composite
 
 import org.junit.Test
 import org.encalmo.expression._
@@ -9,14 +9,15 @@ import org.encalmo.printer.document._
 import org.encalmo.fop.FOPHelper
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
-import org.encalmo.structures.eurocode.composite.BeamOfCompositeSlab
-import org.encalmo.structures.eurocode.composite.CompositeSlabWithProfiledSheeting
 import org.encalmo.structures.eurocode.concrete.ReinforcingSteel
 import org.encalmo.structures.eurocode.concrete.Concrete
 import org.encalmo.structures.eurocode.concrete.ConcreteSymbols
 import org.encalmo.structures.eurocode.actions.ActionsSymbols
-import org.encalmo.structures.eurocode.composite.CompositeSlabWithProfiledSheetingSymbols
-import org.encalmo.structures.eurocode.composite.BeamOfCompositeSlabSymbols
+import org.encalmo.structures.eurocode.steel.SteelSymbols
+import org.encalmo.structures.eurocode.steel.IPESection
+import org.encalmo.structures.eurocode.steel.HeadedStud
+import org.encalmo.structures.eurocode.steel.Steel
+import org.encalmo.structures.eurocode.steel.FLORSTROP
 
 class ZespoloneStrop {
     
@@ -142,6 +143,16 @@ class ZespoloneStrop {
 			Section(style1.useAlign("right"),"Opracował: Artur Opala")
         )
     )
+    
+    @Test def printHtml:Unit = {
+        val layout = Predefined.layout
+        val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"))
+        output.open
+        HtmlTextDocumentPrinter.print(doc1,output)
+        output.close
+        output.printConsole
+        output.saveToFile(new java.io.File("target/test-results/kz-strop.html"))
+    }
     
     @Test def printPdf:Unit = {
         val layout = Predefined.layout

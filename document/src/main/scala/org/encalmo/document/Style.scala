@@ -14,6 +14,8 @@ case class Style(
 	color:Color = Color.BLACK,
 	background:Color = Color.WHITE
 ){
+    
+    val classId:Option[String] = StyleIdGenerator()
 	
 	val hexColor:String = {
 		"#"+Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {
