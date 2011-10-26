@@ -11,11 +11,11 @@ object Predefined {
 	
 	val layout = Layout().useLeftMargin(35).useRightMargin(15).useBottomMargin(10)
     
-    val style1 = DefaultStyle.fontFamily("Stix").fontSize(12).useSpaceBefore(1).useSpaceAfter(1)
+    val style1 = DefaultStyle.fontFamily("sans-serif").fontSize(12).useSpaceBefore(1).useSpaceAfter(1)
     val style2 = style1.fontFamily("Stix").fontSize(10)
     val BOLD = style1.fontBold
     val ITALIC = style1.fontItalic
-    val BLUE = new java.awt.Color(0,0,207)
+    val BLUE = new java.awt.Color(0,0,255)
 	val VIOLET = new java.awt.Color(139,0,207)
 	val YELLOW = new java.awt.Color(255,255,175)
     
