@@ -28,7 +28,14 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		attr("content","text/html; charset=utf-8")
 		end
 		end(HEADER)
-		startb(BODY)
+		start(BODY)
+		style(
+	        ("margin-left",layout.leftMargin+"mm"),
+	        ("margin-right",layout.rightMargin+"mm"),
+	        ("margin-top",layout.topMargin+"mm"),
+	        ("margin-bottom",layout.bottomMargin+"mm")
+	    )
+		end
 	}
 	
 	override def close = {

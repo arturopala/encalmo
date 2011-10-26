@@ -12,20 +12,22 @@ case class Style(
 	paragraph:ParagraphStyle = DefaultParagraphStyle,
 	list:ListStyle = DefaultListStyle,
 	color:Color = Color.BLACK,
-	background:Color = Color.WHITE
+	background:Color = null
 ){
     
     val classId:Option[String] = StyleIdGenerator()
 	
-	val hexColor:String = {
-		"#"+Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {
+	val hexColor:String = color match {
+        case null => ""
+		case _ => "#"+Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {
 			val h:String = x.toHexString
 			if(h.size>1) h else ("0"+h)
 		}).mkString
 	}
 	
-	val hexBackground:String = {
-		"#"+Seq[Int](background.getRed,background.getGreen,background.getBlue).map(x => {
+	val hexBackground:String = background match {
+	    case null => ""
+	    case _ => "#"+Seq[Int](background.getRed,background.getGreen,background.getBlue).map(x => {
 			val h:String = x.toHexString
 			if(h.size>1) h else ("0"+h)
 		}).mkString

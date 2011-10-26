@@ -41,13 +41,20 @@ extends Traveler[DocumentComponent] {
 	val COMMA = dfs.getPatternSeparator
 	
 	val customStyles = """ 
-	    body {font-size:12pt}
+	    body {font-family:sans-serif;font-size:12pt;background-color: #FFFAD8;}
+	    table {border-collapse:collapse;margin:5pt;background-color: #FFFDEF;border: 1px solid #FFBE32;} 
+	    div {padding:5pt 0 2pt 0}
 		.et  {width:100%}
-        .ec1 {width:2%; margin-right:0.7em; text-align:right; vertical-align:top}
-	    .ec2 {width:28%; margin-right:3pt; text-align:left; vertical-align:top}
-	    .ec3 {width:5%; font-size:12pt; font-weight: bold}
-	    .ec4 {width:65%; font-size:10pt}
-	    .usc {border-bottom:0.4pt dotted black;}
+	   	.et td {
+	    	border-top: 1px solid #FFBE32;
+	    	border-bottom: 1px solid #FFBE32;
+	    	border-right: 1px dotted #FFBE32;
+	    	border-left: 1px dotted #FFBE32;
+	    	padding:2pt 5pt;
+	    }
+        .ec1 {width:30%; margin-left:2em; text-align:left; vertical-align:top}
+	    .ec2 {width:5%; font-size:12pt; font-weight: bold; text-align:center;}
+	    .ec3 {width:65%; font-size:10pt}
 	"""
 	    
 	val blockExprPrintStrategy:ExpressionPrintStrategy = output.preferences.expressionPrintStrategy match {
@@ -233,6 +240,8 @@ extends Traveler[DocumentComponent] {
     		if(expr.isFirstBlockComponent){
 			    parentNumSection.map(x => output.attr("style","space-before:",x.style.paragraph.spaceBefore*0.8))
 			}
+    		output.attr("cellpadding","2")
+    		output.attr("cellspacing","0")
     		output.body
 			for(es <- ess){
 				output.startb(TR)
@@ -268,26 +277,21 @@ extends Traveler[DocumentComponent] {
 		            case Some(x) => x.expressions.symbolDescription.getOrElse(styleStack.top)
 		            case None => styleStack.top
 		        }
-		    	if(isCell1){
+		    	if(isCell1 || isCell2){
 					output.startb(TD,"ec1")
 					output.startb(SPAN,descStyle.classId)
 			        output.append(bullet)
+			        output.append("&nbsp;")
+			        output.append(description)
 			        output.end(SPAN)
-			        output.end(TD)
-		    	}
-		        if(isCell2){
-			        output.startb(TD,"ec2 usc")
-			        output.startb(SPAN,descStyle.classId)
-		        	output.append(description)
-		        	output.end(SPAN)
 			        output.end(TD)
 		    	}
 		        etp1.expression match {
 	        		case s:SymbolLike => {
-	        		    output.startb(TD,"ec3 usc")
+	        		    output.startb(TD,"ec2")
 	        		    writeExpression(etp1, style)
 	        		    output.end(TD)
-	        		    output.start(TD,"ec4 usc")
+	        		    output.start(TD,"ec3")
 				        if(!isCell2){
 				        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
 				        	output.attr("colspan",ncs);
@@ -299,7 +303,7 @@ extends Traveler[DocumentComponent] {
 				        output.end(TD)
 	        		}
 	        		case _ => {
-	        		    output.start(TD,"ec4 usc")
+	        		    output.start(TD,"ec3")
 				        if(!isCell2){
 				        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
 				        	output.attr("colspan",ncs);
