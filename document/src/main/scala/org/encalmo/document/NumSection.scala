@@ -53,9 +53,9 @@ extends Section(nsStyle,flow:_*) {
 			resolveStyle(sc,10)
 		}else{
 			if(level<0){
-				sc.numsections.level(0).getOrElse(sc.numsections.numsection.getOrElse(null))
+				sc.level(0).getOrElse(sc.numsection.getOrElse(null))
 			}else{
-				sc.numsections.level(level) match {
+				sc.level(level) match {
 					case Some(style) => style
 					case None => resolveStyle(sc,level-1)
 				}

@@ -4,8 +4,11 @@ package org.encalmo.document
  * Document class
  * @author artur
  */
-class Document(myStyle:Style, val title:String, flow:DocumentComponent*) 
-extends DocumentComponentSeq(myStyle, flow:_*) with BlockComponent {
+class Document(
+        val title:String, 
+        val stylesConfig:StylesConfig,
+        flow:DocumentComponent*) 
+extends DocumentComponentSeq(stylesConfig.default.get, flow:_*) with BlockComponent {
 	
 	override def toString = "Document("+myStyle+","+title+","+flow.mkString(",")+")"
 	
@@ -17,16 +20,16 @@ extends DocumentComponentSeq(myStyle, flow:_*) with BlockComponent {
  */
 object Document {
 	
-	def apply(myStyle:Style, title:String, flow:DocumentComponent*) = {
-		new Document(myStyle, title, flow:_*)
+	def apply(title:String, stylesConfig:StylesConfig, flow:DocumentComponent*) = {
+		new Document(title, stylesConfig, flow:_*)
 	}
 	
 	def apply(title:String, flow:DocumentComponent*) = {
-		new Document(null, title, flow:_*)
+		new Document(title, StylesConfig(DefaultStyle), flow:_*)
 	}
 	
 	def apply(flow:DocumentComponent*) = {
-		new Document(null, "", flow:_*)
+		new Document("", StylesConfig(DefaultStyle), flow:_*)
 	}
 	
 	def unapply(d:Document) = Some(d.myStyle,d.title,d.flow)

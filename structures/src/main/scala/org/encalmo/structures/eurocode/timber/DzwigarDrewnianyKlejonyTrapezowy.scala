@@ -275,7 +275,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     calc(Wyfi2) = (b-2*deff)*(hmaxfi2^2)/6
     calc(sigmam0fi2) = Myfi2/Wyfi2
       
-    val doc1 = Document(Predefined.style1,"",
+    val doc1 = Document("",
         Predefined.stylesConfig,
         Chapter("",
             Section("Ćwiczenie projektowe nr 2 z \"Konstrukcji Drewnianych\". Autor: Artur Opala 61315. Wrocław 2010/2011"),

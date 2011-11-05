@@ -19,9 +19,9 @@ extends DocumentComponent(null){
 	
 	lazy val parentStylesConfig = parentOrSiblingOfType[StylesConfig](classOf[StylesConfig])
 	
-	lazy val trueStyle:Style = parentStylesConfig match {case Some(sc) => sc.assertions.iftrue.get; case None => DefaultStyle}
-	lazy val falseStyle:Style= parentStylesConfig match {case Some(sc) => sc.assertions.iffalse.get; case None => DefaultStyle}
-	lazy val unknownStyle:Style = parentStylesConfig match {case Some(sc) => sc.assertions.unknown.get; case None => DefaultStyle}
+	lazy val trueStyle:Style = parentStylesConfig match {case Some(sc) => sc.assert_true.get; case None => DefaultStyle}
+	lazy val falseStyle:Style= parentStylesConfig match {case Some(sc) => sc.assert_false.get; case None => DefaultStyle}
+	lazy val unknownStyle:Style = parentStylesConfig match {case Some(sc) => sc.assert_unknown.get; case None => DefaultStyle}
 	
 	def operator:Seq[Character]
 	def assert(results:Seq[Expression]):Option[Boolean]

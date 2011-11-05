@@ -27,7 +27,9 @@ class DocumentTest extends AssertionsForJUnit {
         val Evaluate1 = a*b/c
         calc1 put (d -> Evaluate1)
         
-        val doc1 = Document(style1, "Test document",
+        val sc:StylesConfig = StylesConfig(style1)
+        
+        val doc1 = Document("Test document",sc,
             Chapter(style1,"Test chapter",
                 Section("header"),
                 Section("footer"),

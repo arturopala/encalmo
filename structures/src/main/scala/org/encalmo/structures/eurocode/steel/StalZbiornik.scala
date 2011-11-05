@@ -22,7 +22,7 @@ class StalZbiornik {
     
     
     
-    val doc1 = Document(Predefined.style1,"",
+    val doc1 = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(

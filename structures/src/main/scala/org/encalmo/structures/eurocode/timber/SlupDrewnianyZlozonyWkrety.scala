@@ -281,7 +281,7 @@ class SlupDrewnianyZlozonyWkrety {
     
     val przekrojKwadratowy = Seq(arec,SectionSymbols.A,SectionSymbols.Imin,SectionSymbols.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)
     
-    val doc1 = Document(Predefined.style1,"",
+    val doc1 = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(

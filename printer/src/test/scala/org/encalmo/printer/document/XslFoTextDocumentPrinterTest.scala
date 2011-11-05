@@ -57,12 +57,12 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		calc1 put (b -> 3.21)
 		calc1 put (c -> 0.57)
 		
-		val doc1 = Document(style1, "Test document",
+		
+		val doc1 = Document("Test document",StylesConfig(style2),
 			Enumerator(),
     		Chapter(style2,"Test chapter",
 				Section("header"),
 				Section(style2,"footer"),
-				stylesConfig,
 	    		Section(
 		            Text("test1"),
 		            Text(style1,"test2"),
@@ -291,7 +291,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		val BOLD = style1.fontBold
 		val ITALIC = style1.fontItalic
 		
-		val stylesConfig = StylesConfig()
+		val stylesConfig = StylesConfig(style1)
 		stylesConfig(EXPRESSION) = style1.marginLeft(15)
 		stylesConfig(EXPR_SYMBOL) = style1.paddingRight(2)
 		stylesConfig(EXPR_UNRESOLVED) = style1.fontSmaller
@@ -305,7 +305,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		stylesConfig(NUMSECT_LEVEL3) = style1.fontSmaller.fontItalic
 		stylesConfig(NUMSECT_LEVEL4) = style1.fontSmaller.fontSmaller.fontItalic
 		
-		val doc1 = Document(style1,"",
+		val doc1 = Document("",
 		     stylesConfig,
 			 Chapter("",
 		      	  Section("Ćwiczenie z przedmiotu 'Cieńkościenne konstrukcje metalowe'. Słup ściskany osiowo - wyboczenie giętne i skrętne. Autorzy: Irmina Grudzień, Artur Opala."),

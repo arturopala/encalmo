@@ -24,7 +24,7 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 		val expr1 = a*b/c
 		calc1 put (d -> expr1)
 		
-		val doc1 = Document(style1, "Test document",
+		val doc1 = Document("Test document",StylesConfig(style1),
     		Chapter(style1,"Test chapter",
 				Section("header"),
 				Section("footer"),

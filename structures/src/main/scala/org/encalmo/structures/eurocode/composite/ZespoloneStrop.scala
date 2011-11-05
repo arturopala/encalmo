@@ -80,7 +80,7 @@ class ZespoloneStrop {
     zadanie2 add belka
     
     
-    val doc1 = Document(Predefined.style1,"",
+    val doc1 = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(
@@ -146,7 +146,8 @@ class ZespoloneStrop {
     
     @Test def printHtml:Unit = {
         val layout = Predefined.layout
-        val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"))
+        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withSkipStyleConfig(true);
+        val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
         output.open
         HtmlTextDocumentPrinter.print(doc1,output)
         output.close
