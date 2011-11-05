@@ -7,7 +7,7 @@ object CSS {
     
     def convertToClassDefinition(style:Style):String = {
         if(style!=null){
-            "."+style.classId.get + " {" +
+            "."+style.classId + " {" +
 			attrNoZero("font-family",style.font.family) +
 			attrNoZero("font-size",style.font.size,"pt") +
 			attrNoZero("font-style",resolveFontStyle(style.font)) +

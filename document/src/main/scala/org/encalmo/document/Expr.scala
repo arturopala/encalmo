@@ -19,7 +19,7 @@ extends DocumentComponent(exStyle) {
 	override lazy val myStyle:Style = {
         Option(exStyle).getOrElse(
             parentStylesConfig match {
-                case Some(psc) => psc.expressions.expression.getOrElse(null)
+                case Some(psc) => psc.expression.getOrElse(null)
                 case None => null
             }
         )
@@ -44,7 +44,7 @@ extends DocumentComponent(exStyle) {
 	final def resolveStyle(defaultStyle:Style, part:StylesConfigSymbols.Value):Style = {
 		Option(defaultStyle).getOrElse(
 			parentStylesConfig match {
-				case Some(psc) => psc.expressions.part(part).getOrElse(psc.expressions.expression.getOrElse(null))
+				case Some(psc) => psc.part(part).getOrElse(psc.expression.getOrElse(null))
 				case None => null
 			}
 		)

@@ -25,7 +25,7 @@ class BetonSprezonyDzwigarTypuI {
     
     val daneWejsciowe:Seq[Expression] = Seq(CLASS,fck,Ecm)
     
-    val doc1 = Document(Predefined.style1,"",
+    val doc1 = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(

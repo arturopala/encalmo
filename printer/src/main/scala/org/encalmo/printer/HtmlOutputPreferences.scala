@@ -7,9 +7,12 @@ import scala.collection.mutable.LinkedHashMap
  * @author artur.opala
  */
 case class HtmlOutputPreferences(
-	expressionPrintStrategy:String = "table" //list|section|table
+	expressionPrintStrategy:String = "table", //list|section|table
+	skipStyleConfig:Boolean = false
 ){
 	
 	def withExpressionPrintStrategy(s:String):HtmlOutputPreferences = copy(expressionPrintStrategy=s)
+	
+	def withSkipStyleConfig(b:Boolean):HtmlOutputPreferences = copy(skipStyleConfig=b)
 	
 }

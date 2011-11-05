@@ -160,7 +160,7 @@ extends Traveler[DocumentComponent] {
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
 			case sc:StylesConfig => {
-				sc.expressions.numbers match {
+				sc.numbers match {
 					case Some(s) => {mathOutput.numberStyle = s}
 					case None => Unit
 				}
@@ -311,7 +311,7 @@ extends Traveler[DocumentComponent] {
     		val styleConfigOpt = expr.parentStylesConfig 
     		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor(_))
 			val tableRowStyle:Option[Style] = styleConfigOpt match {
-				case Some(styleConfig) => styleConfig.expressions.block 
+				case Some(styleConfig) => styleConfig.block 
 				case None => None
 			}
     		
@@ -360,7 +360,7 @@ extends Traveler[DocumentComponent] {
 		    	val isCell1 = bullet!=null
 		        val isCell2 = isPrintDescription
                 val descStyle = etp1.stylesConfig match {
-		            case Some(x) => x.expressions.symbolDescription.getOrElse(styleStack.top)
+		            case Some(x) => x.symbolDescription.getOrElse(styleStack.top)
 		            case None => styleStack.top
 		        }
 	        	val leafs:Int = se.map(x => x.expression.countTreeLeafs).sum
