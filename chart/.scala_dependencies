@@ -1,0 +1,34 @@
+P:\workspace4\encalmo\chart\target\classes;P:\workspace4\encalmo\chart\target\test-classes;P:\eclipse-indigo\eclipse\configuration\org.eclipse.osgi\bundles\802\1\.cp\lib\scala-library.jar;P:\eclipse-indigo\eclipse\configuration\org.eclipse.osgi\bundles\802\1\.cp\lib\scala-dbc.jar;P:\eclipse-indigo\eclipse\configuration\org.eclipse.osgi\bundles\802\1\.cp\lib\scala-swing.jar;P:\m2\repository\org\scalatest\scalatest\1.2\scalatest-1.2.jar;P:\m2\repository\junit\junit\4.7\junit-4.7.jar;P:\m2\repository\net\sf\opencsv\opencsv\2.1\opencsv-2.1.jar;P:\m2\repository\com\github\scala-incubator\io\core_2.9.0-1\0.1.2\core_2.9.0-1-0.1.2.jar;P:\m2\repository\com\github\jsuereth\scala-arm\scala-arm_2.9.0\0.2\scala-arm_2.9.0-0.2.jar;P:\m2\repository\com\github\scala-incubator\io\file_2.9.0-1\0.1.2\file_2.9.0-1-0.1.2.jar;P:\m2\repository\org\jogamp\gluegen-rt\1.1.1rc3\gluegen-rt-1.1.1rc3.jar;P:\m2\repository\org\jogamp\jogl\1.1.1rc3\jogl-1.1.1rc3.jar;P:\m2\repository\net\masagroup\jzy3d\0.8.4\jzy3d-0.8.4.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\resources.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\rt.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\jsse.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\jce.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\charsets.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\ext\dnsns.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\ext\localedata.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\ext\sunjce_provider.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\ext\sunmscapi.jar;P:\Java\jrmc-4.0.1-1.6.0\jre\lib\ext\sunpkcs11.jar
+-------
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest.scala -> P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest.scala
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest.scala -> P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\JOGLUnitTest.scala -> P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\JOGLUnitTest.scala
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\JOGLUnitTest.scala -> P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest2.scala -> P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest2.scala
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest2.scala -> P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\Chart.scala
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest2.scala -> P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\Chart.scala -> P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\Chart.scala
+-------
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\ChartUnitTest$$anonfun$coords$1$1.class
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\ChartUnitTest$$anon$2.class
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\ChartUnitTest.class
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\ChartUnitTest$$anon$1.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\JOGL$.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\JOGL.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\NativeLibInfo$.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\JOGL$$anonfun$2.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\JOGL$$anonfun$extractLibDir$1.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\JOGL$$anonfun$extractLibDir$1$$anonfun$apply$1.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\JOGL$$anonfun$1.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\JOGL.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\NativeLibInfo.class
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\JOGLUnitTest.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\JOGLUnitTest.class
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest2.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\ChartUnitTest2$$anonfun$1.class
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest2.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\ChartUnitTest2$$anon$1.class
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest2.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\ChartUnitTest2.class
+P:\workspace4\encalmo\chart\src\test\scala\org\encalmo\chart\ChartUnitTest2.scala -> P:\workspace4\encalmo\chart\target\test-classes\org\encalmo\chart\ChartUnitTest2$$anonfun$1$$anonfun$apply$1.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\Chart.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\Chart$.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\Chart.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\ChartOptions$.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\Chart.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\ChartOptions.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\Chart.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\Chart$$anonfun$coords$1.class
+P:\workspace4\encalmo\chart\src\main\scala\org\encalmo\chart\Chart.scala -> P:\workspace4\encalmo\chart\target\classes\org\encalmo\chart\Chart.class
