@@ -4,3 +4,17 @@ glob:target
 
 syntax: regexp
 ^bin$
+syntax: regexp
+^printer/\.scala_dependencies$
+syntax: regexp
+^\.scala_dependencies$
+syntax: regexp
+^calculation/\.scala_dependencies$
+syntax: regexp
+^chart/\.scala_dependencies$
+syntax: regexp
+^expression/\.scala_dependencies$
+syntax: regexp
+^fea/\.scala_dependencies$
+syntax: regexp
+^printer/\.scala_dependencies$
