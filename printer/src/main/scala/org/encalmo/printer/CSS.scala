@@ -1,13 +1,14 @@
 package org.encalmo.printer
 
 import org.encalmo.document.Style
+import org.encalmo.document.StylesConfig
 import org.encalmo.document.FontStyle
 
 object CSS {
     
-    def convertToClassDefinition(style:Style):String = {
+    def convertToClassDefinition(style:Style, stylesConfig:StylesConfig = StylesConfig()):String = {
         if(style!=null){
-            "."+style.classId + " {" +
+            "."+stylesConfig.matchStyleClassId(style).get + " {" +
 			attrNoZero("font-family",style.font.family) +
 			attrNoZero("font-size",style.font.size,"pt") +
 			attrNoZero("font-style",resolveFontStyle(style.font)) +

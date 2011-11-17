@@ -12,9 +12,10 @@ case class Style(
 	paragraph:ParagraphStyle = DefaultParagraphStyle,
 	list:ListStyle = DefaultListStyle,
 	color:Color = Color.BLACK,
-	background:Color = null,
-	classId:String = StyleIdGenerator()
+	background:Color = null
 ){
+    /** Unique style id */
+    val classId:String = StyleIdGenerator()
 	
 	val hexColor:String = color match {
         case null => ""
