@@ -17,7 +17,7 @@ abstract class Assertion(
 ) 
 extends DocumentComponent(null){
 	
-	lazy val parentStylesConfig = parentOrSiblingOfType[StylesConfig](classOf[StylesConfig])
+	lazy val parentStylesConfig:Option[StylesConfig] = document.map(_.stylesConfig)
 	
 	lazy val trueStyle:Style = parentStylesConfig match {case Some(sc) => sc.assert_true.get; case None => DefaultStyle}
 	lazy val falseStyle:Style= parentStylesConfig match {case Some(sc) => sc.assert_false.get; case None => DefaultStyle}

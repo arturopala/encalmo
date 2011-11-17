@@ -158,6 +158,9 @@ extends Traveler[DocumentComponent] {
 				canNewLine = false;
 				write(sc.current.mkString("",".","."+SPACE))
 				sc.in // counter level increment
+				if(ns.title.isDefined){
+				    write(ns.title.get)
+				}
 				plus
 			}
 			case s:Section => {

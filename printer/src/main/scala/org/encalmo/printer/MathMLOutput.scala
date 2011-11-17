@@ -168,6 +168,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if(nf.hasExponent && nf.exponent!=0) {
 			if(!omit){
 				start(MO)
+				attr("class","numexp")
 				attr("mathsize",resolveStyle.font.size-2)
 				body
 				append(ENTITY_CENTER_DOT)
@@ -175,6 +176,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			}
 			start(MSUP)
 			attr("mathsize",resolveStyle.font.size-2)
+			attr("class","numexp")
 			body
 			startb(MN)
 			append("10")
@@ -213,6 +215,14 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		body
 		append(s)
 		end(MI)
+	}
+	
+	def mtextClass(classId:String,s:String*):Unit = {
+		start(MTEXT)
+		attr("class",classId)
+		body
+		s.foreach(append(_))
+		end(MTEXT)
 	}
 
 	def mtext(s:String*):Unit = {
@@ -329,10 +339,11 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	def unit(bu:BaseUnitOfValue) = {
 	    bu.dimension match {
-	        case 1 => mtext(ENTITY_THIN_SPACE,bu.name)
+	        case 1 => mtextClass("unit",ENTITY_THIN_SPACE,bu.name)
 	        case _ => {
 	            start(MSUP)
 				attr("mathsize","85%")
+				attr("class","unit")
 				body
 				mtext(ENTITY_THIN_SPACE,bu.name)
 				mtext(bu.dimension.toString)

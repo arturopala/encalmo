@@ -1,14 +1,15 @@
 package org.encalmo.printer.document
 
-import org.encalmo.common._
-import org.encalmo.expression.SymbolLike
-import org.encalmo.printer._
-import org.encalmo.printer.expression._
-import org.encalmo.document._
-import org.encalmo.printer.XslFoTags._
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.mutable.Stack
 import scala.collection._
+
+import org.encalmo.common._
+import org.encalmo.document._
+import org.encalmo.expression.SymbolLike
+import org.encalmo.printer.XslFoTags._
+import org.encalmo.printer.expression._
+import org.encalmo.printer._
 
 /**
  * Prints document as xsl-fo text 
@@ -159,15 +160,12 @@ extends Traveler[DocumentComponent] {
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
-			case sc:StylesConfig => {
-				sc.numbers match {
+			case nvc:NonVisualComponent => return
+			case d:Document => {
+			    d.stylesConfig.numbers match {
 					case Some(s) => {mathOutput.numberStyle = s}
 					case None => Unit
 				}
-				return
-			}
-			case nvc:NonVisualComponent => return
-			case d:Document => {
 				return
 			}
 			case chapter:Chapter => {
@@ -195,6 +193,13 @@ extends Traveler[DocumentComponent] {
 						output.append(sc.current.mkString("",".","."+SPACE))
 						sc.in // counter level increment
 						if(ens!=null){
+							output.end(INLINE)
+						}
+						if(ns.title.isDefined){
+							output.start(INLINE)
+							output.appendInlineStyleAttributes(ns.style, styleStack.top)
+							output.body
+							output.append(ns.title.get);
 							output.end(INLINE)
 						}
 					}

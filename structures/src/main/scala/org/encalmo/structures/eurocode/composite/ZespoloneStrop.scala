@@ -18,6 +18,7 @@ import org.encalmo.structures.eurocode.steel.IPESection
 import org.encalmo.structures.eurocode.steel.HeadedStud
 import org.encalmo.structures.eurocode.steel.Steel
 import org.encalmo.structures.eurocode.steel.FLORSTROP
+import scalax.file.Path
 
 class ZespoloneStrop {
     
@@ -146,7 +147,7 @@ class ZespoloneStrop {
     
     @Test def printHtml:Unit = {
         val layout = Predefined.layout
-        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withSkipStylesConfig(true);
+        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path("src/main/resources/style.css"))
         val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
         output.open
         HtmlTextDocumentPrinter.print(doc1,output)

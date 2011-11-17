@@ -1,6 +1,11 @@
 package org.encalmo.document
 
 import java.awt.Color
+import org.encalmo.document.TextStyle
+import org.encalmo.document.DefaultParagraphStyle
+import org.encalmo.document.DefaultTextStyle
+import org.encalmo.document.BoxDim
+import org.encalmo.document.ParagraphStyle
 
 /**
  * DocumentComponent's style class
@@ -15,7 +20,7 @@ case class Style(
 	background:Color = null
 ){
     /** Unique style id */
-    val classId:String = StyleIdGenerator()
+    var classId:String = StyleClassIdGenerator()
 	
 	val hexColor:String = color match {
         case null => ""
@@ -90,6 +95,8 @@ case class Style(
 	def useDistanceBetweenStarts(d:Int) = copy(list = list.useDistanceBetweenStarts(d))
     def useDistanceLabelSeparation(d:Int) = copy(list = list.useDistanceLabelSeparation(d))
     def useBullet(s:String) = copy(list = list.useBullet(s))
+    
+    def setClassId(s:String):Style = {classId = s;this}
 	
 }
 
@@ -97,4 +104,8 @@ case class Style(
  * Default style object
  * @author artur.opala
  */
-object DefaultStyle extends Style()
+object DefaultStyle extends Style(){
+    
+    classId = "defaultStyle"
+    
+}

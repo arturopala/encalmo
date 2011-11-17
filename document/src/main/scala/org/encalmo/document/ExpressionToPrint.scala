@@ -14,6 +14,6 @@ case class ExpressionToPrint(
 	stylesConfig:Option[StylesConfig] = None
 ){
     /** style's classId or standard id from styles config */
-    def styleClassId:Option[String] = stylesConfig.map(_.matchStyleClassId(style).getOrElse(style.classId))
+    def styleClassId:Option[String] = if(style!=null) stylesConfig.map(_.matchStyleClassId(style).getOrElse({style.classId})) else None
     
 }

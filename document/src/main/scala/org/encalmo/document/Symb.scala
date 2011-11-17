@@ -18,7 +18,7 @@ extends InlineExpr(sStyle,null,expr:_*){
 	
 	/** Function to implement */
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
-		Seq[ExpressionToPrint](ExpressionToPrint(e,style,null,null,parentStylesConfig))
+		Seq[ExpressionToPrint](ExpressionToPrint(e,null,null,null,parentStylesConfig))
 	}
     
 }

@@ -96,6 +96,7 @@ case class StylesConfig(
     }
 	
 	def all:Seq[Option[Style]] = Seq(
+	    default,
         expression,
         block,
         symbol,
@@ -153,7 +154,7 @@ case class StylesConfig(
 	    )
 	    a
 	    a.map(v => classId(v)) match {
-	        case None => Some(style.classId)
+	        case None => if(style!=null) Some(style.classId) else None
 	        case some => some
 	    }
 	}
@@ -182,7 +183,7 @@ case class StylesConfig(
             case StylesConfigSymbols.NUMSECT_LEVEL8 => "ns8"
             case StylesConfigSymbols.NUMSECT_LEVEL9 => "ns9"
             case StylesConfigSymbols.ASSERTION_FALSE => "assertfalse"
-			case StylesConfigSymbols.ASSERTION_TRUE => "assertrue"
+			case StylesConfigSymbols.ASSERTION_TRUE => "asserttrue"
 			case StylesConfigSymbols.ASSERTION_UNKNOWN => "assertunknown"
             case _ => ""
         }
