@@ -6,7 +6,7 @@ import annotation.tailrec
  * Numbered section component class
  * @author artur.opala
  */
-class NumSection(val nsStyle:Style, val myEnumerator:Enumerator, flow:DocumentComponent*) 
+class NumSection(val title:Option[String], val nsStyle:Style, val myEnumerator:Enumerator, flow:DocumentComponent*) 
 extends Section(nsStyle,flow:_*) {
     
     lazy val parentNumSection = parentOfType[NumSection](classOf[NumSection])
@@ -73,19 +73,23 @@ object NumSection {
 	val defaultEnumerator = Enumerator()
 	
 	def apply(myStyle:Style, enumerator:Enumerator, flow:DocumentComponent*) = {
-		new NumSection(myStyle, enumerator, flow:_*)
+		new NumSection(None, myStyle, enumerator, flow:_*)
 	}
 	
 	def apply(myStyle:Style, flow:DocumentComponent*) = {
-		new NumSection(myStyle, null, flow:_*)
+		new NumSection(None, myStyle, null, flow:_*)
 	}
 	
 	def apply(enumerator:Enumerator, flow:DocumentComponent*) = {
-		new NumSection(null, enumerator, flow:_*)
+		new NumSection(None, null, enumerator, flow:_*)
 	}
 	
 	def apply(flow:DocumentComponent*) = {
-		new NumSection(null, null, flow:_*)
+		new NumSection(None, null, null, flow:_*)
+	}
+	
+	def apply(title:String, flow:DocumentComponent*) = {
+		new NumSection(Some(title), null, null, flow:_*)
 	}
 	
 	def unapply(s:NumSection) = Some(s.nsStyle,s.myEnumerator,s.flow)

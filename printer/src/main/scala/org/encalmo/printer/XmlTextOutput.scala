@@ -60,12 +60,7 @@ extends TextOutput(locale,buffer) {
 		start(name)
 		if(classIds.exists(_.isDefined)){
 		    startAttr("class")
-			classIds.foreach( classId =>
-				if(classId.isDefined){
-				    buffer.append(classId.get)
-				    buffer.append(" ")
-				}
-			)
+		    buffer.append(classIds.filter(_.isDefined).map(_.get).mkString(" "))
 			endAttr()
 		}
 	}

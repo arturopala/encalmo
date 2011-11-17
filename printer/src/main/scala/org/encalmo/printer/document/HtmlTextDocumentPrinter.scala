@@ -85,10 +85,16 @@ div {padding:5pt 0 2pt 0}
 			case nvc:NonVisualComponent => return
 			case d:Document => {
 				output.startb(STYLE)
-				output.append(customStyles)
-				if(!output.preferences.skipStylesConfig){
-                    d.stylesConfig.all.foreach(output.styledef(_, d.stylesConfig))
-                }
+				val allStyles = d.allStyles
+				if(!output.preferences.isCustomStyleSheet){
+				    output.append(customStyles)
+				}
+				if(!output.preferences.skipDocumentStyles){
+				    d.stylesConfig.all.foreach(_.map(allStyles.add(_)))
+                    allStyles.foreach(output.styledef(_, d.stylesConfig))
+                }else if(output.preferences.isCustomStyleSheet){
+				    output.append(output.preferences.customStyleSheet)
+				}
 				output.end(STYLE)
 				return
 			}
@@ -102,6 +108,7 @@ div {padding:5pt 0 2pt 0}
 						val en:Enumerator = ns.enumerator
 						val sc = counterFor(en)
 						output.startb(DIV,ns.styleClassId)
+						output.startb(SPAN,"caption")
 						val ens = en.style
 						if(ens!=null){
 							output.startb(SPAN,en.styleClassId)
@@ -111,6 +118,10 @@ div {padding:5pt 0 2pt 0}
 						if(ens!=null){
 							output.end(SPAN)
 						}
+						if(ns.title.isDefined){
+						    output.append(ns.title.get)
+						}
+						output.end(SPAN)
 					}
 					case s:Section => {
 						output.startb(DIV, s.styleClassId)
@@ -119,7 +130,12 @@ div {padding:5pt 0 2pt 0}
 						output.append(ch)
 					}
 					case ttt:TextToTranslate => {
+					    val first = node.parent.element.isInstanceOf[NumSection] && 
+					    node.parent.element.asInstanceOf[NumSection].title==None && 
+					    node.element.isFirstInlineComponent
+					    if(first)output.startb(SPAN,"caption")
 						output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
+						if(first)output.end(SPAN)
 					}
 					case t:TextContent => {
 						if(t.myStyle!=null){
@@ -155,6 +171,7 @@ div {padding:5pt 0 2pt 0}
 					case a:Assertion => {
 						val result = a.evaluate
 						val s = Section(a.style,result._2:_*)
+						s.parent = a.parent
 						s.travel(traveler = this);
 					}
 					case _ => {}
@@ -307,14 +324,14 @@ div {padding:5pt 0 2pt 0}
    
 	def writeExpression(etp:ExpressionToPrint, style:Style):Unit = {
 		if(etp.expression.printable){
-			if(etp.prefix!=null)mathOutput.prefix = etp.prefix
-			if(etp.suffix!=null)mathOutput.suffix = etp.suffix
+			if(etp.prefix!=null)output.append(etp.prefix)
 			output.start(SPAN, etp.styleClassId)
 	        output.body
 	        mathOutput.open
 	        etp.expression.travel(traveler = ept)
 	        mathOutput.close
 	        output.end(SPAN)
+			if(etp.suffix!=null)output.append(etp.suffix)
 		}
 	}
 	

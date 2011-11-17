@@ -2,6 +2,9 @@ package org.encalmo.document
 
 import org.encalmo.common._
 import annotation.tailrec
+import org.encalmo.common.AdHocTraveler
+import org.encalmo.common.Node
+import scala.collection.mutable.{Set,LinkedHashSet}
 
 /**
  * DocumentComponent trait
@@ -31,12 +34,12 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeLikeWith
     /** Parent document */
     lazy val document:Option[Document] = parentOfType[Document](classOf[Document])
     
-    def styleClassId:Option[String] = document match {
+    lazy val styleClassId:Option[String] = document match {
         case None => Some(style.classId)
         case Some(d) => d.stylesConfig.matchStyleClassId(style)
     }
     
-    def myStyleClassId:Option[String] = myStyle match {
+    lazy val myStyleClassId:Option[String] = myStyle match {
         case null => None
         case _ => {
             document match {
@@ -45,6 +48,21 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeLikeWith
             }
         }
     }
+    
+	lazy val allStyles:Set[Style] = {
+	    val stylesSet:Set[Style] = LinkedHashSet()
+	    if(dcStyle!=null){
+        	stylesSet.add(dcStyle)
+        }
+	    val t = AdHocTraveler[DocumentComponent](onEnterFx = Some({n:Node[DocumentComponent] => {
+	        val style = n.element.dcStyle
+	        if(style!=null){
+	        	stylesSet.add(style)
+	        }
+	    }}))
+	    this.travel(traveler = t)
+	    stylesSet
+	}
 }
 
 /**
