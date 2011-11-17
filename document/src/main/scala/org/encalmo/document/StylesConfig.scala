@@ -7,10 +7,10 @@ import scala.collection.mutable.Map
  * @author artur.opala
  */
 case class StylesConfig(
-    style:Style = DefaultStyle
+    defstyle:Style = DefaultStyle
 ) {
     
-    var default:Option[Style] = Option(style)
+    var default:Option[Style] = Option(defstyle)
 	var expression:Option[Style] = None
 	var symbol:Option[Style] = None
 	var unresolved:Option[Style] = None
@@ -142,8 +142,20 @@ case class StylesConfig(
 		9 -> level9
 	)
 	
-	def getStyleClassId(style:Style) = {
-	    StylesConfigSymbols.values.find(v => apply(v) == style).map(classId(_))
+	def matchStyleClassId(style:Style):Option[String] = {
+	    val a = StylesConfigSymbols.values.find(v => {
+	            val so = apply(v)
+    	        val r = so.map(s => 
+    	            (s.classId==style.classId)
+    	        ).getOrElse(false)
+    	        r
+	        }
+	    )
+	    a
+	    a.map(v => classId(v)) match {
+	        case None => Some(style.classId)
+	        case some => some
+	    }
 	}
 	
 	def classId(sym:StylesConfigSymbols.Value):String = {
@@ -151,13 +163,13 @@ case class StylesConfig(
             case StylesConfigSymbols.DEFAULT => "default"
             case StylesConfigSymbols.EXPRESSION => "exp"
             case StylesConfigSymbols.EXPR_ROW => "exprow"
-            case StylesConfigSymbols.EXPR_SYMBOL => "expsym"
-            case StylesConfigSymbols.EXPR_SYMB_DESCRIPTION => "expsd"
-            case StylesConfigSymbols.EXPR_UNRESOLVED =>"expunr"
-            case StylesConfigSymbols.EXPR_SUBSTITUTED => "expsub"
-            case StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED => "exppev"
-            case StylesConfigSymbols.EXPR_EVALUATED => "expeva"
-            case StylesConfigSymbols.EXPR_NUMBERS => "expnum"
+            case StylesConfigSymbols.EXPR_SYMBOL => "expsymb"
+            case StylesConfigSymbols.EXPR_SYMB_DESCRIPTION => "expdesc"
+            case StylesConfigSymbols.EXPR_UNRESOLVED =>"expunres"
+            case StylesConfigSymbols.EXPR_SUBSTITUTED => "expsubst"
+            case StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED => "expparteval"
+            case StylesConfigSymbols.EXPR_EVALUATED => "expeval"
+            case StylesConfigSymbols.EXPR_NUMBERS => "expnumb"
             case StylesConfigSymbols.NUMSECTION => "ns"
             case StylesConfigSymbols.NUMSECT_LEVEL0 => "ns0"
             case StylesConfigSymbols.NUMSECT_LEVEL1 => "ns1"

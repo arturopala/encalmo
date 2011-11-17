@@ -12,4 +12,8 @@ case class ExpressionToPrint(
 	prefix:String,
 	suffix:String,
 	stylesConfig:Option[StylesConfig] = None
-)
+){
+    /** style's classId or standard id from styles config */
+    def styleClassId:Option[String] = stylesConfig.map(_.matchStyleClassId(style).getOrElse(style.classId))
+    
+}

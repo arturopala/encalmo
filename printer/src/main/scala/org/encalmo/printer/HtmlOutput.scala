@@ -68,10 +68,10 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		})
 	}
 	
-	def styledef(style:Option[Style]):Unit = {
+	def styledef(style:Option[Style],stylesConfig:StylesConfig = StylesConfig()):Unit = {
 	    if(style.isDefined){
 	        append(CRLF)
-	        append(CSS.convertToClassDefinition(style.get))
+	        append(CSS.convertToClassDefinition(style.get,stylesConfig))
 	    }
 	}
 }

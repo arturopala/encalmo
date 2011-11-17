@@ -9,7 +9,6 @@ import annotation.tailrec
 class NumSection(val nsStyle:Style, val myEnumerator:Enumerator, flow:DocumentComponent*) 
 extends Section(nsStyle,flow:_*) {
     
-    lazy val parentStylesConfig = parentOrSiblingOfType[StylesConfig](classOf[StylesConfig])
     lazy val parentNumSection = parentOfType[NumSection](classOf[NumSection])
     lazy val parentEnumeratorProvider = parentOrSiblingOfType[EnumeratorProvider](classOf[EnumeratorProvider])
 	
@@ -40,10 +39,10 @@ extends Section(nsStyle,flow:_*) {
 	 */
     private def resolveStyle(level:Int):Style = {
 		Option(nsStyle).getOrElse(
-			parentStylesConfig match {
-				case Some(psm) => resolveStyle(psm,level)
-				case None => null
-			}
+		    document match {
+		        case None => null
+		        case Some(d) => resolveStyle(d.stylesConfig,level)
+		    }
 		)
 	}
 	

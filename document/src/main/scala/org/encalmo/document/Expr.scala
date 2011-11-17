@@ -14,7 +14,7 @@ extends DocumentComponent(exStyle) {
 
 	override def toString = "Expr("+exStyle+","+calc+","+expr.mkString(",")+")"
 	
-	lazy val parentStylesConfig:Option[StylesConfig] = parentOrSiblingOfType[StylesConfig](classOf[StylesConfig])
+	lazy val parentStylesConfig:Option[StylesConfig] = document.map(_.stylesConfig)
 	
 	override lazy val myStyle:Style = {
         Option(exStyle).getOrElse(

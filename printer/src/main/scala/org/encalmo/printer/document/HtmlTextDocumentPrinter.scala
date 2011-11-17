@@ -41,21 +41,15 @@ extends Traveler[DocumentComponent] {
 	val COMMA = dfs.getPatternSeparator
 	
 	val customStyles = """ 
-	    body {font-family:sans-serif;font-size:12pt;background-color: #FFFAD8;}
-	    table {border-collapse:collapse;margin:5pt;background-color: #FFFDEF;border: 1px solid #FFBE32;} 
-	    div {padding:5pt 0 2pt 0}
-		.et  {width:100%}
-	   	.et td {
-	    	border-top: 1px solid #FFBE32;
-	    	border-bottom: 1px solid #FFBE32;
-	    	border-right: 1px dotted #FFBE32;
-	    	border-left: 1px dotted #FFBE32;
-	    	padding:2pt 5pt;
-	    }
-        .ec1 {width:30%; margin-left:2em; text-align:left; vertical-align:top}
-	    .ec2 {width:5%; font-size:12pt; font-weight: bold; text-align:center;}
-	    .ec3 {width:65%; font-size:10pt}
-	"""
+body {font-family:sans-serif;font-size:12pt;background-color: #FFFAD8;}
+table {border-collapse:collapse;margin:5pt;background-color: #FFFDEF;border: 1px solid #FFBE32;} 
+div {padding:5pt 0 2pt 0}
+.et {width:100%}
+.et td {border-top: 1px solid #FFBE32;border-bottom: 1px solid #FFBE32;border-right: 1px dotted #FFBE32;border-left: 1px dotted #FFBE32;padding:2pt 5pt;}
+.ec1 {width:30%; margin-left:2em; text-align:left; vertical-align:top}
+.ec2 {width:5%; font-size:12pt; font-weight: bold; text-align:center;}
+.ec3 {width:65%; font-size:10pt}
+	    """
 	    
 	val blockExprPrintStrategy:ExpressionPrintStrategy = output.preferences.expressionPrintStrategy match {
 		case "table" => new ExpressionPrintAsTableStrategy(this)
@@ -88,22 +82,13 @@ extends Traveler[DocumentComponent] {
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
-			case sc:StylesConfig => {
-			    if(!output.preferences.skipStyleConfig){
-					sc.numbers match {
-						case Some(s) => {mathOutput.numberStyle = s}
-						case None => Unit
-					}
-					output.startb(STYLE)
-					sc.all.foreach(output.styledef(_))
-					output.end(STYLE)
-			    }
-				return
-			}
 			case nvc:NonVisualComponent => return
 			case d:Document => {
 				output.startb(STYLE)
 				output.append(customStyles)
+				if(!output.preferences.skipStylesConfig){
+                    d.stylesConfig.all.foreach(output.styledef(_, d.stylesConfig))
+                }
 				output.end(STYLE)
 				return
 			}
@@ -116,10 +101,10 @@ extends Traveler[DocumentComponent] {
 					case ns:NumSection => {
 						val en:Enumerator = ns.enumerator
 						val sc = counterFor(en)
-						output.startb(DIV,ns.style.classId)
+						output.startb(DIV,ns.styleClassId)
 						val ens = en.style
 						if(ens!=null){
-							output.startb(SPAN,en.style.classId)
+							output.startb(SPAN,en.styleClassId)
 						}
 						output.append(sc.current.mkString("",".","."+SPACE))
 						sc.in // counter level increment
@@ -128,7 +113,7 @@ extends Traveler[DocumentComponent] {
 						}
 					}
 					case s:Section => {
-						output.startb(DIV, s.style.classId)
+						output.startb(DIV, s.styleClassId)
 					}
 					case ch:Character => {
 						output.append(ch)
@@ -138,7 +123,7 @@ extends Traveler[DocumentComponent] {
 					}
 					case t:TextContent => {
 						if(t.myStyle!=null){
-							output.startb(SPAN,t.myStyle.classId)
+							output.startb(SPAN,t.myStyleClassId)
 						}
 						output.append(t.textContent);
 						if(t.myStyle!=null){
@@ -149,7 +134,7 @@ extends Traveler[DocumentComponent] {
 						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
 						ess.foreach(es => {
 							if(expr.myStyle!=null){
-								output.start(SPAN,expr.myStyle.classId)
+								output.start(SPAN,expr.myStyleClassId)
 								output.attr("style","padding-end:1em")
 								output.body
 							}
@@ -232,12 +217,9 @@ extends Traveler[DocumentComponent] {
     	
     	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
-    		val styleConfigOpt = expr.parentStylesConfig 
+    		val stylesConfig = expr.parentStylesConfig.get
     		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor(_))
-			val tableRowStyle:Option[Style] = styleConfigOpt match {
-				case Some(styleConfig) => styleConfig.block 
-				case None => None
-			}
+			val tableRowStyle:Option[Style] = stylesConfig.block
     		output.start(TABLE,"et")
     		if(expr.isFirstBlockComponent){
 			    parentNumSection.map(x => output.attr("style","space-before:",x.style.paragraph.spaceBefore*0.8))
@@ -248,14 +230,14 @@ extends Traveler[DocumentComponent] {
 			for(es <- ess){
 				output.startb(TR)
 				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
-				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle/*, false*/)
+				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle, stylesConfig)
 				sc.foreach(_.next)
 				output.end(TR)
 			}
             output.end(TABLE)
     	}
     	
-    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle:Option[Style]/*, secondTableRow:Boolean*/){
+    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle:Option[Style], stylesConfig:StylesConfig){
 		    if(!se.isEmpty){
 	        	val etp1 = se.head
 	        	val description:Option[String] = etp1.expression match {
@@ -281,7 +263,7 @@ extends Traveler[DocumentComponent] {
 		        }
 		    	if(isCell1 || isCell2){
 					output.startb(TD,"ec1")
-					output.startb(SPAN,descStyle.classId)
+					output.startb(SPAN,stylesConfig.matchStyleClassId(descStyle))
 			        output.append(bullet)
 			        output.append("&nbsp;")
 			        output.append(description)
@@ -325,22 +307,13 @@ extends Traveler[DocumentComponent] {
    
 	def writeExpression(etp:ExpressionToPrint, style:Style):Unit = {
 		if(etp.expression.printable){
-			val mc = mathOutput.mathStyle
 			if(etp.prefix!=null)mathOutput.prefix = etp.prefix
 			if(etp.suffix!=null)mathOutput.suffix = etp.suffix
-	        if (etp.style!=null){
-	            mathOutput.mathStyle = etp.style
-	        }else{
-	            if(style!=null) {
-	                mathOutput.mathStyle = style
-	            }
-	        }
-			output.start(SPAN, mathOutput.mathStyle.classId)
+			output.start(SPAN, etp.styleClassId)
 	        output.body
 	        mathOutput.open
 	        etp.expression.travel(traveler = ept)
 	        mathOutput.close
-	        mathOutput.mathStyle = mc
 	        output.end(SPAN)
 		}
 	}

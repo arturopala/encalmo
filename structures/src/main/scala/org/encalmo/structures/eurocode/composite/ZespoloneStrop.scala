@@ -146,7 +146,7 @@ class ZespoloneStrop {
     
     @Test def printHtml:Unit = {
         val layout = Predefined.layout
-        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withSkipStyleConfig(true);
+        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withSkipStylesConfig(true);
         val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
         output.open
         HtmlTextDocumentPrinter.print(doc1,output)
