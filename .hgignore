@@ -18,3 +18,5 @@ syntax: regexp
 ^fea/\.scala_dependencies$
 syntax: regexp
 ^printer/\.scala_dependencies$
+syntax: regexp
+^calculation/\.scala_dependencies$

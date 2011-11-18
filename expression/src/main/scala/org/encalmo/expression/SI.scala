@@ -61,5 +61,14 @@ object SI extends UnitOfValueSystem {
 	val m4 = m^4
 	val m6 = m^6
 	val m8 = m^8
-
+	// force
+	val N = BaseUnitOfValue("N",0,1,this)
+	val kN = N exp 3
+	val MN = N exp 6
+	val GN = N exp 9
+	// pressure
+	val Pa = BaseUnitOfValue("Pa",0,1,this)
+	val kPa = Pa exp 3
+    val MPa = Pa exp 6
+    val GPa = Pa exp 9
 }

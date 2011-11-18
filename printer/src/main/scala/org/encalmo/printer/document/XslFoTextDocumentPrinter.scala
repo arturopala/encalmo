@@ -323,6 +323,7 @@ extends Traveler[DocumentComponent] {
     		output.start(TABLE)
     		output.attr("table-layout","fixed")
     		output.attr("width","100%")
+            output.attr("border-collapse","collapse")
     		if(expr.isFirstBlockComponent){
     			//output.attr("keep-with-previous","always")
 			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
@@ -376,6 +377,9 @@ extends Traveler[DocumentComponent] {
 	        	val twoTableRows = !secondTableRow && (isCell2 && twoRows && leafs<15)
 		    	if(isCell1){
 					output.start(TABLE_CELL)
+                    output.attr("border-bottom","0.5pt solid black")
+                    output.attr("border-top","0.5pt solid black")
+                    output.attr("border-left","0.5pt solid black")
 					output.body
 			        output.start(BLOCK)
 			        output.attr("padding-top",paddingTop,"pt")
@@ -390,7 +394,10 @@ extends Traveler[DocumentComponent] {
 		    	}
 		        if(isCell2 && !twoRows){
 			        output.start(TABLE_CELL)
-			        if(!twoTableRows) output.attr("border-bottom","0.4pt dotted black")
+			        if(!twoTableRows) {
+			            output.attr("border-bottom","0.5pt solid black")
+			            output.attr("border-top","0.5pt solid black")
+			        }
 			        output.body
 			        output.start(BLOCK)
 			        output.attr("margin-right","3pt")
@@ -411,7 +418,11 @@ extends Traveler[DocumentComponent] {
 		        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
 		        	output.attr("number-columns-spanned",ncs);
 		        }
-				if(!twoTableRows) output.attr("border-bottom","0.4pt dotted black")
+				if(!twoTableRows){
+				    output.attr("border-bottom","0.5pt solid black")
+                    output.attr("border-top","0.5pt solid black")
+                    output.attr("border-right","0.5pt solid black")
+				}
 			    output.attr("vertical-align","middle")
 		        output.body
 		        if(isCell2 && twoRows){

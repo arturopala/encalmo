@@ -14,9 +14,9 @@ object SteelSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "steel"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
-	val E = symbol(BasicSymbols.E) unit "Pa"
-	val G = symbol(BasicSymbols.G) unit "Pa"
-	val fy = symbol(f|"y") unit "Pa"
+	val E = symbol(BasicSymbols.E) unit SI.Pa
+	val G = symbol(BasicSymbols.G) unit SI.Pa
+	val fy = symbol(f|"y") unit SI.Pa
 	val fyd = symbol(f|"y,d") unit "Pa"
 	val fu = symbol(f|"u") unit "Pa"
 	val gammaM0 = symbol(gamma|"M,0")
