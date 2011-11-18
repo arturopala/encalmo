@@ -12,7 +12,7 @@ div {padding:5pt 0 2pt 0}
 .expsymb {font-size:12pt;font-style:italic;font-weight:normal;color:#000000;min-width:35pt;space-before:1pt;space-after:1pt;color:blue;}
 .expdesc {font-size:10pt;font-style:normal;font-weight:normal;color:#000000;space-before:1pt;space-after:1pt;}
 .expeval {color:green; font-size:11pt;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
-.expeval mn {font-weight:bold;}
+.expeval mn {font-weight:bold;font-size:12pt;}
 .ns0 {space-before:16pt;space-after:1pt;}
 .ns0 .caption {font-size:12pt;font-style:normal;font-weight:bold;color:#000000;letter-spacing:150%;}
 .ns1 {space-before:12pt;space-after:1pt;}
@@ -24,5 +24,7 @@ div {padding:5pt 0 2pt 0}
 .assertfalse {font-size:11pt;font-style:normal;font-weight:bold;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
 .asserttrue {font-size:11pt;font-style:normal;font-weight:normal;color:#000000;margin:1pt 5pt; padding-left:20pt}
 .assertunknown {font-size:11pt;font-style:normal;font-weight:normal;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
-.unit {font-size:90%;}
+.unit {font-size:95%;font-weight:normal;}
 .numexp {color:#545454;font-size:90%;font-weight:normal;}
+.comment {}
+.description {font-size:10pt;}

@@ -23,10 +23,10 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	import BasicSymbols._
 	val dictionary, contextId = "compositeSlabWithProfiledSheeting"
 	
-	val l = symbol(BasicSymbols.l) unit "m"
+	val l = symbol(BasicSymbols.l) unit SI.m
 	val nsp = symbol(BasicSymbols.n|"sp")
-	val h = symbol(BasicSymbols.h) unit "m"
-	val hc = symbol(BasicSymbols.h|c) unit "m"
+	val h = symbol(BasicSymbols.h) unit SI.m
+	val hc = symbol(BasicSymbols.h|c) unit SI.m
 	val Qcfk1 = symbol(Q|"cf,k1") unit "N/m"
 	val Qcfk = symbol(Q|"cf,k") unit "N/m2"
 	val Qcfd = symbol(Q|"cf,d") unit "N/m2"
@@ -34,10 +34,10 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val Qmd = symbol(Q|"m,d") unit "N/m2"
 	val Qk1 = symbol(Q|"k|m") unit "N/m2"
     val Qd1 = symbol(Q|"d|m") unit "N/m2"
-	val deltasm = symbol(BasicSymbols.delta|"s|m") unit "m"
-	val deltam = symbol(BasicSymbols.delta|"m") unit "m"
-	val deltae = symbol(BasicSymbols.delta|"e") unit "m"
-	val deltamax = symbol(BasicSymbols.delta|"max") unit "m"
+	val deltasm = symbol(BasicSymbols.delta|"s|m") unit SI.m
+	val deltam = symbol(BasicSymbols.delta|"m") unit SI.m
+	val deltae = symbol(BasicSymbols.delta|"e") unit SI.m
+	val deltamax = symbol(BasicSymbols.delta|"max") unit SI.m
     val MEdmm = symbol(M|("Ed|m","-")) unit "Nm/m"
     val MEdmp = symbol(M|("Ed|m","+")) unit "Nm/m"
     val MEkm1 = symbol(M|("Ek,1|m")) unit "Nm/m"
@@ -47,7 +47,7 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
     val VEdm2 = symbol(V|"Ed,2|m") unit "N/m"
     val FEdm = symbol(F|"Ed|m") unit "N/m"
     val betav = symbol(BasicSymbols.beta|"v")
-    val ss = symbol(BasicSymbols.s|"s") unit "m"
+    val ss = symbol(BasicSymbols.s|"s") unit SI.m
     
     val Gck = symbol(G|"c,k") unit "N/m2"
     val Gcd = symbol(G|"c,d") unit "N/m2"
@@ -68,33 +68,33 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
     
     val MEdep = symbol(M|("Ed|e","+")) unit "Nm/m"
     val MEdem = symbol(M|("Ed|e","-")) unit "Nm/m"
-    val xpl = symbol(x|"pl") unit "m"
-    val dp = symbol(BasicSymbols.d|"p") unit "m"
+    val xpl = symbol(x|"pl") unit SI.m
+    val dp = symbol(BasicSymbols.d|"p") unit SI.m
 	val Np = symbol(BasicSymbols.N|"p") unit "N/m"
-	val z = symbol(BasicSymbols.z) unit "m"
+	val z = symbol(BasicSymbols.z) unit SI.m
 	val MplRd = symbol(BasicSymbols.M|"pl,Rd") unit "Nm/m"
 	val VEde = symbol(BasicSymbols.V|"Ed|e") unit "N/m"
 	val mV = symbol(BasicSymbols.m|"V") unit "Pa"
 	val kV = symbol(BasicSymbols.k|"V") unit "Pa"
-	val Ls = symbol(BasicSymbols.L|"s") unit "m"
+	val Ls = symbol(BasicSymbols.L|"s") unit SI.m
 	val gammaVs = symbol(BasicSymbols.gamma|"Vs")
 	val V1Rd = symbol(BasicSymbols.V|"1,Rd") unit "N/m"
-	val ap = symbol(BasicSymbols.a|"p") unit "m"
-	val bp = symbol(BasicSymbols.b|"p") unit "m"
-	val cp = symbol(BasicSymbols.c|"p") unit "m"
+	val ap = symbol(BasicSymbols.a|"p") unit SI.m
+	val bp = symbol(BasicSymbols.b|"p") unit SI.m
+	val cp = symbol(BasicSymbols.c|"p") unit SI.m
 	val vmin = symbol(BasicSymbols.v|"min") unit "Pa"
-	val dv = symbol(BasicSymbols.d|"v") unit "m"
+	val dv = symbol(BasicSymbols.d|"v") unit SI.m
 	val kv = symbol(BasicSymbols.k|"v")
 	val VRdc = symbol(BasicSymbols.V|"Rd,c") unit "N/m"
 	val VpRd = symbol(BasicSymbols.V|"p,Rd") unit "N"
 	val Qvd = symbol(BasicSymbols.Q|"v,d") unit "N"
 	val Asmin = symbol(BasicSymbols.A|"s,min") unit "m2/m"
 	val dmesh = symbol(BasicSymbols.d|"mesh") unit "mm"
-	val sd = symbol(BasicSymbols.s|"d") unit "m"
-	val sdmax = symbol(BasicSymbols.s|"d,max") unit "m"
+	val sd = symbol(BasicSymbols.s|"d") unit SI.m
+	val sdmax = symbol(BasicSymbols.s|"d,max") unit SI.m
 	val Eceff = symbol(BasicSymbols.E|"c,eff") unit "Pa"
 	val nE = symbol(BasicSymbols.n|"E")
-	val e0 = symbol(BasicSymbols.e|"0") unit "m"
+	val e0 = symbol(BasicSymbols.e|"0") unit SI.m
 	val I0 = symbol(BasicSymbols.I|"0") unit "m4/m"
 	val W0 = symbol(BasicSymbols.W|"0") unit "m3/m"
 	val Mk = symbol(BasicSymbols.M|"k") unit "Nm/m"
