@@ -2,8 +2,8 @@ P:\workspace4\encalmo\calculation\target\classes;P:\workspace4\encalmo\calculati
 -------
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\FutureExpression.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\FutureExpression.scala
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\FutureExpression.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala
-P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Context.scala
+P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MapContext.scala
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala
@@ -25,8 +25,8 @@ P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\EvalUni
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\EvalUnitTest.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\EvalUnitTest.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Eval.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\EvalUnitTest.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala
-P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext2.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext2.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Context.scala
+P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext2.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext2.scala -> P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext2.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext2.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MapContext.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\TestContext2.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala
@@ -43,8 +43,8 @@ P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MapCont
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MapContext.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Context.scala
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MapContext.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MapContext.scala
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MapContext.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala
-P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala
 P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Context.scala
+P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\CalculationUnitTest.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\MutableContext.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\CalculationUnitTest.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\Calculation.scala
 P:\workspace4\encalmo\calculation\src\test\scala\org\encalmo\calculation\CalculationUnitTest.scala -> P:\workspace4\encalmo\calculation\src\main\scala\org\encalmo\calculation\ExpressionResolver.scala
