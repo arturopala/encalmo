@@ -11,8 +11,8 @@ P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\package.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\package.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Enumerator.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Document.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\BlockComponent.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Document.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Document.scala
-P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Document.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Document.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Style.scala
+P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Document.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Document.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponent.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Document.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\StylesConfig.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Chapter.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\BlockComponent.scala
@@ -31,8 +31,8 @@ P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\TextToTransla
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\TextToTranslate.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Style.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\TextToTranslate.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Text.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\TextToTranslate.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponent.scala
-P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Style.scala
+P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponent.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\StyleClassIdGenerator.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\StyleClassIdGenerator.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\ParagraphStyle.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\ParagraphStyle.scala
@@ -102,8 +102,8 @@ P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Expr.scala ->
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Expr.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Expr.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Expr.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\ExpressionToPrint.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Section.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\BlockComponent.scala
-P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Section.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Section.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Style.scala
+P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Section.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponentSeq.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Section.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Section.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Section.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponent.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Result.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Style.scala
@@ -118,8 +118,8 @@ P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\NumSection.sc
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\NumSection.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Section.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\NumSection.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\DocumentComponent.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\NumSection.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\Enumerator.scala
-P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\NumSection.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\EnumeratorProvider.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\NumSection.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\StylesConfig.scala
+P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\NumSection.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\EnumeratorProvider.scala
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\ListStyle.scala -> P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\ListStyle.scala
 -------
 P:\workspace4\encalmo\document\src\main\scala\org\encalmo\document\FontStyle.scala -> P:\workspace4\encalmo\document\target\classes\org\encalmo\document\FontStyle.class

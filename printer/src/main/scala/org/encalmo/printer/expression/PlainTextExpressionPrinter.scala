@@ -133,7 +133,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
             }
             case bu:BaseUnitOfValue => {
             	w.write("\u2009")
-            	w.write(bu.name)
+            	w.write(bu.name.toString)
             	if(bu.dimension!=1){
             		bu.dimension match {
             			case 2 => w.write("²")

@@ -14,7 +14,7 @@ trait Expression extends TreeLike[Expression] {
    */
   def eval():Expression = this
   
-  def unit:Option[UnitOfValue] = None
+  def unit:UnitOfValue = EmptyUnitOfValue
   
   def or(c:Case):Selection = Selection(CaseExpression(this),Seq(c))
   
@@ -73,35 +73,35 @@ trait Expression extends TreeLike[Expression] {
   def +- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r) => this+(Number(-r)); 
+	  case Number(r,u) => this+(Number(-r,u)); 
 	  case _ => this+(Neg(e))
   }
   
   def *- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r) => *(Number(-r));
+	  case Number(r,u) => *(Number(-r,u));
 	  case _ => *(Neg(e))
   }
   
   def /- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r) => /(Number(-r));
+	  case Number(r,u) => /(Number(-r,u));
 	  case _ => /(Neg(e))
   }
   
   def %- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r) => %(Number(-r)); 
+	  case Number(r,u) => %(Number(-r,u)); 
 	  case _ => %(Neg(e))
   }
   
   def ^- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r) => ^(Number(-r)); 
+	  case Number(r,u) => ^(Number(-r,u)); 
 	  case _ => ^(Neg(e))
   }
   

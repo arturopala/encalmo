@@ -4,11 +4,17 @@ package org.encalmo.expression
  * UnitOfValue trait
  */
 trait UnitOfValue extends Expression {
-
+	
+    def name:UnitOfValueName = UnitOfValueName()
 	def expression:Expression = Void
 	def multiplier:Double = 1
 	
 	override def eval():Expression = Number(multiplier)
+	
+	/** Is non empty unit? */
+	def isDefined:Boolean = false
+	
+	override def + (u:Expression):UnitOfValue = this
 }
 
 /**
@@ -17,7 +23,7 @@ trait UnitOfValue extends Expression {
  */
 case class BaseUnitOfValue (
 
-		symbol:String,
+		baseName:UnitOfValueName,
 		scale:Int = 0,
 		dimension:Int = 1,
 		system:UnitOfValueSystem
@@ -31,7 +37,9 @@ case class BaseUnitOfValue (
 	def dim(exp:Int):BaseUnitOfValue = copy(dimension=dimension*exp)
 	def exp(sca:Int):BaseUnitOfValue = copy(scale=scale+sca)
 	
-	val name = system(scale).map(_.prefix).getOrElse("")+symbol
+	override val name:UnitOfValueName = baseName.withPrefix(system(scale).map(_.prefix).getOrElse(""))
+	
+	override def isDefined:Boolean = true
 	
 }
 
@@ -52,6 +60,7 @@ case class UnitOfValueScale(
 trait UnitOfValueSystem {
 
 	def apply(scale:Int):Option[UnitOfValueScale] = None
+	def apply(name:String):Option[UnitOfValue] = None
 	def multiplier(scale:Int):Double = this(scale).map(_.multiplier).getOrElse(throw new IllegalArgumentException("scale = "+scale))
 
 }
@@ -65,3 +74,20 @@ object EmptyUnitOfValueSystem extends UnitOfValueSystem
  * Empty unit
  */
 object EmptyUnitOfValue extends UnitOfValue
+
+/**
+ * Unit name
+ */
+case class UnitOfValueName (
+    baseName:String = "",
+	prefix:Option[String] = None,
+	suffix:Option[String] = None
+){
+    /** Adds prefix to unit name */
+    def withPrefix(prefix:String):UnitOfValueName = UnitOfValueName(baseName,Some(prefix))
+    
+    /** Returns as String */
+    override val toString:String = prefix.getOrElse("")+baseName+suffix.getOrElse("")
+}
+
+
