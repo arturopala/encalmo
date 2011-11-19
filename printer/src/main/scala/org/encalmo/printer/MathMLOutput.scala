@@ -43,8 +43,8 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		}
 		//attr("displaystyle","true")
 		//attr("scriptlevel","0")
-		//attr("scriptsizemultiplier","0.5")
-		//attr("scriptminsize","3pt")
+		attr("scriptsizemultiplier","0.8")
+		attr("scriptminsize","6pt")
 		body
 		//start(MROW)
 		//body
