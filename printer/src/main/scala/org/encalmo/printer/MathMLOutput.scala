@@ -339,13 +339,13 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	def unit(bu:BaseUnitOfValue) = {
 	    bu.dimension match {
-	        case 1 => mtextClass("unit",ENTITY_THIN_SPACE,bu.name)
+	        case 1 => mtextClass("unit",ENTITY_THIN_SPACE,bu.name.toString)
 	        case _ => {
 	            start(MSUP)
 				attr("mathsize","85%")
 				attr("class","unit")
 				body
-				mtext(ENTITY_THIN_SPACE,bu.name)
+				mtext(ENTITY_THIN_SPACE,bu.name.toString)
 				mtext(bu.dimension.toString)
 				end(MSUP)
 	        }

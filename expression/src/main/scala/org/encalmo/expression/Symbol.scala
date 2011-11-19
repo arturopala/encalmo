@@ -15,7 +15,7 @@ class Symbol(
     val underscript:Option[Symbol] = None,
     val overscript:Option[Symbol] = None,
     val description:Option[String] = None,
-    override val unit:Option[UnitOfValue] = None,
+    override val unit:UnitOfValue = EmptyUnitOfValue,
     val dictionary:Option[String] = None,
     val contextId:Option[Seq[String]] = None,
     override val printable:Boolean = true,
@@ -143,8 +143,8 @@ class Symbol(
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Sets unit */
-    def unit(unit:String):Symbol = copy(unit = Option(new BaseUnitOfValue(unit,0,1,SI)))
-    def unit(unit:UnitOfValue):Symbol = copy(unit = Option(unit))
+    def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(new BaseUnitOfValue(UnitOfValueName(unit),0,1,SI)))
+    def unit(unit:UnitOfValue):Symbol = copy(unit = unit)
     /** Sets dictionary */
     def dictionary(dict:String):Symbol = copy(dictionary = Option(dict))
     /** Copy entire symbol or selected attributes*/
@@ -155,7 +155,7 @@ class Symbol(
 	    underscript:Option[Symbol] = this.underscript,
 	    overscript:Option[Symbol] = this.overscript,
 	    description:Option[String] = this.description,
-	    unit:Option[UnitOfValue] = this.unit,
+	    unit:UnitOfValue = this.unit,
 	    dictionary:Option[String] = this.dictionary,
 	    contextId:Option[Seq[String]] = this.contextId,
 	    printable:Boolean = this.printable,
@@ -209,7 +209,7 @@ class Symbol(
     	underscript.map(x => {sb.append(",underscript=");sb.append(x.toString)})
     	overscript.map(x => {sb.append(",overscript=");sb.append(x.toString)})
     	description.map(x => {sb.append(",description=\"");sb.append(x.toString);sb.append("\"")})
-    	unit.map(x => {sb.append(",unit=\"");sb.append(x.toString);sb.append("\"")})
+    	if(unit.isDefined){sb.append(",unit=\"");sb.append(unit.toString);sb.append("\"")}
     	dictionary.map(x => {sb.append(",dictionary=\"");sb.append(x.toString);sb.append("\"")})
     	contextId.map(x => {sb.append(",contextId=");sb.append(x.toString)})
 		sb.append(")")
@@ -239,7 +239,7 @@ object Symbol {
 	    underscript:Option[Symbol] = None,
 	    overscript:Option[Symbol] = None,
 	    description:Option[String] = None,
-	    unit:Option[UnitOfValue] = None,
+	    unit:UnitOfValue = EmptyUnitOfValue,
 	    dictionary:Option[String] = None,
 	    contextId:Option[Seq[String]] = None,
 	    printable:Boolean = true,

@@ -8,7 +8,8 @@ import java.io.PrintWriter
  */
 case class Number(
 
-		private val r:Real
+		private val r:Real,
+		override val unit:UnitOfValue = EmptyUnitOfValue
 		
 	) extends Value {
 	
@@ -18,9 +19,9 @@ case class Number(
 	 */
 	override def calculate(operator:String, v1:Value, v2:Value):Option[Value] = {
 		val r = (v1,v2) match {
-			case (Number(r1),Number(r2)) => {
+			case (Number(r1,u1),Number(r2,u2)) => {
 				Option(operator match {
-					case "+" => Number(r1+r2)
+					case "+" => Number(r1+r2,u1+u2)
 					case "-" => Number(r1-r2)
 					case "*" => Number(r1*r2)
 					case "/" => Number(r1/r2)
@@ -44,7 +45,7 @@ case class Number(
 	 */
 	override def calculate(operator:String, v:Value):Option[Value] = {
 		v match {
-			case Number(r) => {
+			case Number(r,u) => {
 				Option(operator match {
 					case "-" => Number(-r)
 					case "sqrt" => Number(r.sqrt)
@@ -73,50 +74,50 @@ case class Number(
 	}
 
 	override def ^ (e:Expression):Expression = e match {
-		case Number(r2) if r2==Real.zero => ONE
-		case Number(r2) if r2==Real.one => this
+		case Number(r2,u2) if r2==Real.zero => ONE
+		case Number(r2,u2) if r2==Real.one => this
 		case _ => super.^(e)
 	}
 
 	override def unary_-():Expression = Number(-r)
 
 	override def +- (e:Expression):Expression = e match {
-		case Number(r2) if r2==Real.zero => this
+		case Number(r2,u2) if r2==Real.zero => this
 		case _ => super.+-(e)
 	}
 
 	override def *- (e:Expression):Expression = e match {
-		case Number(r2) if r2==Real.zero => ZERO
-		case Number(r2) if r2==Real.one => Number(-r)
+		case Number(r2,u2) if r2==Real.zero => ZERO
+		case Number(r2,u2) if r2==Real.one => Number(-r)
 		case _ => super.*-(e)
 	}
 
 	override def /- (e:Expression):Expression = e match {
-		case Number(r2) if r2==Real.one => Number(-r)
+		case Number(r2,u2) if r2==Real.one => Number(-r)
 		case _ => super./-(e)
 	}
 
 	override def %- (e:Expression):Expression = e match {
-		case Number(r2) => Number(r%(-r2))
+		case Number(r2,u2) => Number(r%(-r2))
 		case _ => super.%-(e)
 	}
 
 	override def ^- (e:Expression):Expression = e match {
-		case Number(r2) if r2==Real.zero => ONE
-		case Number(r2) if r2==Real.one => this
+		case Number(r2,u2) if r2==Real.zero => ONE
+		case Number(r2,u2) if r2==Real.one => this
 		case _ => super.^-(e)
 	}
 
-	override def < (e:Expression):Boolean = e match {case Number(r1) => r<r1; case _ => false}
-	override def > (e:Expression):Boolean = e match {case Number(r1) => r>r1; case _ => false}
-	override def >= (e:Expression):Boolean = e match {case Number(r1) => r>=r1; case _ => false}
-	override def <= (e:Expression):Boolean = e match {case Number(r1) => r<=r1; case _ => false}
-	override def <> (e:Expression):Boolean = e match {case Number(r1) => r<>r1; case _ => false}
+	override def < (e:Expression):Boolean = e match {case Number(r1,u1) => r<r1; case _ => false}
+	override def > (e:Expression):Boolean = e match {case Number(r1,u1) => r>r1; case _ => false}
+	override def >= (e:Expression):Boolean = e match {case Number(r1,u1) => r>=r1; case _ => false}
+	override def <= (e:Expression):Boolean = e match {case Number(r1,u1) => r<=r1; case _ => false}
+	override def <> (e:Expression):Boolean = e match {case Number(r1,u1) => r<>r1; case _ => false}
 	
 	def isInt = r.isInt
 
 	override def equals(a:Any):Boolean = a match {	
-		case Number(r) => this.r==r
+		case Number(r,u) => this.r==r
 		case _ => false
 	}
 	

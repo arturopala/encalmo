@@ -27,7 +27,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
 		var se = Seq[ExpressionToPrint]()
 		var ue = e // unresolved expression
-		val unit:Option[UnitOfValue] = e.unit
+		val unit:UnitOfValue = e.unit
 		val evaluated = calc.evaluate(e) // evaluated expression
 		e match {
 			case future:FutureExpression => {

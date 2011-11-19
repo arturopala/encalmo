@@ -6,8 +6,12 @@ package org.encalmo.expression
  * [http://en.wikipedia.org/wiki/SI_prefix]
  */
 object SI extends UnitOfValueSystem {
+    
+    val meter:UnitOfValueName = UnitOfValueName("m")
+    val newton:UnitOfValueName = UnitOfValueName("N")
+    val pascal:UnitOfValueName = UnitOfValueName("Pa")
 
-	override def apply(scale:Int):Option[UnitOfValueScale] = map.get(scale)
+	override def apply(scale:Int):Option[UnitOfValueScale] = prefixMap.get(scale)
 
 	object Prefix {
 	
@@ -32,14 +36,14 @@ object SI extends UnitOfValueSystem {
 	
 	private val seq:Seq[Int] = Seq(-15,-12,-9,-6,-3,-2,-1,0,1,2,3,6,9,12,15)
 
-	private val map:Map[Int,UnitOfValueScale] = Map(
+	private val prefixMap:Map[Int,UnitOfValueScale] = Map(
 		0 -> empty,
-		1 -> da, 2 -> h, 3 -> k, 6 -> M, 9 -> G, 12 -> P, 15 -> E,
-		-1 -> d, -2 -> c, -3 -> Prefix.m, -6 -> μ, -9 -> n, -12 -> p, -15 -> f
+		1 -> Prefix.da, 2 -> Prefix.h, 3 -> Prefix.k, 6 -> Prefix.M, 9 -> Prefix.G, 12 -> Prefix.P, 15 -> Prefix.E,
+		-1 -> Prefix.d, -2 -> Prefix.c, -3 -> Prefix.m, -6 -> Prefix.μ, -9 -> Prefix.n, -12 -> Prefix.p, -15 -> Prefix.f
 	)
 	
 	// length
-	val m = BaseUnitOfValue("m",0,1,this)
+	val m = BaseUnitOfValue(meter,0,1,this)
 	val dm = m exp -1
 	val cm = m exp -2
 	val mm = m exp -3
@@ -62,13 +66,34 @@ object SI extends UnitOfValueSystem {
 	val m6 = m^6
 	val m8 = m^8
 	// force
-	val N = BaseUnitOfValue("N",0,1,this)
+	val N = BaseUnitOfValue(newton,0,1,this)
 	val kN = N exp 3
 	val MN = N exp 6
 	val GN = N exp 9
 	// pressure
-	val Pa = BaseUnitOfValue("Pa",0,1,this)
+	val Pa = BaseUnitOfValue(pascal,0,1,this)
 	val kPa = Pa exp 3
     val MPa = Pa exp 6
     val GPa = Pa exp 9
+    
+    override def apply(name:String):Option[UnitOfValue] = unitMap.get(name)
+    
+    private lazy val unitMap:Map[String,UnitOfValue] = Map(
+		m.name.toString -> m,
+		dm.name.toString -> dm,
+		cm.name.toString -> cm,
+		mm.name.toString -> mm,
+		μm.name.toString -> μm,
+		nm.name.toString -> nm,
+		km.name.toString -> km,
+		N.name.toString -> N,
+		kN.name.toString -> kN,
+		MN.name.toString -> MN,
+		GN.name.toString -> GN,
+		Pa.name.toString -> Pa,
+		kPa.name.toString -> kPa,
+		MPa.name.toString -> MPa,
+		GPa.name.toString -> GPa
+	)
+    
 }

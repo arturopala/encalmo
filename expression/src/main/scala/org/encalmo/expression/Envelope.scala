@@ -6,7 +6,7 @@ package org.encalmo.expression
 case class Envelope(
 
 		expression:Expression,
-		override val unit:Option[UnitOfValue]
+		override val unit:UnitOfValue
 
 ) extends Expression {
 
@@ -23,6 +23,6 @@ case class Envelope(
 		}
 	}
 	
-	override val children:Seq[Expression] = if(unit.isDefined) Seq(expression,unit.get) else Seq(expression)
+	override val children:Seq[Expression] = if(unit.isDefined) Seq(expression,unit) else Seq(expression)
 
 }
