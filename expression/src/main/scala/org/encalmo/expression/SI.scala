@@ -43,7 +43,7 @@ object SI extends UnitOfValueSystem {
 	)
 	
 	// length
-	val m = BaseUnitOfValue(meter,0,1,this)
+	val m = BaseUnitOfValue(meter,0,1,this,Characteristics.Length)
 	val dm = m exp -1
 	val cm = m exp -2
 	val mm = m exp -3
@@ -51,27 +51,27 @@ object SI extends UnitOfValueSystem {
 	val nm = m exp -9
 	val km = m exp 3
 	// area
-	val m2 = m dim 2
+	val m2 = m dim 2 set Characteristics.Area
 	val dm2 = m dim 2 exp -1
 	val cm2 = m dim 2 exp -2
 	val mm2 = m dim 2 exp -3
 	val km2 = m dim 2 exp 3
 	// volume
-	val m3 = m dim 3
+	val m3 = m dim 3 set Characteristics.Volume
 	val dm3 = m dim 3 exp -1
 	val cm3 = m dim 3 exp -2
 	val mm3 = m dim 3 exp -3
 	// others
-	val m4 = m^4
-	val m6 = m^6
-	val m8 = m^8
+	val m4 = m dim 4
+	val m6 = m dim 6
+	val m8 = m dim 8
 	// force
-	val N = BaseUnitOfValue(newton,0,1,this)
+	val N = BaseUnitOfValue(newton,0,1,this,Characteristics.Force)
 	val kN = N exp 3
 	val MN = N exp 6
 	val GN = N exp 9
 	// pressure
-	val Pa = BaseUnitOfValue(pascal,0,1,this)
+	val Pa = BaseUnitOfValue(pascal,0,1,this,Characteristics.Pressure)
 	val kPa = Pa exp 3
     val MPa = Pa exp 6
     val GPa = Pa exp 9
