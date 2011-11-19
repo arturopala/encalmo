@@ -11,8 +11,8 @@ div {padding:5pt 0 2pt 0}
 .exprow {font-size:11pt;font-style:normal;font-weight:normal;color:#000000;space-before:2pt;space-after:1pt;}
 .expsymb {font-size:12pt;font-style:italic;font-weight:normal;color:#000000;min-width:35pt;space-before:1pt;space-after:1pt;color:blue;}
 .expdesc {font-size:10pt;font-style:normal;font-weight:normal;color:#000000;space-before:1pt;space-after:1pt;}
-.expeval {color:green; font-size:11pt;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
-.expeval mn {font-weight:bold;font-size:12pt;}
+.expeval {color:green; font-size:12pt;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
+.expeval mn {font-weight:bold;}
 .ns0 {space-before:16pt;space-after:1pt;}
 .ns0 .caption {font-size:12pt;font-style:normal;font-weight:bold;color:#000000;letter-spacing:150%;}
 .ns1 {space-before:12pt;space-after:1pt;}
