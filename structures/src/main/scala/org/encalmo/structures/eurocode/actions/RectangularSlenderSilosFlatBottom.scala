@@ -278,7 +278,7 @@ extends Calculation {
     
 }	
 
-/*object RectangularIntermediateSlendernessSilosShallowHopperExpressions extends MapContext {
+object RectangularIntermediateSlendernessSilosShallowHopperExpressions extends MapContext {
     
     import RectangularSilosSymbols._
     import ParticulateSolidSymbols._
@@ -370,5 +370,5 @@ extends Calculation {
     this(pv) = fx(((gammau*hh)/(nh-1))*((x/hh)-((x/hh)^nh))+pvft*((x/hh)^nh),x)
     this(pnf) = Ff*pv
     this(ptf) = muheff*Ff*pv
-}*/
+}
 

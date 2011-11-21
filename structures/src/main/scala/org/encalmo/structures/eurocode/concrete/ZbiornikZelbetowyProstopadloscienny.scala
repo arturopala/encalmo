@@ -12,6 +12,7 @@ import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.actions.ParticulateSolid
 import org.encalmo.structures.eurocode.actions.RectangularSlenderSilosFlatBottom
+import scalax.file.Path
 
 class ZbiornikZelbetowyProstopadloscienny {
     
@@ -62,6 +63,17 @@ class ZbiornikZelbetowyProstopadloscienny {
 			Section(style1.useAlign("right"),"Opracował: Artur Opala")*/
         )
     )
+    
+    @Test def printHtml:Unit = {
+        val layout = Predefined.layout
+        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path("src/main/resources/style.css"))
+        val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
+        output.open
+        HtmlTextDocumentPrinter.print(doc1,output)
+        output.close
+        output.printConsole
+        output.saveToFile(new java.io.File("target/test-results/kb-silos.html"))
+    }
     
     @Test def printPdf:Unit = {
         val layout = Predefined.layout
