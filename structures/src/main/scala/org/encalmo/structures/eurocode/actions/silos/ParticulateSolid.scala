@@ -1,4 +1,4 @@
-package org.encalmo.structures.eurocode.actions
+package org.encalmo.structures.eurocode.actions.silos
 
 import org.encalmo.expression._
 import org.encalmo.calculation.Context
