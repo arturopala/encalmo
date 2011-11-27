@@ -108,12 +108,22 @@ object ThinWalledCircularSlenderSilosWithSteepHopperExpressions extends MapConte
     this(nh) = 2*(1-0.2)*mu_l*cot(beta)
     this(pv) = fx(((gammau*hh)/(nh-1))*((x/hh)-((x/hh)^nh))+pvft*((x/hh)^nh),x)
     this(pnf) = Ff*pv
-    this(ptf) = muheff*Ff*pv
+    this(ptf) = mu_l*Ff*pv
+    this(pnf0) = Eval(pnf,x -> ZERO)
+    this(ptf0) = Eval(ptf,x -> ZERO)
+    this(pnf1) = Eval(pnf,x -> hh)
+    this(ptf1) = Eval(ptf,x -> hh)
     
     //discharge load on hopper
-    this(Fe) = 1 //TODO wzor z normy
+    this(fiwh) = arctan(mu_l)
+    this(epsilon) = fiwh + arcsin(sin(fiwh)/sin(fiim))
+    this(Fe) = (1+sin(fiim)*cos(epsilon))/(1-sin(fiim)*cos(beta+epsilon))
     this(pne) = Fe*pv
-    this(pte) = muheff*Fe*pv
+    this(pte) = mu_l*Fe*pv
+    this(pne0) = Eval(pne,x -> ZERO)
+    this(pte0) = Eval(pte,x -> ZERO)
+    this(pne1) = Eval(pne,x -> hh)
+    this(pte1) = Eval(pte,x -> hh)
 	
 	// end of context initialization
 	lock
@@ -157,7 +167,10 @@ extends Calculation {
 	
 	//calculated geometry
 	def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(dc,A,U,AU,beta,hh,htp,ho,hc,hb,hcdc),this)
+		Evaluate(Seq(dc,A,U,AU,beta,hh,htp,ho,hc,hb,hcdc),this),
+		AssertionL("[1991-4] 1.1.2 (3)",this,hb/dc,10),
+		AssertionL("[1991-4] 1.1.2 (3)",this,hb,100),
+		AssertionL("[1991-4] 1.1.2 (3)",this,dc,60)
 	)
 	//volumes
 	def volumes = NumSection(TextToTranslate("_volumes",SilosSymbols.dictionary),
@@ -189,12 +202,12 @@ extends Calculation {
     )
     //filling loads on silo hoppers
     def fillingHopperLoad = NumSection(TextToTranslate("_fillingHopperLoad",SilosSymbols.dictionary),"[1991-4] 6.1.2, 6.3.2",
-        AssertionL("leja stromego",this,tan(beta),(1-K_l)/(2*mu_u)),    
-        Evaluate(Seq(Cb,pvft,muheff,Ff,nh,pv,pnf,ptf),this)
+        AssertionL("leja stromego [1991-4] 6.1",this,tan(beta),(1-K_l)/(2*mu_u)),    
+        Evaluate(Seq(Cb,pvft,muheff,Ff,nh,pv,pnf,ptf,pnf0,ptf0,pnf1,ptf1),this)
     )
     //discharge loads on silo hoppers
     def dischargeHopperLoad = NumSection(TextToTranslate("_dischargeHopperLoad",SilosSymbols.dictionary),"[1991-4] 6.3.3", 
-        Evaluate(Seq(Fe,pne,pte),this)
+        Evaluate(Seq(fiwh,epsilon,Fe,pne,pte,pne0,pte0,pne1,pte1),this)
     )
     
 }	

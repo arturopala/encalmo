@@ -13,12 +13,16 @@ import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.actions.silos.ParticulateSolid
 import org.encalmo.structures.eurocode.actions.silos.ThinWalledCircularSlenderSilosWithSteepHopper
 import scalax.file.Path
+import org.encalmo.structures.CalculationDocument
 
-class CircularSteelSilos {
+/**
+ * Calculation of the circular steel silos with steep hopper
+ */
+class CircularSteelSilosCalculation extends CalculationDocument {
     
     import BasicSymbols._
-    
-    val calc = Calculation()
+
+    override val name = "km-silos"
    
     val particulateSolid = ParticulateSolid.Cement
     val steel = Steel.S275
@@ -35,7 +39,7 @@ class CircularSteelSilos {
     
     calc add silos
     
-    val doc1 = Document("",
+    override val doc = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(
@@ -49,17 +53,22 @@ class CircularSteelSilos {
             NumSection("Wykaz materiałów źródłowych",
             	NumSection(styleComment," [1991-4] Norma PN-EN 1991-4 \"Eurokod 1. Oddziaływania na konstrukcje. Część 4: Silosy i zbiorniki.\"")
             ),
-            silos.inputGeometry,
-            particulateSolid.properties,
-            silos.calculatedGeometry,
-            particulateSolid.characteristicValues,
-            silos.volumes,
-            silos.fillingSymmetricalLoad,
-            silos.fillingPatchLoad,
-            silos.dischargeSymmetricalLoad,
-            silos.dischargePatchLoad,
-            silos.fillingHopperLoad,
-            silos.dischargeHopperLoad
+            NumSection("Dane wejściowe",
+                    silos.inputGeometry,
+                    steel.info,
+                    particulateSolid.properties
+            ),
+            NumSection("Oddziaływania na silos przy napełnianiu i opróżnianiu",
+                silos.calculatedGeometry,
+                particulateSolid.characteristicValues,
+                silos.volumes,
+                silos.fillingSymmetricalLoad,
+                silos.fillingPatchLoad,
+                silos.dischargeSymmetricalLoad,
+                silos.dischargePatchLoad,
+                silos.fillingHopperLoad,
+                silos.dischargeHopperLoad
+            )
            /*,
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),
@@ -67,33 +76,5 @@ class CircularSteelSilos {
 			Section(style1.useAlign("right"),"Opracował: Artur Opala")*/
         )
     )
-    
-    @Test def printHtml:Unit = {
-        val layout = Predefined.layout
-        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path("src/main/resources/style.css"))
-        val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
-        output.open
-        HtmlTextDocumentPrinter.print(doc1,output)
-        output.close
-        output.printConsole
-        output.saveToFile(new java.io.File("target/test-results/km-silos.html"))
-    }
-    
-    @Test def printPdf:Unit = {
-        val layout = Predefined.layout
-        val output:XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
-        output.open
-        XslFoTextDocumentPrinter.print(doc1,output)
-        output.close
-        output.printConsole
-        output.saveToFile(new java.io.File("target/test-results/km-silos.fo"))
-        FOPHelper.buildPDF(output.getResult, "target/test-results/km-silos.pdf")
-    }
-    
-    @Test def printText:Unit = {
-        val o:TextOutput = new TextOutput(new java.util.Locale("PL"))
-        PlainTextDocumentPrinter.print(doc1,o)
-        o.printConsole
-    }
 
 }

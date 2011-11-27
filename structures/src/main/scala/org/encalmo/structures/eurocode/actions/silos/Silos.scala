@@ -101,8 +101,19 @@ object SilosSymbols extends SymbolConfigurator {
     lazy val ptf = symbol(BasicSymbols.p|"tf") args (x) unit "kPa"
     lazy val nh = symbol(BasicSymbols.n|"h")
     lazy val muheff = symbol(BasicSymbols.mu|"heff")
-    lazy val Ff = symbol(BasicSymbols.F|"f")
-    lazy val Fe = symbol(BasicSymbols.F|"e")
+    lazy val Ff = symbol(BasicSymbols.F|"f") unit "kN"
+    lazy val Fe = symbol(BasicSymbols.F|"e") unit "kN"
     lazy val pne = symbol(BasicSymbols.p|"ne") args (x) unit "kPa"
     lazy val pte = symbol(BasicSymbols.p|"te") args (x) unit "kPa"
+    lazy val fiwh = symbol(BasicSymbols.phi|"wh") unit "°"
+    lazy val epsilon = symbol(BasicSymbols.epsi) unit "°"
+    lazy val pnf0 = symbol(BasicSymbols.p|"nf,0") unit "kPa"
+    lazy val ptf0 = symbol(BasicSymbols.p|"tf,0") unit "kPa"
+    lazy val pnf1 = symbol(BasicSymbols.p|"nf,1") unit "kPa"
+    lazy val ptf1 = symbol(BasicSymbols.p|"tf,1") unit "kPa"
+    lazy val pne0 = symbol(BasicSymbols.p|"ne,0") unit "kPa"
+    lazy val pte0 = symbol(BasicSymbols.p|"te,0") unit "kPa"
+    lazy val pne1 = symbol(BasicSymbols.p|"ne,1") unit "kPa"
+    lazy val pte1 = symbol(BasicSymbols.p|"te,1") unit "kPa"
+    
 }
