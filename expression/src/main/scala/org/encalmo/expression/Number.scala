@@ -15,22 +15,35 @@ case class Number(
 	
 	/** 
 	 * Calculates result of the operation with two arguments. 
-	 * Supports arguments of the Number type. 
+	 * Supports arguments of the Number type.
 	 */
 	override def calculate(operator:String, v1:Value, v2:Value):Option[Value] = {
 		val r = (v1,v2) match {
 			case (Number(r1,u1),Number(r2,u2)) => {
 				Option(operator match {
-					case "+" => Number(r1+r2,u1+u2)
-					case "-" => Number(r1-r2)
-					case "*" => Number(r1*r2)
+					case "+" => {
+					    if(u1.isSame(u2)){
+					         if(u1==u2) Number(r1+r2,u1) else
+					             if(u1.isLargerThan(u2)) Number(r1+r2.convert(u2,u1),u1) else Number(r1.convert(u1,u2)+r2,u2)
+					    }else{
+					        Number(r1+r2,u1+u2)
+					    }
+					}
+					case "-" => {
+					    if(u1==u2) Number(r1-r2,u1) else
+					        if(u1.isLargerThan(u2)) Number(r1-r2.convert(u2,u1),u1) else Number(r1.convert(u1,u2)-r2,u2)
+					}
+					case "*" => {
+					    if(u1==u2) Number(r1*r2,u1) else
+					        if(u1.isSameBase(u2)) Number(r1*r2.convert(u2,u1),u1.dim(u1.dimension+u2.dimension)) else Number(r1*r2,u1*u2)
+					}
 					case "/" => Number(r1/r2)
 					case "%" => Number(r1%r2)
-					case "^" => Number(r1^r2)
-					case "root" => Number(r1.root(r2))
-					case "min" => Number(Real(Math.min(r1.d,r2.d)))
-					case "max" => Number(Real(Math.max(r1.d,r2.d)))
-					case "hypot" => Number(Real(java.lang.Math.hypot(r1.d,r2.d)))
+					case "^" => Number(r1^r2,u1)
+					case "root" => Number(r1.root(r2),u1)
+					case "min" => if(r1<=r2) v1 else v2
+					case "max" => if(r1>=r2) v1 else v2
+					case "hypot" => Number(Real(java.lang.Math.hypot(r1.d,r2.convert(u2,u1).d)),u1)
 					case _ => null
 				})
 			}
