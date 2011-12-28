@@ -8,13 +8,16 @@ package org.encalmo.expression
 object SI extends UnitOfValueSystem {
     
     val meter:UnitOfValueName = UnitOfValueName("m")
+    val gram:UnitOfValueName = UnitOfValueName("g")
     val newton:UnitOfValueName = UnitOfValueName("N")
     val pascal:UnitOfValueName = UnitOfValueName("Pa")
 
 	override def apply(scale:Int):Option[UnitOfValueScale] = prefixMap.get(scale)
+	
+	override def find(baseName:UnitOfValueName,scale:Int,dimension:Int):Option[UnitOfValue] = unitSeq.find(
+	        u => u.name.baseName==baseName && u.scale==scale && u.dimension==dimension)
 
 	object Prefix {
-	
 		val empty = UnitOfValueScale("",1)
 		val da = UnitOfValueScale("da",1E1)
 		val h = UnitOfValueScale("h",1E2)
@@ -43,7 +46,7 @@ object SI extends UnitOfValueSystem {
 	)
 	
 	// length
-	val m = BaseUnitOfValue(meter,0,1,this,Characteristics.Length)
+	val m = SimpleUnitOfValue(meter,0,1,this,Characteristics.Length)
 	val dm = m exp -1
 	val cm = m exp -2
 	val mm = m exp -3
@@ -52,48 +55,33 @@ object SI extends UnitOfValueSystem {
 	val km = m exp 3
 	// area
 	val m2 = m dim 2 set Characteristics.Area
-	val dm2 = m dim 2 exp -1
-	val cm2 = m dim 2 exp -2
-	val mm2 = m dim 2 exp -3
-	val km2 = m dim 2 exp 3
+	val dm2 = m2 exp -1
+	val cm2 = m2 exp -2
+	val mm2 = m2 exp -3
+	val km2 = m2 exp 3
 	// volume
-	val m3 = m dim 3 set Characteristics.Volume
-	val dm3 = m dim 3 exp -1
-	val cm3 = m dim 3 exp -2
-	val mm3 = m dim 3 exp -3
+	val m3 = m2 dim 3 set Characteristics.Volume
+	val dm3 = m3 exp -1
+	val cm3 = m3 exp -2
+	val mm3 = m3 exp -3
 	// others
 	val m4 = m dim 4
 	val m6 = m dim 6
 	val m8 = m dim 8
+	//weight
+	val g = SimpleUnitOfValue(gram,0,1,this,Characteristics.Weight)
+	val kg = g exp 3
 	// force
-	val N = BaseUnitOfValue(newton,0,1,this,Characteristics.Force)
+	val N = SimpleUnitOfValue(newton,0,1,this,Characteristics.Force)
 	val kN = N exp 3
 	val MN = N exp 6
 	val GN = N exp 9
 	// pressure
-	val Pa = BaseUnitOfValue(pascal,0,1,this,Characteristics.Pressure)
+	val Pa = SimpleUnitOfValue(pascal,0,1,this,Characteristics.Pressure)
 	val kPa = Pa exp 3
     val MPa = Pa exp 6
     val GPa = Pa exp 9
-    
-    override def apply(name:String):Option[UnitOfValue] = unitMap.get(name)
-    
-    private lazy val unitMap:Map[String,UnitOfValue] = Map(
-		m.name.toString -> m,
-		dm.name.toString -> dm,
-		cm.name.toString -> cm,
-		mm.name.toString -> mm,
-		μm.name.toString -> μm,
-		nm.name.toString -> nm,
-		km.name.toString -> km,
-		N.name.toString -> N,
-		kN.name.toString -> kN,
-		MN.name.toString -> MN,
-		GN.name.toString -> GN,
-		Pa.name.toString -> Pa,
-		kPa.name.toString -> kPa,
-		MPa.name.toString -> MPa,
-		GPa.name.toString -> GPa
-	)
+	
+	override lazy val unitSeq:Seq[SimpleUnitOfValue] = Seq(m,dm,cm,mm,μm,nm,km,N,kN,MN,GN,Pa,kPa,MPa,GPa,m2,dm2,cm2,mm2,km2,m3,dm3,cm3,mm3,m4,m6,m8,kg)
     
 }

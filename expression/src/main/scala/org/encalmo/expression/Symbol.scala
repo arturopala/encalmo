@@ -143,7 +143,7 @@ class Symbol(
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Sets unit */
-    def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(new BaseUnitOfValue(UnitOfValueName(unit),0,1,SI)))
+    def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(new SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
     def unit(unit:UnitOfValue):Symbol = copy(unit = unit)
     /** Sets dictionary */
     def dictionary(dict:String):Symbol = copy(dictionary = Option(dict))
