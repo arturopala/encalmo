@@ -96,6 +96,10 @@ class Real(val d: Double) {
   def rad: Real = Real(Math.toRadians(d))
   def deg: Real = Real(Math.toDegrees(d))
   def isInt = (d.toInt == d)
+  def inverse:Real = Real(1/d)
+  
+  def toInt:Int = d.toInt
+  def toLong:Long = d.toLong
 
   def absInt: Int = Math.floor(Math.abs(d)).toInt
 

@@ -1,16 +1,22 @@
 package org.encalmo.expression
 import org.encalmo.common.{AdHocTraveler,Node}
 import org.encalmo.common.Traveler
+import scala.collection.mutable.Stack
+import scala.collection.mutable.Buffer
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
 /**
  * UnitOfValue trait
  */
 trait UnitOfValue extends Expression {
 	
-    def characteristic:Characteristic = Characteristics.Unknown
+    def characteristic:Characteristic = Characteristics.None
     def name:UnitOfValueName = EmptyUnitOfValueName
 	def multiplier:Double = 1
-	def dimension:Int = 1
+	def dimension:Double = 1
+	def scale:Int = 0
 	
 	override def eval():Expression = Number(multiplier)
 	
@@ -27,7 +33,9 @@ trait UnitOfValue extends Expression {
 	def baseUnit:UnitOfValue = this
 	
 	/** Sets dimension of unit */
-	def dim(dim:Int):UnitOfValue
+	def dim(dim:Double):UnitOfValue
+	/** Sets scale of unit */
+	def exp(exp:Int):UnitOfValue
 	
 	def *(u:UnitOfValue) = {
 	    if(this==EmptyUnitOfValue) u 
@@ -37,8 +45,8 @@ trait UnitOfValue extends Expression {
 	}
 	
 	def /(u:UnitOfValue) = {
-	    if(this==EmptyUnitOfValue) ComplexUnitOfValue(Quot(this,u))
-	    else if(u == EmptyUnitOfValue) this 
+	    if(u == EmptyUnitOfValue) this 
+	    else if(this==EmptyUnitOfValue) ComplexUnitOfValue(Quot(this,u))
 	    else if(this.isSame(u)) this.dim(this.dimension-u.dimension)
 	    else ComplexUnitOfValue(Quot(this,u))
 	}
@@ -47,18 +55,29 @@ trait UnitOfValue extends Expression {
 	    if(this==EmptyUnitOfValue) u 
 	    else if(u == EmptyUnitOfValue) this 
 	    else if(this.isSame(u)) this 
-	    else IllegalUnitOfValue(this.name+"+"+u.name)
+	    else new IllegalUnitOfValue(this,"+",u)
 	}
 	
 	def -(u:UnitOfValue):UnitOfValue = {
 	    if(this==EmptyUnitOfValue) u 
 	    else if(u == EmptyUnitOfValue) this 
 	    else if(this.isSame(u)) this 
-	    else IllegalUnitOfValue(this.name+"-"+u.name)
+	    else new IllegalUnitOfValue(this,"-",u)
 	}
-	
-	def toNameString:String = name.toString + (if(dimension == 1) "" else dimension)
     
+    def %(u:UnitOfValue) = {
+        if(u == EmptyUnitOfValue) this 
+        else if(this==EmptyUnitOfValue) this
+        else if(this.isSame(u)) this
+        else new IllegalUnitOfValue(this,"%",u)
+    }
+	
+	def toNameString:String = name.toString + (if(dimension == 1) "" else UnitOfValue.dimensionFormat.format(dimension))
+    
+}
+
+object UnitOfValue {
+    val dimensionFormat = new DecimalFormat("0.#",new DecimalFormatSymbols(Locale.ENGLISH))
 }
 
 /**
@@ -67,59 +86,98 @@ trait UnitOfValue extends Expression {
  */
 case class SimpleUnitOfValue (
 
-		baseName:UnitOfValueName = EmptyUnitOfValueName,
-		scale:Int = 0,
-		override val dimension:Int = 1,
+		baseUnitName:UnitOfValueName = EmptyUnitOfValueName,
+		override val scale:Int = 0,
+		override val dimension:Double = 1,
 		system:UnitOfValueSystem = EmptyUnitOfValueSystem,
-		override val characteristic:Characteristic = Characteristics.Unknown
+		override val characteristic:Characteristic = Characteristics.None
 		
 		
 ) extends UnitOfValue {
 	
 	override val multiplier:Double = Math.pow(system.multiplier(scale),dimension)
 	
-	override def dim(newdim:Int):SimpleUnitOfValue = if(newdim!=0) copy(dimension=newdim) else EmptyUnitOfValue
+	override def dim(newdim:Double):UnitOfValue = if(newdim==0) EmptyUnitOfValue else system.find(baseUnitName.baseName,scale,newdim).getOrElse(copy(dimension = newdim))
+	override def exp(exp:Int):UnitOfValue = system.find(baseUnitName.baseName,scale+exp,dimension).getOrElse(copy(scale=scale+exp))
 	
-	def exp(exp:Int):SimpleUnitOfValue = copy(scale=scale+exp)
-	
-	override val name:UnitOfValueName = baseName.withPrefix(system(scale).map(_.prefix).getOrElse(null))
+	override val name:UnitOfValueName = baseUnitName.withPrefix(system(scale).map(_.prefix).getOrElse(null))
 	
 	override def isDefined:Boolean = true
 	
 	/** Sets characteristic of unit */
 	def set(characteristic:Characteristic) = copy(characteristic = characteristic)
 	
-	override lazy val baseUnit:UnitOfValue = system.find(baseName,0,dimension).getOrElse(this)
+	override lazy val baseUnit:UnitOfValue = system.find(baseUnitName.baseName,0,dimension).getOrElse(this)
 	
+}
+
+/** Empty unit */
+object EmptyUnitOfValue extends SimpleUnitOfValue() {
+    
+    override def dim(newdim:Double):SimpleUnitOfValue = this
+    override def exp(exp:Int):UnitOfValue = this
+    override def toString:String = "EmptyUnitOfValue"
+    
 }
 
 case class UnitOfValueNameBuilder extends Traveler[Expression] {
     
-    val result = StringBuilder.newBuilder
+    private val stack = Stack[Buffer[String]]()
     
-    def toResult:String = result.toString
+    stack.push(Buffer[String]())
+    
+    lazy val toResult:String = stack.top.mkString
     
     override def onEnter(node:Node[Expression]):Unit = node.element match {
-        case u:ComplexUnitOfValue => result.append("[")
-        case EmptyUnitOfValue => result.append{
+        case u:ComplexUnitOfValue => {
+            if(u.dimension!=1) stack.top.append("[")
+        }
+        case EmptyUnitOfValue => stack.top.append{
             if(node.parent!=null && node.parent.element.isInstanceOf[Quot] && node.position==0) "1"
             else "1"
         }
-        case u:UnitOfValue => result.append(u.toNameString)
+        case u:UnitOfValue => stack.top.append(u.toNameString)
+        case o:MultipleInfixOperation => {
+            stack.push(Buffer[String]())
+        }
         case _ => Unit
     }
        
     override def onExit(node:Node[Expression]):Unit = node.element match {
         case u:ComplexUnitOfValue => {
-            result.append("]")
-            if(u.dimension!=1) result.append(u.dimension)
+            if(u.dimension!=1) stack.top.append("]"+UnitOfValue.dimensionFormat.format(u.dimension))
+        }
+        case o:MultipleInfixOperation => {
+            val buff = stack.pop()
+            stack.top.append(buff.sortBy(s => s.toLowerCase()).mkString(o.operator))
         }
         case _ => Unit
     }
     
+    override def onBeforeChildEnter(node:Node[Expression], position:Int, child:Expression):Unit = {
+        stack.push(Buffer[String]())
+        node.element match {
+            case o:Quot if position==1 && ((child.isInstanceOf[ComplexUnitOfValue] && child.asInstanceOf[ComplexUnitOfValue].dimension==1) || child.isInstanceOf[Operation]) => {
+                stack.top.append("(");
+            }
+            case _ => Unit
+        }
+    }
+    
+    override def onAfterChildExit(node:Node[Expression], position:Int, child:Expression):Unit = {
+        node.element match {
+            case o:Quot if position==1 && ((child.isInstanceOf[ComplexUnitOfValue] && child.asInstanceOf[ComplexUnitOfValue].dimension==1) || child.isInstanceOf[Operation]) => {
+                stack.top.append(")");
+            }
+            case _ => Unit
+        }
+        val buff = stack.pop()
+        stack.top.append(buff.mkString)
+    }
+    
     override def onBetweenChildren(node:Node[Expression], leftChild:Expression, rightChild:Expression):Unit = node.element match {
-        case o:Operation2 => result.append(o.operator)
-        case o:MultipleInfixOperation => result.append(o.operator)
+        case o:Operation2 => stack.top.append(o.operator)
+        case o:MultipleInfixOperation => Unit
         case _ => Unit
     }
     
@@ -127,33 +185,38 @@ case class UnitOfValueNameBuilder extends Traveler[Expression] {
 
 case class ComplexUnitOfValue(
 	expression:Expression,
-	override val dimension:Int = 1
+	override val dimension:Double = 1,
+	override val scale:Int = 0
 ) extends UnitOfValue {
     
-    private val nb = new UnitOfValueNameBuilder()
-    expression.travel(traveler=nb)
-    
-    override val name:UnitOfValueName = UnitOfValueName(nb.toResult)
+    override lazy val name:UnitOfValueName = {
+        val nb = new UnitOfValueNameBuilder()
+        this.travel(traveler=nb)
+        UnitOfValueName(nb.toResult)
+    }
     
     override val children:Seq[Expression] = Seq(expression)
 	
 	override def isDefined:Boolean = true
 	
-	override def dim(newdim:Int):UnitOfValue = if(newdim!=0) copy(dimension=newdim) else EmptyUnitOfValue
+	override def dim(newdim:Double):UnitOfValue = if(newdim==0) EmptyUnitOfValue else copy(dimension=newdim)
+	
+	override def exp(exp:Int):UnitOfValue = copy(scale=scale+exp)
 	
 	override def toNameString:String = name.toString
 }
 
 case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
     
-    override def dim(newdim:Int):IllegalUnitOfValue = this
+    def this(u1:UnitOfValue,operator:String,u2:UnitOfValue) = this(u1.toNameString+operator+u2.toNameString)
+    
+    override def dim(newdim:Double):IllegalUnitOfValue = IllegalUnitOfValue("("+desc+")^"+newdim)
+    
+    override def exp(exp:Int):UnitOfValue = IllegalUnitOfValue("("+desc+")exp"+exp)
     
     override def toNameString:String = "!"+desc+"!"
     
 }
-
-/** Empty unit */
-object EmptyUnitOfValue extends SimpleUnitOfValue()
 
 /**
  * UnitOfValueScale class
@@ -171,17 +234,19 @@ trait UnitOfValueSystem {
 
 	def apply(scale:Int):Option[UnitOfValueScale] = Some(UnitOfValueScale("",Math.pow(10,scale)))
 	def apply(name:String):Option[UnitOfValue] = unitMap.get(name)
-	def find(baseName:UnitOfValueName,scale:Int,dimension:Int):Option[UnitOfValue] = Some(SimpleUnitOfValue(baseName,scale,dimension,this,Characteristics.Unknown))
+	def find(baseName:String,scale:Int,dimension:Double):Option[UnitOfValue] = Some(SimpleUnitOfValue(UnitOfValueName(baseName),scale,dimension,this,Characteristics.None))
 	def multiplier(scale:Int):Double = this(scale).map(_.multiplier).getOrElse(Math.pow(10,scale))
-	def unitSeq:Seq[UnitOfValue] = Seq()
-	lazy val unitMap:Map[String,UnitOfValue] = unitSeq.map(u => (u.toNameString,u)).toMap
+	def units:Seq[UnitOfValue] = Seq()
+	lazy val unitMap:Map[String,UnitOfValue] = units.map(u => (u.toNameString,u)).toMap
 
 }
 
 /**
  * Empty system
  */
-object EmptyUnitOfValueSystem extends UnitOfValueSystem
+object EmptyUnitOfValueSystem extends UnitOfValueSystem {
+    override def toString:String = "Empty"
+}
 
 /**
  * Empty name
@@ -206,20 +271,24 @@ case class UnitOfValueName (
 /**
  * Characteristic
  */
-case class Characteristic (description:String)
+case class Characteristic (description:String) {
+    override def toString:String = description
+}
 
 /**
  * Characteristics dictionary
  */
 object Characteristics {
     
-    val Unknown:Characteristic = Characteristic("unknown")
+    val None:Characteristic = Characteristic("none")
     val Length:Characteristic = Characteristic("length")
     val Area:Characteristic = Characteristic("area")
     val Volume:Characteristic = Characteristic("volume")
     val Force:Characteristic = Characteristic("force")
     val Pressure:Characteristic = Characteristic("pressure")
     val Weight:Characteristic = Characteristic("weight")
+    val Angle:Characteristic = Characteristic("angle")
+    val Time:Characteristic = Characteristic("time")
     
 }
 

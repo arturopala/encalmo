@@ -10,15 +10,16 @@ import org.encalmo.fop.FOPHelper
 import org.encalmo.document.StylesConfigSymbols._
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
+import org.encalmo.structures.CalculationDocument
 
-class DzwigarDrewnianyKlejonyTrapezowy {
+class DzwigarDrewnianyKlejonyTrapezowy extends CalculationDocument {
     
     import BasicSymbols._
     
+    override val name = "kd1-dzwigar"
+    
     val LE = Character.LE
     val ARROW = Character.RARROW
-    
-    val calc = Calculation("1")
     
     val l0 = l|0 is "rozpiętość obliczeniowa" unit "m"
     val h1 = h|1 is "wysokość przekroju (niższa)" unit "m"
@@ -275,7 +276,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     calc(Wyfi2) = (b-2*deff)*(hmaxfi2^2)/6
     calc(sigmam0fi2) = Myfi2/Wyfi2
       
-    val doc1 = Document("",
+    override val doc = Document("",
         Predefined.stylesConfig,
         Chapter("",
             Section("Ćwiczenie projektowe nr 2 z \"Konstrukcji Drewnianych\". Autor: Artur Opala 61315. Wrocław 2010/2011"),
@@ -351,22 +352,5 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
 			Section("Koniec obliczeń.")
         )
     )
-    
-    @Test def printPdf:Unit = {
-        val layout = Predefined.layout
-        val output:XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
-        output.open
-        XslFoTextDocumentPrinter.print(doc1,output)
-        output.close
-        output.printConsole
-        output.saveToFile(new java.io.File("target/test-results/kd1-dzwigar.fo"))
-        FOPHelper.buildPDF(output.getResult, "target/test-results/kd1-dzwigar.pdf")
-    }
-    
-    @Test def printText:Unit = {
-        val o:TextOutput = new TextOutput(new java.util.Locale("PL"))
-        PlainTextDocumentPrinter.print(doc1,o)
-        o.printConsole
-    }
 
 }

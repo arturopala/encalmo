@@ -7,15 +7,22 @@ package org.encalmo.expression
  */
 object SI extends UnitOfValueSystem {
     
+    override def toString:String = "SI"
+    
+    private var initialized = false
+    
     val meter:UnitOfValueName = UnitOfValueName("m")
     val gram:UnitOfValueName = UnitOfValueName("g")
+    val second:UnitOfValueName = UnitOfValueName("s")
     val newton:UnitOfValueName = UnitOfValueName("N")
     val pascal:UnitOfValueName = UnitOfValueName("Pa")
+    val degree:UnitOfValueName = UnitOfValueName("°")
+    val radian:UnitOfValueName = UnitOfValueName("rad")
 
 	override def apply(scale:Int):Option[UnitOfValueScale] = prefixMap.get(scale)
 	
-	override def find(baseName:UnitOfValueName,scale:Int,dimension:Int):Option[UnitOfValue] = unitSeq.find(
-	        u => u.name.baseName==baseName && u.scale==scale && u.dimension==dimension)
+	override def find(baseName:String,scale:Int,dimension:Double):Option[UnitOfValue] = if(initialized) units.find(
+	        u => (u.name.baseName==baseName && u.scale==scale && u.dimension==dimension)) else None
 
 	object Prefix {
 		val empty = UnitOfValueScale("",1)
@@ -37,7 +44,7 @@ object SI extends UnitOfValueSystem {
 	
 	import Prefix._
 	
-	private val seq:Seq[Int] = Seq(-15,-12,-9,-6,-3,-2,-1,0,1,2,3,6,9,12,15)
+	//private val seq:Seq[Int] = Seq(-15,-12,-9,-6,-3,-2,-1,0,1,2,3,6,9,12,15)
 
 	private val prefixMap:Map[Int,UnitOfValueScale] = Map(
 		0 -> empty,
@@ -54,22 +61,29 @@ object SI extends UnitOfValueSystem {
 	val nm = m exp -9
 	val km = m exp 3
 	// area
-	val m2 = m dim 2 set Characteristics.Area
+	val m2 = m set Characteristics.Area dim 2
 	val dm2 = m2 exp -1
 	val cm2 = m2 exp -2
 	val mm2 = m2 exp -3
 	val km2 = m2 exp 3
 	// volume
-	val m3 = m2 dim 3 set Characteristics.Volume
+	val m3 = m set Characteristics.Volume dim 3
 	val dm3 = m3 exp -1
 	val cm3 = m3 exp -2
 	val mm3 = m3 exp -3
 	// others
-	val m4 = m dim 4
-	val m6 = m dim 6
-	val m8 = m dim 8
+	val m4 = m set Characteristics.None dim 4
+	val cm4 = m4 exp -2
+	val mm4 = m4 exp -3
+	val m6 = m set Characteristics.None dim 6
+	val cm6 = m6 exp -2
+	val mm6 = m6 exp -3
+	val m8 = m set Characteristics.None dim 8
+	val cm8 = m8 exp -2
+	val mm8 = m8 exp -3
 	//weight
 	val g = SimpleUnitOfValue(gram,0,1,this,Characteristics.Weight)
+	val mg = g exp -3
 	val kg = g exp 3
 	// force
 	val N = SimpleUnitOfValue(newton,0,1,this,Characteristics.Force)
@@ -81,7 +95,16 @@ object SI extends UnitOfValueSystem {
 	val kPa = Pa exp 3
     val MPa = Pa exp 6
     val GPa = Pa exp 9
+    //angle
+    val deg = SimpleUnitOfValue(degree,0,1,this,Characteristics.Angle)
+    val rad = SimpleUnitOfValue(radian,0,1,this,Characteristics.Angle)
+    //time
+    val s = SimpleUnitOfValue(second,0,1,this,Characteristics.Time)
+    val ms = s exp -3
+    val s2 = s dim 2
 	
-	override lazy val unitSeq:Seq[SimpleUnitOfValue] = Seq(m,dm,cm,mm,μm,nm,km,N,kN,MN,GN,Pa,kPa,MPa,GPa,m2,dm2,cm2,mm2,km2,m3,dm3,cm3,mm3,m4,m6,m8,kg)
+	override lazy val units:Seq[UnitOfValue] = Seq(m,dm,cm,mm,μm,nm,km,N,kN,MN,GN,Pa,kPa,MPa,GPa,m2,dm2,cm2,mm2,km2,m3,dm3,cm3,mm3,m4,cm4,mm4,m6,cm6,mm6,m8,cm8,mm8,g,kg,mg,deg,rad,s,ms,s2)
+	
+	initialized = true
     
 }

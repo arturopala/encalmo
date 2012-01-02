@@ -30,6 +30,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
 	val locale = output.locale
 	
 	lazy val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val dimensionFormat:java.text.NumberFormat = new java.text.DecimalFormat("0.#",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
@@ -131,14 +132,14 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
             case ct:CaseTest => {
                 w.write("(")
             }
-            case bu:BaseUnitOfValue => {
+            case u:UnitOfValue => {
             	w.write("\u2009")
-            	w.write(bu.name.toString)
-            	if(bu.dimension!=1){
-            		bu.dimension match {
+            	w.write(u.toNameString)
+            	if(u.dimension!=1){
+            		u.dimension match {
             			case 2 => w.write("²")
             			case 3 => w.write("³")
-            			case _ => w.write(bu.dimension)
+            			case _ => w.write(""+dimensionFormat.format(u.dimension))
             		}
             	}
             }

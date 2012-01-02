@@ -28,6 +28,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	var suffix:String = null
 	
 	lazy val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",java.text.DecimalFormatSymbols.getInstance(locale))
+	lazy val dimensionFormat:java.text.NumberFormat = new java.text.DecimalFormat("0.#",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
@@ -337,16 +338,16 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if(printStyles && !script) end(MSTYLE)
 	}
 	
-	def unit(bu:BaseUnitOfValue) = {
-	    bu.dimension match {
-	        case 1 => mtextClass("unit",ENTITY_THIN_SPACE,bu.name.toString)
+	def unit(u:UnitOfValue) = {
+	    u.dimension match {
+	        case 1 => mtextClass("unit",ENTITY_THIN_SPACE,u.toNameString.toString)
 	        case _ => {
 	            start(MSUP)
 				attr("mathsize","85%")
 				attr("class","unit")
 				body
-				mtext(ENTITY_THIN_SPACE,bu.name.toString)
-				mtext(bu.dimension.toString)
+				mtext(ENTITY_THIN_SPACE,u.toNameString.toString)
+				mtext(dimensionFormat.format(u.dimension))
 				end(MSUP)
 	        }
 	    }

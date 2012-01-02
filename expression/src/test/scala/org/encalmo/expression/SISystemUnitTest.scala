@@ -66,5 +66,27 @@ class SISystemUnitTest extends AssertionsForJUnit {
         assertTrue(SI("g") == Some(SI.g))
         assertTrue(SI("kg") == Some(SI.kg))
     }
+    
+    @Test def testFind {
+        SI.units.foreach(u => {
+            assertEquals(u, SI.find(u.name.baseName,u.scale,u.dimension).get)
+        })
+    }
+    
+    @Test def testDimension {
+        assertEquals(SI.m2, SI.m dim 2)
+        assertEquals(SI.cm2, SI.cm dim 2)
+        assertEquals(SI.m3, SI.m dim 3)
+        assertEquals(SI.cm3, SI.cm dim 3)
+    }
+    
+    @Test def testScale {
+        assertEquals(SI.cm, SI.m exp -2)
+        assertEquals(SI.m, SI.cm exp 2)
+        assertEquals(SI.mm, SI.m exp -3)
+        assertEquals(SI.m, SI.mm exp 3)
+        assertEquals(SI.g, SI.kg exp -3)
+        assertEquals(SI.kg, SI.g exp 3)
+    }
 
 }
