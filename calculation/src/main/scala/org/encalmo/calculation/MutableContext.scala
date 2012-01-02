@@ -11,7 +11,7 @@ trait MutableContext extends Context {
   override def map:Map[Symbol,Expression]
   
   def update(s:Symbol, e:Expression) = {
-		if(opened) map.put(symbol(s),e) else throwException
+		if(!opened) throwException else map.put(symbol(s),e)
   }
 
 }

@@ -24,25 +24,69 @@ case class Number(
 					case "+" => {
 					    if(u1.isSame(u2)){
 					         if(u1==u2) Number(r1+r2,u1) else
-					             if(u1.isLargerThan(u2)) Number(r1+r2.convert(u2,u1),u1) else Number(r1.convert(u1,u2)+r2,u2)
+					             if(u1.isLargerThan(u2)) Number(r1+(r2.convert(u2,u1)),u1) else Number(r1.convert(u1,u2)+r2,u2)
 					    }else{
 					        Number(r1+r2,u1+u2)
 					    }
 					}
 					case "-" => {
-					    if(u1==u2) Number(r1-r2,u1) else
-					        if(u1.isLargerThan(u2)) Number(r1-r2.convert(u2,u1),u1) else Number(r1.convert(u1,u2)-r2,u2)
+					    if(u1.isSame(u2)){
+                             if(u1==u2) Number(r1-r2,u1) else
+                                 if(u1.isLargerThan(u2)) Number(r1-(r2.convert(u2,u1)),u1) else Number(r1.convert(u1,u2)-r2,u2)
+                        }else{
+                            Number(r1-r2,u1-u2)
+                        }
 					}
 					case "*" => {
-					    if(u1==u2) Number(r1*r2,u1) else
-					        if(u1.isSameBase(u2)) Number(r1*r2.convert(u2,u1),u1.dim(u1.dimension+u2.dimension)) else Number(r1*r2,u1*u2)
+					    if(u1.isSame(u2)){
+                             if(u1==u2) Number(r1*r2,u1.dim(u1.dimension+u2.dimension)) else
+                                 if(u1.isLargerThan(u2)) Number(r1*(r2.convert(u2,u1)),u1.dim(u1.dimension+u2.dimension)) else Number(r1.convert(u1,u2)*r2,u2.dim(u1.dimension+u2.dimension))
+                        }else{
+                            Number(r1*r2,u1*u2)
+                        }
 					}
-					case "/" => Number(r1/r2)
-					case "%" => Number(r1%r2)
-					case "^" => Number(r1^r2,u1)
-					case "root" => Number(r1.root(r2),u1)
-					case "min" => if(r1<=r2) v1 else v2
-					case "max" => if(r1>=r2) v1 else v2
+					case "/" => {
+					    if(u1.isSame(u2)){
+                             if(u1==u2) Number(r1/r2,u1.dim(u1.dimension-u2.dimension)) else
+                                 if(u1.isLargerThan(u2)) Number(r1/(r2.convert(u2,u1)),u1.dim(u1.dimension-u2.dimension)) else Number(r1.convert(u1,u2)/r2,u2.dim(u1.dimension-u2.dimension))
+                        }else{
+                            Number(r1/r2,u1/u2)
+                        }
+					}
+					case "%" => {
+                        if(u1.isSame(u2)){
+                             if(u1==u2) Number(r1%r2,u1) else
+                                 if(u1.isLargerThan(u2)) Number(r1.convert(u1,u2)%r2,u2) else Number(r1%(r2.convert(u2,u1)),u1)
+                        }else{
+                            Number(r1%r2,u1%u2)
+                        }
+                    }
+					case "^" => {
+					    if(r2>=0){
+					        Number(r1^r2,u1.dim(u1.dimension*r2.d))
+					    }else{
+					        Number(r1^r2,EmptyUnitOfValue/(u1.dim(u1.dimension*(-r2.d))))
+					    }
+					}
+					case "root" => {
+					    Number(r1.root(r2),u1.dim(u1.dimension/r2))
+					}
+					case "min" => {
+					    if(u1.isSame(u2)){
+                             if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
+                             else if(r1<=r2.convert(u2,u1)) v1 else v2
+                        }else{
+                             if(r1<=r2) v1 else v2
+                        }
+					}
+					case "max" => {
+                        if(u1.isSame(u2)){
+                             if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
+                             else if(r1<=r2.convert(u2,u1)) v2 else v1
+                        }else{
+                             if(r1<=r2) v2 else v1
+                        }
+                    }
 					case "hypot" => Number(Real(java.lang.Math.hypot(r1.d,r2.convert(u2,u1).d)),u1)
 					case _ => null
 				})
@@ -60,31 +104,39 @@ case class Number(
 		v match {
 			case Number(r,u) => {
 				Option(operator match {
-					case "-" => Number(-r)
-					case "sqrt" => Number(r.sqrt)
-					case "cbrt" => Number(r.cbrt)
+					case "-" => Number(-r,u)
+					case "sqrt" => Number(r.sqrt,u.dim(u.dimension/2))
+					case "cbrt" => Number(r.cbrt,u.dim(u.dimension/3))
 					case "exp" => Number(r.exp)
 					case "ln" => Number(r.ln)
 					case "log" => Number(r.log)
-					case "abs" => Number(r.abs)
-					case "sin" => Number(r.rad.sin)
-					case "cos" => Number(r.rad.cos)
-					case "tan" => Number(r.rad.tan)
-					case "cot" => Number(r.rad.cot)
-					case "arcsin" => Number(r.arcsin.deg)
-					case "arccos" => Number(r.arccos.deg)
-					case "arctan" => Number(r.arctan.deg)
-					case "arccot" => Number(r.arccot.deg)
-					case "sinh" => Number(r.rad.sinh)
-					case "cosh" => Number(r.rad.cosh)
-					case "tanh" => Number(r.rad.tanh)
-					case "coth" => Number(r.rad.coth)
+					case "abs" => Number(r.abs,u)
+					case "sin" => if(u==SI.rad) Number(r.sin) else Number(r.rad.sin)
+					case "cos" => if(u==SI.rad) Number(r.cos) else Number(r.rad.cos)
+					case "tan" => if(u==SI.rad) Number(r.tan) else Number(r.rad.tan)
+					case "cot" => if(u==SI.rad) Number(r.cot) else Number(r.rad.cot)
+					case "arcsin" => Number(r.arcsin.deg,SI.deg)
+					case "arccos" => Number(r.arccos.deg,SI.deg)
+					case "arctan" => Number(r.arctan.deg,SI.deg)
+					case "arccot" => Number(r.arccot.deg,SI.deg)
+					case "sinh" => if(u==SI.rad) Number(r.sinh) else Number(r.rad.sinh)
+					case "cosh" => if(u==SI.rad) Number(r.cosh) else Number(r.rad.cosh)
+					case "tanh" => if(u==SI.rad) Number(r.tanh) else Number(r.rad.tanh)
+					case "coth" => if(u==SI.rad) Number(r.coth) else Number(r.rad.coth)
 					case _ => null
 				})
 			}
 			case _ => None
 		}
 	}
+	
+    override def equals(a:Any):Boolean = a match {  
+        case Number(r,u) => if(u == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r==r else {
+            if (u.isSameBase(this.unit)) r==this.r.convert(this.unit,u)
+            else false
+        }
+        case _ => false
+    }
 
 	override def ^ (e:Expression):Expression = e match {
 		case Number(r2,u2) if r2==Real.zero => ONE
@@ -92,7 +144,7 @@ case class Number(
 		case _ => super.^(e)
 	}
 
-	override def unary_-():Expression = Number(-r)
+	override def unary_-():Expression = Number(-r,unit)
 
 	override def +- (e:Expression):Expression = e match {
 		case Number(r2,u2) if r2==Real.zero => this
@@ -101,18 +153,13 @@ case class Number(
 
 	override def *- (e:Expression):Expression = e match {
 		case Number(r2,u2) if r2==Real.zero => ZERO
-		case Number(r2,u2) if r2==Real.one => Number(-r)
+		case Number(r2,u2) if r2==Real.one => Number(-r,unit)
 		case _ => super.*-(e)
 	}
 
 	override def /- (e:Expression):Expression = e match {
-		case Number(r2,u2) if r2==Real.one => Number(-r)
+		case Number(r2,u2) if r2==Real.one => Number(-r,unit)
 		case _ => super./-(e)
-	}
-
-	override def %- (e:Expression):Expression = e match {
-		case Number(r2,u2) => Number(r%(-r2))
-		case _ => super.%-(e)
 	}
 
 	override def ^- (e:Expression):Expression = e match {
@@ -121,18 +168,13 @@ case class Number(
 		case _ => super.^-(e)
 	}
 
-	override def < (e:Expression):Boolean = e match {case Number(r1,u1) => r<r1; case _ => false}
-	override def > (e:Expression):Boolean = e match {case Number(r1,u1) => r>r1; case _ => false}
-	override def >= (e:Expression):Boolean = e match {case Number(r1,u1) => r>=r1; case _ => false}
-	override def <= (e:Expression):Boolean = e match {case Number(r1,u1) => r<=r1; case _ => false}
-	override def <> (e:Expression):Boolean = e match {case Number(r1,u1) => r<>r1; case _ => false}
+	override def < (e:Expression):Boolean = e match {case Number(r1,u1) => r<r1.convert(u1,unit); case _ => false}
+	override def > (e:Expression):Boolean = e match {case Number(r1,u1) => r>r1.convert(u1,unit); case _ => false}
+	override def >= (e:Expression):Boolean = e match {case Number(r1,u1) => r>=r1.convert(u1,unit); case _ => false}
+	override def <= (e:Expression):Boolean = e match {case Number(r1,u1) => r<=r1.convert(u1,unit); case _ => false}
+	override def <> (e:Expression):Boolean = e match {case Number(r1,u1) => r<>r1.convert(u1,unit); case _ => false}
 	
 	def isInt = r.isInt
-
-	override def equals(a:Any):Boolean = a match {	
-		case Number(r,u) => this.r==r
-		case _ => false
-	}
 	
 	def format:String = Real.format(r)
 
@@ -141,6 +183,10 @@ case class Number(
 	def format(locale:java.util.Locale):String = Real.format(r,locale)
 
 	def format(pattern:String,locale:java.util.Locale):String = Real.format(r,pattern,locale)
+	
+	/** Sets unit */
+    def unit(name:String):Number = copy(unit = SI(name).getOrElse(SimpleUnitOfValue(UnitOfValueName(name),0,1,SI)))
+    def unit(unit:UnitOfValue):Number = copy(unit = unit)
 	
 	private final def analyze(d:Double):(Long,Double) = {
 		val ad = Math.abs(d)

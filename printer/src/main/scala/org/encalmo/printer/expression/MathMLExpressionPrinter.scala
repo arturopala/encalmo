@@ -149,8 +149,8 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	               //output.attr("rowalign","left")
 	               output.body
 	            }
-	            case bu:BaseUnitOfValue => {
-	            	output.unit(bu)
+	            case u:UnitOfValue => {
+	            	output.unit(u)
 	            }
 	    		case _ => Unit
 		    }
