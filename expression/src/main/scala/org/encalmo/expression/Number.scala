@@ -3,7 +3,7 @@ package org.encalmo.expression
 import java.io.PrintWriter
 
 /**
- * Real number expression
+ * Real number value expression
  * @author artur.opala
  */
 case class Number(
@@ -136,6 +136,13 @@ case class Number(
             else false
         }
         case _ => false
+    }
+    
+    override def convertTo(newunit:UnitOfValue):Number = newunit match {
+        case u:UnitOfValue if this.unit==u => this
+        case u:UnitOfValue if this.unit.isSameBase(u) => Number(r.convert(unit,newunit),newunit)
+        case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit)
+        case _ => this
     }
 
 	override def ^ (e:Expression):Expression = e match {

@@ -6,14 +6,10 @@ package org.encalmo.expression
  */
 case class TextValue(text:String) extends Value {
 
-	/** 
-	 * Calculates result of the operation with single argument. 
-	 */
-	def calculate(operator:String, v:Value):Option[Value] = None
+	override def calculate(operator:String, v:Value):Option[Value] = None
 	
-	/** 
-	 * Calculates result of the operation with two arguments. 
-	 */
-	def calculate(operator:String, v1:Value,v2:Value):Option[Value] = None
+	override def calculate(operator:String, v1:Value,v2:Value):Option[Value] = None
+	
+	override def convertTo(newunit:UnitOfValue):TextValue = this
 
 }

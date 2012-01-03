@@ -21,6 +21,11 @@ trait Value extends Expression {
 	 */
 	def calculate(operator:String, v1:Value,v2:Value):Option[Value]
 	
+	/**
+	 * Converts this value to the new units
+	 */
+	def convertTo(newunit:UnitOfValue):Value
+	
 	
 }
 
