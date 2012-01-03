@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * Suite of unit test for the org.encalmo.expression package
+ * Suite of unit tests for the org.encalmo.expression package
  * @author artur.opala
  */
 @RunWith(classOf[Suite])
@@ -16,6 +16,9 @@ import org.junit.runners.Suite;
 	classOf[OperationUnitTest],
 	classOf[TransformationsUnitTest],
 	classOf[ValueUnitTest],
-	classOf[UnitOfValueUnitTest]
+	classOf[UnitOfValueUnitTest],
+    classOf[SISystemUnitTest],
+	classOf[NumberUnitOfValueUnitTest],
+	classOf[UnitsTransformationsUnitTest]
 ))
 class TestSuite

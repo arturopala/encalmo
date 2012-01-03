@@ -116,5 +116,9 @@ trait Expression extends TreeLike[Expression] {
 }
 
 object Expression {
+    
+    def simplify(e:Expression):Expression = {
+        e.mapAll(Transformations.simplifyQuot)
+    }
 
 }

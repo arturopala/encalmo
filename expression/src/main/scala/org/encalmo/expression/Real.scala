@@ -1,4 +1,5 @@
 package org.encalmo.expression
+import java.text.DecimalFormatSymbols
 
 object Real {
 
@@ -24,6 +25,8 @@ object Real {
   }
 
   val defaultFormat: java.text.DecimalFormat = getFormat(java.util.Locale.getDefault)
+  
+  val stringFormat = new java.text.DecimalFormat("0.###############",new java.text.DecimalFormatSymbols(java.util.Locale.ENGLISH))
 
   def format(r: Real): String = defaultFormat.format(r.d)
 
@@ -96,7 +99,11 @@ class Real(val d: Double) {
   def rad: Real = Real(Math.toRadians(d))
   def deg: Real = Real(Math.toDegrees(d))
   def isInt = (d.toInt == d)
-  def inverse:Real = Real(1/d)
+  def inverse:Real = {
+      val l = java.lang.Math.log10(d)
+      if(Real(l).isInt) Real(Math.pow(10,-l))
+      else Real(1/d)
+  }
   
   def toInt:Int = d.toInt
   def toLong:Long = d.toLong
@@ -104,16 +111,16 @@ class Real(val d: Double) {
   def absInt: Int = Math.floor(Math.abs(d)).toInt
 
   /**
-   * Equals two real numbers if differs no more then 0.00000001
+   * Equals two real numbers if they differs no more then 0.00000001
    */
   override def equals(a: Any): Boolean = a match {
     case r: Real => {
-      r.d == d || (Math.abs(r.d - d) < 0.00000001)
+      this.eq(r) || r.d == d || (Math.abs(r.d - d) < 0.00000001) || (d==Double.NaN && r.d==Double.NaN) || (d==Double.NegativeInfinity && r.d==Double.NegativeInfinity) || (d==Double.PositiveInfinity && r.d==Double.PositiveInfinity) 
     }
     case _ => false
   }
 
   def convert(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1.multiplier==u2.multiplier) this else Real(d * u1.multiplier/u2.multiplier)
 
-  override def toString = String.valueOf(d)
+  override def toString = Real.stringFormat.format(d)
 }

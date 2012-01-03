@@ -21,13 +21,11 @@ trait UnitOfValue extends Expression {
 	override def eval():Expression = Number(multiplier)
 	
 	def isDefined:Boolean = false
-	
     def isSameBase(u:UnitOfValue):Boolean = this.name.baseName==u.name.baseName
-    
+    def isSameScale(u:UnitOfValue):Boolean = this.scale==u.scale
     def isSameDimension(u:UnitOfValue):Boolean = this.dimension == u.dimension
-
-	def isSame(u:UnitOfValue):Boolean = isSameBase(u) && isSameDimension(u)
-	
+    def isSameBaseAndScale(u:UnitOfValue):Boolean = this.name.baseName==u.name.baseName && this.scale==u.scale
+	def isSame(u:UnitOfValue):Boolean = isSameBase(u) && isSameDimension(u) && isSameScale(u)
 	def isLargerThan(u:UnitOfValue):Boolean = multiplier > u.multiplier
 	
 	def baseUnit:UnitOfValue = this
@@ -77,7 +75,83 @@ trait UnitOfValue extends Expression {
 }
 
 object UnitOfValue {
-    val dimensionFormat = new DecimalFormat("0.#",new DecimalFormatSymbols(Locale.ENGLISH))
+    
+    val dimensionFormat = Real.stringFormat
+    
+    def simplify(u:UnitOfValue):UnitOfValue = {
+        u.mapAll(simplifyFx _) match {
+            case u:UnitOfValue => u
+            case e => ComplexUnitOfValue(e,1,0)
+        }
+    }
+    
+    def simplifyFx(e:Expression):Expression = e match {
+        case Quot(l,r) if (ZERO==l) => ZERO
+        case Quot(l,r) if (ONE==r) => l
+        case EmptyUnitOfValue => ONE
+        case ComplexUnitOfValue(exp:Expression,1,0) => exp
+        case ComplexUnitOfValue(unit:UnitOfValue,dimension,scale) => dimension match {
+            case 0 => EmptyUnitOfValue
+            case 1 => unit
+            case _ => unit.dim(dimension*unit.dimension).exp(scale+unit.scale)
+        }
+        case Prod(a,Quot(ONE,b)) => Quot(a,b)
+        case Prod(Quot(ONE,a),b) => Quot(b,a)
+        case Prod(ONE,a) => a
+        case Prod(a,ONE) => a
+        case Quot(n1:Number,n2:Number) => e.eval
+        case Prod(n1:Number,n2:Number) => e.eval
+        case Prod(Quot(n1:Number,a),n2:Number) => Quot((n1*n2).eval,a)
+        case Prod(Quot(a,n1:Number),n2:Number) => Prod(a,(n2/n1).eval)
+        case Prod(n1:Number,Quot(n2:Number,a)) => Quot((n1*n2).eval,a)
+        case Prod(n1:Number,Quot(a,n2:Number)) => Prod(a,(n1/n2).eval)
+        case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) if u1.isSameBase(u2) => simplifyQuot(u1,u2)
+        case Prod(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) if u1.isSameBase(u2) => simplifyProd(u1,u2)
+        case Quot(Prod(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod(a,simplifyQuot(u1,u2))
+        case Quot(Prod(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod(a,simplifyQuot(u1,u2))
+        case Quot(u1:SimpleUnitOfValue,Prod(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Quot(simplifyQuot(u1,u2),a)
+        case Quot(u1:SimpleUnitOfValue,Prod(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Quot(simplifyQuot(u1,u2),a)
+        case Prod(Quot(u1:SimpleUnitOfValue,a),Quot(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod(Quot(b,a),simplifyQuot(u1,u2))
+        case Prod(Quot(a,u1:SimpleUnitOfValue),Quot(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod(Quot(a,b),simplifyQuot(u2,u1))
+        case Prod(Quot(u1:SimpleUnitOfValue,a),Quot(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Quot(simplifyProd(u1,u2),Prod(a,b))
+        case Prod(Quot(a,u1:SimpleUnitOfValue),Quot(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Quot(Prod(a,b),simplifyProd(u1,u2))
+        case Quot(Prod(a,u1:SimpleUnitOfValue),Prod(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod(Quot(a,b),simplifyQuot(u1,u2))
+        case Quot(Prod(u1:SimpleUnitOfValue,a),Prod(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod(Quot(a,b),simplifyQuot(u1,u2))
+        case Quot(Prod(u1:SimpleUnitOfValue,a),Prod(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod(Quot(a,b),simplifyQuot(u1,u2))
+        case Quot(Prod(a,u1:SimpleUnitOfValue),Prod(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod(Quot(a,b),simplifyQuot(u1,u2))
+        case Prod(Quot(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Quot(simplifyProd(u1,u2),a)
+        case Prod(u1:SimpleUnitOfValue,Quot(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Quot(simplifyProd(u1,u2),a)
+        case Prod(Quot(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod(a,simplifyQuot(u2,u1))
+        case Prod(u1:SimpleUnitOfValue,Quot(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod(a,simplifyQuot(u1,u2))
+        case _ => e
+    }
+    
+    def simplifyQuot(u1:UnitOfValue,u2:UnitOfValue):Expression = {
+        if(u1.isSameScale(u2)) {
+            if(u1.dimension>=u2.dimension) u1.dim(u1.dimension-u2.dimension)
+            else Quot(1,u1.dim(u2.dimension-u1.dimension))
+        }
+        else {
+            u1.multiplier/u2.multiplier match {
+                case 1 => u1.baseUnit.dim(u1.dimension-u2.dimension)
+                case m if m>1 && u1.dimension>=u2.dimension => Prod(Number(Real(m)),u1.baseUnit.dim(u1.dimension-u2.dimension))
+                case m if m<1 && u1.dimension>=u2.dimension => Quot(u1.baseUnit.dim(u1.dimension-u2.dimension),Number(Real(m).inverse))
+                case m if m>1 && u1.dimension<u2.dimension => Quot(Number(Real(m)),u1.baseUnit.dim(u2.dimension-u1.dimension))
+                case m if m<1 && u1.dimension<u2.dimension => Prod(Number(Real(m).inverse),u1.baseUnit.dim(u2.dimension-u1.dimension))
+            }
+        }
+    }
+    
+    def simplifyProd(u1:UnitOfValue,u2:UnitOfValue):Expression = {
+        if(u1.isSameScale(u2)) u1.dim(u1.dimension+u2.dimension)
+        else {
+            u1.multiplier*u2.multiplier match {
+                case 1 => u1.baseUnit.dim(u1.dimension-u2.dimension)
+                case m if m>1 => Prod(Number(Real(m)),u1.baseUnit.dim(u1.dimension+u2.dimension))
+                case m if m<1 => Quot(u1.baseUnit.dim(u1.dimension+u2.dimension),Number(Real(m).inverse))
+            }
+        }
+    }
 }
 
 /**
@@ -140,6 +214,7 @@ case class UnitOfValueNameBuilder extends Traveler[Expression] {
         case o:MultipleInfixOperation => {
             stack.push(Buffer[String]())
         }
+        case Number(r,u) => stack.top.append(r.toString())
         case _ => Unit
     }
        
@@ -204,6 +279,11 @@ case class ComplexUnitOfValue(
 	override def exp(exp:Int):UnitOfValue = copy(scale=scale+exp)
 	
 	override def toNameString:String = name.toString
+
+    final override def map(f: Transformation): Expression = {
+        val ve = expression.map(f);
+        f(if(ve == expression) this else copy(expression = ve))
+    }
 }
 
 case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
@@ -222,7 +302,6 @@ case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
  * UnitOfValueScale class
  */
 case class UnitOfValueScale(
-
 		prefix:String,
 		multiplier:Double
 )
@@ -285,6 +364,7 @@ object Characteristics {
     val Area:Characteristic = Characteristic("area")
     val Volume:Characteristic = Characteristic("volume")
     val Force:Characteristic = Characteristic("force")
+    val MomentOfForce:Characteristic = Characteristic("momentOfForce")
     val Pressure:Characteristic = Characteristic("pressure")
     val Weight:Characteristic = Characteristic("weight")
     val Angle:Characteristic = Characteristic("angle")

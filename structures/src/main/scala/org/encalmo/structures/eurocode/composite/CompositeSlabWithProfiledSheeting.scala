@@ -25,7 +25,8 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	
 	val l = symbol(BasicSymbols.l) unit SI.m
 	val nsp = symbol(BasicSymbols.n|"sp")
-	val h = symbol(BasicSymbols.h) unit SI.m
+	/** height of the slab */
+	val h = symbol(BasicSymbols.h) unit "m"
 	val hc = symbol(BasicSymbols.h|c) unit SI.m
 	val Qcfk1 = symbol(Q|"cf,k1") unit "N/m"
 	val Qcfk = symbol(Q|"cf,k") unit "N/m2"

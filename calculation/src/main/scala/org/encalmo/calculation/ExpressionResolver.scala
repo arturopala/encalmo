@@ -73,7 +73,8 @@ trait ExpressionResolver {
 	def map(e1:Expression, t:Transformation, c:Int = 0):Expression = {
 		val e2 = e1.map(t)
 		if(c>=MAX_MAP_ALL_LOOP_COUNT){
-			throw new IllegalStateException("Probably circular reference: "+e1)
+		    if(e1==e2) return e1
+		    else throw new IllegalStateException("Probably circular reference: "+e1)
 		}else{
 			if(e1.eq(e2)) {
 				return e1
@@ -89,6 +90,7 @@ trait ExpressionResolver {
 	private val resolver:Transformation = {
 		e => e match {
 			case s:Symbol => this.getRawExpression(s).getOrElse(s) match {
+			    case v:Value => v.convertTo(s.unit)
 			    case x => x
 			}
 			case _ => e
@@ -102,10 +104,16 @@ trait ExpressionResolver {
 	private val evaluator:Transformation = {
 		e => e match {
 			case s:Symbol => this.getExpression(s) match {
-				case Some(x) => x.eval
+				case Some(x) => x.eval match {
+				    case v:Value => v.convertTo(s.unit)
+				    case r => r
+				}
 				case None => s
 			}
-			case sl:SymbolLike => sl.eval
+			case sl:SymbolLike => sl.eval match {
+                    case v:Value => v.convertTo(sl.symbol.unit)
+                    case r => r
+                }
 			case _ => e.eval
 		}
 	}
@@ -117,10 +125,16 @@ trait ExpressionResolver {
 	private val substitutor:Transformation = {
 		e => e match {
 			case s:Symbol => this.getExpression(s) match {
-				case Some(x) => x.eval
+				case Some(x) => x.eval match {
+                    case v:Value => v.convertTo(s.unit)
+                    case r => r
+                }
 				case None => s
 			}
-			case sl:SymbolLike => sl.eval
+			case sl:SymbolLike => sl.eval match {
+                    case v:Value => v.convertTo(sl.symbol.unit)
+                    case r => r
+                }
 			case sel:Selection => {
 				sel.trim
 			}
