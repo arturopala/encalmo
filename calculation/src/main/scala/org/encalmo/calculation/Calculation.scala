@@ -4,7 +4,7 @@ import scala.collection.mutable.{Map,LinkedHashSet,LinkedHashMap}
 import org.encalmo.expression._
 
 /** 
- * Calculation. Mutable context with cache.
+ * Calculation. Mutable context with evaluated expression's cache.
  */
 class Calculation(val id:Option[String] = None) extends ContextSet with MutableContext {
 	
@@ -20,7 +20,7 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	/** Maps symbols to the expressions */
 	def put(ts:(Symbol,Expression)*):Unit = {
 		if(opened) for(t <- ts){
-			context(t._1) = t._2
+		    update(t._1,t._2)
 		} else throwException
 	}
 	
