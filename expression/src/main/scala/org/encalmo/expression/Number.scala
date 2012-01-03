@@ -131,7 +131,8 @@ case class Number(
 	}
 	
     override def equals(a:Any):Boolean = a match {  
-        case Number(r,u) => if(u == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r==r else {
+        case n:Number if this.eq(n) => true
+        case Number(r,u) => if(u==unit || u == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r==r else {
             if (u.isSameBase(this.unit)) r==this.r.convert(this.unit,u)
             else false
         }

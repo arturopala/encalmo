@@ -19,8 +19,9 @@ import org.encalmo.structures.eurocode.steel.HeadedStud
 import org.encalmo.structures.eurocode.steel.Steel
 import org.encalmo.structures.eurocode.steel.FLORSTROP
 import scalax.file.Path
+import org.encalmo.structures.CalculationDocument
 
-class ZespoloneStrop {
+class CompositeSlabCalculationDocument extends CalculationDocument {
     
     import BasicSymbols._
     import SteelSymbols.{gammaM0,gammaM1}
@@ -29,6 +30,8 @@ class ZespoloneStrop {
     
     import CompositeSlabWithProfiledSheetingSymbols.{Gsk,qk,Fk,dmesh,sd}
     //import ProfiledSteelSheetSymbols
+    
+    override val name = "kz-strop"
     
     val zadanie1Statyka,zadanie1Eksploatacja,zadanie1Wymiarowanie:Seq[Expression] = Seq()
     val zadanie2Materialy,zadanie2Obciazenia,zadanie2Montaz,zadanie2Eksploatacja,zadanie2Wymiarowanie:Seq[Expression] = Seq()
@@ -46,7 +49,7 @@ class ZespoloneStrop {
     val daneWejsciowe = Seq(L1,L2,pc)
     
     //przyjete materialy i wymiary
-    val height:Expression = 0.12
+    val height:Expression = 12 unit SI.cm
     val blacha = FLORSTROP.T59_Z_125
     val beton = Concrete.C_20_25
     val stalZbrojeniowa = ReinforcingSteel.B500SP
@@ -81,7 +84,7 @@ class ZespoloneStrop {
     zadanie2 add belka
     
     
-    val doc1 = Document("",
+    val doc = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(
@@ -144,33 +147,5 @@ class ZespoloneStrop {
 			Section(style1.useAlign("right"),"Opracował: Artur Opala")
         )
     )
-    
-    @Test def printHtml:Unit = {
-        val layout = Predefined.layout
-        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path("src/main/resources/style.css"))
-        val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
-        output.open
-        HtmlTextDocumentPrinter.print(doc1,output)
-        output.close
-        output.printConsole
-        output.saveToFile(new java.io.File("target/test-results/kz-strop.html"))
-    }
-    
-    @Test def printPdf:Unit = {
-        val layout = Predefined.layout
-        val output:XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
-        output.open
-        XslFoTextDocumentPrinter.print(doc1,output)
-        output.close
-        output.printConsole
-        output.saveToFile(new java.io.File("target/test-results/kz-strop.fo"))
-        FOPHelper.buildPDF(output.getResult, "target/test-results/kz-strop.pdf")
-    }
-    
-    @Test def printText:Unit = {
-        val o:TextOutput = new TextOutput(new java.util.Locale("PL"))
-        PlainTextDocumentPrinter.print(doc1,o)
-        o.printConsole
-    }
 
 }

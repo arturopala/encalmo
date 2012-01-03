@@ -15,6 +15,7 @@ object SI extends UnitOfValueSystem {
     val gram:UnitOfValueName = UnitOfValueName("g")
     val second:UnitOfValueName = UnitOfValueName("s")
     val newton:UnitOfValueName = UnitOfValueName("N")
+    val newtonmeter:UnitOfValueName = UnitOfValueName("Nm")
     val pascal:UnitOfValueName = UnitOfValueName("Pa")
     val degree:UnitOfValueName = UnitOfValueName("°")
     val radian:UnitOfValueName = UnitOfValueName("rad")
@@ -95,6 +96,10 @@ object SI extends UnitOfValueSystem {
 	val kPa = Pa exp 3
     val MPa = Pa exp 6
     val GPa = Pa exp 9
+    // moment of force
+    val Nm = SimpleUnitOfValue(newtonmeter,0,1,this,Characteristics.MomentOfForce)
+    val kNm = Nm exp 3
+    val MNm = Nm exp 6
     //angle
     val deg = SimpleUnitOfValue(degree,0,1,this,Characteristics.Angle)
     val rad = SimpleUnitOfValue(radian,0,1,this,Characteristics.Angle)
@@ -103,7 +108,28 @@ object SI extends UnitOfValueSystem {
     val ms = s exp -3
     val s2 = s dim 2
 	
-	override lazy val units:Seq[UnitOfValue] = Seq(m,dm,cm,mm,μm,nm,km,N,kN,MN,GN,Pa,kPa,MPa,GPa,m2,dm2,cm2,mm2,km2,m3,dm3,cm3,mm3,m4,cm4,mm4,m6,cm6,mm6,m8,cm8,mm8,g,kg,mg,deg,rad,s,ms,s2)
+	override lazy val units:Seq[UnitOfValue] = Seq(
+	        // simple units
+	        m,dm,cm,mm,μm,nm,km,
+	        g,kg,mg,
+            s,ms,s2,
+	        N,kN,MN,GN,
+	        Pa,kPa,MPa,GPa,
+	        m2,dm2,cm2,mm2,km2,
+	        m3,dm3,cm3,mm3,
+	        m4,cm4,mm4,
+	        m6,cm6,mm6,
+	        m8,cm8,mm8,
+	        deg,rad,
+	        Nm,kNm,MNm,
+	        // complex derived units
+	        m/s,m/s2,
+	        (kg*m)/s2,kg/m,kg/m2,kg/m3,
+	        N/m,N/m2,N/m3,N*m,Nm/m,
+	        kN/m,kN/m2,kN/m3,kNm/m,
+	        MN/m,MN/m2,MN/m3,MNm/m,
+	        m2/m,m3/m,m4/m,m6/m,m8/m
+    )
 	
 	initialized = true
     

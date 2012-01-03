@@ -1,7 +1,7 @@
 package org.encalmo.expression
 
 /**
- * Common tranformations set
+ * Common tranformations of expressions
  * @author artur.opala
  */
 object Transformations {

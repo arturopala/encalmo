@@ -24,7 +24,8 @@ div {padding:5pt 0 2pt 0}
 .assertfalse {font-size:11pt;font-style:normal;font-weight:bold;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
 .asserttrue {font-size:11pt;font-style:normal;font-weight:normal;color:#000000;margin:1pt 5pt; padding-left:20pt}
 .assertunknown {font-size:11pt;font-style:normal;font-weight:normal;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
-.unit {font-size:95%;font-weight:normal;}
+.unit {font-size:95%;font-weight:normal;color:#545454}
+.illegalunit {font-size:60%;font-weight:bold;color:red}
 .numexp {color:#545454;font-size:90%;font-weight:normal;}
 .comment {}
 .description {font-size:10pt;}

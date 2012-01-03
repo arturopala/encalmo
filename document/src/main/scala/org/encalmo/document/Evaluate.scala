@@ -7,7 +7,6 @@ import org.encalmo.expression.Transformations
 import org.encalmo.expression.Operation2
 import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
-import org.encalmo.expression.Envelope
 import org.encalmo.expression.SymbolLike
 import org.encalmo.expression.Selection
 import org.encalmo.expression.UnitOfValue
@@ -80,7 +79,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
                     }
 				}
 			}
-			se = se :+ ExpressionToPrint(Envelope(evaluated,unit),resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",null,parentStylesConfig)
+			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),"=",null,parentStylesConfig)
 		}
 		se
 	}

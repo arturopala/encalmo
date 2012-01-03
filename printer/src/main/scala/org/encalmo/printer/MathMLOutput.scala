@@ -338,15 +338,12 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if(printStyles && !script) end(MSTYLE)
 	}
 	
-	def unit(u:UnitOfValue) = {
+	def unit(u:SimpleUnitOfValue):Unit = {
 	    u.dimension match {
-	        case 1 => mtextClass("unit",ENTITY_THIN_SPACE,u.toNameString.toString)
+	        case 1 => mtext(u.name.toString)
 	        case _ => {
-	            start(MSUP)
-				attr("mathsize","85%")
-				attr("class","unit")
-				body
-				mtext(ENTITY_THIN_SPACE,u.toNameString.toString)
+	            startb(MSUP)
+				mtext(u.name.toString)
 				mtext(dimensionFormat.format(u.dimension))
 				end(MSUP)
 	        }
