@@ -18,45 +18,69 @@ case class Number(
 	 * Supports arguments of the Number type.
 	 */
 	override def calculate(operator:String, v1:Value, v2:Value):Option[Value] = {
-		val r = (v1,v2) match {
+		(v1,v2) match {
 			case (Number(r1,u1),Number(r2,u2)) => {
 				Option(operator match {
 					case "+" => {
-					    if(u1.isSame(u2)){
+					    if(u1.isSameBaseAndDimension(u2)){
 					         if(u1==u2) Number(r1+r2,u1) else
-					             if(u1.isLargerThan(u2)) Number(r1+(r2.convert(u2,u1)),u1) else Number(r1.convert(u1,u2)+r2,u2)
+				             if(u1.isLargerThan(u2)) Number(r1+(r2.convert(u2,u1)),u1) else Number(r1.convert(u1,u2)+r2,u2)
 					    }else{
 					        Number(r1+r2,u1+u2)
 					    }
 					}
 					case "-" => {
-					    if(u1.isSame(u2)){
+					    if(u1.isSameBaseAndDimension(u2)){
                              if(u1==u2) Number(r1-r2,u1) else
-                                 if(u1.isLargerThan(u2)) Number(r1-(r2.convert(u2,u1)),u1) else Number(r1.convert(u1,u2)-r2,u2)
+                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert(u2,u1)),u1) else Number(r1.convert(u1,u2)-r2,u2)
                         }else{
                             Number(r1-r2,u1-u2)
                         }
 					}
 					case "*" => {
-					    if(u1.isSame(u2)){
-                             if(u1==u2) Number(r1*r2,u1.dim(u1.dimension+u2.dimension)) else
-                                 if(u1.isLargerThan(u2)) Number(r1*(r2.convert(u2,u1)),u1.dim(u1.dimension+u2.dimension)) else Number(r1.convert(u1,u2)*r2,u2.dim(u1.dimension+u2.dimension))
+					    if(u1.isSameBase(u2)){
+                             if(u1.isSameDimension(u2)){
+                                 if(u1.isLargerScaleThan(u2)) 
+                                     Number(r1*(r2.convert(u2,u1)),u1.dim(u1.dimension*2)) 
+                                     else Number(r1.convert(u1,u2)*r2,u2.dim(u1.dimension*2))
+                             }else if(u1.isSameScale(u2)){
+                                 Number(r1*r2,u1.dim(u1.dimension+u2.dimension))
+                             }else{
+                                 if(u1.isLargerScaleThan(u2)) 
+                                     Number(r1*(r2.adjustScale(u2,u1)),u1.dim(u1.dimension+u2.dimension)) 
+                                     else Number((r1.adjustScale(u1,u2)*r2),u2.dim(u1.dimension+u2.dimension))
+                             }
                         }else{
-                            Number(r1*r2,u1*u2)
+                            Number(r1*r2,(u1*u2).simplifiedUnit)
                         }
 					}
 					case "/" => {
-					    if(u1.isSame(u2)){
-                             if(u1==u2) Number(r1/r2,u1.dim(u1.dimension-u2.dimension)) else
-                                 if(u1.isLargerThan(u2)) Number(r1/(r2.convert(u2,u1)),u1.dim(u1.dimension-u2.dimension)) else Number(r1.convert(u1,u2)/r2,u2.dim(u1.dimension-u2.dimension))
+					   if(u1.isSameBase(u2)){
+                             if(u1.isSameDimension(u2)){
+                                 Number(r1/(r2.convert(u2,u1)),EmptyUnitOfValue)
+                             }else if(u1.isSameScale(u2)){
+                                 if(u1.dimension>u2.dimension) 
+                                     Number(r1/r2,u1.dim(u1.dimension-u2.dimension)) 
+                                     else Number(r1/r2,ComplexUnitOfValue(Quot(ONE,u1.dim(u2.dimension-u1.dimension))))
+                             }else{
+                                 if(u1.dimension>u2.dimension) {
+                                     if(u1.isLargerScaleThan(u2)) 
+                                         Number(r1/(r2.adjustScale(u2,u1)),u1.dim(u1.dimension-u2.dimension)) 
+                                         else Number((r1.adjustScale(u1,u2)/r2),u2.dim(u1.dimension-u2.dimension))
+                                 }else{
+                                     if(u1.isLargerScaleThan(u2)) 
+                                         Number(r1/(r2.adjustScale(u2,u1)),ComplexUnitOfValue(Quot(ONE,u1.dim(u2.dimension-u1.dimension)))) 
+                                         else Number((r1.adjustScale(u1,u2)/r2),ComplexUnitOfValue(Quot(ONE,u2.dim(u2.dimension-u1.dimension))))
+                                 }
+                             }
                         }else{
-                            Number(r1/r2,u1/u2)
+                            Number(r1/r2,(u1/u2).simplifiedUnit)
                         }
 					}
 					case "%" => {
-                        if(u1.isSame(u2)){
+                        if(u1.isSameBaseAndDimension(u2)){
                              if(u1==u2) Number(r1%r2,u1) else
-                                 if(u1.isLargerThan(u2)) Number(r1.convert(u1,u2)%r2,u2) else Number(r1%(r2.convert(u2,u1)),u1)
+                             if(u1.isLargerThan(u2)) Number(r1.convert(u1,u2)%r2,u2) else Number(r1%(r2.convert(u2,u1)),u1)
                         }else{
                             Number(r1%r2,u1%u2)
                         }
@@ -72,7 +96,7 @@ case class Number(
 					    Number(r1.root(r2),u1.dim(u1.dimension/r2))
 					}
 					case "min" => {
-					    if(u1.isSame(u2)){
+					    if(u1.isSameBaseAndDimension(u2)){
                              if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
                              else if(r1<=r2.convert(u2,u1)) v1 else v2
                         }else{
@@ -80,7 +104,7 @@ case class Number(
                         }
 					}
 					case "max" => {
-                        if(u1.isSame(u2)){
+                        if(u1.isSameBaseAndDimension(u2)){
                              if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
                              else if(r1<=r2.convert(u2,u1)) v2 else v1
                         }else{
@@ -93,7 +117,6 @@ case class Number(
 			}
 			case _ => None
 		}
-		r
 	}
 	
 	/** 
@@ -133,7 +156,7 @@ case class Number(
     override def equals(a:Any):Boolean = a match {  
         case n:Number if this.eq(n) => true
         case Number(r,u) => if(u==unit || u == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r==r else {
-            if (u.isSameBase(this.unit)) r==this.r.convert(this.unit,u)
+            if (u.isSameBaseAndDimension(this.unit)) r==this.r.convert(this.unit,u)
             else false
         }
         case _ => false
@@ -141,10 +164,12 @@ case class Number(
     
     override def convertTo(newunit:UnitOfValue):Number = newunit match {
         case u:UnitOfValue if this.unit==u => this
-        case u:UnitOfValue if this.unit.isSameBase(u) => Number(r.convert(unit,newunit),newunit)
+        case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert(unit,newunit),newunit)
         case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit)
         case _ => this
     }
+    
+    override def convertToBaseUnit:Number = if(unit.isBaseUnit) this else Number(r.convert(unit,unit.baseUnit),unit.baseUnit)
 
 	override def ^ (e:Expression):Expression = e match {
 		case Number(r2,u2) if r2==Real.zero => ONE
@@ -176,11 +201,26 @@ case class Number(
 		case _ => super.^-(e)
 	}
 
-	override def < (e:Expression):Boolean = e match {case Number(r1,u1) => r<r1.convert(u1,unit); case _ => false}
-	override def > (e:Expression):Boolean = e match {case Number(r1,u1) => r>r1.convert(u1,unit); case _ => false}
-	override def >= (e:Expression):Boolean = e match {case Number(r1,u1) => r>=r1.convert(u1,unit); case _ => false}
-	override def <= (e:Expression):Boolean = e match {case Number(r1,u1) => r<=r1.convert(u1,unit); case _ => false}
-	override def <> (e:Expression):Boolean = e match {case Number(r1,u1) => r<>r1.convert(u1,unit); case _ => false}
+	override def < (e:Expression):Boolean = e match {
+	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r<r1.convert(u1,unit) else r<r1
+	    case _ => false
+    }
+	override def > (e:Expression):Boolean = e match {
+	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r>r1.convert(u1,unit) else r>r1
+	    case _ => false
+    }
+	override def >= (e:Expression):Boolean = e match {
+	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r>=r1.convert(u1,unit) else r>=r1
+	    case _ => false
+    }
+	override def <= (e:Expression):Boolean = e match {
+	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r<=r1.convert(u1,unit) else r<=r1
+	    case _ => false
+    }
+	override def <> (e:Expression):Boolean = e match {
+	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r<>r1.convert(u1,unit) else r<>r1
+	    case _ => false
+    }
 	
 	def isInt = r.isInt
 	
@@ -312,11 +352,11 @@ object ZERO extends Number(Real.zero){
 	override def + (e:Expression):Expression = e
 	override def - (e:Expression):Expression = -e
 	override def ^ (e:Expression):Expression = e match {
-		case _ if ZERO.eq(e) => ONE; 
+		case ZERO => ONE; 
 		case _ => ZERO
 	}
 
-	override def unary_-():Expression = this
+	override def unary_-():Expression = ZERO
 	override def isInt = false
 
 }
@@ -329,7 +369,6 @@ object ZERO extends Number(Real.zero){
 object ONE extends Number(Real.one){
 
 	override def * (e:Expression):Expression = e
-	override def / (e:Expression):Expression = Quot(ONE,e)
 	override def % (e:Expression):Expression = e
 	override def ^ (e:Expression):Expression = ONE
 	override def isInt = true

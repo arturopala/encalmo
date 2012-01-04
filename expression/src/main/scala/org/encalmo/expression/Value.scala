@@ -24,9 +24,12 @@ trait Value extends Expression {
 	/**
 	 * Converts this value to the new units
 	 */
-	def convertTo(newunit:UnitOfValue):Value
+	def convertTo(newunit:UnitOfValue):Value = this
 	
-	
+	/**
+     * Converts this value to the base units
+     */
+	def convertToBaseUnit:Value = this
 }
 
 object Value {

@@ -88,5 +88,10 @@ class SISystemUnitTest extends AssertionsForJUnit {
         assertEquals(SI.g, SI.kg exp -3)
         assertEquals(SI.kg, SI.g exp 3)
     }
+    
+    @Test def testExpand1 {
+        assertEquals(SI.kg*SI.m/SI.s2, SI.expand(SI.N))
+        assertEquals(SI.N*SI.m, SI.expand(SI.Nm))
+    }
 
 }

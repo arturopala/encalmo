@@ -21,7 +21,6 @@ trait Expression extends TreeLike[Expression] {
   def + (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if ZERO.eq(e) => this; 
 	  case Sum(l,r) => Sum(this,l,r); 
 	  case _ => Sum(this,e)
   }
@@ -29,15 +28,12 @@ trait Expression extends TreeLike[Expression] {
   def - (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if ZERO.eq(e) => this; 
 	  case _ => Diff(this,e)
   }
   
   def * (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if ONE.eq(e) => this; 
-	  case _ if ZERO.eq(e) => ZERO; 
 	  case Prod(l,r) => Prod(this,l,r);
 	  case _ => Prod(this,e)
   }
@@ -45,22 +41,19 @@ trait Expression extends TreeLike[Expression] {
   def / (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if ONE.eq(e) => this; 
 	  case _ => Quot(this,e)
   }
   
   def % (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if ONE.eq(e) => this; 
 	  case _ => Modulo(this,e)
   }
   
   def ^ (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case _ if ZERO.eq(e) => ONE; 
-	  case _ if ONE.eq(e) => this; 
+	  case ZERO => ONE
 	  case _ => Power(this,e)
   }
   
