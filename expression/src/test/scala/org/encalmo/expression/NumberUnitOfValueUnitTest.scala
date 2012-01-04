@@ -18,6 +18,7 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertEquals(1.2 unit SI.m2, 1200000 unit SI.mm2)
         assertEquals(1.2 unit SI.m3, 1200000 unit SI.cm3)
         assertEquals(1.2 unit SI.m3, 1200000000l unit SI.mm3)
+        assertFalse((1.2 unit SI.m) == (1.2 unit SI.m2))
     }
 	
 	@Test def testSum1() {
@@ -183,6 +184,39 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertEquals("cm*g",d.unit.toNameString)
     }
     
+    @Test def testMultiply5() {
+        val a:Number = 1.2 unit SI.cm
+        val b:Number = 2.1 unit SI.cm2
+        val c = (a*b).eval
+        assertEquals(Number(2.52),c);
+        assertEquals("cm3",c.unit.toNameString)
+        val d = (b*a).eval
+        assertEquals(Number(2.52),d);
+        assertEquals("cm3",d.unit.toNameString)
+    }
+    
+    @Test def testMultiply6() {
+        val a:Number = 1.2 unit SI.cm
+        val b:Number = 2.1 unit SI.m2
+        val c = (a*b).eval
+        assertEquals(Number(0.0252),c);
+        assertEquals("m3",c.unit.toNameString)
+        val d = (b*a).eval
+        assertEquals(Number(0.0252),d);
+        assertEquals("m3",d.unit.toNameString)
+    }
+    
+    @Test def testMultiply7() {
+        val a:Number = 1.2 unit SI.cm
+        val b:Number = 2.1 unit SI.km2
+        val c = (a*b).eval
+        assertEquals(Number(0.0000252),c);
+        assertEquals("km3",c.unit.toNameString)
+        val d = (b*a).eval
+        assertEquals(Number(0.0000252),d);
+        assertEquals("km3",d.unit.toNameString)
+    }
+    
     @Test def testDivide1() {
         val a:Number = 1.2
         val b:Number = 2.1
@@ -197,6 +231,14 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         val c = (a/b).eval
         assertEquals(Number(0.571428571),c);
         assertEquals(EmptyUnitOfValue,c.unit)
+    }
+    
+    @Test def testDivide2a() {
+        val a:Number = 1.2 unit SI.cm
+        val b:Number = 2.1 unit SI.cm2
+        val c = (a/b).eval
+        assertEquals(Number(0.571428571),c);
+        assertEquals("1/cm",c.unit.toNameString)
     }
     
     @Test def testDivide3() {
@@ -221,6 +263,28 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         val c = (a/b).eval
         assertEquals(Number(0.4),c);
         assertEquals("cm/kg",c.unit.toNameString)
+    }
+    
+    @Test def testDivide6() {
+        val a:Number = 2 unit SI.cm
+        val b:Number = 5 unit SI.m2
+        val c = (a/b).eval
+        assertEquals(Number(0.004),c);
+        assertEquals("1/m",c.unit.toNameString)
+        val d = (b/a).eval
+        assertEquals(Number(250),d);
+        assertEquals("m",d.unit.toNameString)
+    }
+    
+    @Test def testDivide7() {
+        val a:Number = 2 unit SI.cm2
+        val b:Number = 5 unit SI.m
+        val c = (a/b).eval
+        assertEquals(Number(0.00004),c);
+        assertEquals("m",c.unit.toNameString)
+        val d = (b/a).eval
+        assertEquals(Number(25000),d);
+        assertEquals("1/m",d.unit.toNameString)
     }
     
     @Test def testModulo1() {

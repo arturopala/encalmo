@@ -24,6 +24,8 @@ object SI extends UnitOfValueSystem {
 	
 	override def find(baseName:String,scale:Int,dimension:Double):Option[UnitOfValue] = if(initialized) units.find(
 	        u => (u.name.baseName==baseName && u.scale==scale && u.dimension==dimension)) else None
+	        
+	override def expand(u:UnitOfValue):UnitOfValue = expansionMap.get(u).getOrElse(u)
 
 	object Prefix {
 		val empty = UnitOfValueScale("",1)
@@ -108,7 +110,7 @@ object SI extends UnitOfValueSystem {
     val ms = s exp -3
     val s2 = s dim 2
 	
-	override lazy val units:Seq[UnitOfValue] = Seq(
+	override val units:Seq[UnitOfValue] = Seq(
 	        // simple units
 	        m,dm,cm,mm,μm,nm,km,
 	        g,kg,mg,
@@ -129,6 +131,17 @@ object SI extends UnitOfValueSystem {
 	        kN/m,kN/m2,kN/m3,kNm/m,
 	        MN/m,MN/m2,MN/m3,MNm/m,
 	        m2/m,m3/m,m4/m,m6/m,m8/m
+    )
+    
+    val expansionMap:Map[UnitOfValue,UnitOfValue] = Map(
+            N -> kg*m/s2,
+            Pa -> N/m2,
+            kPa -> kN/m2,
+            MPa -> MN/m2,
+            GPa -> GN/m2,
+            Nm -> N*m,
+            kNm -> kN*m,
+            MNm -> MN*m
     )
 	
 	initialized = true

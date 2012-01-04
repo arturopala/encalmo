@@ -120,7 +120,14 @@ class Real(val d: Double) {
     case _ => false
   }
 
-  def convert(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1.multiplier==u2.multiplier) this else Real(d * u1.multiplier/u2.multiplier)
+  def convert(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1.isSameBaseAndDimension(u2)) {
+      if(u1.multiplier==u2.multiplier) this else Real(d * u1.multiplier/u2.multiplier)
+  } else if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this
+  else throw new IllegalArgumentException("Cannot convert value of unit ["+u1.toNameString+"] to ["+u2.toNameString+"]")
+  
+  def convertToBaseUnit(u: UnitOfValue):Real = if(u.isBaseUnit) this else Real(d * u.multiplier/u.baseUnit.multiplier)
+  
+  def adjustScale(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1.scale==u2.scale) this else convert(u1,u1.exp(u2.scale-u1.scale))
 
   override def toString = Real.stringFormat.format(d)
 }

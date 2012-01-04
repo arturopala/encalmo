@@ -9,6 +9,12 @@ class UnitsTransformationsUnitTest extends AssertionsForJUnit {
 	
 	import BasicSymbols._
 	
+	@Test def testSimplify0() {
+        val a:UnitOfValue = SI.m/SI.m
+        val as:Expression = UnitOfValue.simplify(a)
+        assertEquals("",as.unit.toNameString)
+    }
+	
 	@Test def testSimplify1() {
 		val a:UnitOfValue = SI("m4/m").get
 		val as:Expression = UnitOfValue.simplify(a)
@@ -145,7 +151,55 @@ class UnitsTransformationsUnitTest extends AssertionsForJUnit {
     @Test def testSimplify23() {
         val a:UnitOfValue = (SI.m2/SI.N)*(SI.cm/SI.kN)
         val as:UnitOfValue = UnitOfValue.simplify(a)
-        assertEquals("cm3/kN2",as.toNameString)
+        assertEquals("m3/(100000*N2)",as.toNameString)
+    }
+    
+    @Test def testSimplify24() {
+        val a:UnitOfValue = (SI.m2/(SI.N*SI.m))*(SI.m/SI.N)
+        val as:UnitOfValue = UnitOfValue.simplify(a)
+        assertEquals("m2/N2",as.toNameString)
+    }
+    
+    @Test def testSimplify25() {
+        val a:UnitOfValue = (SI.m/SI.N)*(SI.m/SI.N)
+        val as:UnitOfValue = UnitOfValue.simplify(a)
+        assertEquals("m2/N2",as.toNameString)
+    }
+    
+    @Test def testSimplify26() {
+        val a:UnitOfValue = (SI.m/SI.kg)*(SI.m/SI.N)
+        val as:UnitOfValue = UnitOfValue.simplify(a)
+        assertEquals("m2/(kg*N)",as.toNameString)
+    }
+    
+    @Test def testSimplify27() {
+        val a:UnitOfValue = (SI.N/SI.m)/SI.m
+        val as:UnitOfValue = UnitOfValue.simplify(a)
+        assertEquals("N/m2",as.toNameString)
+    }
+    
+    @Test def testExpand0() {
+        val a:UnitOfValue = SI.N/SI.m
+        val as:UnitOfValue = UnitOfValue.expand(a)
+        assertEquals("kg/s2",as.toNameString)
+    }
+    
+    @Test def testExpand1() {
+        val a:UnitOfValue = SI.Pa/SI.m
+        val as:UnitOfValue = UnitOfValue.expand(a)
+        assertEquals("kg/(m2*s2)",as.toNameString)
+    }
+    
+    @Test def testExpand3() {
+        val a:UnitOfValue = (SI.Pa*SI.s)/SI.m
+        val as:UnitOfValue = UnitOfValue.expand(a)
+        assertEquals("kg/(m2*s)",as.toNameString)
+    }
+    
+    @Test def testExpand4() {
+        val a:UnitOfValue = (SI.Pa*SI.s)/(SI.m*SI.N)
+        val as:UnitOfValue = UnitOfValue.expand(a)
+        assertEquals("kg2/(m3*s3)",as.toNameString)
     }
 
 }

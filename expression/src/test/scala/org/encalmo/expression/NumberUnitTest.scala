@@ -54,6 +54,13 @@ class NumberUnitTest extends AssertionsForJUnit {
 		val c = -a
 		assertEquals(Number(-1),c.eval);
 	}
+    
+    @Test def verifyZERO() {
+        import BasicSymbols._
+        assertEquals(ONE,ZERO^ZERO)
+        assertEquals(ZERO,ZERO^a)
+        assertEquals(ONE,a^ZERO)
+    }
 	
 	@Test def testFormatForPrint() {
 		val n1 = Number(0.289765)
