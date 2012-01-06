@@ -167,14 +167,14 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	this(bp) = 0.1
 	this(cp) = 2*(ap+bp)+4*(dp-hc)+2*PI*hc
 	this(dv) = dp
-	this(kv) = sqrt(1+(200/(dv*1000)))
-	this(vmin) = 35*sqrt(kv^3)*sqrt(fck)
+	this(kv) = sqrt(1+(200/(dv*1000))).nounit
+	this(vmin) = 35*sqrt(kv^3)*sqrt(fck).setunit(SI.Pa)
 	this(VpRd) = vmin*cp*dp
 	this(VRdc) = vmin*dv
 	this(Qvd) = Fd
 	//zarysowanie betonu nad podpora
 	this(Asmin) = 0.002*hc*1
-	this(sdmax) = (PI*(dmesh^2))/(4*Asmin)*1E-6
+	this(sdmax) = (PI*(dmesh^2))/(4*Asmin)//*1E-6
 	//ugiecia w fazie eksploatacji
 	this(Eceff) = Ecm/2
 	this(nE) = E/Eceff
@@ -291,7 +291,7 @@ extends Calculation {
 		NumSection("Sprawdzenie nośności na ścinanie poprzeczne w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.5(1) i PN-EN 1992-1-1 pkt. 6.2.2",
 			Evaluate(Seq(dv,kv,vmin,VRdc),this),
 			AssertionLE("nośności na ścinanie",this,abs(VEde/VRdc),1),
-			AssertionLE("EN 1992-1-1 (6.5)",this,VEde,0.5*dv*fcd*(0.6*(1-(fck/250E6))))
+			AssertionLE("EN 1992-1-1 (6.5)",this,VEde,0.5*dv*fcd*(0.6*(1-(fck/Number(250E6,SI.Pa)))))
 		),
 		NumSection("Sprawdzenie nośności na przebicie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.6(1) i PN-EN 1992-1-1 pkt.6.4.4",
 			Evaluate(Seq(ap,bp,cp,VpRd,Qvd),this),

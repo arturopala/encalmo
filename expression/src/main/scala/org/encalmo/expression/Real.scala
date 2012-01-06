@@ -25,15 +25,11 @@ object Real {
   }
 
   val defaultFormat: java.text.DecimalFormat = getFormat(java.util.Locale.getDefault)
-  
   val stringFormat = new java.text.DecimalFormat("0.###############",new java.text.DecimalFormatSymbols(java.util.Locale.ENGLISH))
 
   def format(r: Real): String = defaultFormat.format(r.d)
-
   def format(r: Real, format: java.text.NumberFormat): String = format.format(r.d)
-
   def format(r: Real, locale: java.util.Locale): String = getFormat(locale).format(r.d)
-
   def format(r: Real, pattern: String, locale: java.util.Locale): String = {
     val format = getFormat(locale)
     format.applyPattern(pattern);
@@ -111,19 +107,23 @@ class Real(val d: Double) {
   def absInt: Int = Math.floor(Math.abs(d)).toInt
 
   /**
-   * Equals two real numbers if they differs no more then 0.00000001
+   * Equals two real numbers if they differs no more then 0.0001%
    */
   override def equals(a: Any): Boolean = a match {
     case r: Real => {
-      this.eq(r) || r.d == d || (Math.abs(r.d - d) < 0.00000001) || (d==Double.NaN && r.d==Double.NaN) || (d==Double.NegativeInfinity && r.d==Double.NegativeInfinity) || (d==Double.PositiveInfinity && r.d==Double.PositiveInfinity) 
+      this.eq(r) || r.d == d || (r.d!=0 && d!=0 && Math.signum(r.d)==Math.signum(d) && Math.abs(r.d - d) < Math.abs(d/1E6)) || (d==Double.NaN && r.d==Double.NaN) || (d==Double.NegativeInfinity && r.d==Double.NegativeInfinity) || (d==Double.PositiveInfinity && r.d==Double.PositiveInfinity) 
     }
     case _ => false
   }
 
-  def convert(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1.isSameBaseAndDimension(u2)) {
-      if(u1.multiplier==u2.multiplier) this else Real(d * u1.multiplier/u2.multiplier)
-  } else if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this
-  else throw new IllegalArgumentException("Cannot convert value of unit ["+u1.toNameString+"] to ["+u2.toNameString+"]")
+  def convert(u1: UnitOfValue, u2: UnitOfValue): Real = 
+      if(u1.isSameBaseAndDimension(u2)) convert1(u1,u2)
+      else if(u1.isSameExpandedUnit(u2)) convert2(u1,u2) 
+      else if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this
+      else throw new IllegalArgumentException("Cannot convert value of unit ["+u1.toNameString+"] to ["+u2.toNameString+"]")
+  
+  private[expression] def convert1(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this else if(u1.multiplier==u2.multiplier) this else Real(d * u1.multiplier/u2.multiplier)
+  private[expression] def convert2(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this else if(u1.expandedUnit._2==u2.expandedUnit._2) this else Real(d * u1.expandedUnit._2/u2.expandedUnit._2)
   
   def convertToBaseUnit(u: UnitOfValue):Real = if(u.isBaseUnit) this else Real(d * u.multiplier/u.baseUnit.multiplier)
   

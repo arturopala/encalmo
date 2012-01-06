@@ -89,11 +89,11 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
 	val alpha = symbol(BasicSymbols.alpha)
 	val kt = symbol(BasicSymbols.k|"t")
 	val ktmax = symbol(BasicSymbols.k|"t,max")
-	val nr = symbol(BasicSymbols.n|"r") unit "szt."
+	val nr = symbol(BasicSymbols.n|"r")
 	val VEdr = symbol(BasicSymbols.V|"Ed,r") unit "N"
 	val Ls = symbol(BasicSymbols.L|"s") unit "m"
 	val nf = symbol(BasicSymbols.n|"f")
-	val nfprim = symbol(BasicSymbols.n|("f","'")) unit "szt."
+	val nfprim = symbol(BasicSymbols.n|("f","'"))
 	val s = symbol(BasicSymbols.s) unit "m"
 	val smax = symbol(BasicSymbols.s|"max") unit "m"
 	val smin = symbol(BasicSymbols.s|"min") unit "m"
@@ -101,9 +101,9 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
 	val VEdc = symbol(BasicSymbols.V|"Ed,c") unit "N"
 	val kphi = symbol(BasicSymbols.k|BasicSymbols.phi)
 	val PpbRd = symbol(BasicSymbols.P|"pb,Rd") unit "N"
-	val VRdsr = symbol(BasicSymbols.V|"Rd,s,r") unit "N"
+	val VRdsr = symbol(BasicSymbols.V|"Rd,s,r") unit "N/m"
 	val thetat = symbol(BasicSymbols.theta|"t") unit "°"
-	val VRdsc = symbol(BasicSymbols.V|"Rd,s,c") unit "N"
+	val VRdsc = symbol(BasicSymbols.V|"Rd,s,c") unit "N/m"
 	val bn2 = symbol(BasicSymbols.b|"E,2") unit "m"
     val Sy2 = symbol(BasicSymbols.S|"y,2") unit "m3"
     val z2 = symbol(BasicSymbols.z|"2") unit "m"
@@ -130,7 +130,7 @@ object BeamOfCompositeSlabExpressions extends MapContext {
     import IBeamSectionSymbols.{ctw,ctf,bf,tf}
     
     //obciazenia i schemat statyczny w fazie montazu
-    this(gk) = 10*m
+    this(gk) = 10*m.setunit("N/m")
     this(gd) = gk*gammaG
     this(Qk1) = (Qcfk*SLAB.l)+(Gcck*SLAB.l)+gk+(Qmk*SLAB.l)
     this(Qd1) = (Qcfk*gammaG*SLAB.l)+(Gccd*SLAB.l)+gd+(Qmd*SLAB.l)

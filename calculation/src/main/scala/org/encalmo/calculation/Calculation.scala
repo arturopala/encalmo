@@ -34,6 +34,12 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 * Uses and updates internal cache of resolved symbols.
 	 */
 	override def evaluate(e:Expression):Expression = {
+	    /*val expr = e match {
+	        case s:Symbol => cache.get(s).getOrElse(
+	                super.evaluate(e)
+            )
+	        case _ => super.evaluate(e)
+	    }*/
 		val expr = super.evaluate(e)
 		e match {
 			case s:Symbol => addToCache(s,expr)
@@ -45,7 +51,15 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 * Returns expression mapped to that symbol or None
 	 */
 	override def getExpression(s:Symbol):Option[Expression] = {
-		cache.get(s).orElse(findExpression(s,set.elements))
+		/*cache.get(s).orElse(
+	        findExpression(s,set.elements)
+        )*/
+	    val c = cache.get(s)
+	    if(c.isDefined) c
+	    else {
+	        /*val e =*/ findExpression(s,set.elements)
+	        /*if(e.isDefined) Some(addToCache(s,e.get)) else None*/
+	    }
 	}
 	
 	/**
@@ -81,8 +95,9 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 * Adds resolved espresion to cache
 	 */
 	private def addToCache(s:Symbol,e:Expression) = {
-		cache.put(s,e)
-		e
+	    val ec = e match {case v:Value => v.convertTo(s.unit); case _ => e}
+		cache.put(s,ec)
+		ec
 	}
 	
 	/**
