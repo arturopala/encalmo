@@ -14,15 +14,15 @@ object SteelSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "steel"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
-	val E = symbol(BasicSymbols.E) unit SI.Pa
-	val G = symbol(BasicSymbols.G) unit SI.Pa
+	val E = symbol(BasicSymbols.E) unit SI.GPa
+	val G = symbol(BasicSymbols.G) unit SI.GPa
 	val fy = symbol(f|"y") unit SI.Pa
 	val fyd = symbol(f|"y,d") unit SI.Pa
 	val fu = symbol(f|"u") unit SI.Pa
 	val gammaM0 = symbol(gamma|"M,0")
 	val gammaM1 = symbol(gamma|"M,1")
 	val gammaV = symbol(gamma|"V")
-	val gammas = symbol(gamma|"s") unit "N/m3"
+	val gammas = symbol(gamma|"s") unit "kN/m3"
 	val epsiy = symbol(BasicSymbols.epsiv|"y")
 	val epsiu = symbol(BasicSymbols.epsiv|"u")
 	val epsi = symbol(BasicSymbols.epsi)
@@ -33,11 +33,11 @@ object SteelExpressions extends MapContext {
 
 	import SteelSymbols._
 	
-	this(E) = 210E9
-	this(gammas) = 78.5E3
+	this(E) = 210
+	this(gammas) = 78.5
 	this(fyd) = fy/gammaM0
 	this(epsiy) = fy/E
-	this(epsi) = sqrt(235E6/fy).nounit
+	this(epsi) = sqrt(Number(235,SI.MPa)/fy)
 	lock
 }
 
