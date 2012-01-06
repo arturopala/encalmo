@@ -8,7 +8,7 @@ import java.io.PrintWriter
  */
 case class Number(
 
-		private val r:Real,
+		private[encalmo] val r:Real,
 		override val unit:UnitOfValue = EmptyUnitOfValue
 		
 	) extends Value {
@@ -22,18 +22,26 @@ case class Number(
 			case (Number(r1,u1),Number(r2,u2)) => {
 				Option(operator match {
 					case "+" => {
-					    if(u1.isSameBaseAndDimension(u2)){
-					         if(u1==u2) Number(r1+r2,u1) else
-				             if(u1.isLargerThan(u2)) Number(r1+(r2.convert(u2,u1)),u1) else Number(r1.convert(u1,u2)+r2,u2)
-					    }else{
+                        if(u1==u2) Number(r1+r2,u1)
+					    else if(u1.isSameBaseAndDimension(u2)){
+				             if(u1.isLargerThan(u2)) Number(r1+(r2.convert1(u2,u1)),u1) else Number(r1.convert1(u1,u2)+r2,u2)
+					    }
+					    else if (u1.isSameExpandedUnit(u2)){
+					        if(u1.isLargerThan(u2)) Number(r1+(r2.convert2(u2,u1)),u1) else Number(r1.convert2(u1,u2)+r2,u2)
+					    }
+					    else{
 					        Number(r1+r2,u1+u2)
 					    }
 					}
 					case "-" => {
-					    if(u1.isSameBaseAndDimension(u2)){
-                             if(u1==u2) Number(r1-r2,u1) else
-                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert(u2,u1)),u1) else Number(r1.convert(u1,u2)-r2,u2)
-                        }else{
+					    if(u1==u2) Number(r1-r2,u1)
+					    else if(u1.isSameBaseAndDimension(u2)){ 
+                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert1(u2,u1)),u1) else Number(r1.convert1(u1,u2)-r2,u2)
+                        }
+					    else if(u1.isSameExpandedUnit(u2)){ 
+                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert2(u2,u1)),u1) else Number(r1.convert2(u1,u2)-r2,u2)
+                        }
+					    else{
                             Number(r1-r2,u1-u2)
                         }
 					}
@@ -41,8 +49,8 @@ case class Number(
 					    if(u1.isSameBase(u2)){
                              if(u1.isSameDimension(u2)){
                                  if(u1.isLargerScaleThan(u2)) 
-                                     Number(r1*(r2.convert(u2,u1)),u1.dim(u1.dimension*2)) 
-                                     else Number(r1.convert(u1,u2)*r2,u2.dim(u1.dimension*2))
+                                     Number(r1*(r2.convert1(u2,u1)),u1.dim(u1.dimension*2)) 
+                                     else Number(r1.convert1(u1,u2)*r2,u2.dim(u1.dimension*2))
                              }else if(u1.isSameScale(u2)){
                                  Number(r1*r2,u1.dim(u1.dimension+u2.dimension))
                              }else{
@@ -50,14 +58,18 @@ case class Number(
                                      Number(r1*(r2.adjustScale(u2,u1)),u1.dim(u1.dimension+u2.dimension)) 
                                      else Number((r1.adjustScale(u1,u2)*r2),u2.dim(u1.dimension+u2.dimension))
                              }
-                        }else{
+                        }
+					    else if(u1.isSameExpandedUnit(u2)){ 
+					        if(u1.isLargerThan(u2)) Number(r1*(r2.convert2(u2,u1)),(u1*u1).simplifiedUnit) else Number(r1.convert2(u1,u2)*r2,(u2*u2).simplifiedUnit)
+					    }
+					    else{
                             Number(r1*r2,(u1*u2).simplifiedUnit)
                         }
 					}
 					case "/" => {
 					   if(u1.isSameBase(u2)){
                              if(u1.isSameDimension(u2)){
-                                 Number(r1/(r2.convert(u2,u1)),EmptyUnitOfValue)
+                                 Number(r1/(r2.convert1(u2,u1)),EmptyUnitOfValue)
                              }else if(u1.isSameScale(u2)){
                                  if(u1.dimension>u2.dimension) 
                                      Number(r1/r2,u1.dim(u1.dimension-u2.dimension)) 
@@ -73,15 +85,23 @@ case class Number(
                                          else Number((r1.adjustScale(u1,u2)/r2),ComplexUnitOfValue(Quot(ONE,u2.dim(u2.dimension-u1.dimension))))
                                  }
                              }
-                        }else{
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                            Number(r1/(r2.convert2(u2,u1)),EmptyUnitOfValue)
+                        }
+					    else{
                             Number(r1/r2,(u1/u2).simplifiedUnit)
                         }
 					}
 					case "%" => {
-                        if(u1.isSameBaseAndDimension(u2)){
-                             if(u1==u2) Number(r1%r2,u1) else
-                             if(u1.isLargerThan(u2)) Number(r1.convert(u1,u2)%r2,u2) else Number(r1%(r2.convert(u2,u1)),u1)
-                        }else{
+                        if(u1==u2) Number(r1%r2,u1) 
+                        else if(u1.isSameBaseAndDimension(u2)){
+                             if(u1.isLargerThan(u2)) Number(r1.convert1(u1,u2)%r2,u2) else Number(r1%(r2.convert1(u2,u1)),u1)
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                            if(u1.isLargerThan(u2)) Number(r1.convert2(u1,u2)%r2,u2) else Number(r1%(r2.convert2(u2,u1)),u1)
+                        }
+                        else{
                             Number(r1%r2,u1%u2)
                         }
                     }
@@ -98,16 +118,26 @@ case class Number(
 					case "min" => {
 					    if(u1.isSameBaseAndDimension(u2)){
                              if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
-                             else if(r1<=r2.convert(u2,u1)) v1 else v2
-                        }else{
+                             else if(r1<=r2.convert1(u2,u1)) v1 else v2
+                        }
+					    else if(u1.isSameExpandedUnit(u2)){ 
+					         if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
+                             else if(r1<=r2.convert2(u2,u1)) v1 else v2
+					    }
+					    else{
                              if(r1<=r2) v1 else v2
                         }
 					}
 					case "max" => {
                         if(u1.isSameBaseAndDimension(u2)){
                              if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
-                             else if(r1<=r2.convert(u2,u1)) v2 else v1
-                        }else{
+                             else if(r1<=r2.convert1(u2,u1)) v2 else v1
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                            if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
+                            else if(r1<=r2.convert2(u2,u1)) v2 else v1
+                        }
+                        else{
                              if(r1<=r2) v2 else v1
                         }
                     }
@@ -153,10 +183,10 @@ case class Number(
 		}
 	}
 	
-    override def equals(a:Any):Boolean = a match {  
+    override def equals(a:Any):Boolean = a match {
         case n:Number if this.eq(n) => true
         case Number(r,u) => if(u==unit || u == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r==r else {
-            if (u.isSameBaseAndDimension(this.unit)) r==this.r.convert(this.unit,u)
+            if (u.isSameBaseAndDimension(this.unit) || u.isSameExpandedUnit(this.unit)) r==this.r.convert(this.unit,u)
             else false
         }
         case _ => false
@@ -164,7 +194,8 @@ case class Number(
     
     override def convertTo(newunit:UnitOfValue):Number = newunit match {
         case u:UnitOfValue if this.unit==u => this
-        case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert(unit,newunit),newunit)
+        case u:UnitOfValue if (this.unit.isSameBaseAndDimension(u)) => Number(r.convert1(unit,newunit),newunit)
+        case u:UnitOfValue if (this.unit.isSameExpandedUnit(u)) => Number(r.convert2(unit,newunit),newunit)
         case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit)
         case _ => this
     }
@@ -225,12 +256,10 @@ case class Number(
 	def isInt = r.isInt
 	
 	def format:String = Real.format(r)
-
 	def format(format:java.text.NumberFormat):String = Real.format(r, format);
-
 	def format(locale:java.util.Locale):String = Real.format(r,locale)
-
 	def format(pattern:String,locale:java.util.Locale):String = Real.format(r,pattern,locale)
+	def asString:String = r.toString()
 	
 	/** Sets unit */
     def unit(name:String):Number = copy(unit = SI(name).getOrElse(SimpleUnitOfValue(UnitOfValueName(name),0,1,SI)))

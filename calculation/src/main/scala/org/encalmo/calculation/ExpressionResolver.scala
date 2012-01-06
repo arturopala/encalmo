@@ -63,11 +63,11 @@ trait ExpressionResolver {
 	}
 	
 	/**
-	 * Evaluates
+	 * Evaluates expression in the context
 	 */
 	def evaluate(e:Expression):Expression = {
-	    val resolved = e.mapAll(resolver)
-		map(resolved,evaluator)
+	    val e1 = e.mapAll(preevaluator)
+		map(e1,evaluator)
 	}
 	
 	def map(e1:Expression, t:Transformation, c:Int = 0):Expression = {
@@ -88,58 +88,44 @@ trait ExpressionResolver {
 	 * Replaces symbols with mapped expressions
 	 */
 	private val resolver:Transformation = {
-		e => e match {
-			case s:Symbol => this.getRawExpression(s).getOrElse(s) match {
-			    case v:Value => v.convertTo(s.unit)
-			    case x => x
-			}
-			case _ => e
-		}
+		case s:Symbol => this.getRawExpression(s).getOrElse(s)
+		case e => e
 	}
+    
+	
+	/**
+	 * Single-pass pre-evaluating transformation. 
+	 */
+    private val preevaluator:Transformation = {
+        case s:Symbol => this.getExpression(s).getOrElse(s)
+        case e => e
+    }
 	
 	/**
 	 * Single-pass evaluating transformation. 
 	 * Evaluates expressions
 	 */
 	private val evaluator:Transformation = {
-		e => e match {
-			case s:Symbol => this.getExpression(s) match {
-				case Some(x) => x.eval match {
-				    case v:Value => v.convertTo(s.unit)
-				    case r => r
-				}
-				case None => s
-			}
-			case sl:SymbolLike => sl.eval match {
-                    case v:Value => v.convertTo(sl.symbol.unit)
-                    case r => r
-                }
-			case _ => e.eval
+		case s:Symbol => this.getExpression(s) match {
+			case Some(x) => x.eval 
+			case None => s
 		}
+		case sl:SymbolLike => sl.eval
+		case e => e.eval
 	}
 	
 	/**
 	 * Single-pass substituting transformation. 
-	 * Replaces symbols with their values
+	 * Replaces symbols with their evaluated values
 	 */
 	private val substitutor:Transformation = {
-		e => e match {
-			case s:Symbol => this.getExpression(s) match {
-				case Some(x) => x.eval match {
-                    case v:Value => v.convertTo(s.unit)
-                    case r => r
-                }
-				case None => s
-			}
-			case sl:SymbolLike => sl.eval match {
-                    case v:Value => v.convertTo(sl.symbol.unit)
-                    case r => r
-                }
-			case sel:Selection => {
-				sel.trim
-			}
-			case _ => e
+		case s:Symbol => this.getExpression(s) match {
+			case Some(x) => x.eval
+			case None => s
 		}
+		case sl:SymbolLike => sl.eval
+		case sel:Selection => sel.trim
+		case e => e
 	}
 	
 	def evaluateWithAndReturnCopy(er:ExpressionResolver):ExpressionResolver = {

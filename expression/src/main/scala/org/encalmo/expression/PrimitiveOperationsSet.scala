@@ -101,6 +101,13 @@ case class Prod2(l: Expression, r: Expression) extends InfixOperation {
     override def copy(l: Expression, r: Expression) = Prod2(l, r)
     override val operator = "*"
     override val precedence = 11
+    
+    def toProd:Prod = Prod(back(l),back(r))
+    
+    private def back:(Expression)=>Expression = {
+        case p:Prod2 => p.toProd
+        case e => e
+    }
 }
 
 /**

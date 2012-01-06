@@ -33,6 +33,7 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
 	@tailrec
 	final def mapAll(f:A=>A, c:Int = 0, source:A = this):A = {
 		val e:A = map(f)
+		if(false) Console.println(e)
 		if(c>=MAX_MAP_ALL_LOOP_COUNT){
 			throw new CycleDetectedException[A](source,source.toString+" -> "+e.toString)
 		}else{

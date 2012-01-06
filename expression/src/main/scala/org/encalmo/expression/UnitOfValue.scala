@@ -26,15 +26,22 @@ trait UnitOfValue extends Expression {
     def isSameBaseAndScale(u:UnitOfValue):Boolean = this.name.baseName==u.name.baseName && this.scale==u.scale
     def isSameBaseAndDimension(u:UnitOfValue):Boolean = isSameBase(u) && isSameDimension(u)
 	def isSame(u:UnitOfValue):Boolean = isSameBase(u) && isSameDimension(u) && isSameScale(u)
-	def isLargerThan(u:UnitOfValue):Boolean = multiplier > u.multiplier
+	def isLargerThan(u:UnitOfValue):Boolean = if(this.expandedUnitMultiplier != u.expandedUnitMultiplier) this.expandedUnitMultiplier > u.expandedUnitMultiplier 
+	    else this.toNameString.size < u.toNameString.size
 	def isLargerScaleThan(u:UnitOfValue):Boolean = scale > u.scale
+	
+	def isSameExpandedUnit(u:UnitOfValue):Boolean = this.expandedUnitBase.toNameString==u.expandedUnitBase.toNameString
+	def isSameExpandedUnitAndMultiplier(u:UnitOfValue):Boolean = this.expandedUnit==u.expandedUnit
 	
 	/** Base unit of this unit's family */
 	def baseUnit:UnitOfValue = this
     /** Simplified unit variant */
     def simplifiedUnit:UnitOfValue
     /** Expanded unit variant */
-    def expandedUnit:UnitOfValue
+    def expandedUnit:(UnitOfValue,Double)
+    
+    def expandedUnitBase:UnitOfValue = expandedUnit._1
+    def expandedUnitMultiplier:Double = expandedUnit._2
 	
 	/** Sets dimension of unit */
 	def dim(dim:Double):UnitOfValue
@@ -119,7 +126,9 @@ case class SimpleUnitOfValue (
 	
 	override lazy val baseUnit:UnitOfValue = system.find(baseUnitName.baseName,0,dimension).getOrElse(this)
 	override lazy val simplifiedUnit:UnitOfValue = this
-	override lazy val expandedUnit:UnitOfValue = system.expand(this)
+	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
+
+    override lazy val toString:String = toNameString
 	
 }
 
@@ -128,9 +137,9 @@ object EmptyUnitOfValue extends SimpleUnitOfValue() {
     
     override def dim(newdim:Double):SimpleUnitOfValue = this
     override def exp(exp:Int):UnitOfValue = this
-    override def toString:String = "EmptyUnitOfValue"
+    override lazy val toString:String = "_"
     override lazy val simplifiedUnit:UnitOfValue = this
-    override lazy val expandedUnit:UnitOfValue = this
+    override lazy val expandedUnit:(UnitOfValue,Double) = (this,1)
     
 }
 
@@ -225,13 +234,15 @@ case class ComplexUnitOfValue(
 	override def dim(newdim:Double):UnitOfValue = if(newdim==0) EmptyUnitOfValue else copy(dimension=newdim)
 	override def exp(exp:Int):UnitOfValue = copy(scale=scale+exp)
 	override def toNameString:String = name.toString
-	override lazy val simplifiedUnit:UnitOfValue = UnitOfValue.simplify(this)
-	override lazy val expandedUnit:UnitOfValue = UnitOfValue.expand(this)
+	override lazy val simplifiedUnit:UnitOfValue = UnitOfValue.simplifyUnit(this)
+	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
 
     final override def map(f: Transformation): Expression = {
         val ve = expression.map(f);
         f(if(ve == expression) this else copy(expression = ve))
     }
+    
+    override lazy val toString:String = toNameString
 }
 
 case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
@@ -242,7 +253,7 @@ case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
     override def exp(exp:Int):UnitOfValue = IllegalUnitOfValue("("+desc+")exp"+exp)
     override def toNameString:String = "!"+desc+"!"
     override lazy val simplifiedUnit:UnitOfValue = this
-    override lazy val expandedUnit:UnitOfValue = this
+    override lazy val expandedUnit:(UnitOfValue,Double) = (this,1)
     
 }
 
@@ -328,57 +339,89 @@ object UnitOfValue {
     
     val dimensionFormat = Real.stringFormat
     
-    def expand(u:UnitOfValue):UnitOfValue = {
-        val e = u.mapAll(expandFx _) match {
-            case u:UnitOfValue => u
-            case e => ComplexUnitOfValue(e)
+    def expandUnit(u:UnitOfValue):(UnitOfValue,Double) = {
+        val e1:Expression = u.mapAll(simplifyFx)
+        val e2 = e1.mapAll(expandFx)
+        val e3 = e2.mapAll(simplifyFx)
+        val n:Number = e3.mapAll(multiplierFx).eval match {
+            case n:Number => n
+            case _ => ZERO
         }
-        val s = simplify(e)
-        s
+        val u2:UnitOfValue = encapsulateUnitFx(e3.mapAll(cleanNumbersFx).mapAll(simplifyFx).eval)
+        (u2,n.r.d)
     }
     
-    private def expandFx(e:Expression):Expression = e match {
-        case u:SimpleUnitOfValue => u.expandedUnit
-        case _ => e
+    def evaluateExpandedUnitMultiplier(u:UnitOfValue):Expression = {
+        u.mapAll(multiplierFx).eval
     }
     
-    def simplify(u:UnitOfValue):UnitOfValue = {
-        u.mapAll(simplifyFx _) match {
-            case u:UnitOfValue => u
-            case e => ComplexUnitOfValue(e)
+    def simplifyUnit(u:UnitOfValue):UnitOfValue = {
+        encapsulateUnitFx(u.mapAll(simplifyFx))
+    }
+    
+    def encapsulateUnitFx:(Expression)=>UnitOfValue = {
+        case u:UnitOfValue => u
+        case e => ComplexUnitOfValue(e)
+    }
+    
+    private def expandFx:(Expression)=>Expression = {
+        case u:SimpleUnitOfValue => {
+            u.multiplier match {
+                case 1 => u.system.expand(u)
+                case m => Prod2(Number(m),u.system.expand(u.baseUnit))
+            }
+            
         }
+        case e => e
+    }
+    
+    private def multiplierFx:(Expression)=>Expression = {
+        case EmptyUnitOfValue => ONE
+        case iu:IllegalUnitOfValue => ZERO
+        case su:SimpleUnitOfValue => Number(su.multiplier)
+        case ComplexUnitOfValue(expression,1,0) => expression
+        case ComplexUnitOfValue(unit:UnitOfValue,dimension,scale) => dimension match {
+            case 0 => EmptyUnitOfValue
+            case 1 => unit
+            case _ => unit.dim(dimension*unit.dimension).exp(scale+unit.scale)
+        }
+        case ComplexUnitOfValue(expression,dimension,scale) if dimension>1 => Prod((for (a <- 1 to dimension.toInt) yield expression):_*)
+        case e => e
+    }
+    
+    private def cleanNumbersFx:(Expression)=>Expression = {
+        case n:Number => ONE
+        case e => e
     }
     
     /** Unit expression simplification rules */
-    private def simplifyFx(e:Expression):Expression = e match {
+    private def simplifyFx:(Expression)=>Expression = {
         
-        // rules for operation simplification
+        // rules for translation
         
         case p:Prod => p.eval match { case p2:Prod => p2.toProd2; case x => x }
-        case Quot(a,b) if a==b => ONE                // a/a = 1
-        case Quot(Quot(a,b),c) => Quot(a,Prod2(b,c)) // (a/b)/c = a/[b*c]
-        case Quot(a,Quot(b,c)) => Quot(Prod2(a,c),b) // a/(b/c) = [a*c]/b
         
         // rules for values simplification
         
-        case Quot(n1:Value,n2:Value) => e.eval  // evaluation
-        case Prod2(n1:Value,n2:Value) => e.eval  // evaluation
-        case Prod2(ONE,a) => a                   //  1 * a = a
-        case Prod2(a,ONE) => a                   //  a * 1 = a
-        case Prod2(ZERO,a) => ZERO               //  0 * a = 0
-        case Prod2(a,ZERO) => ZERO               //  a * 0 = 0
-        case Quot(ZERO,a) => ZERO               //  0/a = 0
-        case Quot(a,ONE)  => a                  //  a/1 = a
-        case Prod2(a,Quot(ONE,b)) => Quot(a,b)   //  a * 1/b = a/b
-        case Prod2(Quot(ONE,a),b) => Quot(b,a)   //  1/a * b = b/a
+        case Quot(n1:Value,n2:Value) => Quot(n1,n2).eval    // evaluation
+        case Prod2(n1:Value,n2:Value) => Prod2(n1,n2).eval  // evaluation
+        case Prod2(a,n1:Value) => Prod2(n1:Value,a)     // reordering
+        case Prod2(ONE,a) => a                          //  1 * a = a
+        //case Prod2(a,ONE) => a                        //  a * 1 = a
+        case Prod2(ZERO,a) => ZERO                      //  0 * a = 0
+        //case Prod2(a,ZERO) => ZERO                    //  a * 0 = 0
+        case Quot(ZERO,a) => ZERO                       //  0/a = 0
+        case Quot(a,ONE)  => a                          //  a/1 = a
+        case Prod2(a,Quot(ONE,b)) => Quot(a,b)          //  a * 1/b = a/b
+        //case Prod2(Quot(ONE,a),b) => Quot(b,a)          //  1/a * b = b/a
         
-        case Prod2(Quot(n1:Value,a),n2:Value) => Quot((n1*n2).eval,a)  //   n1/a * n2 = [n1*n2]/a
-        case Prod2(Quot(a,n1:Value),n2:Value) => Prod2(a,(n2/n1).eval) //   a/n1 * n2 = a*[n2/n1]
+        //case Prod2(Quot(n1:Value,a),n2:Value) => Quot((n1*n2).eval,a)  //   n1/a * n2 = [n1*n2]/a
+        //case Prod2(Quot(a,n1:Value),n2:Value) => Prod2(a,(n2/n1).eval) //   a/n1 * n2 = a*[n2/n1]
         case Prod2(n1:Value,Quot(n2:Value,a)) => Quot((n1*n2).eval,a)  //   n1 * n2/a = [n1*n2]/a
         case Prod2(n1:Value,Quot(a,n2:Value)) => Prod2(a,(n1/n2).eval) //   n1 * a/n2 = a*[n1/n2]
         
-        case Prod2(Prod2(n1:Value,a),n2:Value) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
-        case Prod2(Prod2(a,n1:Value),n2:Value) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
+        //case Prod2(Prod2(n1:Value,a),n2:Value) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
+        //case Prod2(Prod2(a,n1:Value),n2:Value) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
         case Prod2(n1:Value,Prod2(n2:Value,a)) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
         case Prod2(n1:Value,Prod2(a,n2:Value)) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
         
@@ -387,15 +430,17 @@ object UnitOfValue {
         //case Quot(n1:Value,Quot(a,n2:Value)) => Quot((n1*n2).eval,a) //   n1 / a/n2 = [n1*n2]/a
         //case Quot(n1:Value,Quot(n2:Value,a)) => Prod2(a,(n1/n2).eval)//   n1 / n2/a = [n1/n2]*a
         
-        case Prod2(Quot(n1:Value,a),Quot(n2:Value,b)) => Quot((n1*n2).eval,Prod2(a,b)) //   n1/a * n2/b = [n1*n2]/[a*b]
-        case Prod2(Quot(n1:Value,a),Quot(b,n2:Value)) => Prod2((n1*n2).eval,Quot(b,a)) //   n1/a * b/n2 = [n1/n2]*[b/a]
-        case Prod2(Quot(a,n1:Value),Quot(n2:Value,b)) => Prod2((n2/n1).eval,Quot(a,b)) //   a/n1 * n2/b = [n2/n1]*[a/b]
-        case Prod2(Quot(a,n1:Value),Quot(b,n2:Value)) => Quot(Prod2(a,b),(n1/n2).eval) //   a/n1 * b/n2 = [a*b]/[n1*n2]
+        //case Prod2(Quot(n1:Value,a),Quot(n2:Value,b)) => Quot((n1*n2).eval,Prod2(a,b)) //   n1/a * n2/b = [n1*n2]/[a*b]
+        //case Prod2(Quot(n1:Value,a),Quot(b,n2:Value)) => Prod2((n1*n2).eval,Quot(b,a)) //   n1/a * b/n2 = [n1/n2]*[b/a]
+        //case Prod2(Quot(a,n1:Value),Quot(n2:Value,b)) => Prod2((n2/n1).eval,Quot(a,b)) //   a/n1 * n2/b = [n2/n1]*[a/b]
+        //case Prod2(Quot(a,n1:Value),Quot(b,n2:Value)) => Quot(Prod2(a,b),(n1/n2).eval) //   a/n1 * b/n2 = [a*b]/[n1*n2]
         
         case Quot(Prod2(n1:Value,a),Prod2(n2:Value,b)) => Prod2((n1/n2).eval,Quot(a,b)) //   n1*a / n2*b = [n1/n2]*[a/b]
         case Quot(Prod2(n1:Value,a),Prod2(b,n2:Value)) => Prod2((n1/n2).eval,Quot(a,b)) //   n1*a / b*n2 = [n1/n2]*[a/b]
         case Quot(Prod2(a,n1:Value),Prod2(n2:Value,b)) => Prod2((n1/n2).eval,Quot(a,b)) //   a*n1 / n2*b = [n1/n2]*[a/b]
         case Quot(Prod2(a,n1:Value),Prod2(b,n2:Value)) => Prod2((n1/n2).eval,Quot(a,b)) //   a*n1 / b*n2 = [n1/n2]*[a/b]
+        
+        case Prod2(Prod2(n1:Value,a),Prod2(n2:Value,b)) => Prod2((n1*n2).eval,Prod2(a,b)) // a*n1 * b*n2 = [n1*n2]*(a*b)
         
         //case Quot(Prod2(n1:Value,a),Quot(n2:Value,b)) => Prod2((n1/n2).eval,Prod2(a,b)) //   n1*a / n2/b = n1*a * b/n2 = [n1/n2]*[a*b]
         //case Quot(Prod2(n1:Value,a),Quot(b,n2:Value)) => Prod2((n1*n2).eval,Quot(a,b)) //   n1*a / b/n2 = n1*a * n2/b = [n1*n2]*[a/b]
@@ -421,54 +466,78 @@ object UnitOfValue {
         case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) if u1.isSameBase(u2) => simplifyQuot(u1,u2)
         case Prod2(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) if u1.isSameBase(u2) => simplifyProd2(u1,u2)
         
-        case Quot(Prod2(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(a,simplifyQuot(u1,u2))
-        case Quot(Prod2(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(a,simplifyQuot(u1,u2))
-        case Quot(u1:SimpleUnitOfValue,Prod2(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Quot(simplifyQuot(u1,u2),a)
-        case Quot(u1:SimpleUnitOfValue,Prod2(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Quot(simplifyQuot(u1,u2),a)
+        case Quot(Prod2(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(a,simplifyQuot(u1,u2)) // (a*u1)/u2 = a*[u1/u2]
+        case Quot(Prod2(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(a,simplifyQuot(u1,u2)) // (u1*a)/u2 = a*[u1/u2]
+        case Quot(u1:SimpleUnitOfValue,Prod2(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Quot(simplifyQuot(u1,u2),a)  // u1/(a*u2) = [u1/u2]/a
+        case Quot(u1:SimpleUnitOfValue,Prod2(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Quot(simplifyQuot(u1,u2),a)  // u1/(u2*a) = [u1/u2]/a
         
-        case Prod2(Prod2(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),a) //   n1*a * n2 = [n1*n2]*a
-        case Prod2(Prod2(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),a) //   n1*a * n2 = [n1*n2]*a
-        case Prod2(u1:SimpleUnitOfValue,Prod2(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),a) //   n1*a * n2 = [n1*n2]*a
-        case Prod2(u1:SimpleUnitOfValue,Prod2(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),a) //   n1*a * n2 = [n1*n2]*a
+        //case Prod2(Prod2(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),a) //   n1*a * n2 = [n1*n2]*a
+        //case Prod2(Prod2(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),a) //   n1*a * n2 = [n1*n2]*a
+        case Prod2(u1:SimpleUnitOfValue,Prod2(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),a)   //   n1*a * n2 = [n1*n2]*a
+        case Prod2(u1:SimpleUnitOfValue,Prod2(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),a)   //   n1*a * n2 = [n1*n2]*a
         
-        case Prod2(Quot(u1:SimpleUnitOfValue,a),Quot(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(Quot(b,a),simplifyQuot(u1,u2))
-        case Prod2(Quot(a,u1:SimpleUnitOfValue),Quot(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))
-        case Prod2(Quot(u1:SimpleUnitOfValue,a),Quot(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),Prod2(a,b))
-        case Prod2(Quot(a,u1:SimpleUnitOfValue),Quot(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Quot(Prod2(a,b),simplifyProd2(u1,u2))
+        case Prod2(Prod2(a,u1:SimpleUnitOfValue),Prod2(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(Prod2(a,b),simplifyProd2(u1,u2)) // a*n1 * b*n2 = [n1*n2]*(a*b)
+        case Prod2(Prod2(u1:SimpleUnitOfValue,a),Prod2(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(Prod2(a,b),simplifyProd2(u1,u2)) // a*n1 * b*n2 = [n1*n2]*(a*b)
+        case Prod2(Prod2(a,u1:SimpleUnitOfValue),Prod2(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod2(Prod2(a,b),simplifyProd2(u1,u2)) // a*n1 * b*n2 = [n1*n2]*(a*b)
+        case Prod2(Prod2(u1:SimpleUnitOfValue,a),Prod2(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod2(Prod2(a,b),simplifyProd2(u1,u2)) // a*n1 * b*n2 = [n1*n2]*(a*b)
         
-        case Quot(Prod2(a,u1:SimpleUnitOfValue),Prod2(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u1,u2))
-        case Quot(Prod2(u1:SimpleUnitOfValue,a),Prod2(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u1,u2))
-        case Quot(Prod2(u1:SimpleUnitOfValue,a),Prod2(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u1,u2))
-        case Quot(Prod2(a,u1:SimpleUnitOfValue),Prod2(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u1,u2))
+        case Prod2(Quot(u1:SimpleUnitOfValue,a),Quot(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(Quot(b,a),simplifyQuot(u1,u2))  // (u1/a) * (b/u2) = (b/a)*[u1/u2]
+        case Prod2(Quot(a,u1:SimpleUnitOfValue),Quot(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))  // (a/u1) * (u2/b) = (a/b)*[u2/u1]
+        case Prod2(Quot(u1:SimpleUnitOfValue,a),Quot(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),Prod2(a,b)) // (u1/a) * (u2/b) = [u1*u2]/(a*b)
+        case Prod2(Quot(a,u1:SimpleUnitOfValue),Quot(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Quot(Prod2(a,b),simplifyProd2(u1,u2)) // (a/u1) * (b/u2) = (a*b)/[u1*u2]
         
-        case Prod2(Quot(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),a)
-        case Prod2(u1:SimpleUnitOfValue,Quot(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),a)
-        case Prod2(Quot(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(a,simplifyQuot(u2,u1))
-        case Prod2(u1:SimpleUnitOfValue,Quot(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(a,simplifyQuot(u1,u2))
+        case Quot(Prod2(a,u1:SimpleUnitOfValue),Prod2(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u1,u2)) // (a*u1)/(b*u2) = (a/b)*[u1/u2]
+        case Quot(Prod2(u1:SimpleUnitOfValue,a),Prod2(b,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u1,u2)) // (u1*a)/(b*u2) = (a/b)*[u1/u2]
+        case Quot(Prod2(u1:SimpleUnitOfValue,a),Prod2(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u1,u2)) // (a*u1)/(u2*b) = (a/b)*[u1/u2]
+        case Quot(Prod2(a,u1:SimpleUnitOfValue),Prod2(u2:SimpleUnitOfValue,b)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u1,u2)) // (u1*a)/(u2*b) = (a/b)*[u1/u2]
         
-        //case Quot(Quot(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Quot(a,simplifyProd2(u1,u2))
-        //case Quot(Quot(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Quot(simplifyQuot(u1,u2),a)
-        //case Quot(u1:SimpleUnitOfValue,Quot(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),a)
-        //case Quot(u1:SimpleUnitOfValue,Quot(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Prod2(simplifyQuot(u1,u2),a)
+        case Prod2(Quot(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),a) // (u1/a)*u2 = [u1*u2]/a
+        case Prod2(u1:SimpleUnitOfValue,Quot(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),a) // u1*(u2/a) = [u1*u2]/a
+        case Prod2(Quot(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(a,simplifyQuot(u2,u1)) // (a/u1)*u2 = a*[u2/u1]
+        case Prod2(u1:SimpleUnitOfValue,Quot(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Prod2(a,simplifyQuot(u1,u2)) // u1*(a/u2) = a*[u1/u2]
         
-        case Prod2(Quot(a,Prod2(b,u1:SimpleUnitOfValue)),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))
-        case Prod2(Quot(a,Prod2(u1:SimpleUnitOfValue,b)),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))
-        case Prod2(Quot(Prod2(b,u1:SimpleUnitOfValue),a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyProd2(u2,u1))
-        case Prod2(Quot(Prod2(u1:SimpleUnitOfValue,b),a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyProd2(u2,u1))
+        case Quot(Quot(a,u1:SimpleUnitOfValue),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Quot(a,simplifyProd2(u1,u2)) // (a/u1)/u2 = a/[u1*u2]
+        case Quot(Quot(u1:SimpleUnitOfValue,a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Quot(simplifyQuot(u1,u2),a)  // (u1/a)/u2 = [u1/u2]/a 
+        case Quot(u1:SimpleUnitOfValue,Quot(a,u2:SimpleUnitOfValue)) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),a) // u1/(a/u2) = [u1*u2]/a
+        case Quot(u1:SimpleUnitOfValue,Quot(u2:SimpleUnitOfValue,a)) if u1.isSameBase(u2) => Prod2(simplifyQuot(u1,u2),a) // u1/(u2/a) = [u1/u2]*a 
         
-        case Prod2(u2:SimpleUnitOfValue,Quot(a,Prod2(b,u1:SimpleUnitOfValue))) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))
-        case Prod2(u2:SimpleUnitOfValue,Quot(a,Prod2(u1:SimpleUnitOfValue,b))) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))
-        case Prod2(u2:SimpleUnitOfValue,Quot(Prod2(b,u1:SimpleUnitOfValue),a)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyProd2(u2,u1))
-        case Prod2(u2:SimpleUnitOfValue,Quot(Prod2(u1:SimpleUnitOfValue,b),a)) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyProd2(u2,u1))
+        case Prod2(Quot(a,Prod2(b,u1:SimpleUnitOfValue)),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))  // (a/(b*u1))*u2 = (a/b)*[u2/u1]
+        case Prod2(Quot(a,Prod2(u1:SimpleUnitOfValue,b)),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))  // (a/(u1*b))*u2 = (a/b)*[u2/u1]
+        case Prod2(Quot(Prod2(b,u1:SimpleUnitOfValue),a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(b,a),simplifyProd2(u2,u1)) // ((b*u1)/a)*u2 = (b/a)*[u1*u2]
+        case Prod2(Quot(Prod2(u1:SimpleUnitOfValue,b),a),u2:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(b,a),simplifyProd2(u2,u1)) // ((u1*b)/a)*u2 = (b/a)*[u1*u2]
         
-        case Prod2(u1:SimpleUnitOfValue,Prod2(Quot(u2:SimpleUnitOfValue,a),b)) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),Quot(b,a))
-        case Prod2(u1:SimpleUnitOfValue,Prod2(a,Quot(u2:SimpleUnitOfValue,b))) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),Quot(a,b))
-        case Prod2(Prod2(Quot(u2:SimpleUnitOfValue,a),b),u1:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),Quot(b,a))
-        case Prod2(Prod2(a,Quot(u2:SimpleUnitOfValue,b)),u1:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(simplifyProd2(u1,u2),Quot(a,b))
+        //case Prod2(u2:SimpleUnitOfValue,Quot(a,Prod2(b,u1:SimpleUnitOfValue))) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))
+        //case Prod2(u2:SimpleUnitOfValue,Quot(a,Prod2(u1:SimpleUnitOfValue,b))) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyQuot(u2,u1))
+        case Prod2(u2:SimpleUnitOfValue,Quot(Prod2(b,u1:SimpleUnitOfValue),a)) if u1.isSameBase(u2) => Prod2(Quot(b,a),simplifyProd2(u2,u1)) // u2*((b*u1)/a) = (b/a)*[u1*u2]
+        case Prod2(u2:SimpleUnitOfValue,Quot(Prod2(u1:SimpleUnitOfValue,b),a)) if u1.isSameBase(u2) => Prod2(Quot(b,a),simplifyProd2(u2,u1)) // u2*((u1*b)/a) = (b/a)*[u1*u2]
         
-        case Quot(u1:SimpleUnitOfValue,Prod2(a,Quot(b,u2:SimpleUnitOfValue))) if u1.isSameBase(u2) => Quot(simplifyProd2(u1,u2),Prod2(a,b))
+        case Prod2(u1:SimpleUnitOfValue,Prod2(Quot(u2:SimpleUnitOfValue,a),b)) if u1.isSameBase(u2) => Prod2(Quot(b,a),simplifyProd2(u1,u2)) // u1*((u2/a)*b) = (b/a)*[u1*u2]
+        case Prod2(u1:SimpleUnitOfValue,Prod2(a,Quot(u2:SimpleUnitOfValue,b))) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyProd2(u1,u2)) // u1*(a*(u2/b)) = (a/b)*[u1*u2]
+        case Prod2(Prod2(Quot(u2:SimpleUnitOfValue,a),b),u1:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(b,a),simplifyQuot(u2,u1))  // ((u2/a)*b)*u1 = (b/a)*[u2/u1]
+        case Prod2(Prod2(a,Quot(u2:SimpleUnitOfValue,b)),u1:SimpleUnitOfValue) if u1.isSameBase(u2) => Prod2(Quot(a,b),simplifyProd2(u1,u2)) // (a*(u2/b))*u1 = (a/b)*[u2*u1]
         
-        case _ => e
+        case Quot(u1:SimpleUnitOfValue,Prod2(a,Quot(b,u2:SimpleUnitOfValue))) if u1.isSameBase(u2) => Quot(Prod2(a,b),simplifyProd2(u1,u2)) // u1/(a*(b/u2)) = (a*b)/[u1*u2]
+        
+        case q:Quot if q.l.isInstanceOf[Prod2] && q.r.isInstanceOf[Prod2] => simplifyQuotOfProd(q)  // quot of prod simplification
+        
+        // rules for operation simplification
+        
+        case Quot(a,b) if a==b => ONE                                       // a/a = 1
+        case Prod2(a,Prod2(b,Prod2(c,d))) => Prod2(Prod2(a,b),Prod2(c,d))   // (a*(b*(c*d))) = (a*b)*(c*d)
+        case Quot(Quot(a,b),Quot(c,d)) => Prod2(Quot(a,b),Quot(d,c))        // (a/b) / (c/d) = (a/b)*(d/c)
+        case Prod2(Quot(a,b),Quot(c,d)) => Quot(Prod2(a,c),Prod2(b,d))      // (a/b) * (c/d) = (a*c)/(b*d)
+        case Quot(Quot(Prod2(a,b),c),d) => Quot(Prod2(a,b),Prod2(c,d))      // ((a*b)/c)/d) = (a*b)/(c*d)
+        case Prod2(Prod2(a,b),Quot(c,d)) => Quot(Prod2(Prod2(a,b),c),d)     // (a*b)*(c/d) = ((a*b)*c)/d
+        case Prod2(Quot(c,d),Prod2(a,b)) => Quot(Prod2(Prod2(a,b),c),d)     // (c/d)*(a*b) = ((a*b)*c)/d
+        case Prod2(a,Quot(b,Prod2(c,d))) => Quot(Prod2(a,b),Prod2(c,d))     // a*(b/(c*d)) = (a*b)/(c*d)
+        case Quot(Quot(a,b),c) => Quot(a,Prod2(b,c))                        // (a/b)/c = a/(b*c)
+        case Quot(a,Quot(b,c)) => Quot(Prod2(a,c),b)                        // a/(b/c) = (a*c)/b
+        case Prod2(Quot(a,b),c) => Quot(Prod2(a,c),b)                       // (a/b)*c = (a*c)/b
+        case Prod2(c,Quot(a,b)) => Quot(Prod2(a,c),b)                       // c*(a/b) = (a*c)/b
+        
+        //case Prod2(p:Prod2,a) => Prod2(a,p)                               // reordering
+        
+        case e => e
     }
     
     private def simplifyQuot(u1:UnitOfValue,u2:UnitOfValue):Expression = {
@@ -498,6 +567,76 @@ object UnitOfValue {
             }
         }
     }
+    
+    private def simplifyQuotOfProd(q:Quot):Expression = {
+        val l = q.l.asInstanceOf[Prod2].toProd.args.toSeq
+        val r = q.r.asInstanceOf[Prod2].toProd.args.toSeq
+        var seq2 = r
+        val seq1 = l.collect {
+            case u1:UnitOfValue => {
+                val e = seq2.find({case u2:UnitOfValue => u2.isSameBase(u1); case _ => false})
+                if(e.isDefined) {
+                    seq2 = seq2.diff(Seq(e.get))
+                    simplifyQuot(u1,e.get.asInstanceOf[UnitOfValue]) 
+                } else u1
+            }
+            case e => e
+        }.filter{case EmptyUnitOfValue => false; case _ => true}
+        seq2 = seq2.filter{case EmptyUnitOfValue => false; case _ => true}
+        if(l==seq1 && r==seq2) q
+        else{
+            if(seq2.isEmpty) {if(seq1.tail.isEmpty) seq1.head else Prod(seq1:_*)}
+            else Quot(if(seq1.tail.isEmpty) seq1.head else Prod(seq1:_*),if(seq2.tail.isEmpty) seq2.head else Prod(seq2:_*))
+        }
+    }
+}
+
+case class NoUnit(e: Expression) extends Expression {
+
+    override val children: Seq[Expression] = Seq(e)
+
+    final override def eval(): Expression = {
+        val ev = e eval;
+        ev match {
+            case Number(r, u) if u != EmptyUnitOfValue => Number(r, EmptyUnitOfValue)
+            case _ if (ev != e) => copy(ev)
+            case _ if (ev == e) => this
+        }
+    }
+
+    final override def map(f: Transformation): Expression = {
+        val ev = e.map(f);
+        f(ev match {
+            case Number(r, u) if u != EmptyUnitOfValue => Number(r, EmptyUnitOfValue)
+            case _ if (ev != e) => copy(ev)
+            case _ if (ev == e) => this
+        })
+    }
+
+}
+
+case class SetUnit(e: Expression, override val unit:UnitOfValue) extends Expression {
+
+    override val children: Seq[Expression] = Seq(e)
+
+    final override def eval(): Expression = {
+        val ev = e eval;
+        ev match {
+            case Number(r, u) if u != unit => Number(r, unit)
+            case _ if (ev != e) => copy(ev)
+            case _ if (ev == e) => this
+        }
+    }
+
+    final override def map(f: Transformation): Expression = {
+        val ev = e.map(f);
+        f(ev match {
+            case Number(r, u) if u != unit => Number(r, unit)
+            case _ if (ev != e) => copy(ev)
+            case _ if (ev == e) => this
+        })
+    }
+
 }
 
 

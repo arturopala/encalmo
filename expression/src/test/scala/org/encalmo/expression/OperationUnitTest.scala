@@ -43,6 +43,28 @@ class OperationUnitTest extends AssertionsForJUnit {
         val exp = Prod(a,Prod(b,Prod(c,Prod(d,e),f),g),h)
         assertEquals(Prod(a,b,c,d,e,f,g,h),exp)
     }
+    
+    @Test def verifyProd3() {
+        import BasicSymbols._
+        val exp = Prod2(a,Prod2(b,Prod2(c,Prod2(d,e))))
+        assertEquals(Prod(a,b,c,d,e),exp.toProd)
+    }
+    
+    @Test def verifyProd4() {
+        import BasicSymbols._
+        val exp = Prod2(a,Prod2(Prod2(c,Prod2(d,e)),b))
+        assertEquals(Prod(a,c,d,e,b),exp.toProd)
+    }
+    
+    @Test def verifyProd5() {
+        import BasicSymbols._
+        val e1 = Prod2(a,Prod2(Prod2(c,Prod2(d,e)),b))
+        val e2 = Prod(a,c,d,e,b)
+        val e3 = Prod2(Prod2(Prod2(Prod2(a,c),d),e),b)
+        assertEquals(e2,e1.toProd)
+        assertEquals(e3,e2.toProd2)
+        assertFalse(e1==e2.toProd2)
+    }
 	
 	@Test def verifyMin1() {
 		import Symbol._

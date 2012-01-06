@@ -38,7 +38,7 @@ class DzwigarDrewnianyKlejonyTrapezowy extends CalculationDocument {
     calc(xihb) = h2/b
     calc(xilh) = l0/hm
     
-    val rhok = rho|"k" is "gęstość charakterystyczna" unit "kg/m³"
+    val rhok = rho|"k" is "gęstość charakterystyczna" unit "kg/m3"
     val G0k = G|"0,k" is "ciężar własny dźwigara" unit "N/m"
     val G1k = G|"1,k" is "obciążenie stałe" unit "N/m"
     val Qk1 = Q|"k,1" is "obciążenie średniotrwałe" unit "N/m"
@@ -107,7 +107,7 @@ niedoskonałości modelowania i odchyłki wymiarowe, przyjęty dla drewna klejon
     calc(RA) = qd*l0/2
     val My = M|"y" is "moment zginający w miejscu wystąpienia największych naprężeń normalnych" unit "Nm"
     calc(My) = RA*xmax-qd*(xmax^2)/2
-    val Wy = W|"y" is "wskaźnik zginania w miejscu wystąpienia największych naprężeń normalnych" unit "m³"
+    val Wy = W|"y" is "wskaźnik zginania w miejscu wystąpienia największych naprężeń normalnych" unit "m3"
     calc(Wy) = b*(hmax^2)/6
     calc(sigmam0d) = My/Wy
     
@@ -140,7 +140,7 @@ zgodnie z Tablicą 6.1 [1] dla obciążenia równomiernie rozłożonego i przył
     calc(taud) = (1.5*Vd)/(beff*h1)
     
     val lpod = l|"pod" is "długość oparcia na podporze" unit "m"
-    val Aef = A|"ef" is "efektywne pole docisku" unit "m²"
+    val Aef = A|"ef" is "efektywne pole docisku" unit "m2"
     val Fc90d = F|"c,90,d" is "obliczeniowa siła ściskająca w poprzek włókien" unit "N"
     val kc90 = k|"c,90" is "współczynnik uwzględniający rozkład obciążenia, możliwość powstania pęknięć oraz stopień odkształcenia przy ściskaniu"
     calc(Fc90d) = RA
@@ -194,7 +194,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     val dcharn = d|"char,n" is "hipotetyczna głębokość zwęglenia, uwzględniająca wpływ zaokrągleń narożników." unit "m"
     calc(t) = 30
     calc(dcharn) = (betan*t)/1000
-    val Ar = A|r is "powierzchia przekroju pozostałego po 30 min pożaru" unit "m²"
+    val Ar = A|r is "powierzchia przekroju pozostałego po 30 min pożaru" unit "m2"
     val pr = p|r is "obwód przekroju pozostałego po 30 min pożaru" unit "m"
     val kfi = k|"fi" is "współczynnik uwzględniający zwiększoną wytrzymałość i sztywność drewna na podstawie tablicy 2.1"
     val kmodmfi = k|"mod,m,fi" is "współczynnik modyfikujący wytrzymałość na zginanie w warunkach pożarowych"
@@ -232,7 +232,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     calc(RAfi) = EdA*l0/2
     val Myfi = M|"y,fi" is "moment zginający w miejscu wystąpienia największych naprężeń normalnych" unit "Nm"
     calc(Myfi) = RAfi*xmaxfi-EdA*(xmaxfi^2)/2
-    val Wyfi = W|"y,fi" is "wskaźnik zginania w miejscu wystąpienia największych naprężeń normalnych" unit "m³"
+    val Wyfi = W|"y,fi" is "wskaźnik zginania w miejscu wystąpienia największych naprężeń normalnych" unit "m3"
     calc(Wyfi) = (b-2*dcharn)*(hmaxfi^2)/6
     calc(sigmam0fi) = Myfi/Wyfi
     
@@ -272,7 +272,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     calc(RAfi2) = EdA*l0/2
     val Myfi2 = M|"y,fi,2" is "moment zginający w miejscu wystąpienia największych naprężeń normalnych" unit "Nm"
     calc(Myfi2) = RAfi*xmaxfi2-EdA*(xmaxfi2^2)/2
-    val Wyfi2 = W|"y,fi,2" is "wskaźnik zginania w miejscu wystąpienia największych naprężeń normalnych" unit "m³"
+    val Wyfi2 = W|"y,fi,2" is "wskaźnik zginania w miejscu wystąpienia największych naprężeń normalnych" unit "m3"
     calc(Wyfi2) = (b-2*deff)*(hmaxfi2^2)/6
     calc(sigmam0fi2) = Myfi2/Wyfi2
       

@@ -17,8 +17,8 @@ object SteelSymbols extends SymbolConfigurator {
 	val E = symbol(BasicSymbols.E) unit SI.Pa
 	val G = symbol(BasicSymbols.G) unit SI.Pa
 	val fy = symbol(f|"y") unit SI.Pa
-	val fyd = symbol(f|"y,d") unit "Pa"
-	val fu = symbol(f|"u") unit "Pa"
+	val fyd = symbol(f|"y,d") unit SI.Pa
+	val fu = symbol(f|"u") unit SI.Pa
 	val gammaM0 = symbol(gamma|"M,0")
 	val gammaM1 = symbol(gamma|"M,1")
 	val gammaV = symbol(gamma|"V")
@@ -37,7 +37,7 @@ object SteelExpressions extends MapContext {
 	this(gammas) = 78.5E3
 	this(fyd) = fy/gammaM0
 	this(epsiy) = fy/E
-	this(epsi) = sqrt(235E6/fy)
+	this(epsi) = sqrt(235E6/fy).nounit
 	lock
 }
 

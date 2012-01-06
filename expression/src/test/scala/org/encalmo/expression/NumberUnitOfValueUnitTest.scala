@@ -73,6 +73,28 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
             assertEquals(u,c.unit)
         })
     }
+    
+    @Test def testSum6() {
+        val a:Number = 1.2 unit SI.N
+        val b:Number = 2.1 unit SI.Pa*SI.m2
+        val c = (a+b).eval
+        assertEquals(Number(3.3),c.eval);
+        assertEquals(SI.N,c.unit)
+        val d = (b+a).eval
+        assertEquals(Number(3.3),d.eval);
+        assertEquals(SI.N,d.unit)
+    }
+    
+    @Test def testSum7() {
+        val a:Number = 1.2 unit SI.MN
+        val b:Number = 2.1 unit SI.Pa*SI.m2
+        val c = (a+b).eval
+        assertEquals(Number(1.2000021),c.eval);
+        assertEquals(SI.MN,c.unit)
+        val d = (b+a).eval
+        assertEquals(Number(1.2000021),d.eval);
+        assertEquals(SI.MN,d.unit)
+    }
 	
 	@Test def testSubtract1() {
         val a:Number = 1.2
@@ -128,6 +150,17 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
             assertEquals(Number(0.9),d.eval);
             assertEquals(u,d.unit)
         })
+    }
+    
+    @Test def testSubtract6() {
+        val a:Number = 1.2 unit SI.N
+        val b:Number = 2.1 unit SI.Pa*SI.m2
+        val c = (a-b).eval
+        assertEquals(Number(-0.9),c.eval);
+        assertEquals(SI.N,c.unit)
+        val d = (b-a).eval
+        assertEquals(Number(0.9),d.eval);
+        assertEquals(SI.N,d.unit)
     }
 	
 	@Test def testMultiply1() {
@@ -217,6 +250,50 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertEquals("km3",d.unit.toNameString)
     }
     
+    @Test def testMultiply8() {
+        val a:Number = 1.2 unit SI.N/SI.m2
+        val b:Number = 2.1 unit SI.Pa
+        val c = (a*b).eval
+        assertEquals(Number(2.52),c);
+        assertEquals(SI.Pa*SI.Pa,c.unit)
+        val d = (b*a).eval
+        assertEquals(Number(2.52),d);
+        assertEquals(SI.Pa*SI.Pa,d.unit)
+    }
+    
+    @Test def testMultiply9() {
+        val a:Number = 1.2 unit SI.N/SI.m2
+        val b:Number = 2.1 unit SI.kPa
+        val c = (a*b).eval
+        assertEquals(Number(0.00252),c);
+        assertEquals(SI.kPa*SI.kPa,c.unit)
+        val d = (b*a).eval
+        assertEquals(Number(0.00252),d);
+        assertEquals(SI.kPa*SI.kPa,d.unit)
+    }
+    
+    @Test def testMultiply10() {
+        val a:Number = 1.2 unit SI.N/SI.mm2
+        val b:Number = 2.1 unit SI.MPa
+        val c = (a*b).eval
+        assertEquals(Number(2.52),c);
+        assertEquals(SI.MPa*SI.MPa,c.unit)
+        val d = (b*a).eval
+        assertEquals(Number(2.52),d);
+        assertEquals(SI.MPa*SI.MPa,d.unit)
+    }
+    
+    @Test def testMultiply11() {
+        val a:Number = 1.2 unit SI.N/SI.m2
+        val b:Number = 2.1 unit SI.m
+        val c = (a*b).eval
+        assertEquals(Number(2.52),c);
+        assertEquals(SI.N/SI.m,c.unit)
+        val d = (b*a).eval
+        assertEquals(Number(2.52),d);
+        assertEquals(SI.N/SI.m,d.unit)
+    }
+    
     @Test def testDivide1() {
         val a:Number = 1.2
         val b:Number = 2.1
@@ -285,6 +362,17 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         val d = (b/a).eval
         assertEquals(Number(25000),d);
         assertEquals("1/m",d.unit.toNameString)
+    }
+    
+    @Test def testDivide8() {
+        val a:Number = 2 unit SI.Pa*SI.m2
+        val b:Number = 5 unit SI.N
+        val c = (a/b).eval
+        assertEquals(Number(0.4),c);
+        assertEquals(EmptyUnitOfValue,c.unit)
+        val d = (b/a).eval
+        assertEquals(Number(2.5),d);
+        assertEquals(EmptyUnitOfValue,d.unit)
     }
     
     @Test def testModulo1() {
@@ -431,6 +519,14 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertEquals(SI.cm2,c.unit)
     }
     
+    @Test def testMin5() {
+        val a:Number = 2 unit SI.Pa
+        val b:Number = 3 unit SI.N/SI.m2
+        val c = min(a,b).eval
+        assertEquals(Number(2),c);
+        assertEquals(SI.Pa,c.unit)
+    }
+    
     @Test def testMax1() {
         val a:Number = 16 unit SI.cm2
         val b:Number = 2 unit SI.cm2
@@ -461,6 +557,14 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         val c = max(a,b).eval
         assertEquals(Number(3),c);
         assertEquals(SI.g,c.unit)
+    }
+    
+    @Test def testMax5() {
+        val a:Number = 2 unit SI.Pa
+        val b:Number = 3 unit SI.N/SI.m2
+        val c = max(a,b).eval
+        assertEquals(Number(3),c);
+        assertEquals(SI.N/SI.m2,c.unit)
     }
     
     @Test def testHypot1() {
@@ -603,6 +707,19 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         val b = tan(a).eval
         assertEquals(Number(1),b)
         assertEquals(EmptyUnitOfValue,b.unit)
+    }
+    
+    @Test def testI1() {
+        val a = Number(111,SI.N/SI.m2)*1*Number(12.5,SI.m)+Number(111,SI.N/SI.m2)*1.5*Number(12.5,SI.m)+Number(111,SI.N/SI.m)+Number(111,SI.N/SI.m2)*Number(12.5,SI.m)
+        val b = a.eval
+        assertEquals(Number(4967.25),b)
+        assertEquals(SI.N/SI.m,b.unit)
+        val c = Sum(Prod(Number(2804.4342857142856,SI.N/SI.m2),Number(1.35),Number(2.8,SI.m)),Prod(Number(234.946575,SI.N/SI.m2),Number(2.8,SI.m)),Number(1647,SI.N/SI.m),Prod(Number(1125,SI.N/SI.m2),Number(2.8,SI.m)))
+        val d = c.eval
+        assertEquals(SI.N/SI.m,d.unit)
+        val f = Sum(Prod(Quot(Prod(Sum(Prod(Number(0.14,SI.m),Diff(Number(0.12,SI.m),Number(0.059,SI.m))),Prod(Number(0.5),Sum(Number(0.0954,SI.m),Number(0.127,SI.m)),Number(0.059,SI.m))),Sum(Number(25000,SI.N/SI.m3),Number(1000,SI.N/SI.m3))),Number(0.14,SI.m)),Number(1.35),Number(2.8,SI.m),Prod(Number(0.002217,SI.m2/SI.m),Number(78500,SI.N/SI.m3),Number(1.35),Number(2.8,SI.m),Prod(Number(10),Number(122,SI.N/SI.m),Number(1.35)),Prod(Number(1.5),max(Number(750), Prod(Number(0.1),Quot(Prod(Sum(Prod(Number(0.14,SI.m),Diff(Number(0.12,SI.m),Number(0.059,SI.m))),Prod(Number(0.5),Sum(Number(0.0954,SI.m),Number(0.127,SI.m)),Number(0.059,SI.m))),Sum(Number(25000,SI.N/SI.m3),Number(1000,SI.N/SI.m3))),Number(0.14,SI.m)))),Number(2.8,SI.m)))))
+        val g = f.eval
+        assertEquals(SI.N/SI.m,g.unit)
     }
 	
 }

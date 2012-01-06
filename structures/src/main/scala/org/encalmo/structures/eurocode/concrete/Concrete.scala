@@ -44,8 +44,8 @@ object ConcreteExpressions extends MapContext {
 	this(fcd) = fck/gammaC
 	this(fctd) = fctk/gammaC
 	this(gammac) = 25000
-	this(gammacf) = gammac+1000
-	this(v) = 0.6*(1-fck/250E6)
+	this(gammacf) = gammac+Number(1000,SI.N/SI.m3)
+	this(v) = 0.6*(1-fck/Number(250,SI.MPa))
 }
 
 /** Concrete class */

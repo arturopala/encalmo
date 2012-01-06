@@ -106,6 +106,10 @@ trait Expression extends TreeLike[Expression] {
   
   def printable = true
   
+  def nounit:Expression = NoUnit(this)
+  def setunit(u:UnitOfValue):Expression = SetUnit(this,u)
+  def setunit(s:String):Expression = SetUnit(this,SI(s).getOrElse(EmptyUnitOfValue))
+  
 }
 
 object Expression {
