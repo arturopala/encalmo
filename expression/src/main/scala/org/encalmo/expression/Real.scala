@@ -128,6 +128,12 @@ class Real(val d: Double) {
   def convertToBaseUnit(u: UnitOfValue):Real = if(u.isBaseUnit) this else Real(d * u.multiplier/u.baseUnit.multiplier)
   
   def adjustScale(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1.scale==u2.scale) this else convert(u1,u1.exp(u2.scale-u1.scale))
+  
+  def adjustValue(accuracy:Double): Real = if(accuracy<=0) this else {
+      val bd:BigDecimal = BigDecimal(d)
+      val r2 = Real((((bd+(accuracy*0.8)).quot(accuracy))*accuracy).toDouble)
+      if(r2!=this) r2 else this
+  }
 
   override def toString = Real.stringFormat.format(d)
 }

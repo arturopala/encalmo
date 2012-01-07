@@ -104,10 +104,14 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    				case o: PrefixOperation => {
 	    					output.mo(o.operator,"prefix")
 	    				}
-	    				case o:Quot => {
-	    					output.start(MFRAC)
-	    					output.attr("linethickness","0.6")
-	    					output.body
+	    				case o:Quot => { o match {
+	    				        case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.startb(MROW)
+	    				        case _ => {
+                                    output.start(MFRAC)
+                                    output.attr("linethickness","0.6")
+                                    output.body
+	    				        }
+	    				    }
 	    				}
 	    				case o:Power => {
 	    					output.startb(MSUP)
@@ -230,7 +234,10 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 
 	override def onBetweenChildren(node: Node[Expression], leftChild: Expression, rightChild: Expression): Unit = {
 		node.element match {
-			case o:Quot => Unit
+			case o:Quot => o match {
+                case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.mo("/")
+                case _ => Unit
+            }
 			case o:Power => Unit
 			case o:cbrt => Unit
 			case o:root => Unit
@@ -319,8 +326,12 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 					case o: PostfixOperation => {
 						output.mo(o.operator,"postfix")
 					}
-					case o:Quot => {
-						output.end(MFRAC)
+					case o:Quot => {o match {
+                            case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.end(MROW)
+                            case _ => {
+                                output.end(MFRAC)
+                            }
+    					}
 					}
 					case o:Power => {
 						output.end(MSUP)

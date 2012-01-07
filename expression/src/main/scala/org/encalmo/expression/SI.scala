@@ -14,6 +14,8 @@ object SI extends UnitOfValueSystem {
     val meter:UnitOfValueName = UnitOfValueName("m")
     val gram:UnitOfValueName = UnitOfValueName("g")
     val second:UnitOfValueName = UnitOfValueName("s")
+    val minute:UnitOfValueName = UnitOfValueName("min")
+    val hour:UnitOfValueName = UnitOfValueName("h")
     val newton:UnitOfValueName = UnitOfValueName("N")
     val newtonmeter:UnitOfValueName = UnitOfValueName("Nm")
     val pascal:UnitOfValueName = UnitOfValueName("Pa")
@@ -109,12 +111,14 @@ object SI extends UnitOfValueSystem {
     val s = SimpleUnitOfValue(second,0,1,this,Characteristics.Time)
     val ms = s exp -3
     val s2 = s dim 2
+    val min = SimpleUnitOfValue(minute,0,1,this,Characteristics.Time)
+    val h = SimpleUnitOfValue(hour,0,1,this,Characteristics.Time)
 	
 	override val units:Seq[UnitOfValue] = Seq(
 	        // simple units
 	        m,dm,cm,mm,μm,nm,km,
 	        g,kg,mg,
-            s,ms,s2,
+            s,ms,s2,min,h,
 	        N,kN,MN,GN,
 	        Pa,kPa,MPa,GPa,
 	        m2,dm2,cm2,mm2,km2,
@@ -130,7 +134,8 @@ object SI extends UnitOfValueSystem {
 	        N/m,N/m2,N/m3,N*m,Nm/m,
 	        kN/m,kN/m2,kN/m3,kNm/m,
 	        MN/m,MN/m2,MN/m3,MNm/m,
-	        m2/m,m3/m,m4/m,m6/m,m8/m
+	        m2/m,m3/m,m4/m,m6/m,m8/m,
+	        m3/min,m3/h
     )
     
     val expansionMap:Map[UnitOfValue,UnitOfValue] = Map(
@@ -141,7 +146,9 @@ object SI extends UnitOfValueSystem {
             GPa -> GN/m2,
             Nm -> N*m,
             kNm -> kN*m,
-            MNm -> MN*m
+            MNm -> MN*m,
+            min -> ComplexUnitOfValue(60*s),
+            h -> ComplexUnitOfValue(60*min)
     )
 	
 	initialized = true

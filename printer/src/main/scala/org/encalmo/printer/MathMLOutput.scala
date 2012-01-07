@@ -155,7 +155,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 				}
 			}
 			body
-			append(integerFormat1.format(nf.integer))
+			integerFormat1.format(nf.integer).toCharArray.map{case ' ' => append("&thinsp;"/*MathMLTags.ENTITY_THIN_SPACE*/); case a => append(a)}
 			if(nf.fraction>0){
 				nf.decimals match {
 					case 1 => append(fractionFormat1.format(nf.fraction))
