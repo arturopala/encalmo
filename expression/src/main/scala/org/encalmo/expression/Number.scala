@@ -194,10 +194,33 @@ case class Number(
     
     override def convertTo(newunit:UnitOfValue):Number = newunit match {
         case u:UnitOfValue if this.unit==u => this
+        case u:UnitOfValue if newunit==EmptyUnitOfValue => this
         case u:UnitOfValue if (this.unit.isSameBaseAndDimension(u)) => Number(r.convert1(unit,newunit),newunit)
         case u:UnitOfValue if (this.unit.isSameExpandedUnit(u)) => Number(r.convert2(unit,newunit),newunit)
         case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit)
         case _ => this
+    }
+    
+    override def convertTo(newunit:UnitOfValue,accuracy:Option[Double]):Number = newunit match {
+        case u:UnitOfValue if this.unit==u => this.adjustTo(accuracy)
+        case u:UnitOfValue if newunit==EmptyUnitOfValue => this.adjustTo(accuracy)
+        case u:UnitOfValue if (this.unit.isSameBaseAndDimension(u)) => Number(r.convert1(unit,newunit),newunit).adjustTo(accuracy)
+        case u:UnitOfValue if (this.unit.isSameExpandedUnit(u)) => Number(r.convert2(unit,newunit),newunit).adjustTo(accuracy)
+        case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit).adjustTo(accuracy)
+        case _ => this
+    }
+    
+    def adjustTo(accuracy:Option[Double]):Number = accuracy match {
+        case Some(a) => {
+            val r2 = r.adjustValue(a)
+            if(r2!=r) Number(r2,unit) else this
+        }
+        case None => this
+    }
+    
+    def adjustTo(accuracy:Double):Number = if(accuracy<=0) this else {
+        val r2 = r.adjustValue(accuracy)
+        if(r2!=r) Number(r2,unit) else this
     }
     
     override def convertToBaseUnit:Number = if(unit.isBaseUnit) this else Number(r.convert(unit,unit.baseUnit),unit.baseUnit)
