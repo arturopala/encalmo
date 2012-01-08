@@ -1,31 +1,36 @@
-body {font-family:sans-serif;font-size:12pt;background-color: #FFFAD8;}
+@media screen {
+  body {font-family:sans-serif;font-size:12pt;background-color: #FFFAD8; margin:20mm}
+}
+@media print {
+  body {font-family:serif;font-size:10pt;background-color: white; margin:3mm}
+}
 table {border-collapse:collapse;margin:5pt;background-color: #FFFDEF;border: 1px solid #FFBE32;} 
 div {padding:5pt 0 2pt 0}
 .et {width:100%}
 .et td {border-top: 1px solid #FFBE32;border-bottom: 1px solid #FFBE32;border-right: 1px dotted #FFBE32;border-left: 1px dotted #FFBE32;padding:2pt 5pt;}
 .ec1 {width:30%; margin-left:2em; text-align:left; vertical-align:top}
-.ec2 {width:5%; font-size:12pt; font-weight: bold; text-align:center;}
-.ec3 {width:65%; font-size:11pt}  
-.default {font-size:11pt;font-style:normal;font-weight:normal;color:#000000;}
-.exp {font-size:11pt;font-style:normal;font-weight:normal;color:#000000;space-before:1pt;space-after:1pt;}
-.exprow {font-size:11pt;font-style:normal;font-weight:normal;color:#000000;space-before:2pt;space-after:1pt;}
-.expsymb {font-size:12pt;font-style:italic;font-weight:normal;color:#000000;min-width:35pt;space-before:1pt;space-after:1pt;color:blue;}
-.expdesc {font-size:10pt;font-style:normal;font-weight:normal;color:#000000;space-before:1pt;space-after:1pt;}
-.expeval {color:green; font-size:12pt;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
+.ec2 {width:5%; font-size:1em; font-weight: bold; text-align:center;}
+.ec3 {width:65%; font-size:1em}  
+.default {font-size:0.94em;font-style:normal;font-weight:normal;color:#000000;}
+.exp {font-size:0.94em;font-style:normal;font-weight:normal;color:#000000;space-before:1pt;space-after:1pt;}
+.exprow {font-size:0.94em;font-style:normal;font-weight:normal;color:#000000;space-before:2pt;space-after:1pt;}
+.expsymb {font-size:1em;font-style:italic;font-weight:normal;color:#000000;min-width:35pt;space-before:1pt;space-after:1pt;color:blue;}
+.expdesc {font-size:0.83em;font-style:normal;font-weight:normal;color:#000000;space-before:1pt;space-after:1pt;}
+.expeval {color:green; font-size:1em;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
 .expeval mn {font-weight:bold;}
-.ns0 {space-before:16pt;space-after:1pt;}
-.ns0 .caption {font-size:12pt;font-style:normal;font-weight:bold;color:#000000;letter-spacing:150%;}
-.ns1 {space-before:12pt;space-after:1pt;}
-.ns1 .caption {font-size:12pt;font-style:normal;font-weight:bold;color:#000000;}
-.ns2 {space-before:12pt;space-after:1pt;}
-.ns2 .caption {font-size:11pt;font-style:normal;font-weight:bold;color:#000000;}
-.ns4 {space-before:8pt;space-after:1pt;}
-.ns4 .caption {font-size:11pt;font-style:italic;font-weight:normal;color:#000000;}
-.assertfalse {font-size:11pt;font-style:normal;font-weight:bold;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
-.asserttrue {font-size:11pt;font-style:normal;font-weight:normal;color:#000000;margin:1pt 5pt; padding-left:20pt}
-.assertunknown {font-size:11pt;font-style:normal;font-weight:normal;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
-.unit {font-size:95%;font-weight:normal;color:#545454}
-.illegalunit {font-size:60%;font-weight:bold;color:red}
-.numexp {color:#545454;font-size:90%;font-weight:normal;}
+.ns0 {space-before:1.3em;space-after:1pt;}
+.ns0 .caption {font-size:1em;font-style:normal;font-weight:bold;color:#000000;letter-spacing:150%;}
+.ns1 {space-before:1em;space-after:1pt;}
+.ns1 .caption {font-size:1em;font-style:normal;font-weight:bold;color:#000000;}
+.ns2 {space-before:1em;space-after:1pt;}
+.ns2 .caption {font-size:0.94em;font-style:normal;font-weight:bold;color:#000000;}
+.ns4 {space-before:0.7em;space-after:1pt;}
+.ns4 .caption {font-size:0.94em;font-style:italic;font-weight:normal;color:#000000;}
+.assertfalse {font-size:0.94em;font-style:normal;font-weight:bold;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
+.asserttrue {font-size:0.94em;font-style:normal;font-weight:normal;color:#000000;margin:1pt 5pt; padding-left:20pt}
+.assertunknown {font-size:0.94em;font-style:normal;font-weight:normal;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
+.unit {font-size:0.94em;font-weight:normal;color:#545454}
+.illegalunit {font-size:0.6em;font-weight:bold;color:red}
+.numexp {color:#545454;font-size:0.9em;font-weight:normal;}
 .comment {}
-.description {font-size:10pt;}
+.description {font-size:0.83em;}
