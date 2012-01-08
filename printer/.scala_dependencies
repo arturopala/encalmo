@@ -126,6 +126,15 @@
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/PlainTextExpressionPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/PlainTextExpressionPrinterTest.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Output.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/XmlTextOutput.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Layout.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/CSS.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutputPreferences.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/MathMLOutput.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/LayoutBasedOutput.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlTags.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Output.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/document/HtmlTextDocumentPrinter.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/SectionCounter.scala
@@ -270,6 +279,8 @@
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/TextOutput.class
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/TextOutput$.class
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/TextOutput$$anonfun$append$1.class
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/HtmlOutput.class
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/HtmlOutput.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/HtmlOutput$.class
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/TextOutput$.class
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/TextOutput.class
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/TextOutput$$anonfun$append$2.class
