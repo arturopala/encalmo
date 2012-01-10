@@ -549,10 +549,10 @@ object UnitOfValue {
             u1.multiplier/u2.multiplier match {
                 case 1 if u1.dimension>=u2.dimension => u1.baseUnit.dim(u1.dimension-u2.dimension)
                 case 1 if u1.dimension<u2.dimension => Quot(ONE,u1.dim(u2.dimension-u1.dimension))
-                case m if m>1 && u1.dimension>=u2.dimension => Prod(Number(Real(m)),u1.baseUnit.dim(u1.dimension-u2.dimension))
+                case m if m>1 && u1.dimension>=u2.dimension => Prod2(Number(Real(m)),u1.baseUnit.dim(u1.dimension-u2.dimension))
                 case m if m<1 && u1.dimension>=u2.dimension => Quot(u1.baseUnit.dim(u1.dimension-u2.dimension),Number(Real(m).inverse))
                 case m if m>1 && u1.dimension<u2.dimension => Quot(Number(Real(m)),u1.baseUnit.dim(u2.dimension-u1.dimension))
-                case m if m<1 && u1.dimension<u2.dimension => Prod(Number(Real(m).inverse),u1.baseUnit.dim(u2.dimension-u1.dimension))
+                case m if m<1 && u1.dimension<u2.dimension => Quot(ONE,Prod2(Number(Real(m).inverse),u1.baseUnit.dim(u2.dimension-u1.dimension)))
             }
         }
     }
