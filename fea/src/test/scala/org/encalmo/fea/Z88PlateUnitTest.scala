@@ -54,14 +54,14 @@ class Z88PlateUnitTest {
     
     @Test def testLoadZ88O2:Unit = {
        val mesh:Mesh[Plate19] = MeshBuilder.buildRectanglePlate19(10d,10d,10,10)
-       val p:Z88Project[Plate19] = Z88Project(Plate19Type, LoadCase[Plate19](mesh,null,null,null,null,null), Path("fea/src/test/resources"))
+       val p:Z88Project[Plate19] = Z88Project(Plate19Type, LoadCase[Plate19](mesh,null,null,null,null,null), Path("src/test/resources"))
        val s1 = p.readOutputFile_Z88O2
        assertTrue(s1.size>0)
     }
     
     @Test def testLoadZ88O3:Unit = {
        val mesh:Mesh[Plate19] = MeshBuilder.buildRectanglePlate19(10d,10d,10,10)
-       val p:Z88Project[Plate19] = Z88Project(Plate19Type, LoadCase[Plate19](mesh,null,null,null,null,null), Path("fea/src/test/resources"))
+       val p:Z88Project[Plate19] = Z88Project(Plate19Type, LoadCase[Plate19](mesh,null,null,null,null,null), Path("src/test/resources"))
        val s1 = p.readOutputFile_Z88O3(0)
        assertTrue(s1.size>0)
        val s2 = p.readOutputFile_Z88O3(1)

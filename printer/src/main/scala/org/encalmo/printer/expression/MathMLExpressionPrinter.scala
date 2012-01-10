@@ -80,7 +80,23 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
                         output.symbol(sl.symbol)
                     }
 	    		}
-	    		case n: Number => output.mn(n)
+	    		case n: Number => {
+	    		    n.unit match {
+	    		        case EmptyUnitOfValue => output.mn(n)
+	    		        case _ => {
+	    		            output.startb(MROW)
+	    		            output.mn(n)
+	    		            output.start(MROW)
+                            output.attr("mathsize","85%")
+                            output.attr("class","unit")
+                            output.body
+                            output.mtext(ENTITY_THIN_SPACE)
+	    		            n.unit.travel(traveler = this)
+	    		            output.end(MROW)
+	    		            output.end(MROW)
+	    		        }
+	    		    }
+	    		}
 	    		case tv: TextValue => output.mtext(tv.text)
 	    		case o: Operation => {
 	    			writeOpeningBracketIfNeeded(node, o)
@@ -88,10 +104,14 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    				case o: PrefixOperation => {
 	    					output.mo(o.operator,"prefix")
 	    				}
-	    				case o:Quot => {
-	    					output.start(MFRAC)
-	    					output.attr("linethickness","0.6")
-	    					output.body
+	    				case o:Quot => { o match {
+	    				        case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.startb(MROW)
+	    				        case _ => {
+                                    output.start(MFRAC)
+                                    output.attr("linethickness","0.6")
+                                    output.body
+	    				        }
+	    				    }
 	    				}
 	    				case o:Power => {
 	    					output.startb(MSUP)
@@ -149,9 +169,21 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	               //output.attr("rowalign","left")
 	               output.body
 	            }
-	            case bu:BaseUnitOfValue => {
-	            	output.unit(bu)
+	            case su:SimpleUnitOfValue => {
+	               output.unit(su)
 	            }
+                case cu:ComplexUnitOfValue => {
+                    cu.dimension match {
+                        case 1 => 
+                        case _ => {
+                            output.startb(MSUP)
+                        }
+                    }
+                   output.startb(MROW)
+                }
+                case iu:IllegalUnitOfValue => {
+                    output.mtextClass("illegalunit",iu.desc)
+                }
 	    		case _ => Unit
 		    }
 	    }else{
@@ -202,7 +234,10 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 
 	override def onBetweenChildren(node: Node[Expression], leftChild: Expression, rightChild: Expression): Unit = {
 		node.element match {
-			case o:Quot => Unit
+			case o:Quot => o match {
+                case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.mo("/")
+                case _ => Unit
+            }
 			case o:Power => Unit
 			case o:cbrt => Unit
 			case o:root => Unit
@@ -291,8 +326,12 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 					case o: PostfixOperation => {
 						output.mo(o.operator,"postfix")
 					}
-					case o:Quot => {
-						output.end(MFRAC)
+					case o:Quot => {o match {
+                            case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.end(MROW)
+                            case _ => {
+                                output.end(MFRAC)
+                            }
+    					}
 					}
 					case o:Power => {
 						output.end(MSUP)
@@ -370,6 +409,16 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
                 output.append(")")
                 output.end(MTEXT)
                 output.end(MROW)
+            }
+            case cu:ComplexUnitOfValue => {
+               output.end(MROW)
+               cu.dimension match {
+                    case 1 => 
+                    case _ => {
+                        output.mtext(output.dimensionFormat.format(cu.dimension))
+                        output.end(MSUP)
+                    }
+                }
             }
 			case _ => Unit
 			}

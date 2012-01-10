@@ -16,6 +16,7 @@ trait Traveler[A<:AnyRef] {
 	
 	def onExit(node:Node[A]):Unit = Unit
 
+	def mapElement(a:A):A = a
 	
 }
 
@@ -25,7 +26,8 @@ case class AdHocTraveler[A<:AnyRef] (
     val onExitFx:Option[Node[A]=>Unit] = None,
     val onBeforeChildEnterFx:Option[(Node[A],Int,A)=>Unit] = None,
     val onAfterChildExitFx:Option[(Node[A],Int,A)=>Unit] = None,
-    val onBetweenChildrenFx:Option[(Node[A],A,A)=>Unit] = None
+    val onBetweenChildrenFx:Option[(Node[A],A,A)=>Unit] = None,
+    val mapElementFx:Option[A=>A] = None
     
 ) extends Traveler[A] {
     
@@ -38,5 +40,7 @@ case class AdHocTraveler[A<:AnyRef] (
 	override def onAfterChildExit(node:Node[A], position:Int, child:A):Unit = onAfterChildExitFx.map(_(node,position,child))
 	
 	override def onExit(node:Node[A]):Unit = onExitFx.map(_(node))
+	
+	override  def mapElement(a:A):A = if(mapElementFx.isDefined) mapElementFx.map(_(a)).get else super.mapElement(a)
     
 }

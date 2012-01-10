@@ -50,11 +50,11 @@ class SlupDrewnianyZlozonyWkrety {
     calc(ay) = (b-b1)/2
     val przyjetaGeometria = Seq(b1,h1,b2,h2,b,h)
     
-    val A1 = BasicSymbols.A|1 is "pole powierzchni segmentu półki" unit "m²"
+    val A1 = BasicSymbols.A|1 is "pole powierzchni segmentu półki" unit "m2"
     calc(A1) = b1*h1
-    val A2 = BasicSymbols.A|2 is "pole powierzchni środnika" unit "m²"
+    val A2 = BasicSymbols.A|2 is "pole powierzchni środnika" unit "m2"
     calc(A2) = b2*h2
-    val A = BasicSymbols.A is "całkowite pole powierzchni przekroju" unit "m²"
+    val A = BasicSymbols.A is "całkowite pole powierzchni przekroju" unit "m2"
     calc(A) = A2+4*A1
     val Iz1 = BasicSymbols.I|"z,1" is "moduł bezwładności segmentu półki względem osi Z" unit "m4"
     calc(Iz1) = (b1*(h1^3))/12
@@ -82,7 +82,7 @@ class SlupDrewnianyZlozonyWkrety {
     calc(s1min) = (5+5)*d
     val s1 = s|"1" is "przyjęty rozstaw wkrętów w szeregu wzdłuż włókien " unit "mm"
     calc(s1) = 60
-    val nh = n|"h" is "przyjęta ilość wkrętów w rzędzie na szerokości półki" unit "szt."
+    val nh = n|"h" is "przyjęta ilość wkrętów w rzędzie na szerokości półki"
     calc(nh) = 1
     val np = n|"p" is "ilość płaszczyzn styku środnika z półką wg B.1.3(1) [1]"
     calc(np) = 2
@@ -102,7 +102,7 @@ class SlupDrewnianyZlozonyWkrety {
     calc(t2) = 6*d
     val lw = l|"w" is "wymagana długość wkręta" unit "mm"
     calc(lw) = round((b1*1000)+t2,RoundingMode.Step(true,10))
-    val nw = n|"w" is "całkowita liczba wkrętów w słupie" unit "szt."
+    val nw = n|"w" is "całkowita liczba wkrętów w słupie"
     calc(nw) = 4*nh*(round((l0*1000-2*s3c)/s1)+1)
     val przyjeteLaczniki = Seq(d,deff,s1min,s1,nh,np,s1eff,s2,s3c,s3t,s4c,s4t,t2,lw,nw)
     
@@ -134,9 +134,9 @@ class SlupDrewnianyZlozonyWkrety {
     calc3(E90mean) = 380000000
     val Gmean = G|"mean" is "średni moduł odkształcenia postaciowego" unit "Pa" 
     calc3(Gmean) = 720000000
-    val rhok = rho|"k" is "gęstość charakterystyczna" unit "kg/m³"
+    val rhok = rho|"k" is "gęstość charakterystyczna" unit "kg/m3"
     calc3(rhok) = 370
-    val rhom = rho|"m" is "gęstość średnia" unit "kg/m³"
+    val rhom = rho|"m" is "gęstość średnia" unit "kg/m3"
     calc3(rhom) = 450
     val wlasciwosciMechaniczneCharakterystyczne = Seq(fmk,ft0k,ft90k,fc0k,fc90k,fvk,E0mean,E005,E90mean,Gmean,rhok,rhom)
     
@@ -173,17 +173,17 @@ class SlupDrewnianyZlozonyWkrety {
     calc(gamma1SGN) = (1+(((PI^2)*E0mean*A1*(s1eff*0.001))/(Ku*(l0^2)*1000000)))^(-1)
     val gamma1SGU = (gamma|"1")!"SGU" is "współczynnik zmniejszający moment bezwładności półek ze względu na podatność połączeń dla SGU wg B.5 [1]"
     calc(gamma1SGU) = (1+(((PI^2)*E0mean*A1*(s1eff*0.001))/(Kser*(l0^2)*1000000)))^(-1)
-    val EIzeffSGN = (Symbol("(EI)")|"z,ef") is "sztywność zastępcza względem osi Z dla SGN wg B.1 [1]" unit "Nm²" 
+    val EIzeffSGN = (Symbol("(EI)")|"z,ef") is "sztywność zastępcza względem osi Z dla SGN wg B.1 [1]" unit "Nm2" 
     calc(EIzeffSGN) = E0mean*(Iz2+4*(Iz1+gamma1SGN*A1*(ay^2)))
-    val EIzeffSGU = (Symbol("(EI)")|"z,ef")!"SGU" is "sztywność zastępcza względem osi Z dla SGU wg B.1 [1]" unit "Nm²" 
+    val EIzeffSGU = (Symbol("(EI)")|"z,ef")!"SGU" is "sztywność zastępcza względem osi Z dla SGU wg B.1 [1]" unit "Nm2" 
     calc(EIzeffSGU) = E0mean*(Iz2+4*(Iz1+gamma1SGU*A1*(ay^2)))
-    val EIyeffSGN = (Symbol("(EI)")|"y,ef") is "sztywność zastępcza względem osi Y dla SGN wg B.1 [1]" unit "Nm²" 
+    val EIyeffSGN = (Symbol("(EI)")|"y,ef") is "sztywność zastępcza względem osi Y dla SGN wg B.1 [1]" unit "Nm2" 
     calc(EIyeffSGN) = E0mean*(Iy2+4*(Iy1+gamma1SGN*A1*(az^2)))
-    val EIyeffSGU = (Symbol("(EI)")|"y,ef")!"SGU" is "sztywność zastępcza względem osi Y dla SGU wg B.1 [1]" unit "Nm²" 
+    val EIyeffSGU = (Symbol("(EI)")|"y,ef")!"SGU" is "sztywność zastępcza względem osi Y dla SGU wg B.1 [1]" unit "Nm2" 
     calc(EIyeffSGU) = E0mean*(Iy2+4*(Iy1+gamma1SGU*A1*(az^2)))
-    val EIeffSGN = (Symbol("(EI)")|"ef") is "sztywność zastępcza dla SGN" unit "Nm²" 
+    val EIeffSGN = (Symbol("(EI)")|"ef") is "sztywność zastępcza dla SGN" unit "Nm2" 
     calc(EIeffSGN) = min(EIzeffSGN,EIyeffSGN)
-    val EIeffSGU = (Symbol("(EI)")|"ef")!"SGU" is "sztywność zastępcza dla SGU" unit "Nm²" 
+    val EIeffSGU = (Symbol("(EI)")|"ef")!"SGU" is "sztywność zastępcza dla SGU" unit "Nm2" 
     calc(EIeffSGU) = min(EIzeffSGU,EIyeffSGU)
     val xiEI = xi|"(EI)" is "stosunek sztywności zastępczych względem osi Y/Z" unit "%"
     calc(xiEI) = (EIyeffSGN*100)/EIzeffSGN

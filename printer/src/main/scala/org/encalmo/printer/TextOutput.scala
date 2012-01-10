@@ -31,6 +31,13 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	}
 	
 	/**
+     * Appends char to the buffer
+     */
+	def append(char:Char):Unit = {
+	    buffer.append(char)
+	}
+	
+	/**
 	 * Appends string to the buffer
 	 */
 	def append(content:String*):Unit = {

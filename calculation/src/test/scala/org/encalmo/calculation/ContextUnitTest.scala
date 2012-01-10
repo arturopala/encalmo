@@ -51,4 +51,52 @@ class ContextUnitTest extends AssertionsForJUnit {
 		assertEquals(Sum(Prod(Number(2.0),Number(3.0)),Prod(Number(2.0),Number(4.0))),r_b)
 	}
 	
+	@Test def testUnitConversion1() {
+        val c1 = Context()
+        val c2 = Context()
+        val s1 = Symbol("s1") unit SI.kg
+        val s2 = Symbol("s2") unit SI.cm
+        val n = Number(123.45)
+        c1(s1) = n
+        c2(s2) = n
+        val r1 = c1.resolve(s1)
+        val r2 = c2.resolve(s2)
+        assertEquals(Number(123.45),r1)
+        assertEquals(SI.kg,r1.unit)
+        assertEquals(Number(123.45),r2)
+        assertEquals(SI.cm,r2.unit)
+    }
+    
+    @Test def testUnitConversion2() {
+        val c1 = Context()
+        val c2 = Context()
+        val s1 = Symbol("s1") unit SI.kg
+        val s2 = Symbol("s2")
+        val n = Number(123.45) unit SI.g
+        c1(s1) = n
+        c2(s2) = n
+        val r1 = c1.resolve(s1)
+        val r2 = c2.resolve(s2)
+        assertEquals(Number(0.12345),r1)
+        assertEquals(SI.kg,r1.unit)
+        assertEquals(Number(123.45),r2)
+        assertEquals(SI.g,r2.unit)
+    }
+    
+    @Test def testUnitConversion3() {
+        val c1 = Context()
+        val c2 = Context()
+        val s1 = Symbol("s1") unit SI.km
+        val s2 = Symbol("s2") unit SI.cm
+        val n = Number(123.45) unit SI.m
+        c1(s1) = n
+        c2(s2) = n
+        val r1 = c1.resolve(s1)
+        val r2 = c2.resolve(s2)
+        assertEquals(Number(0.12345),r1)
+        assertEquals(SI.km,r1.unit)
+        assertEquals(Number(12345),r2)
+        assertEquals(SI.cm,r2.unit)
+    }
+	
 }

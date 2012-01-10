@@ -54,6 +54,13 @@ class NumberUnitTest extends AssertionsForJUnit {
 		val c = -a
 		assertEquals(Number(-1),c.eval);
 	}
+    
+    @Test def verifyZERO() {
+        import BasicSymbols._
+        assertEquals(ONE,ZERO^ZERO)
+        assertEquals(ZERO,ZERO^a)
+        assertEquals(ONE,a^ZERO)
+    }
 	
 	@Test def testFormatForPrint() {
 		val n1 = Number(0.289765)
@@ -136,11 +143,25 @@ class NumberUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testFormatForPrint2 {
-	
 		val n:Number = (Number(122E-6)/Number(201.062E-9)).eval.asInstanceOf[Number]
 		val fn = n.formatForPrint
 		assertTrue(!fn.isNegative)
-	
 	}
+
+    @Test def testAdjust() {
+        val a = Number(12.1311)
+        val b = a.adjustTo(0.01)
+        assertEquals(Number(12.13),b)
+        val c = a.adjustTo(0.1)
+        assertEquals(Number(12.2),c)
+        val d = a.adjustTo(1)
+        assertEquals(Number(12),d)
+        val e = a.adjustTo(5)
+        assertEquals(Number(15),e)
+        val f = a.adjustTo(10)
+        assertEquals(Number(20),f)
+        val g = a.adjustTo(20)
+        assertEquals(Number(20),g)
+    }
 	
 }
