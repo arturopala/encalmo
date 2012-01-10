@@ -14,13 +14,13 @@ object ConcreteSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "concrete"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
-	val fck = symbol(f|"ck") unit "Pa"
-	val fckcube = symbol(f|"ck,cube") unit "Pa"
-	val fcm = symbol(f|"cm") unit "Pa"
-	val fctm = symbol(f|"ctm") unit "Pa"
-	val fctk = symbol(f|"ctk") unit "Pa"
-	val fctk095 = symbol(f|"ctk, 0,95") unit "Pa"
-	val Ecm = symbol(E|"cm") unit "Pa"
+	val fck = symbol(f|"ck") unit "MPa"
+	val fckcube = symbol(f|"ck,cube") unit "MPa"
+	val fcm = symbol(f|"cm") unit "MPa"
+	val fctm = symbol(f|"ctm") unit "MPa"
+	val fctk = symbol(f|"ctk") unit "MPa"
+	val fctk095 = symbol(f|"ctk, 0,95") unit "MPa"
+	val Ecm = symbol(E|"cm") unit "GPa"
 	val epsic1 = symbol(epsiv|"c1") unit "‰"
 	val epsicu1 = symbol(epsiv|"cu1") unit "‰"
 	val epsic2 = symbol(epsiv|"c2") unit "‰"
@@ -29,10 +29,10 @@ object ConcreteSymbols extends SymbolConfigurator {
 	val epsicu3 = symbol(epsiv|"cu3") unit "‰"
 	val n = symbol(BasicSymbols.n)
 	val gammaC = symbol(gamma|"C")
-	val fcd = symbol(f|"cd") unit "Pa"
-	val fctd = symbol(f|"ctd") unit "Pa"
-	val gammac = symbol(gamma|"c") unit "N/m3"
-	val gammacf = symbol(gamma|"c,f") unit "N/m3"
+	val fcd = symbol(f|"cd") unit "MPa"
+	val fctd = symbol(f|"ctd") unit "MPa"
+	val gammac = symbol(gamma|"c") unit "kN/m3"
+	val gammacf = symbol(gamma|"c,f") unit "kN/m3"
 	val v = symbol(BasicSymbols.v)
 }
 
@@ -43,8 +43,8 @@ object ConcreteExpressions extends MapContext {
 	
 	this(fcd) = fck/gammaC
 	this(fctd) = fctk/gammaC
-	this(gammac) = 25000
-	this(gammacf) = gammac+Number(1000,SI.N/SI.m3)
+	this(gammac) = 25 unit SI.kN/SI.m3
+	this(gammacf) = gammac+Number(1,SI.kN/SI.m3)
 	this(v) = 0.6*(1-fck/Number(250,SI.MPa))
 }
 
@@ -121,121 +121,121 @@ object Concrete {
 	def C_90_105:Concrete = new Concrete("C50/60",data_C_90_105)
 	
 	private lazy val data_C_12_15 = new NormalConcrete{
-		this(fck) = 12E6
-		this(fckcube) = 15E6
-		this(fcm) = 20E6
-		this(fctm) = 1.6E6
-		this(fctk) = 1.1E6
-		this(fctk095) = 2.0E6
-		this(Ecm) = 27E9
+		this(fck) = 12
+		this(fckcube) = 15
+		this(fcm) = 20
+		this(fctm) = 1.6
+		this(fctk) = 1.1
+		this(fctk095) = 2.0
+		this(Ecm) = 27
 		this(epsic1) = 1.8
 		lock
 	}
 	
 	private lazy val data_C_16_20 = new NormalConcrete{
-		this(fck) = 16E6
-		this(fckcube) = 20E6
-		this(fcm) = 24E6
-		this(fctm) = 1.9E6
-		this(fctk) = 1.3E6
-		this(fctk095) = 2.5E6
-		this(Ecm) = 29E9
+		this(fck) = 16
+		this(fckcube) = 20
+		this(fcm) = 24
+		this(fctm) = 1.9
+		this(fctk) = 1.3
+		this(fctk095) = 2.5
+		this(Ecm) = 29
 		this(epsic1) = 1.9
 		lock
 	}
 	
 	private lazy val data_C_20_25 = new NormalConcrete{
-		this(fck) = 20E6
-		this(fckcube) = 25E6
-		this(fcm) = 28E6
-		this(fctm) = 2.2E6
-		this(fctk) = 1.5E6
-		this(fctk095) = 2.9E6
-		this(Ecm) = 30E9
+		this(fck) = 20
+		this(fckcube) = 25
+		this(fcm) = 28
+		this(fctm) = 2.2
+		this(fctk) = 1.5
+		this(fctk095) = 2.9
+		this(Ecm) = 30
 		this(epsic1) = 2
 		lock
 	}
 	
 	private lazy val data_C_25_30 = new NormalConcrete{
-		this(fck) = 25E6
-		this(fckcube) = 30E6
-		this(fcm) = 33E6
-		this(fctm) = 2.6E6
-		this(fctk) = 1.8E6
-		this(fctk095) = 3.3E6
-		this(Ecm) = 31E9
+		this(fck) = 25
+		this(fckcube) = 30
+		this(fcm) = 33
+		this(fctm) = 2.6
+		this(fctk) = 1.8
+		this(fctk095) = 3.3
+		this(Ecm) = 31
 		this(epsic1) = 2.1
 		lock
 	}
 	
 	private lazy val data_C_30_37 = new NormalConcrete{
-		this(fck) = 30E6
-		this(fckcube) = 37E6
-		this(fcm) = 38E6
-		this(fctm) = 2.9E6
-		this(fctk) = 2.0E6
-		this(fctk095) = 3.8E6
-		this(Ecm) = 32E9
+		this(fck) = 30
+		this(fckcube) = 37
+		this(fcm) = 38
+		this(fctm) = 2.9
+		this(fctk) = 2.0
+		this(fctk095) = 3.8
+		this(Ecm) = 32
 		this(epsic1) = 2.2
 		lock
 	}
 	
 	private lazy val data_C_35_45 = new NormalConcrete{
-		this(fck) = 35E6
-		this(fckcube) = 45E6
-		this(fcm) = 43E6
-		this(fctm) = 3.2E6
-		this(fctk) = 2.2E6
-		this(fctk095) = 4.2E6
-		this(Ecm) = 34E9
+		this(fck) = 35
+		this(fckcube) = 45
+		this(fcm) = 43
+		this(fctm) = 3.2
+		this(fctk) = 2.2
+		this(fctk095) = 4.2
+		this(Ecm) = 34
 		this(epsic1) = 2.25
 		lock
 	}
 	
 	private lazy val data_C_40_50 = new NormalConcrete{
-		this(fck) = 40E6
-		this(fckcube) = 50E6
-		this(fcm) = 48E6
-		this(fctm) = 3.5E6
-		this(fctk) = 2.5E6
-		this(fctk095) = 4.6E6
-		this(Ecm) = 35E9
+		this(fck) = 40
+		this(fckcube) = 50
+		this(fcm) = 48
+		this(fctm) = 3.5
+		this(fctk) = 2.5
+		this(fctk095) = 4.6
+		this(Ecm) = 35
 		this(epsic1) = 2.3
 		lock
 	}
 	
 	private lazy val data_C_45_55 = new NormalConcrete{
-		this(fck) = 45E6
-		this(fckcube) = 55E6
-		this(fcm) = 53E6
-		this(fctm) = 3.8E6
-		this(fctk) = 2.7E6
-		this(fctk095) = 4.9E6
-		this(Ecm) = 36E9
+		this(fck) = 45
+		this(fckcube) = 55
+		this(fcm) = 53
+		this(fctm) = 3.8
+		this(fctk) = 2.7
+		this(fctk095) = 4.9
+		this(Ecm) = 36
 		this(epsic1) = 2.4
 		lock
 	}
 	
 	private lazy val data_C_50_60 = new NormalConcrete{
-		this(fck) = 50E6
-		this(fckcube) = 60E6
-		this(fcm) = 58E6
-		this(fctm) = 4.1E6
-		this(fctk) = 2.9E6
-		this(fctk095) = 5.3E6
-		this(Ecm) = 37E9
+		this(fck) = 50
+		this(fckcube) = 60
+		this(fcm) = 58
+		this(fctm) = 4.1
+		this(fctk) = 2.9
+		this(fctk095) = 5.3
+		this(Ecm) = 37
 		this(epsic1) = 2.45
 		lock
 	}
 	
 	private lazy val data_C_55_67 = new MapContext{
-		this(fck) = 55E6
-		this(fckcube) = 67E6
-		this(fcm) = 63E6
-		this(fctm) = 4.2E6
-		this(fctk) = 3E6
-		this(fctk095) = 5.5E6
-		this(Ecm) = 38E9
+		this(fck) = 55
+		this(fckcube) = 67
+		this(fcm) = 63
+		this(fctm) = 4.2
+		this(fctk) = 3
+		this(fctk095) = 5.5
+		this(Ecm) = 38
 		this(epsic1) = 2.5
 		this(epsicu1) = 3.2
 		this(epsic2) = 2.2
@@ -247,13 +247,13 @@ object Concrete {
 	}
 	
 	private lazy val data_C_60_75 = new MapContext{
-		this(fck) = 60E6
-		this(fckcube) = 75E6
-		this(fcm) = 68E6
-		this(fctm) = 4.4E6
-		this(fctk) = 3.1E6
-		this(fctk095) = 5.7E6
-		this(Ecm) = 39E9
+		this(fck) = 60
+		this(fckcube) = 75
+		this(fcm) = 68
+		this(fctm) = 4.4
+		this(fctk) = 3.1
+		this(fctk095) = 5.7
+		this(Ecm) = 39
 		this(epsic1) = 2.6
 		this(epsicu1) = 3.0
 		this(epsic2) = 2.3
@@ -265,13 +265,13 @@ object Concrete {
 	}
 	
 	private lazy val data_C_70_85 = new MapContext{
-		this(fck) = 70E6
-		this(fckcube) = 85E6
-		this(fcm) = 78E6
-		this(fctm) = 4.6E6
-		this(fctk) = 3.2E6
-		this(fctk095) = 6.0E6
-		this(Ecm) = 41E9
+		this(fck) = 70
+		this(fckcube) = 85
+		this(fcm) = 78
+		this(fctm) = 4.6
+		this(fctk) = 3.2
+		this(fctk095) = 6.0
+		this(Ecm) = 41
 		this(epsic1) = 2.7
 		this(epsicu1) = 2.8
 		this(epsic2) = 2.4
@@ -283,13 +283,13 @@ object Concrete {
 	}
 	
 	private lazy val data_C_80_95 = new MapContext{
-		this(fck) = 80E6
-		this(fckcube) = 95E6
-		this(fcm) = 88E6
-		this(fctm) = 4.8E6
-		this(fctk) = 3.4E6
-		this(fctk095) = 6.3E6
-		this(Ecm) = 42E9
+		this(fck) = 80
+		this(fckcube) = 95
+		this(fcm) = 88
+		this(fctm) = 4.8
+		this(fctk) = 3.4
+		this(fctk095) = 6.3
+		this(Ecm) = 42
 		this(epsic1) = 2.8
 		this(epsicu1) = 2.8
 		this(epsic2) = 2.5
@@ -301,13 +301,13 @@ object Concrete {
 	}
 	
 	private lazy val data_C_90_105 = new MapContext{
-		this(fck) = 90E6
-		this(fckcube) = 105E6
-		this(fcm) = 98E6
-		this(fctm) = 5.0E6
-		this(fctk) = 3.5E6
-		this(fctk095) = 6.6E6
-		this(Ecm) = 44E9
+		this(fck) = 90
+		this(fckcube) = 105
+		this(fcm) = 98
+		this(fctm) = 5.0
+		this(fctk) = 3.5
+		this(fctk095) = 6.6
+		this(Ecm) = 44
 		this(epsic1) = 2.8
 		this(epsicu1) = 2.8
 		this(epsic2) = 2.6
