@@ -47,8 +47,8 @@ object ProfiledSteelSheetSymbols extends SymbolConfigurator {
 	val RwRd = symbol(R|"w,Rd") unit "N/m"
 	val alpha = symbol(BasicSymbols.alpha)
 	val la = symbol(BasicSymbols.l|"a") unit "m"
-	val fyb = symbol(BasicSymbols.f|"yb") unit "m"
-	val fypd = symbol(BasicSymbols.f|"yp,d") unit "m"
+	val fyb = symbol(BasicSymbols.f|"yb") unit "Pa"
+	val fypd = symbol(BasicSymbols.f|"yp,d") unit "Pa"
 
 }
 
@@ -100,7 +100,7 @@ object ProfiledSteelSheetExpressions extends MapContext {
 	this(VbRd) = ((hw/sin(Phi))*tcor*fbv)/gammaM0
 	this(VplRd) = ((hw/sin(Phi))*tcor*(fyb/sqrt(3)))/gammaM0
 	this(VwRd) = (2*min(VbRd,VplRd))/bs
-	this(Rw1Rd) = alpha*(tcor^2)*sqrt(fyb*E)*(1-0.1*sqrt(r/tcor))*(0.5+sqrt((0.02*la)/tcor))*(2.4+((Phi/90)^2))*(1/gammaM1)
+	this(Rw1Rd) = alpha*(tcor^2)*sqrt(fyb*E)*(1-0.1*sqrt(r/tcor))*(0.5+sqrt((0.02*la)/tcor))*(2.4+((Phi/(Number(90,SI.deg)))^2))*(1/gammaM1)
 	this(RwRd) = (2*Rw1Rd)/bs
 	
 	lock

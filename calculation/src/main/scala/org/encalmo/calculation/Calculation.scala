@@ -4,7 +4,7 @@ import scala.collection.mutable.{Map,LinkedHashSet,LinkedHashMap}
 import org.encalmo.expression._
 
 /** 
- * Calculation. Mutable context with cache.
+ * Calculation. Mutable context with evaluated expression's cache.
  */
 class Calculation(val id:Option[String] = None) extends ContextSet with MutableContext {
 	
@@ -20,7 +20,7 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	/** Maps symbols to the expressions */
 	def put(ts:(Symbol,Expression)*):Unit = {
 		if(opened) for(t <- ts){
-			context(t._1) = t._2
+		    update(t._1,t._2)
 		} else throwException
 	}
 	
@@ -45,7 +45,8 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 * Returns expression mapped to that symbol or None
 	 */
 	override def getExpression(s:Symbol):Option[Expression] = {
-		cache.get(s).orElse(findExpression(s,set.elements))
+	    val c = cache.get(s)
+	    if(c.isDefined) c else findExpression(s,set.elements)
 	}
 	
 	/**
@@ -81,8 +82,12 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 * Adds resolved espresion to cache
 	 */
 	private def addToCache(s:Symbol,e:Expression) = {
-		cache.put(s,e)
-		e
+	    val ec = e match {
+	        case v:Value => v.convertTo(s.unit,s.accuracy)
+	        case _ => e
+        }
+		cache.put(s,ec)
+		ec
 	}
 	
 	/**

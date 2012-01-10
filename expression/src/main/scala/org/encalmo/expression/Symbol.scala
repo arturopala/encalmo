@@ -20,7 +20,8 @@ class Symbol(
     val contextId:Option[Seq[String]] = None,
     override val printable:Boolean = true,
     val args:Option[Seq[Symbol]] = None,
-    val indexes:Option[Seq[Int]] = None
+    val indexes:Option[Seq[Int]] = None,
+    val accuracy:Option[Double] = None
 
 ) extends Expression with SymbolLike {
 
@@ -143,8 +144,12 @@ class Symbol(
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Sets unit */
-    def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(new BaseUnitOfValue(UnitOfValueName(unit),0,1,SI)))
+    def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
     def unit(unit:UnitOfValue):Symbol = copy(unit = unit)
+    /** Set accuracy of evaluations */
+    def accuracy(d:Double) = copy(accuracy = Some(d))
+    def acc(d:Double) = copy(accuracy = Some(d)) // short name
+    def accuracy(optd:Option[Double]) = copy(accuracy = optd)
     /** Sets dictionary */
     def dictionary(dict:String):Symbol = copy(dictionary = Option(dict))
     /** Copy entire symbol or selected attributes*/
@@ -160,9 +165,10 @@ class Symbol(
 	    contextId:Option[Seq[String]] = this.contextId,
 	    printable:Boolean = this.printable,
 	    args:Option[Seq[Symbol]] = this.args,
-	    indexes:Option[Seq[Int]] = this.indexes
+	    indexes:Option[Seq[Int]] = this.indexes,
+	    accuracy:Option[Double] = this.accuracy
 	) = {
-		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable,args,indexes)
+		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable,args,indexes,accuracy)
     }
     /** Sets this symbol as non printable */
     def makeNonPrintable:Symbol = copy(printable = false)
@@ -244,9 +250,10 @@ object Symbol {
 	    contextId:Option[Seq[String]] = None,
 	    printable:Boolean = true,
 	    args:Option[Seq[Symbol]] = None,
-        indexes:Option[Seq[Int]] = None
+        indexes:Option[Seq[Int]] = None,
+        accuracy:Option[Double] = None
 	) = {
-		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable,args,indexes)
+		new Symbol(name,subscript,superscript,underscript,overscript,description,unit,dictionary,contextId,printable,args,indexes,accuracy)
 	}
 	
 	def unapply(s:Symbol) = Some(s.name,s.subscript,s.superscript)

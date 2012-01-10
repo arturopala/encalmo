@@ -29,12 +29,6 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		end
 		end(HEADER)
 		start(BODY)
-		style(
-	        ("margin-left",layout.leftMargin+"mm"),
-	        ("margin-right",layout.rightMargin+"mm"),
-	        ("margin-top",layout.topMargin+"mm"),
-	        ("margin-bottom",layout.bottomMargin+"mm")
-	    )
 		end
 	}
 	
