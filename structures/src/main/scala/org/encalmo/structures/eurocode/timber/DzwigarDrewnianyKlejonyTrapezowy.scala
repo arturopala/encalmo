@@ -279,7 +279,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     override val doc = Document("",
         Predefined.stylesConfig,
         Chapter("",
-            Section("Ćwiczenie projektowe nr 2 z \"Konstrukcji Drewnianych\". Autor: Artur Opala 61315. Wrocław 2010/2011"),
+            Section("Ćwiczenie projektowe nr 2 z \"Konstrukcji Drewnianych\". Autor: XXX"),
             Section(""),
             NumSection("Zadanie",
                 Section(styleComment,"Dźwigar trapezowy z drewna klejonego warstwowo."),
