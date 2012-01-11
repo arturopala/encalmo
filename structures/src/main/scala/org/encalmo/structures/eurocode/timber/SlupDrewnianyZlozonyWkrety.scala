@@ -286,7 +286,7 @@ class SlupDrewnianyZlozonyWkrety {
         Chapter("",
         	Section(
             	Section("Ćwiczenie projektowe nr 1 z \"Konstrukcji Drewnianych\". Semestr zimowy 2010/2011."),
-        		Section("Autor: Artur Opala, album nr 61315. Prowadzący: dr inż. Tomasz Nowak, Instytut Budownictwa Politechiki Wrocławskiej.")
+        		Section("Autor: XXX. Prowadzący: dr inż. Tomasz Nowak, Instytut Budownictwa Politechiki Wrocławskiej.")
         	),
             Section(""),
             NumSection("Zadanie",
@@ -329,7 +329,7 @@ class SlupDrewnianyZlozonyWkrety {
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),
 			Section(style1.marginTop(20),""),
-			Section(style1.useAlign("right"),"Opracował: Artur Opala")
+			Section(style1.useAlign("right"),"Opracował: XXX")
         )
     )
     
