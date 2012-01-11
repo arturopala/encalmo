@@ -44,7 +44,7 @@ class CircularSteelSilosCalculation extends CalculationDocument {
         Chapter("",
         	Section(
             	Section("Ćwiczenie projektowe z \"Konstrukcji Metalowych\". Semestr zimowy 2011/2012."),
-        		Section("Autor: Artur Opala, 61315. Prowadzący: dr inż. Jacek Dudkiewicz, Instytut Budownictwa Politechiki Wrocławskiej.")
+        		Section("Autor: XXX. Prowadzący: dr inż. Jacek Dudkiewicz, Instytut Budownictwa Politechiki Wrocławskiej.")
         	),
             Section(""),
             NumSection("Zadanie projektowe",
@@ -73,7 +73,7 @@ class CircularSteelSilosCalculation extends CalculationDocument {
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),
 			Section(style1.marginTop(20),""),
-			Section(style1.useAlign("right"),"Opracował: Artur Opala")*/
+			Section(style1.useAlign("right"),"Opracował: XXX")*/
         )
     )
 
