@@ -32,7 +32,7 @@ class ZbiornikZelbetowyProstopadloscienny {
         Chapter("",
         	Section(
             	Section("Ćwiczenie projektowe z \"Konstrukcji Betonowych\". Semestr letni 2010/2011."),
-        		Section("Autor: Artur Opala, 61315. Prowadzący: dr inż. Włodzimierz Wydra, Instytut Budownictwa Politechiki Wrocławskiej.")
+        		Section("Autor: XXX. Prowadzący: dr inż. Włodzimierz Wydra, Instytut Budownictwa Politechiki Wrocławskiej.")
         	),
             Section(""),
             NumSection("Zadanie projektowe",
@@ -60,7 +60,7 @@ class ZbiornikZelbetowyProstopadloscienny {
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),
 			Section(style1.marginTop(20),""),
-			Section(style1.useAlign("right"),"Opracował: Artur Opala")*/
+			Section(style1.useAlign("right"),"Opracował: XXX")*/
         )
     )
     
