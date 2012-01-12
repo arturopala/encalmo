@@ -39,8 +39,8 @@ class TRBCalculationDocument extends CalculationDocument {
     val HW = Symbol("HW") is "Głębokość wykopu"; calc(HW) = HS+HL
     val BL = Symbol("BL") is "Szerokość ławy fundamentowej"; calc(BL) = 1.20 unit SI.m
     val KG = Symbol("KG") is "Kategoria gruntu"; calc(KG) = text("III")
-    val l = BasicSymbols.l is "Szerokość skarpy wykopu wg tab. 3.10"; calc(l) = HS*0.75
-    val lo = BasicSymbols.l|o is "Szerokość odsadzki skarpy wykopu"; calc(lo) = 0.5 unit SI.m
+    val l = BasicSymbols.l is "Szerokość skarpy wykopu"; calc(l) = HW*0.67
+    val lo = BasicSymbols.l|o is "Szerokość odsadzki skarpy wykopu"; calc(lo) = 0.6 unit SI.m
     val VB = V|B is "Objętość wykopu do wywiezienia" acc 1; calc(VB) = Aw*HW
     val VZ = V|Z is "Objętość wykopu do zasypania" acc 1;  calc(VZ) = (l/2+lo+(HL-BL)/2)*HW*Ow
     val VC = V|C is "Objętość całkowita wykopu" acc 1; calc(VC) = VB+VZ
@@ -77,11 +77,11 @@ class TRBCalculationDocument extends CalculationDocument {
     val Pjt = P|"jt" is "Pojemność użyteczna środka transportu urobku"; calc(Pjt) = Ns/(gammao*Ss)
     val tp = t|p is "Czas podstawienia środka transportu"; calc(tp) = 2 unit SI.min
     val nc = n|c is "Liczba cykli koparki potrzebnych do załadowania środka transportu" acc 1; calc(nc) = Pjt/(Qk*Sn)
-    val tz = t|z is "Czas załadunku urobku" unit SI.min; calc(tz) = nc*tk/Sw
+    val tz = t|z is "Czas załadunku urobku" unit SI.min acc 0.1; calc(tz) = nc*tk/Sw
     val vj = v|j is "Prędkość średnia środka transportu"; calc(vj) = 25 unit SI.km/SI.h
-    val tj = t|j is "Czas przejazdu do miejsca składowania urobku" unit SI.min; calc(tj) = Lu/vj
+    val tj = t|j is "Czas przejazdu do miejsca składowania urobku" unit SI.min acc 0.1; calc(tj) = Lu/vj
     val tw = t|w is "Czas wyładunku urobku" unit SI.min; calc(tw) = 3 unit SI.min
-    val Tj = T|j is "Czas trwania pojedyńczego cyklu tranportowego"; calc(Tj) = tp+tz+2*tj+tw
+    val Tj = T|j is "Czas trwania pojedyńczego cyklu tranportowego" unit SI.min acc 0.1; calc(Tj) = tp+tz+2*tj+tw
     val Nj = N|j is "Liczba środków transportu potrzebnych dla zapewnienia ciągłej pracy koparki" acc 1; calc(Nj) = Tj/tz
     
     // roboty betonowe
