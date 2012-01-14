@@ -52,7 +52,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
         Chapter("",
         	Section(
             	Section("Ćwiczenie projektowe z przedmiotu \"Betonowe Konstrukcje Sprężone\". Semestr zimowy 2011/2012."),
-        		Section("Autor: Artur Opala, album nr 61315. Prowadzący: dr inż. Aleksy Łodo, Instytut Budownictwa Politechiki Wrocławskiej.")
+        		Section("Autor: XXX. Prowadzący: dr inż. Aleksy Łodo, Instytut Budownictwa Politechiki Wrocławskiej.")
         	),
             Section(""),
             NumSection("Zadanie",
@@ -71,7 +71,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),
 			Section(style1.marginTop(20),""),
-			Section(style1.useAlign("right"),"Opracował: Artur Opala")
+			Section(style1.useAlign("right"),"Opracował: XXX")
         )
     )
 
