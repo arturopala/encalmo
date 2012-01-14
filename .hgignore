@@ -20,3 +20,7 @@ syntax: regexp
 ^printer/\.scala_dependencies$
 syntax: regexp
 ^calculation/\.scala_dependencies$
+syntax: regexp
+\.scala_dependencies$
+syntax: regexp
+\.scala_dependencies$
