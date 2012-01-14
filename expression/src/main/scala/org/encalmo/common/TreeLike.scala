@@ -24,16 +24,17 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
 	def map(f:A=>A):A = f(this)
 	
 	/**
-	 * Maps this structure with tranformation function in loop
-	 * while returns non identical results or if loop count exceeds max allowed number (256)
+	 * Maps this structure with tranformation function in a loop
+	 * while returns non identical results
 	 * Subtypes should return own copy with custom arguments after transformation
 	 * @param f transformate
-	 * @return fully tranformed structure or lasty transformed in case of max loop count overflow
+	 * @return fully tranformed structure
+	 * @throw CycleDetectedException if loop count exceeds max allowed number (256)
 	 */
 	@tailrec
 	final def mapAll(f:A=>A, c:Int = 0, source:A = this):A = {
 		val e:A = map(f)
-		if(true) Console.println(e)
+		if(false) Console.println(e)
 		if(c>=MAX_MAP_ALL_LOOP_COUNT){
 			throw new CycleDetectedException[A](source,source.toString+" -> "+e.toString)
 		}else{

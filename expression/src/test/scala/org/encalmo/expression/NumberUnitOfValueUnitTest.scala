@@ -20,6 +20,24 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertEquals(1.2 unit SI.m3, 1200000000l unit SI.mm3)
         assertFalse((1.2 unit SI.m) == (1.2 unit SI.m2))
     }
+    
+    @Test def testInequals {
+        assertTrue(Number(5.123) > Number(3.211))
+        assertTrue(Number(3.222) < Number(3.223))
+        assertTrue((1000 unit SI.mm) < (1.2 unit SI.m))
+        assertTrue((1000 unit SI.mm) <= (1.2 unit SI.m))
+        assertTrue((0.019 unit SI.m) < Number(0.2))
+        assertTrue((0.019 unit SI.m) <= Number(0.2))
+        val a:Number = 12000 unit SI.N/SI.m
+        val b:Number = 1.2 unit SI.m*SI.MPa
+        assertTrue(a < b)
+        assertTrue(b > a)
+    }
+    
+    @Test def testInequals2 {
+        val c = ((1930000 unit SI.Nm)/(1.247 unit SI.m3*SI.MPa)).eval
+        assertTrue(c<2.5)
+    }
 	
 	@Test def testSum1 {
 		val a:Number = 1.2

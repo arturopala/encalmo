@@ -186,7 +186,8 @@ case class Number(
     override def equals(a:Any):Boolean = a match {
         case n:Number if this.eq(n) => true
         case Number(r,u) => if(u==unit || u == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r==r else {
-            if (u.isSameBaseAndDimension(this.unit) || u.isSameExpandedUnit(this.unit)) r==this.r.convert(this.unit,u)
+            if (u.isSameBaseAndDimension(this.unit)) r==this.r.convert1(this.unit,u)
+            else if (u.isSameExpandedUnit(this.unit))r==this.r.convert2(this.unit,u)
             else false
         }
         case _ => false
@@ -256,23 +257,48 @@ case class Number(
 	}
 
 	override def < (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r<r1.convert(u1,unit) else r<r1
+	    case Number(r1,u1) =>  if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r<r1 
+    	    else {
+    	        if(u1.isSameBaseAndDimension(unit)) r<r1.convert1(u1,unit) 
+    	        else if(u1.isSameExpandedUnit(this.unit)) r<r1.convert2(u1,unit) 
+    	        else r<r1
+    	    }
 	    case _ => false
     }
 	override def > (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r>r1.convert(u1,unit) else r>r1
+	    case Number(r1,u1) => if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r>r1 
+            else {
+                if(u1.isSameBaseAndDimension(unit)) r>r1.convert1(u1,unit) 
+                else if(u1.isSameExpandedUnit(this.unit)) r>r1.convert2(u1,unit) 
+                else r>r1
+            }
 	    case _ => false
     }
 	override def >= (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r>=r1.convert(u1,unit) else r>=r1
+	    case Number(r1,u1) => if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r>=r1 
+            else {
+                if(u1.isSameBaseAndDimension(unit)) r>=r1.convert1(u1,unit) 
+                else if(u1.isSameExpandedUnit(this.unit)) r>=r1.convert2(u1,unit) 
+                else r>=r1
+            }
 	    case _ => false
     }
 	override def <= (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r<=r1.convert(u1,unit) else r<=r1
+	    case Number(r1,u1) => if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r<=r1 
+            else {
+                if(u1.isSameBaseAndDimension(unit)) r<=r1.convert1(u1,unit) 
+                else if(u1.isSameExpandedUnit(this.unit)) r<=r1.convert2(u1,unit) 
+                else r<=r1
+            }
 	    case _ => false
     }
 	override def <> (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1.isSameBaseAndDimension(unit)) r<>r1.convert(u1,unit) else r<>r1
+	    case Number(r1,u1) => if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r<>r1 
+            else {
+                if(u1.isSameBaseAndDimension(unit)) r<>r1.convert1(u1,unit) 
+                else if(u1.isSameExpandedUnit(this.unit)) r<>r1.convert2(u1,unit) 
+                else r<>r1
+            }
 	    case _ => false
     }
 	

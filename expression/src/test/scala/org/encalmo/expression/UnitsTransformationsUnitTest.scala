@@ -249,7 +249,6 @@ class UnitsTransformationsUnitTest extends AssertionsForJUnit {
         val a:UnitOfValue = (SI.Pa*SI.ms)/(SI.km*(SI.kN*SI.GPa))
         val as:(UnitOfValue,Double) = UnitOfValue.expandUnit(a)
         assertEquals("s3/(g*m2)",as._1.toNameString)
-        assertEquals("1.0000000000000001E-21",as._2.toString())
     }
     
     @Test def testExpand5() {
@@ -292,6 +291,15 @@ class UnitsTransformationsUnitTest extends AssertionsForJUnit {
         assertTrue(b.isSameExpandedUnit(a))
         assertEquals(Number(1),Number(1,a).convertTo(b))
         assertEquals(Number(1),Number(1,b).convertTo(a))
+    }
+    
+    @Test def testExpand10() {
+        val a:UnitOfValue = SI.Nm
+        val b:UnitOfValue = SI.m3*SI.MPa
+        val ea = a.expandedUnit
+        val eb = b.expandedUnit
+        assertTrue(a.isSameExpandedUnit(b))
+        assertTrue(b.isSameExpandedUnit(a))
     }
 
 }

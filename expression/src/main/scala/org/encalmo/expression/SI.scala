@@ -113,6 +113,10 @@ object SI extends UnitOfValueSystem {
     val s2 = s dim 2
     val min = SimpleUnitOfValue(minute,0,1,this,Characteristics.Time)
     val h = SimpleUnitOfValue(hour,0,1,this,Characteristics.Time)
+    // speed
+    val mps = m/s
+    // acceleration
+    val mps2 = m/s2
 	
 	override val units:Seq[UnitOfValue] = Seq(
 	        // simple units
@@ -129,7 +133,7 @@ object SI extends UnitOfValueSystem {
 	        deg,rad,
 	        Nm,kNm,MNm,
 	        // complex derived units
-	        m/s,m/s2,
+	        mps,mps2,
 	        (kg*m)/s2,kg/m,kg/m2,kg/m3,
 	        N/m,N/m2,N/m3,N*m,Nm/m,
 	        kN/m,kN/m2,kN/m3,kNm/m,

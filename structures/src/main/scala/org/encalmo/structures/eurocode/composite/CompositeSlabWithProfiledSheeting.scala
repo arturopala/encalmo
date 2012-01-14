@@ -168,7 +168,7 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	this(cp) = 2*(ap+bp)+4*(dp-hc)+2*PI*hc
 	this(dv) = dp
 	this(kv) = sqrt(1+(200/(dv*1000))).nounit
-	this(vmin) = 35*sqrt(kv^3)*sqrt(fck).setunit(SI.Pa)
+	this(vmin) = 35*sqrt(kv^3)*(sqrt(fck).setunit(SI.MPa))
 	this(VpRd) = vmin*cp*dp
 	this(VRdc) = vmin*dv
 	this(Qvd) = Fd
