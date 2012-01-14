@@ -123,7 +123,7 @@ class Real(val d: Double) {
       else throw new IllegalArgumentException("Cannot convert value of unit ["+u1.toNameString+"] to ["+u2.toNameString+"]")
   
   private[expression] def convert1(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this else if(u1.multiplier==u2.multiplier) this else Real(d * u1.multiplier/u2.multiplier)
-  private[expression] def convert2(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this else if(u1.expandedUnit._2==u2.expandedUnit._2) this else Real(d * u1.expandedUnit._2/u2.expandedUnit._2)
+  private[expression] def convert2(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this else if(u1.expandedUnitMultiplier==u2.expandedUnitMultiplier) this else Real(d * u1.expandedUnitMultiplier/u2.expandedUnitMultiplier)
   
   def convertToBaseUnit(u: UnitOfValue):Real = if(u.isBaseUnit) this else Real(d * u.multiplier/u.baseUnit.multiplier)
   

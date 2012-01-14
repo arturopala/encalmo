@@ -108,7 +108,7 @@ object BasicSymbols {
 	lazy val ni = nu
 	
 	lazy val eul:Symbol = Symbol("eul")
-	lazy val grav:Symbol = Symbol("g")
+	lazy val grav:Symbol = Symbol("grav")
 	
 	lazy val BasicSymbols2PlainTextMap:Map[Symbol,String] = Map(
 			alpha 	-> "α",
@@ -153,7 +153,8 @@ object BasicSymbols {
 			Psi 	-> "Ψ",
 			Omega 	-> "Ω",
 			nabla 	-> "nabla",
-			eul		-> "e"
+			eul		-> "e",
+			grav      -> "g"
 	)
 	
 	lazy val String2PlainTextMap:Map[String,String] = BasicSymbols2PlainTextMap.map(a => (a._1.name,a._2))
@@ -203,7 +204,8 @@ object BasicSymbols {
 			Psi 	-> "&Psi;",
 			Omega 	-> "&Omega;",
 			nabla 	-> "&nabla;",
-			eul		-> "e"
+			eul		-> "&escr;",
+			grav      -> "&gscr;"
 	)
 	
 	lazy val String2MathMLMap:Map[String,String] = BasicSymbols2MathMLMap.map(a => (a._1.name,a._2))

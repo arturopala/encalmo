@@ -28,4 +28,4 @@ object EUL extends Constant[Number](BasicSymbols.eul,Number(Real.e))
  * gravity constant
  * @author artur.opala
  */
-object GRAV extends Constant[Number](BasicSymbols.grav,Number(9.81))
+object GRAV extends Constant[Number](BasicSymbols.grav,Number(9.81,SI.mps2))

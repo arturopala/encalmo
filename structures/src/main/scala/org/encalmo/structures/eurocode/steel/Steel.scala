@@ -14,18 +14,18 @@ object SteelSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "steel"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
-	val E = symbol(BasicSymbols.E) unit SI.GPa
-	val G = symbol(BasicSymbols.G) unit SI.GPa
-	val fy = symbol(f|"y") unit SI.Pa
-	val fyd = symbol(f|"y,d") unit SI.Pa
-	val fu = symbol(f|"u") unit SI.Pa
-	val gammaM0 = symbol(gamma|"M,0")
-	val gammaM1 = symbol(gamma|"M,1")
-	val gammaV = symbol(gamma|"V")
-	val gammas = symbol(gamma|"s") unit "kN/m3"
-	val epsiy = symbol(BasicSymbols.epsiv|"y")
-	val epsiu = symbol(BasicSymbols.epsiv|"u")
-	val epsi = symbol(BasicSymbols.epsi)
+	val E = symbol(BasicSymbols.E) unit SI.GPa //Moduł sprężystości
+	val G = symbol(BasicSymbols.G) unit SI.GPa //Moduł sprężystości przy ścinaniu
+	val fy = symbol(f|"y") unit SI.MPa         //Charakterystyczna granica plastyczności stali
+	val fyd = symbol(f|"y,d") unit SI.MPa      //Obliczeniowa granica plastyczności stali
+	val fu = symbol(f|"u") unit SI.MPa         //Wytrzymałość na rozciąganie
+	val gammaM0 = symbol(gamma|"M,0")          //Współczynnik materiałowy dla stali przy weryfikacji nośności przekroju poprzecznego, wg 6.1(1)
+	val gammaM1 = symbol(gamma|"M,1")          //Współczynnik materiałowy dla stali przy ocenie stateczności, wg 6.1(1)
+	val gammaV = symbol(gamma|"V")             //Odkształcenie odpowiadające granicy plastyczności
+	val gammas = symbol(gamma|"s") unit "kN/m3"//Ciężar objętościowy stali
+	val epsiy = symbol(BasicSymbols.epsiv|"y") //Odkształcenie odpowiadające granicy plastyczności
+	val epsiu = symbol(BasicSymbols.epsiv|"u") //Odkształcenie odpowiadające wytrzymałości na rozciąganie
+	val epsi = symbol(BasicSymbols.epsi)       //Współczynnik korekcyjny klasy stali
 }
 
 /** Common steel expressions */
@@ -83,32 +83,32 @@ object Steel {
 	def S280GD = new Steel("S280 GD",data_S280GD)
 	
 	private lazy val data_S235 = new MapContext {
-		this(fy) = 235E6
-		this(fu) = 360E6
+		this(fy) = 235
+		this(fu) = 360
 		lock
 	}
 	
 	private lazy val data_S275 = new MapContext {
-		this(fy) = 275E6
-		this(fu) = 430E6
+		this(fy) = 275
+		this(fu) = 430
 		lock
 	}
 	
 	private lazy val data_S355 = new MapContext {
-		this(fy) = 355E6
-		this(fu) = 510E6
+		this(fy) = 355
+		this(fu) = 510
 		lock
 	}
 	
 	private lazy val data_S450 = new MapContext {
-		this(fy) = 440E6
-		this(fu) = 550E6
+		this(fy) = 440
+		this(fu) = 550
 		lock
 	}
 	
 	private lazy val data_S280GD = new MapContext {
-		this(E) = 210E9
-		this(fy) = 280E6
+		this(E) = 210
+		this(fy) = 280
 		lock
 	}
 }

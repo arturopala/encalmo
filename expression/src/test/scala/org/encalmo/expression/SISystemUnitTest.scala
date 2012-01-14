@@ -6,6 +6,15 @@ import org.junit.Test
 
 class SISystemUnitTest extends AssertionsForJUnit {
     
+    @Test def testBaseUnit {
+        assertEquals(SI.N, SI.kN.baseUnit)
+        assertEquals(SI.m, SI.mm.baseUnit)
+        assertEquals(SI.m2, SI.mm2.baseUnit)
+        assertEquals(SI.m3, SI.cm3.baseUnit)
+        assertEquals(SI.N*SI.N, (SI.kN*SI.kN).baseUnit)
+        assertEquals(SI.N*SI.N*SI.N, (SI.kN*SI.kN*SI.kN).baseUnit)
+    }
+    
     @Test def testIsLargerThen {
         assertTrue(SI.m isLargerThan SI.cm)
         assertTrue(SI.km isLargerThan SI.m)
