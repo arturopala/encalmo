@@ -184,6 +184,18 @@ class UnitsTransformationsUnitTest extends AssertionsForJUnit {
         assertEquals("N/m",as.toNameString)
     }
     
+    @Test def testSimplify29() {
+        val a:UnitOfValue = SI.cm2 * (SI.kN/SI.m3)
+        val as:UnitOfValue = UnitOfValue.simplifyUnit(a)
+        assertEquals("kN/(10000*m)",as.toNameString)
+    }
+    
+    @Test def testSimplify30() {
+        val a:UnitOfValue = (SI.kN/SI.m3)*SI.cm2
+        val as:UnitOfValue = UnitOfValue.simplifyUnit(a)
+        assertEquals("kN/(10000*m)",as.toNameString)
+    }
+    
     @Test def testExpand0() {
         val a:UnitOfValue = SI.N/SI.m
         val as:(UnitOfValue,Double) = UnitOfValue.expandUnit(a)
