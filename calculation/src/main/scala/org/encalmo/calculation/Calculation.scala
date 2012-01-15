@@ -13,6 +13,12 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	private val context = new MapContext(id)
 	private val cache = new LinkedHashMap[Symbol,Expression]
 	
+	private var accuracy:Option[Double] = None
+	def acc(d:Double):Calculation = {
+	    accuracy = Some(d)
+	    this
+	}
+	
 	val map = context.map
 	
 	set.add(context)
@@ -83,7 +89,11 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 */
 	private def addToCache(s:Symbol,e:Expression) = {
 	    val ec = e match {
-	        case v:Value => v.convertTo(s.unit,s.accuracy)
+	        case v:Value => v.convertTo(s.unit, 
+	                if(s.accuracy.isDefined) 
+	                    s.accuracy 
+                    else 
+                        accuracy)
 	        case _ => e
         }
 		cache.put(s,ec)

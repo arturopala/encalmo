@@ -24,14 +24,15 @@ class Sum(val args:Expression*) extends MultipleInfixOperation {
         case _ => false
     }
     
-    def toSum2:Sum2 = args.tail.foldLeft[Expression](args.head)((a,b) => Sum2(a,b)).asInstanceOf[Sum2]
+    def toSum2:Expression = args.reduceLeft[Expression]((a,b) => Sum2(a,b))
 }
 
 object Sum {
     
     def apply(args:Expression*):Sum = {
-        val pargs = if (!args.exists(_.isInstanceOf[Sum])) args else args.flatMap(_ match {
+        val pargs = if (!args.exists(a => a.isInstanceOf[Sum] || a.isInstanceOf[Sum2])) args else args.flatMap(_ match {
             case Sum(seq@_*) => seq
+            case s2:Sum2 => s2.children
             case e => Seq(e)
         })
         new Sum(pargs:_*)
@@ -76,14 +77,15 @@ class Prod(val args:Expression*) extends MultipleInfixOperation {
 	    case _ => false
 	}
 	
-	def toProd2:Prod2 = args.tail.foldLeft[Expression](args.head)((a,b) => Prod2(a,b)).asInstanceOf[Prod2]
+	def toProd2:Expression = args.reduceLeft[Expression]((a,b) => Prod2(a,b))
 }
 
 object Prod {
     
     def apply(args:Expression*):Prod = {
-        val pargs = if (!args.exists(_.isInstanceOf[Prod])) args else args.flatMap(_ match {
+        val pargs = if (!args.exists(a => a.isInstanceOf[Prod] || a.isInstanceOf[Prod2])) args else args.flatMap(_ match {
             case Prod(seq@_*) => seq
+            case p2:Prod2 => p2.children
             case e => Seq(e)
         })
         new Prod(pargs:_*)

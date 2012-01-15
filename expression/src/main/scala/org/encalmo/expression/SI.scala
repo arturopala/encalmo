@@ -90,6 +90,7 @@ object SI extends UnitOfValueSystem {
 	val g = SimpleUnitOfValue(gram,0,1,this,Characteristics.Weight)
 	val mg = g exp -3
 	val kg = g exp 3
+	val t = SimpleUnitOfValue(gram,6,1,this,Characteristics.Weight,Some(UnitOfValueName("t")))
 	// force
 	val N = SimpleUnitOfValue(newton,0,1,this,Characteristics.Force)
 	val kN = N exp 3
@@ -121,7 +122,7 @@ object SI extends UnitOfValueSystem {
 	override val units:Seq[UnitOfValue] = Seq(
 	        // simple units
 	        m,dm,cm,mm,μm,nm,km,
-	        g,kg,mg,
+	        g,kg,mg,t,
             s,ms,s2,min,h,
 	        N,kN,MN,GN,
 	        Pa,kPa,MPa,GPa,

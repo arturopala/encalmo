@@ -28,6 +28,8 @@ trait CalculationDocument {
     
     /** Calculation's output files base name */
     val name:String
+   
+    def acc(d:Double):Unit = calc.acc(d)
     
     @Test def printHtml:Unit = {
         val layout = Predefined.layout

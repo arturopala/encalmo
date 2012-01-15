@@ -60,10 +60,17 @@ case class Number(
                              }
                         }
 					    else if(u1.isSameExpandedUnit(u2)){ 
-					        if(u1.isLargerThan(u2)) Number(r1*(r2.convert2(u2,u1)),(u1*u1).simplifiedUnit) else Number(r1.convert2(u1,u2)*r2,(u2*u2).simplifiedUnit)
+					        if(u1.isLargerThan(u2)) {
+					            val su = (u1*u1).simplifiedUnit
+					            Number(r1*(r2.convert2(u2,u1))*su._2,su._1)
+					        } else {
+					            val su = (u2*u2).simplifiedUnit
+					            Number(r1.convert2(u1,u2)*r2*su._2,su._1)
+					        }
 					    }
 					    else{
-                            Number(r1*r2,(u1*u2).simplifiedUnit)
+					        val su = (u1*u2).simplifiedUnit
+                            Number(r1*r2*su._2,su._1)
                         }
 					}
 					case "/" => {
@@ -90,7 +97,8 @@ case class Number(
                             Number(r1/(r2.convert2(u2,u1)),EmptyUnitOfValue)
                         }
 					    else{
-                            Number(r1/r2,(u1/u2).simplifiedUnit)
+					        val su = (u1/u2).simplifiedUnit
+                            Number(r1/r2*su._2,su._1)
                         }
 					}
 					case "%" => {

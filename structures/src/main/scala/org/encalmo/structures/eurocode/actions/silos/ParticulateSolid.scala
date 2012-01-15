@@ -27,7 +27,7 @@ object ParticulateSolidSymbols extends SymbolConfigurator {
     /** Angle of internal friction (mean) */
     lazy val fiim = symbol(BasicSymbols.phi|"im") unit "°"
     /** Angle of internal friction (factor) */
-    lazy val afi = symbol(BasicSymbols.a|BasicSymbols.phi) 
+    lazy val afi = symbol(BasicSymbols.a|BasicSymbols.phi)
     /** Lateral pressure ratio (mean) */
     lazy val Km = symbol(BasicSymbols.K|"m") 
     /** Lateral pressure ratio (factor) */
@@ -58,9 +58,9 @@ object ParticulateSolidSymbols extends SymbolConfigurator {
     /** Coefficient of wall friction (lower characteristic value) */
     val mu_l = symbol(BasicSymbols.mu!"l") 
     /** Angle of internal friction (upper characteristic value) */
-    val fi_u = symbol(BasicSymbols.phi|("i","u")) unit "°"
+    val fi_u = symbol(BasicSymbols.phi|("i","u")) unit "°" acc 0.1
     /** Angle of internal friction (lower characteristic value) */
-    val fi_l = symbol(BasicSymbols.phi|("i","l")) unit "°"
+    val fi_l = symbol(BasicSymbols.phi|("i","l")) unit "°" acc 0.1
    
 }
 
