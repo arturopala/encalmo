@@ -286,8 +286,8 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if (s.hasSubscript) symbol(s.subscript.get,true)
 		if(s.hasIndexes) {
 		    start(MTEXT)
-		    attr("mathsize","70%")
-		    attr("mathvariant","italic")
+		    attr("mathsize","90%")
+		    //attr("mathvariant","italic")
 		    body
             append("[")
             var ic = 0

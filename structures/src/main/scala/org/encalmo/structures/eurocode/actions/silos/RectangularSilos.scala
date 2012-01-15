@@ -34,7 +34,7 @@ object RectangularSlenderSilosWithFlatBottomExpressions extends MapContext {
 	import ParticulateSolidSymbols._
 	
 	//calculated geometry
-	this(h3) = h1-ts
+	this(h3) = h1-th
 	this(b3) = b1-2*t
 	this(b4) = b2-2*t
 	this(dc) = min(b3,b4)
@@ -86,8 +86,8 @@ object RectangularSlenderSilosWithFlatBottomExpressions extends MapContext {
 	
 	//filling patch load
 	this(ef) = dc/4
-	this(E) = 2*ef/dc
-	this(Cpf) = 0.21*Cop*(1+2*(E^2))*(1-(EUL^(-1.5*(hcdc-1))))
+	this(Ef) = 2*ef/dc
+	this(Cpf) = 0.21*Cop*(1+2*(Ef^2))*(1-(EUL^(-1.5*(hcdc-1))))
 	this(ppf) = Cpf*phf(1)
 	this(ppfnc) = 0.36*ppf
 	this(ppfnc1) = Eval(ppfnc, z -> hc/2)
@@ -105,7 +105,7 @@ object RectangularSlenderSilosWithFlatBottomExpressions extends MapContext {
     this(nezSkt) = Eval(nezSk, z -> hc)
 	
 	//discharge patch load
-    this(Cpe) = 0.42*Cop*(1+2*(E^2))*(1-(EUL^(-1.5*(hcdc-1))))
+    this(Cpe) = 0.42*Cop*(1+2*(Ef^2))*(1-(EUL^(-1.5*(hcdc-1))))
     this(ppe) = Cpe*phe
     this(ppenc) = 0.36*ppe
     this(ppenc1) = Eval(ppenc, z -> hc/2)
@@ -145,12 +145,12 @@ extends Calculation {
 	this(h1) = vh1
 	this(h2) = vh2
 	this(t) = vt
-	this(ts) = vts
+	this(th) = vts
 	this(be) = vbe
 	
 	//input geometry
 	def inputGeometry = NumSection(TextToTranslate("_inputGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(b1,b2,h1,h2,t,ts),this)
+		Evaluate(Seq(b1,b2,h1,h2,t,th),this)
 	)
 	//input assertions
 	
@@ -176,7 +176,7 @@ extends Calculation {
 	)
 	//filling patch load
 	def fillingPatchLoad = NumSection(TextToTranslate("_fillingPatchLoad",SilosSymbols.dictionary),
-        Evaluate(Seq(ef,E,Cpf,ppf,ppfnc,ppfnc1,s,Fpf1),this)
+        Evaluate(Seq(ef,Ef,Cpf,ppf,ppfnc,ppfnc1,s,Fpf1),this)
     )
     //discharge symmetrical load
 	def dischargeSymmetricalLoad = NumSection(TextToTranslate("_dischargeSymmetricalLoad",SilosSymbols.dictionary),

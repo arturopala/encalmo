@@ -36,12 +36,15 @@ trait UnitOfValue extends Expression {
 	/** Base unit of this unit's family */
 	def baseUnit:UnitOfValue = this
     /** Simplified unit variant */
-    def simplifiedUnit:UnitOfValue
+    def simplifiedUnit:(UnitOfValue,Double)
     /** Expanded unit variant */
     def expandedUnit:(UnitOfValue,Double)
     
     def expandedUnitBase:UnitOfValue = expandedUnit._1
     def expandedUnitMultiplier:Double = expandedUnit._2
+    
+    def simplifiedUnitBase:UnitOfValue = simplifiedUnit._1
+    def simplifiedUnitMultiplier:Double = simplifiedUnit._2
 	
 	/** Sets dimension of unit */
 	def dim(dim:Double):UnitOfValue
@@ -107,7 +110,8 @@ case class SimpleUnitOfValue (
 		override val scale:Int = 0,
 		override val dimension:Double = 1,
 		system:UnitOfValueSystem = EmptyUnitOfValueSystem,
-		override val characteristic:Characteristic = Characteristics.None
+		override val characteristic:Characteristic = Characteristics.None,
+		val customName:Option[UnitOfValueName] = None
 		
 		
 ) extends UnitOfValue {
@@ -117,7 +121,7 @@ case class SimpleUnitOfValue (
 	override def dim(newdim:Double):UnitOfValue = if(newdim==0) EmptyUnitOfValue else system.find(baseUnitName.baseName,scale,newdim).getOrElse(copy(dimension = newdim))
 	override def exp(exp:Int):UnitOfValue = system.find(baseUnitName.baseName,scale+exp,dimension).getOrElse(copy(scale=scale+exp))
 	
-	override val name:UnitOfValueName = baseUnitName.withPrefix(system(scale).map(_.prefix).getOrElse(null))
+	override val name:UnitOfValueName = customName.getOrElse(baseUnitName.withPrefix(system(scale).map(_.prefix).getOrElse(null)))
 	
 	override def isDefined:Boolean = true
 	
@@ -125,7 +129,7 @@ case class SimpleUnitOfValue (
 	def set(characteristic:Characteristic) = copy(characteristic = characteristic)
 	
 	override lazy val baseUnit:UnitOfValue = system.find(baseUnitName.baseName,0,dimension).getOrElse(SimpleUnitOfValue(baseUnitName,0,dimension,system,characteristic))
-	override lazy val simplifiedUnit:UnitOfValue = this
+	override lazy val simplifiedUnit:(UnitOfValue,Double) = (this,1)
 	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
 
     override lazy val toString:String = toNameString
@@ -138,7 +142,7 @@ object EmptyUnitOfValue extends SimpleUnitOfValue() {
     override def dim(newdim:Double):SimpleUnitOfValue = this
     override def exp(exp:Int):UnitOfValue = this
     override lazy val toString:String = "_"
-    override lazy val simplifiedUnit:UnitOfValue = this
+    override lazy val simplifiedUnit:(UnitOfValue,Double) = (this,1)
     override lazy val expandedUnit:(UnitOfValue,Double) = (this,1)
     
 }
@@ -234,7 +238,7 @@ case class ComplexUnitOfValue(
 	override def dim(newdim:Double):UnitOfValue = if(newdim==0) EmptyUnitOfValue else copy(dimension=newdim)
 	override def exp(exp:Int):UnitOfValue = copy(scale=scale+exp)
 	override def toNameString:String = name.toString
-	override lazy val simplifiedUnit:UnitOfValue = UnitOfValue.simplifyUnit(this)
+	override lazy val simplifiedUnit:(UnitOfValue,Double) = UnitOfValue.simplifyUnit(this)
 	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
 
     final override def map(f: Transformation): Expression = {
@@ -252,7 +256,7 @@ case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
     override def dim(newdim:Double):IllegalUnitOfValue = IllegalUnitOfValue("("+desc+")^"+newdim)
     override def exp(exp:Int):UnitOfValue = IllegalUnitOfValue("("+desc+")exp"+exp)
     override def toNameString:String = "!"+desc+"!"
-    override lazy val simplifiedUnit:UnitOfValue = this
+    override lazy val simplifiedUnit:(UnitOfValue,Double) = (this,1)
     override lazy val expandedUnit:(UnitOfValue,Double) = (this,1)
     
 }
@@ -355,8 +359,17 @@ object UnitOfValue {
         u.mapAll(multiplierFx).eval
     }
     
-    def simplifyUnit(u:UnitOfValue):UnitOfValue = {
-        encapsulateUnitFx(u.mapAll(simplifyFx))
+    def simplifyUnit(u:UnitOfValue):(UnitOfValue,Double) = {
+        val e1 = u.mapAll(simplifyFx)
+        val n:Number = e1.mapAll(numberFx).eval match {
+            case n:Number => n
+            case _ => ZERO
+        }
+        val u2:UnitOfValue = encapsulateUnitFx(e1.mapAll(cleanNumbersFx).mapAll(simplifyFx) match {
+            case ONE => EmptyUnitOfValue
+            case x => x
+        })
+        (u2,n.r.d)
     }
     
     def encapsulateUnitFx:(Expression)=>UnitOfValue = {
@@ -372,6 +385,20 @@ object UnitOfValue {
             }
             
         }
+        case e => e
+    }
+    
+    private def numberFx:(Expression)=>Expression = {
+        case EmptyUnitOfValue => ONE
+        case iu:IllegalUnitOfValue => ZERO
+        case su:SimpleUnitOfValue => ONE
+        case ComplexUnitOfValue(expression,1,0) => expression
+        case ComplexUnitOfValue(unit:UnitOfValue,dimension,scale) => dimension match {
+            case 0 => EmptyUnitOfValue
+            case 1 => unit
+            case _ => unit.dim(dimension*unit.dimension).exp(scale+unit.scale)
+        }
+        case ComplexUnitOfValue(expression,dimension,scale) if dimension>1 => Prod((for (a <- 1 to dimension.toInt) yield expression):_*)
         case e => e
     }
     

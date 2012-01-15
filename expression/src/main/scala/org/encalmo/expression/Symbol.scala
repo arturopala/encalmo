@@ -143,6 +143,8 @@ class Symbol(
     def at(id:String):Symbol = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
+    /** Appends comment to the description */
+    def &(comment:String):Symbol = copy(description = Option(if(description.isDefined) description.get+" "+comment else comment))
     /** Sets unit */
     def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
     def unit(unit:UnitOfValue):Symbol = copy(unit = unit)

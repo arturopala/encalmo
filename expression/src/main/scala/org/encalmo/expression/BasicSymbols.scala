@@ -60,6 +60,8 @@ object BasicSymbols {
 	lazy val Y:Symbol = Symbol("Y")
 	lazy val Z:Symbol = Symbol("Z")
 	
+	lazy val ls:Symbol = Symbol("lscr")
+	
 	lazy val alpha:Symbol = Symbol("alpha")
 	lazy val beta:Symbol = Symbol("beta")
 	lazy val gamma:Symbol = Symbol("gamma")
@@ -154,7 +156,8 @@ object BasicSymbols {
 			Omega 	-> "Ω",
 			nabla 	-> "nabla",
 			eul		-> "e",
-			grav      -> "g"
+			grav    -> "g",
+			ls      -> "l"
 	)
 	
 	lazy val String2PlainTextMap:Map[String,String] = BasicSymbols2PlainTextMap.map(a => (a._1.name,a._2))
@@ -205,7 +208,8 @@ object BasicSymbols {
 			Omega 	-> "&Omega;",
 			nabla 	-> "&nabla;",
 			eul		-> "&escr;",
-			grav      -> "&gscr;"
+			grav    -> "&gscr;",
+			ls      -> "&lscr;"
 	)
 	
 	lazy val String2MathMLMap:Map[String,String] = BasicSymbols2MathMLMap.map(a => (a._1.name,a._2))
