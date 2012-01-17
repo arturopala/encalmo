@@ -50,7 +50,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val mi1 = symbol(BasicSymbols.mu|"1") is "Współczynnik kształtu dachu";calc(mi1) = 0.8
     val Ce = symbol(BasicSymbols.C|"e") is "Współczynnik ekspozycji";calc(Ce) = 1.0
     val Ct = symbol(BasicSymbols.C|"t") is "Współczynnik termiczny"; calc(Ct) = 1.0
-    val qsk = symbol(BasicSymbols.s|"r") unit "kN/m2" acc 0.1 is "Charakterystyczne obciążenie śniegiem dachu";calc(qsk) = mi1*Ce*Ct*sk
+    val qsk = symbol(BasicSymbols.q|"sk") unit "kN/m2" acc 0.1 is "Charakterystyczne obciążenie śniegiem dachu";calc(qsk) = mi1*Ce*Ct*sk
     
     val gpk = g|"p,k" is "Charakterystyczny ciężar pokrycia dachu (płyt kanałowych i warstw izolacyjnych)" unit SI.kN/SI.m2; calc(gpk) = 3
     val qtk = q|"t,k" is "Charakterytyczne obciążenie technologiczne dźwigara" unit SI.kN/SI.m; calc(qtk) = 1.0
@@ -157,7 +157,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val sigcpd = sigma|"cpd" is "Naprężenia w dolnych włóknach skrajnych przekroju betonowego" unit MPa; calc(sigcpd) = Pksup/Acs + (Pksup*zcp)/Wcsd
     val sigcpg = sigma|"cpg" is "Naprężenia w górnych włóknach skrajnych przekroju betonowego" unit MPa; calc(sigcpg) = Pksup/Acs - (Pksup*zcp)/Wcsg
     
-    val As2 = A|"s2" is "Pole przekroju zbrojenia pasywnego w strefie ściskanej"; calc(As2) = 2*((PI*((16 unit mm)^2))/4)
+    val As2 = A|"s2" is "Pole przekroju zbrojenia pasywnego w strefie ściskanej"; calc(As2) = 2*((PI*((20 unit mm)^2))/4)
     val sigp2 = sigma|"p2" is "Naprężenia w górnych cięgnach sprężających" unit MPa; calc(sigp2) = (400 unit MPa) - sigpmo
     val xeff = x|"eff" is "Zasięg strefy ściskanej dla przekroju teowego" unit cm; calc(xeff) = (Ap1*fpd - Ap2*sigp2 - 2*b2*hz1*fcd - As2*zbrojenie(fyd))/(b1*fcd)
     val d1 = d|"1" is "Odległość od górnej krawędzi przekroju do osi obojętnej dolnych cięgien sprężających" unit cm; calc(d1) = hd-yp1
