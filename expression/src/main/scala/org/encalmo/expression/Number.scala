@@ -339,7 +339,7 @@ case class Number(
 		val rif = analyze(r.d)
 		val si:Int = if(rif._1==0) 0 else getScale(rif._1)
 		val sf:Int = if(rif._2==0) 0 else Math.abs(getScale(rif._2))
-		if(si>4){
+		if(si>6){
 			val nsi = (si%3)
 			val nrif = analyze(rif._1/Math.pow(10,si-nsi))
 			NumberFormatted(

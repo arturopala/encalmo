@@ -123,5 +123,11 @@ class UnitOfValueUnitTest extends AssertionsForJUnit {
     	assertEquals("!m+kg!*N",((SI.m+SI.kg)*SI.N).toNameString)
     }
     
+    @Test def testPercent{
+        assertEquals(0.01,SI.percent.simplifiedUnit._2,0)
+        assertEquals(0.001,SI.permille.simplifiedUnit._2,0)
+        assertEquals(0.01,(SI.kg*SI.percent).simplifiedUnit._2,0)
+    }
+    
 
 }

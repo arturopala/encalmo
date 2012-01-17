@@ -90,10 +90,10 @@ class CircularSteelSilosCalculation extends CalculationDocument {
                     NumSection("Naprężenia krytyczne przy ściskaniu równoleżnikowym",silos.naprezeniaKrytyczneRownoleznikowe),
                     NumSection("Naprężenia krytyczne przy ścinaniu",silos.naprezeniaKrytyczneScinajace)
                 ),
-                NumSection("Sprawdzenie warunku stateczności powłoki przy obciążeniu wiatrem pustego silosu (obc. stałe + użytkowe + wiatr)",
+                NumSection("Sprawdzenie warunku stateczności powłoki przy obciążeniu wiatrem pustego silosu (obc. stałe (płaszcz,dach,pomost) + użytkowe + wiatr)",
                     silos.statecznoscKombinacja1
                 ),
-                NumSection("Sprawdzenie warunku stateczności powłoki przy opróżnianiu silosu (obc. stałe + użytkowe + śnieg + opróżnianie)",
+                NumSection("Sprawdzenie warunku stateczności powłoki przy opróżnianiu silosu (obc. stałe (płaszcz,dach,pomost) + użytkowe + śnieg + opróżnianie)",
                     silos.statecznoscKombinacja2
                 ),
                 NumSection("Sprawdzenie stateczności lokalnej płaszcza w rejonie podpory",

@@ -19,6 +19,8 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertEquals(1.2 unit SI.m3, 1200000 unit SI.cm3)
         assertEquals(1.2 unit SI.m3, 1200000000l unit SI.mm3)
         assertFalse((1.2 unit SI.m) == (1.2 unit SI.m2))
+        assertFalse((1.2 unit SI.percent) == Number(0.012))
+        assertFalse((1.2 unit SI.permille) == Number(0.0012))
     }
     
     @Test def testInequals {

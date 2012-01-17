@@ -129,7 +129,7 @@ case class SimpleUnitOfValue (
 	def set(characteristic:Characteristic) = copy(characteristic = characteristic)
 	
 	override lazy val baseUnit:UnitOfValue = system.find(baseUnitName.baseName,0,dimension).getOrElse(SimpleUnitOfValue(baseUnitName,0,dimension,system,characteristic))
-	override lazy val simplifiedUnit:(UnitOfValue,Double) = (this,1)
+	override lazy val simplifiedUnit:(UnitOfValue,Double) = if(baseUnitName==EmptyUnitOfValueName) (baseUnit,multiplier) else (this,1)
 	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
 
     override lazy val toString:String = toNameString
@@ -489,6 +489,10 @@ object UnitOfValue {
             case _ => unit.dim(dimension*unit.dimension).exp(scale+unit.scale)
         }
         case ComplexUnitOfValue(expression,dimension,scale) if dimension>1 => Prod((for (a <- 1 to dimension.toInt) yield expression):_*)
+        case su:SimpleUnitOfValue if(su.baseUnitName==EmptyUnitOfValueName) => su.multiplier
+        
+        case Power(u1:UnitOfValue,Number(Real(d),u2)) => u1.dim(u1.dimension*d)
+        case root(u1:UnitOfValue,Number(Real(d),u2)) => u1.dim(u1.dimension/d)
         
         case Quot(u1:UnitOfValue,u2:UnitOfValue) if u1.isSameExpandedUnit(u2) => u1.expandedUnitMultiplier/u2.expandedUnitMultiplier
         case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) if u1.isSameBase(u2) => simplifyQuot(u1,u2)
@@ -619,7 +623,7 @@ object UnitOfValue {
     }
 }
 
-case class NoUnit(e: Expression) extends Expression {
+case class NoUnit(e: Expression) extends Expression with Transparent {
 
     override val children: Seq[Expression] = Seq(e)
 
@@ -643,7 +647,7 @@ case class NoUnit(e: Expression) extends Expression {
 
 }
 
-case class SetUnit(e: Expression, override val unit:UnitOfValue) extends Expression {
+case class SetUnit(e: Expression, override val unit:UnitOfValue) extends Expression with Transparent {
 
     override val children: Seq[Expression] = Seq(e)
 

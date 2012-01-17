@@ -50,6 +50,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 				case o:root => false
 				case o:abs => false
 				case po: Operation => po.precedence > o.precedence && (node.position > 0 || po.precedence - o.precedence > 5)
+				case t:Transparent => isBracketNeeded(node.parent,o)
 				case _ => false
 			}
 		} else {
@@ -130,6 +131,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    				}
 	    				case o:abs => {
 	    					output.mo("|","infix","thinmathspace","thinmathspace")
+	    				}
+	    				case o:round => {
+	    				    
 	    				}
 	    				case o: NamedOperation => {
 	    					o match {
@@ -226,6 +230,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 						output.startb(MSUP)
 						output.startb(MROW)
 					}
+                    case Power(Number(r,u),any) if u!=EmptyUnitOfValue && position==0 => {
+                        output.leftBracket
+                    }
 					case _ => Unit
 				}
 			}
@@ -291,11 +298,6 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 					}  
 					case o:cbrt => {
 						output.end(MROW)
-						output.startb(MROW)
-						output.startb(MN)
-						output.append("3")
-						output.end(MN)
-						output.end(MROW)
 					}
 					case o: Operation => {
 						output.end(MROW)
@@ -312,6 +314,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 						output.end(MN)
 						output.end(MSUP)
 					}
+                    case Power(Number(r,u),any) if u!=EmptyUnitOfValue && position==0 => {
+                        output.rightBracket
+                    }
 					case _ => Unit
 				}
 			}
@@ -340,6 +345,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 						output.end(MSQRT)
 					}
 					case o:cbrt => {
+					    output.startb(MN)
+                        output.append("3")
+                        output.end(MN)
 						output.end(MROOT)
 					}
 					case o:root => {
@@ -351,6 +359,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
     				case o:abs => {
     					output.mo("|","infix","thinmathspace","thinmathspace")
     				}
+                    case o:round => {
+                        
+                    }
 					case o: NamedOperation => {
 						o match {
 							case _ => {
