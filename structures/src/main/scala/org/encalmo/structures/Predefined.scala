@@ -55,5 +55,6 @@ object Predefined {
     
     val styleDescription:Style = style1.fontSmaller.fontSmaller.hyphenateOn.marginLeft(23).setClassId("description")
     val styleComment = style1.fontSmaller.marginLeft(20).setClassId("comment")
+    val styleTitle = style1.fontBigger.fontBold.paddingTop(20).paddingBottom(20).useAlign("center").setClassId("title")
     
 }

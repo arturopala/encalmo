@@ -55,6 +55,12 @@ class NumberUnitTest extends AssertionsForJUnit {
 		assertEquals(Number(-1),c.eval);
 	}
     
+    @Test def verifyPower() {
+        assertEquals(Number(4),Power(2,2).eval);
+        assertEquals(Number(25),Power(5,2).eval);
+        assertEquals(Number(5),Power(25,0.5).eval);
+    }
+    
     @Test def verifyZERO() {
         import BasicSymbols._
         assertEquals(ONE,ZERO^ZERO)

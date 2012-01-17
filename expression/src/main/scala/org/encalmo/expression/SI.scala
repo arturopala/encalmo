@@ -57,6 +57,9 @@ object SI extends UnitOfValueSystem {
 		-1 -> Prefix.d, -2 -> Prefix.c, -3 -> Prefix.m, -6 -> Prefix.μ, -9 -> Prefix.n, -12 -> Prefix.p, -15 -> Prefix.f
 	)
 	
+	val percent = SimpleUnitOfValue(EmptyUnitOfValueName,-2,1,this,Characteristics.None,Some(UnitOfValueName("%")))
+	val permille = SimpleUnitOfValue(EmptyUnitOfValueName,-3,1,this,Characteristics.None,Some(UnitOfValueName("‰")))
+	
 	// length
 	val m = SimpleUnitOfValue(meter,0,1,this,Characteristics.Length)
 	val dm = m exp -1
@@ -121,6 +124,7 @@ object SI extends UnitOfValueSystem {
 	
 	override val units:Seq[UnitOfValue] = Seq(
 	        // simple units
+	        percent,permille,
 	        m,dm,cm,mm,μm,nm,km,
 	        g,kg,mg,t,
             s,ms,s2,min,h,

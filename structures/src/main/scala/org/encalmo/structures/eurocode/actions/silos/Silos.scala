@@ -232,12 +232,13 @@ object SilosSymbols extends SymbolConfigurator {
     
     lazy val s1 = symbol(BasicSymbols.s|"1") unit SI.mm acc 1 is "Szerokość słupa podpierającego"
     lazy val hpp = symbol(BasicSymbols.h|"pp") unit SI.mm acc 1 is "Wysokość pierścienia podporowego"
+    lazy val tp = symbol(BasicSymbols.t|"p") unit SI.mm acc 1 is "Grubość blachy płaszcza w strefie podporowej"
     lazy val tpp = symbol(BasicSymbols.t|"pp") unit SI.mm acc 1 is "Grubość środnika pierścienia podporowego"
     lazy val ns = symbol(BasicSymbols.n|"s") acc 1 is "Liczba podpór silosu"
     lazy val s2 = symbol(BasicSymbols.s|"2") unit SI.mm acc 1 is "Szerokość płaszcza komory obciążona lokalnie przy podporze"
     
     lazy val sigmax1 = symbol(BasicSymbols.sigma|"x,1") unit SI.MPa is "Obliczeniowe naprężenie na dolnej krawędzi pierścienia podporowego"
-    lazy val sigmax2 = symbol(BasicSymbols.sigma|"x,2") unit SI.MPa is "Obliczeniowe naprężenie na górnej krawędzi pierścienia podporowego"
+    lazy val sigmax2 = symbol(BasicSymbols.sigma|"x,2") unit SI.MPa is "Obliczeniowe naprężenie na dolnej krawędzi płaszcza komory"
     lazy val sigmax1cr = symbol(BasicSymbols.sigma|"x,1,cr") unit SI.MPa is "Obliczeniowe naprężenie krytyczne w strefie przypodporowej"
     lazy val sigmax2cr = symbol(BasicSymbols.sigma|"x,2,cr") unit SI.MPa is "Obliczeniowe naprężenie krytyczne w strefie przypodporowej"
     lazy val N1 = symbol(BasicSymbols.N|"1") unit SI.kN is "Obliczeniowa siła działająca na słup podporowy"

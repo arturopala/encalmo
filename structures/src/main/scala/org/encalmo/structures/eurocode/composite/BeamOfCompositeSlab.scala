@@ -121,7 +121,7 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	val STUD = HeadedStudSymbols
 
 	import BeamOfCompositeSlabSymbols._
-	import ConcreteSymbols.{fck,fcd,Ecm,v}
+	import ConcreteSymbols.{fck,fcd,Ecm,vc}
 	import SteelSymbols.{E,fyd,fy,fu,gammaM0,gammaV}
 	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,hc,Eceff,nE,dmesh,sd,fyrd}
 	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,t,bo,bs,fypd}
@@ -207,7 +207,7 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	this(PpbRd) = kphi*1.1*STUD.d*SHEET.tcor*fypd
 	this(thetat) = 45
 	this(VRdsr) = cot(45)*((((PI*square(dmesh/1000))/4*fyrd)/sd)+min(SHEET.Ap*fypd,PpbRd/s))
-	this(VRdsc) = v*fcd*sin(thetat)*cos(thetat)*hc
+	this(VRdsc) = vc*fcd*sin(thetat)*cos(thetat)*hc
 	//ugiecia w fazie eksploatacji
 	this(deltae) = (5*ΔQk*(l^4))/(384*I1*E)
 	this(deltamax) = deltam1-deltam0+deltae
@@ -239,7 +239,7 @@ extends Calculation {
 	val STUD = HeadedStudSymbols
 
 	import BeamOfCompositeSlabSymbols._
-	import ConcreteSymbols.{v}
+	import ConcreteSymbols.{vc}
 	import SteelSymbols.{E,fyd,epsi,fy}
 	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff,nE}
 	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,bo,bs}
@@ -331,7 +331,7 @@ extends Calculation {
 		NumSection("Sprawdzenie ścinania podłużnego w płycie zespolonej wg pkt. 6.6.6",
 			Evaluate(Seq(VEdc,kphi,PpbRd,thetat,VRdsr),this),
 			AssertionLE("nośności prętów zbrojeniowych na ścinanie podłużne",this,VEdc,VRdsr),
-			Evaluate(Seq(v,VRdsc),this),
+			Evaluate(Seq(vc,VRdsc),this),
 			AssertionLE("nośności ściskanych krzyżulców betonowych",this,VEdc,VRdsc)
 		)
 	)

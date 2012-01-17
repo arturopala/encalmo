@@ -171,7 +171,6 @@ object ThinWalledCircularSlenderSilosWithSteepHopperExpressions extends MapConte
     this(wemax) = 1.0*Eval(qpz,z -> ze)
     this(wi) = cpi*Eval(qpz,z -> ze)
     
-    //bucklingtauxtRcr
     this(omega) = h1/sqrt(r*t)
     this(Cx) = 1.0
     this(sigxRcr) = 0.605*Cx*E*(t/r)
@@ -238,16 +237,16 @@ object ThinWalledCircularSlenderSilosWithSteepHopperExpressions extends MapConte
     val sigmatEd2 = sigmatEd(2) & "na poziomie krawędzi dolnej strefy przypodporowej, wg wzoru z [1993-1-6] D.30, "
     this(sigmatEd2) = Eval(phe, z -> zp)*(r/t)
     val QtauEd2 = QtauEd(2) & "na poziomie krawędzi dolnej strefy przypodporowej"
-    this(QtauEd2) = Fpf1
+    this(QtauEd2) = Fpe1
     val tauEd2 = tauEd(2) & "na poziomie krawędzi dolnej strefy przypodporowej"
     this(tauEd2) = QtauEd2/(PI*r*t)
     val zeta2 = zeta(2) & "na poziomie krawędzi dolnej strefy przypodporowej"
     this(zeta2) = ((sigmaxEd2/sigxRd)^kx)-(ki*(sigmaxEd2/sigxRd)*(sigmatEd2/sigtRd))+((sigmatEd2/sigtRd)^kt)+((tauEd2/tauRd)^ktau)
     
 	this(s2) = s1+2*hpp
-	this(N1) = 2*((Gck*h1+Grk+Gpk+Ghk)*1.35 + Quk*1.5 + nezSkt*U*1.5 + Vh*gammau*1.5)/ns
+	this(N1) = ((Gck*h1+Grk+Gpk+Ghk)*1.35 + (Quk + Qsk*U + V*gammau)*1.5)/ns
 	this(sigmax1) = N1/(s1*tpp)
-	this(sigmax2) = N1/(s2*t)
+	this(sigmax2) = N1/(s2*tp)
 	this(sigmax1cr) = 0.605*(1+1.5*((r/hpp)^2)*(tpp/r))*E*(r/t)
 	this(lambdax1) = sqrt(fy/sigmax1cr)
     this(chix1) = rangeChoiceLELE(lambdax1,1,lambdax0,1-betax*(((lambdax1-lambdax0)/(lambdapx-lambdax0))^etax),lambdapx,alphax/(lambdax1^2))
@@ -297,13 +296,14 @@ extends Calculation {
 	this(HM) = 140 unit SI.m
 	this(s1) = 400 unit SI.mm
 	this(hpp) = 400 unit SI.mm
+	this(tp) = t
 	this(tpp) = 10 unit SI.mm
-	this(ns) = 6
+	this(ns) = 4
 	this(gammaM1) = 1.1
     
 	//input geometry
 	def inputGeometry = NumSection(TextToTranslate("_inputGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(d1,h1,h2,de,t,th,tr,alpha,h3),this)
+		Evaluate(Seq(d1,h1,h2,de,t,th,tr,tp,tpp,alpha,h3),this)
 	)
 	//input assertions
 	
@@ -385,7 +385,7 @@ extends Calculation {
             AssertionLE("interakcji naprężeń [1993-1-6] 8.19",this,zeta2,1)
     )
     def statecznoscLokalnaPodpory = Section(
-            Evaluate(this,s1,hpp,s2,ns,N1,sigmax1,sigmax1cr,lambdax1,chix1,sigxRd1,sigmax2),
+            Evaluate(this,tp,tpp,s1,hpp,s2,ns,N1,sigmax1,sigmax1cr,lambdax1,chix1,sigxRd1,sigmax2),
             AssertionLE("nośności lokalnej przy podporze",this,sigmax1,sigxRd1),
             AssertionLE("nośności lokalnej przy podporze",this,sigmax2,sigxRd)
     )

@@ -14,26 +14,48 @@ object ConcreteSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "concrete"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
-	val fck = symbol(f|"ck") unit "MPa"
-	val fckcube = symbol(f|"ck,cube") unit "MPa"
-	val fcm = symbol(f|"cm") unit "MPa"
-	val fctm = symbol(f|"ctm") unit "MPa"
-	val fctk = symbol(f|"ctk") unit "MPa"
-	val fctk095 = symbol(f|"ctk, 0,95") unit "MPa"
-	val Ecm = symbol(E|"cm") unit "GPa"
+	val fck = symbol(f|"ck") unit SI.MPa
+	val fckcube = symbol(f|"ck,cube") unit SI.MPa
+	val fcm = symbol(f|"cm") unit SI.MPa
+	val fctm = symbol(f|"ctm") unit SI.MPa
+	val fctk = symbol(f|"ctk") unit SI.MPa
+	val fctk095 = symbol(f|"ctk, 0,95") unit SI.MPa
+	val Ecm = symbol(E|"cm") unit SI.GPa
 	val epsic1 = symbol(epsiv|"c1") unit "‰"
 	val epsicu1 = symbol(epsiv|"cu1") unit "‰"
 	val epsic2 = symbol(epsiv|"c2") unit "‰"
 	val epsicu2 = symbol(epsiv|"cu2") unit "‰"
 	val epsic3 = symbol(epsiv|"c3") unit "‰"
 	val epsicu3 = symbol(epsiv|"cu3") unit "‰"
-	val n = symbol(BasicSymbols.n)
+	val nc = symbol(BasicSymbols.n|c)
 	val gammaC = symbol(gamma|"C")
-	val fcd = symbol(f|"cd") unit "MPa"
-	val fctd = symbol(f|"ctd") unit "MPa"
+	val fcd = symbol(f|"cd") unit SI.MPa
+	val fctd = symbol(f|"ctd") unit SI.MPa
 	val gammac = symbol(gamma|"c") unit "kN/m3"
 	val gammacf = symbol(gamma|"c,f") unit "kN/m3"
-	val v = symbol(BasicSymbols.v)
+	val vc = symbol(BasicSymbols.v|c)
+	
+	val epsics = epsiv|"cs" is "Odkształcenie skurczowe" unit SI.permille
+	val epsicsd = epsiv|"csd" is "Odkształcenie skurczowe spowodowane wysychaniem betonu" args(t,t|s) unit SI.permille
+	val epsicsdinf = epsiv|"csd,∞" is "Końcowe odkształcenie skurczowe spowodowane wysychaniem betonu" unit SI.permille
+    val epsicsa = epsiv|"csa" is "Odkształcenie skurczowe spowodowane skurczem autogenicznym betonu" unit SI.permille
+    val epsicsainf = epsiv|"csa,∞" is "Końcowe odkształcenie skurczowe spowodowane skurczem autogenicznym betonu" unit SI.permille
+    val betasc = beta|"sc" is "Współczynnik skurczowy zależny od rodzaju cementu"
+    val betads = beta|"ds" is "Funkcja przyrostu skurczu w czasie t-ts" args(t,t|s)
+	val betaas = beta|"as" is "Funkcja przyrostu skurczu autogenicznego w czasie t" args(t)
+    val betaRH = beta|"RH" is "Współczynnik skurczowy zależny od wilgotności względnej powietrza"
+    val RH = "RH" is "Wilgotność względna powietrza"
+    val dtimec = "t-ts" is "Liczba dni"
+    val timec0 = "t0" is "Wiek betonu w chwili przyłożenia obciążenia"
+    val ho = h|o is "Miarodajny wymiar przekroju elementu" unit SI.mm
+    val phit = phi args(t,t|0) is "Współczynnik pełzania betonu"
+    val phitinf = phi args ("∞",t) is "Końcowy współczynnik pełzania betonu"
+    val betac = beta|"c" is "Funkcja przyrostu pełzania po przyłożeniu obciążenia"
+    val pfiRH = phi|"RH" is ""
+    val betafcm = beta|"fcm" is ""
+    val betaH = beta|"H" is "Współczynnik zależny od wilgotności względnej powietrza"
+    val betat0 = beta|"t0" is ""
+    val Eceff = symbol(E|"c,eff") unit SI.GPa is "Efektywny sieczny moduł sprężystości betonu z uwzględnieniem czasu trwania obciążenia"
 }
 
 /** Common Concrete expressions */
@@ -45,7 +67,25 @@ object ConcreteExpressions extends MapContext {
 	this(fctd) = fctk/gammaC
 	this(gammac) = 25 unit SI.kN/SI.m3
 	this(gammacf) = gammac+Number(1,SI.kN/SI.m3)
-	this(v) = 0.6*(1-fck/Number(250,SI.MPa))
+	this(vc) = 0.6*(1-fck/Number(250,SI.MPa))
+	this(betasc) = 5
+	this(betaRH) = 1.55*(1-((RH/100)^3))
+	this(epsicsdinf) = ((160+(betasc*((90-fcm).nounit)))*1E-3*betaRH)
+	this(betads) = ((dtimec)/(0.035*((ho.nounit)^2)+dtimec))^0.5
+	this(epsicsd) = epsicsdinf*betads
+	this(epsicsainf) = 2.5*(fck.nounit-10)*1E-3
+	this(epsicsainf) = 2.5*(fck.nounit-10)*1E-3
+	this(betaas) = 1-(EUL^(-0.2*sqrt(dtimec)))
+	this(epsicsa) = epsicsainf*betaas
+	this(epsics) = epsicsd+epsicsa
+	this(pfiRH) = (1 + (1-RH/100)/(0.1*cbrt(ho.nounit)*((35/fcm.nounit)^0.7)))*((35/fcm.nounit)^0.2)
+	this(betafcm) = 16.8/sqrt(fcm.nounit)
+	this(betat0) = 1/(0.1+(timec0^0.2))
+	this(phitinf) = pfiRH*betafcm*betat0
+	this(betaH) = min(1.5*(1+((0.012*RH)^18))*ho.nounit,1500)
+	this(betac) = (dtimec/(betaH+dtimec))^0.3
+	this(phit) = phitinf*betac
+	this(Eceff) = Ecm/(1+phit)
 }
 
 /** Concrete class */
@@ -56,6 +96,8 @@ class Concrete(id:String,data:Context) extends Calculation(Option(id)) {
 	def info = NumSection(TextToTranslate("Concrete",ConcreteSymbols.dictionary),id,
 		Evaluate(Seq(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1),this)
 	)
+	
+	def skurcz  = Evaluate(this,betasc,RH,betaRH,epsicsdinf,ho,dtimec,betads,epsicsd,epsicsainf,betaas,epsicsa,epsics,pfiRH,betafcm,betat0,phitinf,betaH,betac,phit)
 	
 	this add ConcreteExpressions
 	this add data
@@ -76,7 +118,7 @@ class NormalConcrete extends MapContext {
 	this(epsicu2) = 3.5
 	this(epsic3) = 1.75
 	this(epsicu3) = 3.5
-	this(n) = 2.0
+	this(nc) = 2.0
 }
 
 /** Concrete classes library */
@@ -240,7 +282,7 @@ object Concrete {
 		this(epsicu1) = 3.2
 		this(epsic2) = 2.2
 		this(epsicu2) = 3.1
-		this(n) = 1.75
+		this(nc) = 1.75
 		this(epsic3) = 1.8
 		this(epsicu3) = 3.1
 		lock
@@ -258,7 +300,7 @@ object Concrete {
 		this(epsicu1) = 3.0
 		this(epsic2) = 2.3
 		this(epsicu2) = 2.9
-		this(n) = 1.6
+		this(nc) = 1.6
 		this(epsic3) = 1.9
 		this(epsicu3) = 2.9
 		lock
@@ -276,7 +318,7 @@ object Concrete {
 		this(epsicu1) = 2.8
 		this(epsic2) = 2.4
 		this(epsicu2) = 2.7
-		this(n) = 1.45
+		this(nc) = 1.45
 		this(epsic3) = 2.0
 		this(epsicu3) = 2.7
 		lock
@@ -294,7 +336,7 @@ object Concrete {
 		this(epsicu1) = 2.8
 		this(epsic2) = 2.5
 		this(epsicu2) = 2.6
-		this(n) = 1.4
+		this(nc) = 1.4
 		this(epsic3) = 2.2
 		this(epsicu3) = 2.6
 		lock
@@ -312,7 +354,7 @@ object Concrete {
 		this(epsicu1) = 2.8
 		this(epsic2) = 2.6
 		this(epsicu2) = 2.6
-		this(n) = 1.4
+		this(nc) = 1.4
 		this(epsic3) = 2.3
 		this(epsicu3) = 2.6
 		lock

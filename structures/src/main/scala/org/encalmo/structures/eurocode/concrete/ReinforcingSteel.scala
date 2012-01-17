@@ -14,17 +14,17 @@ object ReinforcingSteelSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "reinforcing_steel"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
-	val Es = symbol(BasicSymbols.E|"s") unit "Pa"
-	val Gs = symbol(BasicSymbols.G|"s") unit "Pa"
-	val fyk = symbol(f|"y,k") unit "Pa"
-	val fymax = symbol(f|"y,max") unit "Pa"
-	val fyd = symbol(f|"y,d") unit "Pa"
-	val ft = symbol(f|"t") unit "Pa"
-	val fR = symbol(f|"R") unit "Pa"
+	val Es = symbol(BasicSymbols.E|"s") unit SI.GPa
+	val Gs = symbol(BasicSymbols.G|"s") unit SI.GPa
+	val fyk = symbol(f|"y,k") unit SI.MPa
+	val fymax = symbol(f|"y,max") unit SI.MPa
+	val fyd = symbol(f|"y,d") unit SI.MPa
+	val ft = symbol(f|"t") unit SI.MPa
+	val fR = symbol(f|"R") unit SI.MPa
 	val gammaS = symbol(gamma|"S")
 	val epsiuk = symbol(BasicSymbols.epsiv|"u,k")
 	val epsiu = symbol(BasicSymbols.epsiv|"u")
-	val gammas = symbol(gamma|"s") unit "N/m3"
+	val gammas = symbol(gamma|"s") unit "kN/m3"
 	
 }
 
@@ -33,8 +33,8 @@ object ReinforcingSteelExpressions extends MapContext {
 
 	import ReinforcingSteelSymbols._
 	
-	this(Es) = 200E9
-	this(gammas) = 78.5E3
+	this(Es) = 200
+	this(gammas) = 78.5
 	this(fyd) = fyk/gammaS
 	this(epsiu) = epsiuk/gammaS
 	
@@ -71,8 +71,8 @@ object ReinforcingSteel {
 	def B500SP = new ReinforcingSteel("B500SP",data_B500SP)
 	
 	private lazy val data_B500SP = new MapContext {
-		this(fyk) = 500E6
-		this(ft) = 575E6
+		this(fyk) = 500
+		this(ft) = 575
 		this(epsiuk) = 0.08
 		lock
 	}
