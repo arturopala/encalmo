@@ -187,6 +187,11 @@ extends Traveler[DocumentComponent] {
                 }
                 output.end(BLOCK)
             }
+            case PageBreak => {
+                output.start(BLOCK)
+                output.attr("break-after","page")
+                output.end
+            }
 			case _ => {
 				tryStartPageSequence(null,node.element.style)
 				node.element match {
