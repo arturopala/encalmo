@@ -32,6 +32,15 @@ div {padding:5pt 0 2pt 0}
 .unit {font-size:0.94em;font-weight:normal;color:#545454}
 .illegalunit {font-size:0.6em;font-weight:bold;color:red}
 .numexp {color:#545454;font-size:0.9em;font-weight:normal;}
-.comment {}
+.comment {font-size:1em;}
+.comment1 {font-size:0.9em; padding-left:1em}
 .description {font-size:0.83em;}
 .title {font-size:1.5em; font-weigh:bold; padding:1em 0}
+.toc {padding-top:5pt;padding-bottom:5pt}
+.toctitle {font-size:1em;}
+.toc0 {font-size:0.9em; padding-left:0.5em}
+.toc1 {font-size:0.8em; padding-left:0.5em}
+.toc2 {font-size:0.7em; padding-left:0.5em}
+.toc3 {font-size:0.6em; padding-left:0.5em}
+.toc4 {font-size:0.6em; padding-left:0.5em}
+.toc5 {font-size:0.6em; padding-left:0.5em}

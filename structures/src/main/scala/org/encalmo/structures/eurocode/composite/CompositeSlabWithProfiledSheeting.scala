@@ -93,7 +93,7 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val dmesh = symbol(BasicSymbols.d|"mesh") unit "mm"
 	val sd = symbol(BasicSymbols.s|"d") unit SI.m
 	val sdmax = symbol(BasicSymbols.s|"d,max") unit SI.m
-	val Eceff = symbol(BasicSymbols.E|"c,eff") unit "Pa"
+	val Eceff2 = symbol(BasicSymbols.E|"ceff") unit "Pa"
 	val nE = symbol(BasicSymbols.n|"E")
 	val e0 = symbol(BasicSymbols.e|"0") unit SI.m
 	val I0 = symbol(BasicSymbols.I|"0") unit "m4/m"
@@ -176,8 +176,8 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	this(Asmin) = 0.002*hc*1
 	this(sdmax) = (PI*(dmesh^2))/(4*Asmin)//*1E-6
 	//ugiecia w fazie eksploatacji
-	this(Eceff) = Ecm/2
-	this(nE) = E/Eceff
+	this(Eceff2) = Ecm/2
+	this(nE) = E/Eceff2
 	this(e0) = (Ap*(h-epd)+(1/nE)*1*hc*(hc/2)+(1/nE)*(bo/bs)*hp*(h-(hp/2)))/(Ap+((1*hc)/nE)+(1*bo*hp)/(bs*nE))
 	this(I0) = Iplus+Ap*((h-e0-epd)^2)+((1*(hc^3))/(nE*12))+((1*hc)/nE)*((e0-hc/2)^2)+(1*bo*(hp^3))/(nE*bs*12)+(1*bo*hp)/(nE*bs)*((h-e0-(hp/2))^2)
 	this(W0) = I0/(h-e0)
@@ -305,7 +305,7 @@ extends Calculation {
 			AssertionLE("minimalnego zbrojenia na zarysowanie nad podporą",this,sd,sdmax)
 		),
 		NumSection("Sprawdzenie braku zarysowania betonu w przęśle od obciążeń przyłożonych po zespoleniu wg PN-EN 1994-1-1 pkt. 9.8.2(3)",
-			Evaluate(Seq(Eceff,nE,e0,I0,W0,Mk,sigmactplus),this),
+			Evaluate(Seq(Eceff2,nE,e0,I0,W0,Mk,sigmactplus),this),
 			AssertionLE("braku zarysowania przekroju",this,sigmactplus,fctm)
 		),
 		NumSection("Sprawdzenie ugięcia całkowitego",

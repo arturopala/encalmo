@@ -96,5 +96,15 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
   	        children.size + children.map(_.countTreeLeafs).sum
   	    }
   	}
+  	
+  	/** Collection of all nested level's children of the type A */
+    final def allNestedChildrenOfType[B <: TreeLike[A]](t:Class[B]):Seq[B] = {
+        children.filter(e => t.isAssignableFrom(e.getClass)).map(_.asInstanceOf[B]) ++ children.flatMap(_.childrenOfType[B](t))
+    }
+    
+    /** Collection of children of the type A */
+    final def childrenOfType[B <: TreeLike[A]](t:Class[B]):Seq[B] = {
+        children.filter(e => t.isAssignableFrom(e.getClass)).map(_.asInstanceOf[B])
+    }
 
 }

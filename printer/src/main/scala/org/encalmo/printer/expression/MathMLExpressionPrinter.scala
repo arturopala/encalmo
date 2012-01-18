@@ -49,6 +49,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 				case o:cbrt => false
 				case o:root => false
 				case o:abs => false
+				case o:round => false
 				case po: Operation => po.precedence > o.precedence && (node.position > 0 || po.precedence - o.precedence > 5)
 				case t:Transparent => isBracketNeeded(node.parent,o)
 				case _ => false
