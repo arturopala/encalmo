@@ -218,6 +218,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
                 Section("Normy i literatura",
                 	Section(styleComment1,"[1] Norma PN-B-03264 \"Konstrukcje betonowe, żelbetowe i sprężone. Obliczenia statyczne i projektowanie.\"")
                 ),
+                PageBreak,
                 NumSection("Parametry zadania",Evaluate(calc,ld,lr,hd,beton(CLASS),phip,phis)),
                 NumSection("Dane materiałów konstrukcyjnych",
                         NumSection("Cięgna sprężające z drutu Y1670C",Evaluate(calc,rhop,ap,dsigp,Fpk,Fp,Fp01k,rop,fpk,fp01k,gammas,fpd)),
