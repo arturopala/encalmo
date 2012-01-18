@@ -49,7 +49,7 @@ object ThinWalledCircularSlenderSilosWithSteepHopperExpressions extends MapConte
 	this(hb) = hc+hh
 	this(hcdc) = hc/dc
 	this(tr) = t
-	this(h4) = h3+h2+h1+((d1/2)*tan(alpha))
+	this(h4) = h3+h2+h1
 	
 	//volumes
 	this(Vc) = A*h1
@@ -141,7 +141,7 @@ object ThinWalledCircularSlenderSilosWithSteepHopperExpressions extends MapConte
     this(Gck) = gammas*t*U
     this(Ghk) = gammas*th*Sh
     this(Gpk) = 10 unit SI.kN
-    this(Gk) = Gck+Ghk+Grk+Gpk
+    //this(Gk) = Gck+Ghk+Grk+Gpk
     
     this(Quk) = (2.5 unit SI.kN/SI.m2) * A
     
@@ -264,6 +264,10 @@ class ThinWalledCircularSlenderSilosWithSteepHopper(
 	heightOfHopper:Expression, 
 	thicknessOfChamberWall:Expression, 
 	thicknessOfHopperWall:Expression, 
+	thicknessOfRing:Expression, 
+	heightOfRing:Expression, 
+	widthOfColumn:Expression,
+	numberOfColumns:Expression, 
 	diameterOfOutlet:Expression, 
 	particulateSolid:ParticulateSolid,
 	wallType:Expression,
@@ -294,22 +298,22 @@ extends Calculation {
 	this(h3) = 2.5 unit SI.m
     this(alpha) = 5 unit SI.deg
 	this(HM) = 140 unit SI.m
-	this(s1) = 400 unit SI.mm
-	this(hpp) = 400 unit SI.mm
+	this(s1) = widthOfColumn
+	this(hpp) = heightOfRing
 	this(tp) = t
-	this(tpp) = 10 unit SI.mm
-	this(ns) = 4
+	this(tpp) = thicknessOfRing
+	this(ns) = numberOfColumns
 	this(gammaM1) = 1.1
     
 	//input geometry
 	def inputGeometry = NumSection(TextToTranslate("_inputGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(d1,h1,h2,de,t,th,tr,tp,tpp,alpha,h3),this)
+		Evaluate(Seq(d1,h1,h2,de,t,th,tr,tp,tpp,alpha,h3,h4),this)
 	)
 	//input assertions
 	
 	//calculated geometry
 	def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(r,dc,A,U,AU,beta,h4,hh,he,htp,ho,hc,hb,hcdc,Sc,Sh,S),this),
+		Evaluate(Seq(r,dc,A,U,AU,beta,hh,he,htp,ho,hc,hb,hcdc,Sc,Sh,S),this),
 		AssertionL("[1991-4] 1.1.2 (3)",this,hb/dc,10),
 		AssertionL("[1991-4] 1.1.2 (3)",this,hb,100 unit SI.m),
 		AssertionL("[1991-4] 1.1.2 (3)",this,dc,60 unit SI.m),
@@ -319,7 +323,7 @@ extends Calculation {
 	def volumes = NumSection(TextToTranslate("_volumes",SilosSymbols.dictionary),
 		Evaluate(Seq(Vc,Vh,V,W),this)
 	)
-    def ciezarWlasny = NumSection("Oddziaływania od ciężaru własnego",Evaluate(this,Gck,Ghk,Grk,Gpk,Gk))
+    def ciezarWlasny = NumSection("Oddziaływania od ciężaru własnego",Evaluate(this,Gck,Ghk,Grk,Gpk))
     def obciazenieUzytkowe = NumSection("Obciążenie użytkowe",Evaluate(this,Quk))
     def obciazenieSniegiem = NumSection("Oddziaływania od obciążenia śniegiem",Evaluate(this,HM,sk,mi1,Ce,Ct,sr,Qsk))
     def obciazenieWiatrem = NumSection("Oddziaływania od obciążenia wiatrem",Evaluate(this,qbo,cez,qpz,cscd,ze,Re,Aref,cf,Fw,wemax,cpi,wi))
