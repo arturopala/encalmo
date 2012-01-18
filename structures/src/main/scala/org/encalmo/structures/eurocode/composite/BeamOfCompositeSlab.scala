@@ -123,7 +123,7 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	import BeamOfCompositeSlabSymbols._
 	import ConcreteSymbols.{fck,fcd,Ecm,vc}
 	import SteelSymbols.{E,fyd,fy,fu,gammaM0,gammaV}
-	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,hc,Eceff,nE,dmesh,sd,fyrd}
+	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,hc,Eceff2,nE,dmesh,sd,fyrd}
 	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,t,bo,bs,fypd}
     import ActionsSymbols.{gammaG,gammaQ}
     import SectionSymbols.{m,Wy,A,Iy,b,h,Wypl,AVz}
@@ -241,7 +241,7 @@ extends Calculation {
 	import BeamOfCompositeSlabSymbols._
 	import ConcreteSymbols.{vc}
 	import SteelSymbols.{E,fyd,epsi,fy}
-	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff,nE}
+	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff2,nE}
 	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,bo,bs}
     import ActionsSymbols.{gammaG,gammaQ}
     import SectionSymbols.{AVz}
@@ -312,7 +312,7 @@ extends Calculation {
 			AssertionLE("nośności na zginanie",this,MEde/MplRd,1)
 		),
 		NumSection("Sprawdzenie naprężeń we włóknach skrajnych belki",
-			Evaluate(Seq(Eceff,nE,bn,Sy,z0,I1,Wel,ΔMk,sigmake,sigmamax),this),
+			Evaluate(Seq(Eceff2,nE,bn,Sy,z0,I1,Wel,ΔMk,sigmake,sigmamax),this),
 			AssertionLE("naprężeń dopuszczalnych we włóknach skrajnych",this,sigmamax,1.02*fy)
 		),
 		NumSection("Sprawdzenie łączników na ścinanie wg PN-EN 1994-1-1 pkt. 6.6",

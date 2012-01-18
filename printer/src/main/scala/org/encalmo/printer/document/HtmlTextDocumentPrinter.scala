@@ -63,7 +63,7 @@ div {padding:5pt 0 2pt 0}
 	styleStack.push(DefaultStyle)
 	
 	/** Returns counter linked to the enumerator */
-	private def counterFor(en:Enumerator):SectionCounter = {
+	protected def counterFor(en:Enumerator):SectionCounter = {
 		var sco = counterMap.get(en)
 		if(!sco.isDefined){
 			sco = Some(SectionCounter(en))
@@ -102,18 +102,29 @@ div {padding:5pt 0 2pt 0}
 			    output.startb(P)
 				chapter.header.travel(traveler=this)
 			}
+			case toc:TableOfContents => {
+                if(toc.parentDocument.isDefined){
+                    output.startb(DIV,"toc")
+                    toc.parentDocument.get.travel(traveler = new HtmlTableOfContentsPrinterTraveler(output))
+                    output.end(DIV)
+                }
+            }
 			case _ => {
 				node.element match {
 					case ns:NumSection => {
 						val en:Enumerator = ns.enumerator
 						val sc = counterFor(en)
+						val label = sc.current.mkString("",".",".")
 						output.startb(DIV,ns.styleClassId)
+						output.start(ANCHOR)
+						output.attr("name",label)
+						output.end
 						output.startb(SPAN,"caption")
 						val ens = en.style
 						if(ens!=null){
 							output.startb(SPAN,en.styleClassId)
 						}
-						output.append(sc.current.mkString("",".","."+SPACE))
+						output.append(label,SPACE)
 						sc.in // counter level increment
 						if(ens!=null){
 							output.end(SPAN)
@@ -335,6 +346,55 @@ div {padding:5pt 0 2pt 0}
 		}
 	}
 	
+}
+
+class HtmlTableOfContentsPrinterTraveler(output:HtmlOutput) 
+extends HtmlTextDocumentPrinterTraveler(output) {
+    
+    override def onEnter(node:Node[DocumentComponent]):Unit = {
+        node.element match {
+            case ns:NumSection => {
+                val en:Enumerator = ns.enumerator
+                val sc = counterFor(en)
+                val label = sc.current.mkString("",".",".")
+                output.startb(SPAN,"toc"+sc.currentLevel)
+                output.start(ANCHOR)
+                output.attr("href","#",label)
+                output.body
+                output.append(label,SPACE)
+                if(ns.title.isDefined){
+                    output.append(ns.title.get)
+                }
+                ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
+                    case ttt:TextToTranslate => {
+                        output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
+                        output.append(SPACE)
+                    }
+                    case t:Text => {
+                        output.append(t.textContent)
+                        output.append(SPACE)
+                    }
+                    case _ =>
+                })
+                output.end(ANCHOR)
+                output.end(SPAN)
+                sc.in // counter level increment
+            }
+            case _ => Unit
+        }
+    }
+        
+    override def onExit(node:Node[DocumentComponent]):Unit = {
+        node.element match {
+            case ns:NumSection => {
+                val sc = counterFor(ns.enumerator)
+                sc.out //counter level decrement
+                sc.next // counter increment
+            }
+            case _ =>
+        }
+    }
+    
 }
 
 

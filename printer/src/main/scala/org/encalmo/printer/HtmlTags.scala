@@ -21,5 +21,6 @@ object HtmlTags {
     val OL 			    	= "ol"
     val UL 			    	= "ul"
     val LI 			    	= "li"
+    val ANCHOR              = "a"
 
 }

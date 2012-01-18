@@ -53,7 +53,7 @@ extends Traveler[DocumentComponent] {
 	styleStack.push(DefaultStyle)
 	
 	/** Returns counter linked to the enumerator */
-	private def counterFor(en:Enumerator):SectionCounter = {
+	protected def counterFor(en:Enumerator):SectionCounter = {
 		var sco = counterMap.get(en)
 		if(!sco.isDefined){
 			sco = Some(SectionCounter(en))
@@ -171,6 +171,22 @@ extends Traveler[DocumentComponent] {
 			case chapter:Chapter => {
 				tryStartPageSequence(chapter,chapter.style)
 			}
+            case toc:TableOfContents => {
+                output.start(BLOCK)
+                output.attr("margin-top","1em")
+                output.attr("margin-bottom","1em")
+                output.body
+                if(toc.parentDocument.isDefined){
+                    output.start(BLOCK)
+                    output.attr("margin-bottom","0.3em")
+                    output.attr("font-size", "12pt")
+                    output.body
+                    output.append(toc.title)
+                    output.end(BLOCK)
+                    toc.parentDocument.get.travel(traveler = new XslFoTableOfContentsPrinterTraveler(output))
+                }
+                output.end(BLOCK)
+            }
 			case _ => {
 				tryStartPageSequence(null,node.element.style)
 				node.element match {
@@ -180,7 +196,7 @@ extends Traveler[DocumentComponent] {
 						output.start(BLOCK)
 						output.appendBlockStyleAttributes(ns.style,styleStack.top)
 						if(ns.isFirstBlockComponent){
-						    //output.attr("keep-with-previous","always")
+						    output.attr("keep-with-previous","always")
 						}
 						output.body
 						val ens = en.style
@@ -323,7 +339,7 @@ extends Traveler[DocumentComponent] {
     		output.start(TABLE)
     		output.attr("table-layout","fixed")
     		output.attr("width","100%")
-            output.attr("border-collapse","collapse")
+            //output.attr("border-collapse","collapse")
     		if(expr.isFirstBlockComponent){
     			//output.attr("keep-with-previous","always")
 			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
@@ -463,6 +479,53 @@ extends Traveler[DocumentComponent] {
     	
 	}
 	
+}
+
+class XslFoTableOfContentsPrinterTraveler(output:XslFoOutput) 
+extends XslFoTextDocumentPrinterTraveler(output) {
+    
+    override def onEnter(node:Node[DocumentComponent]):Unit = {
+        node.element match {
+            case ns:NumSection => {
+                val en:Enumerator = ns.enumerator
+                val sc = counterFor(en)
+                output.start(BLOCK)
+                output.attr("font-size", Math.max(11-sc.currentLevel,7)+"pt")
+                output.attr("margin-left",(2*sc.currentLevel)+"em")
+                output.body
+                output.append(sc.current.mkString("",".","."+SPACE))
+                if(ns.title.isDefined){
+                    output.append(ns.title.get)
+                }
+                ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
+                    case ttt:TextToTranslate => {
+                        output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
+                        output.append(SPACE)
+                    }
+                    case t:Text => {
+                        output.append(t.textContent)
+                        output.append(SPACE)
+                    }
+                    case _ =>
+                })
+                output.end(BLOCK)
+                sc.in // counter level increment
+            }
+            case _ => Unit
+        }
+    }
+        
+    override def onExit(node:Node[DocumentComponent]):Unit = {
+        node.element match {
+            case ns:NumSection => {
+                val sc = counterFor(ns.enumerator)
+                sc.out //counter level decrement
+                sc.next // counter increment
+            }
+            case _ =>
+        }
+    }
+    
 }
 
 

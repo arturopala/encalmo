@@ -54,7 +54,8 @@ object Predefined {
     stylesConfig(ASSERTION_UNKNOWN) = styleWarunek.useBackground(java.awt.Color.ORANGE).useColor(java.awt.Color.RED)
     
     val styleDescription:Style = style1.fontSmaller.fontSmaller.hyphenateOn.marginLeft(23).setClassId("description")
-    val styleComment = style1.fontSmaller.marginLeft(20).setClassId("comment")
+    val styleComment = style1.fontSmaller.setClassId("comment")
+    val styleComment1 = style1.fontSmaller.marginLeft(20).setClassId("comment1")
     val styleTitle = style1.fontBigger.fontBold.paddingTop(20).paddingBottom(20).useAlign("center").setClassId("title")
     
 }
