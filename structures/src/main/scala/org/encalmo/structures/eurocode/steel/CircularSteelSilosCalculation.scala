@@ -53,7 +53,7 @@ class CircularSteelSilosCalculation extends CalculationDocument {
         	),
             Section(""),
             Section(
-                Section(styleTitle,"Silos stalowy jednokomorowy na cement."),
+                Section(styleTitle,"Stalowy silos walcowy jednokomorowy na cement. \r\n Sprawdzenie nośności powłoki komory."),
                 TableOfContents("Spis treści"),
                 Section(styleComment,"Wykaz materiałów źródłowych",
                     Section(styleComment1,"[1991-1-3] Norma PN-EN 1991-1-3 \"Eurokod 1. Oddziaływania na konstrukcje. Część 1-3: Oddziaływania ogólne. Obciążenia śniegiem.\""),
@@ -63,6 +63,7 @@ class CircularSteelSilosCalculation extends CalculationDocument {
                 	Section(styleComment1,"[1993-1-6] Norma PN-EN 1993-1-6 \"Eurokod 3. Projektowanie konstrukcji stalowych. Część 1-6: Wytrzymałosć i stateczność konstrukcji powłokowych.\""),
                 	Section(styleComment1,"[1993-4] Norma PN-EN 1993-4 \"Eurokod 3. Projektowanie konstrukcji stalowych. Część 4-1: Silosy.\"")
                 ),
+                PageBreak,
                 NumSection("Dane do projektowania",
                         silos.inputGeometry,
                         steel.info,
