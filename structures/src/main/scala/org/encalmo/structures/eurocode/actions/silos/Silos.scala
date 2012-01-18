@@ -139,7 +139,7 @@ object SilosSymbols extends SymbolConfigurator {
     lazy val pne1 = symbol(BasicSymbols.p|"ne,1") unit "kPa"
     lazy val pte1 = symbol(BasicSymbols.p|"te,1") unit "kPa"
     
-    lazy val Gk = symbol(BasicSymbols.G|"k") unit "kN" is "Charakterystyczny ciężar własny silosu"
+    //lazy val Gk = symbol(BasicSymbols.G|"k") unit "kN" is "Charakterystyczny ciężar własny silosu"
     lazy val Gck = symbol(BasicSymbols.G|"ck") unit "kN/m" is "Charakterystyczny ciężar własny płaszcza komory"
     lazy val Ghk = symbol(BasicSymbols.G|"hk") unit "kN" is "Charakterystyczny ciężar własny płaszcza leja"
     lazy val Grk = symbol(BasicSymbols.G|"rk") unit "kN" is "Charakterystyczny ciężar własny powłoki dachu"

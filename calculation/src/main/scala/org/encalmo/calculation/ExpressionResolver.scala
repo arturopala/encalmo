@@ -125,6 +125,7 @@ trait ExpressionResolver {
 		}
 		case sl:SymbolLike => sl.eval
 		case sel:Selection => sel.trim
+		case ev:Eval => ev.substitute
 		case e => e
 	}
 	
