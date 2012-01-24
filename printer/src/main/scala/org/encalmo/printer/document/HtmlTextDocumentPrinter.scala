@@ -9,6 +9,9 @@ import org.encalmo.printer.HtmlTags._
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.mutable.Stack
 import scala.collection._
+import org.encalmo.style.Style
+import org.encalmo.style.DefaultStyle
+import org.encalmo.style.StylesConfig
 
 /**
  * Prints document as html5 text 

@@ -1,9 +1,9 @@
 package org.encalmo.printer
 import java.io.Writer
 import org.encalmo.expression._
-import org.encalmo.document.Style
-import org.encalmo.document.FontStyle
-import org.encalmo.document.DefaultStyle
+import org.encalmo.style.Style
+import org.encalmo.style.FontStyle
+import org.encalmo.style.DefaultStyle
 import org.encalmo.common.Translator
 import MathMLTags._
 

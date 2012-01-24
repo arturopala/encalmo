@@ -7,6 +7,9 @@ import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
 import org.encalmo.printer._
+import org.encalmo.style.DefaultFontStyle
+import org.encalmo.style.DefaultStyle
+import org.encalmo.style.StylesConfig
 
 class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 	

@@ -2,6 +2,9 @@ package org.encalmo.printer
 
 import org.encalmo.document._
 import XslFoTags._
+import org.encalmo.style.Style
+import org.encalmo.style.FontStyle
+import org.encalmo.style.DefaultFontStyle
 
 /**
  * XslFo text output

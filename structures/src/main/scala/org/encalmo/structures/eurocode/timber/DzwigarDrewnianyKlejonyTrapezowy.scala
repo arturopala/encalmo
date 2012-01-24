@@ -7,7 +7,7 @@ import org.encalmo.document._
 import org.encalmo.printer._
 import org.encalmo.printer.document._
 import org.encalmo.fop.FOPHelper
-import org.encalmo.document.StylesConfigSymbols._
+import org.encalmo.style.StylesConfigSymbols._
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.CalculationDocument

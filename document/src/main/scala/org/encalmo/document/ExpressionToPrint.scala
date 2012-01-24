@@ -1,6 +1,8 @@
 package org.encalmo.document
 
 import org.encalmo.expression._
+import org.encalmo.style.Style
+import org.encalmo.style.StylesConfig
 
 /**
  * Expression to print holder

@@ -6,6 +6,9 @@ import org.junit.Assert._
 import org.junit.Test
 import org.encalmo.expression._
 import org.encalmo.calculation._
+import org.encalmo.style.DefaultFontStyle
+import org.encalmo.style.DefaultStyle
+import org.encalmo.style.StylesConfig
 
 /**
  * Document test

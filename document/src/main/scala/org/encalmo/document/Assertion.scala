@@ -1,10 +1,12 @@
 package org.encalmo.document
 import scala.collection.mutable._
-
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Symbol
 import org.encalmo.expression.Number
 import org.encalmo.calculation.Calculation
+import org.encalmo.style.StylesConfig
+import org.encalmo.style.Style
+import org.encalmo.style.DefaultStyle
 
 /**
  * Assertion class

@@ -1,8 +1,8 @@
 package org.encalmo.printer
 
-import org.encalmo.document.Style
-import org.encalmo.document.StylesConfig
-import org.encalmo.document.FontStyle
+import org.encalmo.style.Style
+import org.encalmo.style.StylesConfig
+import org.encalmo.style.FontStyle
 
 object CSS {
     

@@ -1,4 +1,6 @@
 package org.encalmo.document
+import org.encalmo.style.StylesConfig
+import org.encalmo.style.DefaultStyle
 
 /**
  * Document class

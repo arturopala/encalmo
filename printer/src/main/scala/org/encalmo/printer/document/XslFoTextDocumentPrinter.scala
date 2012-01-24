@@ -3,13 +3,14 @@ package org.encalmo.printer.document
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.mutable.Stack
 import scala.collection._
-
 import org.encalmo.common._
 import org.encalmo.document._
 import org.encalmo.expression.SymbolLike
 import org.encalmo.printer.XslFoTags._
 import org.encalmo.printer.expression._
 import org.encalmo.printer._
+import org.encalmo.style.Style
+import org.encalmo.style.DefaultStyle
 
 /**
  * Prints document as xsl-fo text 

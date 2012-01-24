@@ -1,4 +1,4 @@
-package org.encalmo.document
+package org.encalmo.style
 
 import scala.collection.mutable.Map
 

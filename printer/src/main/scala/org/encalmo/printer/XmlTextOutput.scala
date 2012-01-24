@@ -1,5 +1,5 @@
 package org.encalmo.printer
-import org.encalmo.document.Style
+import org.encalmo.style.Style
 
 /**
  * XML text output

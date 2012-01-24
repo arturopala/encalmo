@@ -2,6 +2,9 @@ package org.encalmo.printer
 
 import org.encalmo.document._
 import HtmlTags._
+import org.encalmo.style.FontStyle
+import org.encalmo.style.StylesConfig
+import org.encalmo.style.Style
 
 /**
  * Html text output

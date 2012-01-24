@@ -1,6 +1,8 @@
 package org.encalmo.document
 
 import annotation.tailrec
+import org.encalmo.style.Style
+import org.encalmo.style.StylesConfig
 
 /**
  * Numbered section component class

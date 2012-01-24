@@ -1,6 +1,7 @@
 package org.encalmo.document
 
 import annotation.tailrec
+import org.encalmo.style.Style
 
 /**
  * TableOfContents section component class
