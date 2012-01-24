@@ -1,6 +1,7 @@
 package org.encalmo.document
 
 import org.encalmo.common._
+import org.encalmo.style.Style
 
 /**
  * Document's components sequence abstract class

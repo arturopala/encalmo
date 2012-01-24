@@ -8,13 +8,16 @@ import org.encalmo.calculation._
 import org.encalmo.document._
 import org.encalmo.printer._
 import org.encalmo.fop.FOPHelper
+import org.encalmo.style.DefaultFontStyle
+import org.encalmo.style.DefaultStyle
+import org.encalmo.style.StylesConfig
 
 class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 	
 	@Test def test1() {
 		
 		import BasicSymbols._
-		import org.encalmo.document.StylesConfigSymbols._
+		import org.encalmo.style.StylesConfigSymbols._
 		
 		val font1 = DefaultFontStyle.++.makeBold
 		val font2 = DefaultFontStyle.makeItalic
@@ -222,7 +225,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	@Test def test2() {
 		
 		import BasicSymbols._
-		import org.encalmo.document.StylesConfigSymbols._
+		import org.encalmo.style.StylesConfigSymbols._
 		
 		val c1 = Calculation("1") 
 		

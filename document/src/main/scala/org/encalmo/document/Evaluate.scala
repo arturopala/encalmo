@@ -1,7 +1,6 @@
 package org.encalmo.document
 
 import scala.collection.mutable.LinkedList
-
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Transformations
 import org.encalmo.expression.Operation2
@@ -14,6 +13,8 @@ import org.encalmo.expression.Function
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.FutureExpression
 import org.encalmo.calculation.Eval
+import org.encalmo.style.Style
+import org.encalmo.style.StylesConfigSymbols
 
 /**
  * Evaluate: symbol = resolved = evaluated

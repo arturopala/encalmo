@@ -1,9 +1,9 @@
 package org.encalmo.document
 import scala.collection.mutable.LinkedList
-
 import org.encalmo.expression.Expression
 import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
+import org.encalmo.style.Style
 
 /**
  * Symb inline component class

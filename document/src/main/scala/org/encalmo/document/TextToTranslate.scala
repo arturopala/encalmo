@@ -1,4 +1,5 @@
 package org.encalmo.document
+import org.encalmo.style.Style
 
 /**
  * TextToTranslate component class

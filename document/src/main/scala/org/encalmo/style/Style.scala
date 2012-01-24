@@ -1,11 +1,6 @@
-package org.encalmo.document
+package org.encalmo.style
 
 import java.awt.Color
-import org.encalmo.document.TextStyle
-import org.encalmo.document.DefaultParagraphStyle
-import org.encalmo.document.DefaultTextStyle
-import org.encalmo.document.BoxDim
-import org.encalmo.document.ParagraphStyle
 
 /**
  * DocumentComponent's style class

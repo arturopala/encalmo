@@ -5,6 +5,8 @@ import annotation.tailrec
 import org.encalmo.common.AdHocTraveler
 import org.encalmo.common.Node
 import scala.collection.mutable.{Set,LinkedHashSet}
+import org.encalmo.style.Style
+import org.encalmo.style.DefaultStyle
 
 /**
  * DocumentComponent trait

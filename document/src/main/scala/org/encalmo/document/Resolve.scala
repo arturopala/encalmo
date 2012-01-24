@@ -6,6 +6,8 @@ import org.encalmo.expression.Operation2
 import org.encalmo.expression.OperationN
 import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
+import org.encalmo.style.Style
+import org.encalmo.style.StylesConfigSymbols
 
 /**
  * Resolve: symbol = resolved
