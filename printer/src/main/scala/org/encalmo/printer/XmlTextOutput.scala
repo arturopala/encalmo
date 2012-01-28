@@ -45,6 +45,17 @@ extends TextOutput(locale,buffer) {
 		appendTagName(name)
 	}
 	
+	def startNoIndent(name:String):Unit = {
+        if(!indent.isFirst){
+            
+        } else {
+            indent.isFirst = false
+        }
+        indent ++;
+        buffer.append("<")
+        appendTagName(name)
+    }
+	
 	/**
 	 * Appends element's start tag to the buffer
 	 */
@@ -120,6 +131,15 @@ extends TextOutput(locale,buffer) {
 		buffer.append(">")
 		indent.inBody = false
 	}
+	
+	def endNoIndent(name:String):Unit = {
+        indent --;
+        buffer.append("</")
+        appendTagName(name)
+        buffer.append(">")
+        buffer.append("&#8203;")
+        indent.inBody = false
+    }
 	
 	/**
 	 * Appends short element's tag to the buffer

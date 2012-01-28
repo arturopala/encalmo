@@ -57,8 +57,8 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
 		val children = element.children
 		if(!children.isEmpty){
 			children.size match {
-				case 1 => travelChild(node,children(0),traveler)
-				case 2 => travel2Children(node,children(0),children(1),traveler)
+				case 1 => travelChild(node,children.head,traveler)
+				case 2 => travel2Children(node,children.head,children.tail.head,traveler)
 				case _ => travelNChildren(node,children,traveler)
 			}
 			
@@ -79,7 +79,7 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
   	}
   	
   	private def travelNChildren(node:Node[A],children:Seq[A],traveler:Traveler[A]):Unit = {
-		travelChild(node,children(0),traveler,0)
+		travelChild(node,children.head,traveler,0)
 		for(x <- 1 to children.size-1){
 			traveler.onBetweenChildren(node,children(x-1),children(x))
 			travelChild(node,children(x),traveler,x)

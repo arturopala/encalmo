@@ -24,8 +24,6 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	var mathStyle:Style = DefaultStyle
 	var numberStyle:Style = null
-	var prefix:String = null
-	var suffix:String = null
 	
 	lazy val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val dimensionFormat:java.text.NumberFormat = new java.text.DecimalFormat("0.#",java.text.DecimalFormatSymbols.getInstance(locale))
@@ -34,31 +32,17 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",java.text.DecimalFormatSymbols.getInstance(locale))
 	
-	val SYMB_CLASS_ID = "symb"
-	val NUM_CLASS_ID = "num"
-	
 	override def open = {
-		start(MATH)
+		startNoIndent(MATH)
 		if(declare){
 		    declareNamespace("http://www.w3.org/1998/Math/MathML")
 		}
 		if(displayType.isDefined){
 		    attr("display",displayType.get)
 		}
-		//attr("displaystyle","true")
-		//attr("scriptlevel","0")
-		attr("scriptsizemultiplier","0.8")
+		attr("scriptsizemultiplier","0.9")
 		attr("scriptminsize","6pt")
 		body
-		//start(MROW)
-		//body
-		if(prefix!=null & prefix!=""){
-			startb(MTEXT)
-			append(ENTITY_THICK_SPACE)
-			append(prefix)
-			append(ENTITY_THICK_SPACE)
-			end(MTEXT)
-		}
 		if(printStyles && mathStyle!=null){
 			start(MSTYLE)
 			appendStyleAttributes(mathStyle)
@@ -70,30 +54,18 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if(printStyles && mathStyle!=null){
 			end(MSTYLE)
 		}
-		if(suffix!=null & suffix!=""){
-			start(MTEXT)
-			attr("mathsize",resolveStyle.font.size-2)
-			body
-			append(ENTITY_THICK_SPACE)
-			append(suffix)
-			append(ENTITY_THICK_SPACE)
-			end(MTEXT)
-		}
-		//end(MROW)
-		end(MATH)
-		prefix = null
-		suffix = null
+		endNoIndent(MATH)
 	}
 	
 	def thickspace = {
 		start(MSPACE)
-		attr("width","thickmathspace")
+		attr("width",THICKMATHSPACE)
 		body
 	}
 
 	def thinspace = {
 		start(MSPACE)
-		attr("width","thinmathspace")
+		attr("width",THINMATHSPACE)
 		body
 	}
 
@@ -128,14 +100,16 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			attr("rspace",rspace)
 		}
 		body
-		buffer append (s match {
-		case "-" => "&minus;"
-		case "+" => "+"
-		case "*" => ENTITY_CENTER_DOT
-		case _ => s
-		})
+		buffer append convertOperator(s)
 		end(MO)
 	}
+	
+	def convertOperator(s:String):String = s match {
+        case "-" => "&minus;"
+        case "+" => "+"
+        case "*" => ENTITY_CENTER_DOT
+        case _ => s
+    }
 
 	def mn(n: Number):Unit = {
 		val nf:NumberFormatted = n.formatForPrint
@@ -265,10 +239,13 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		end(MSUP)
 	}
 	
-	def symbol(s:Symbol,script:Boolean=false,printArgs:Boolean=true):Unit = {
-	    start(MROW,SYMB_CLASS_ID)
+	def symbol(s:Symbol,script:Boolean=false,printArgs:Boolean=true,classId:String = SYMB_CLASS_ID):Unit = {
+	    start(MROW)
 	    if(printStyles && !script){
     	    attr("mathvariant","italic")
+	    }
+	    if(classId!=null){
+	        attr("class",classId)
 	    }
 	    body
 		//under-over script start
@@ -287,7 +264,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		}
 		//scripts
 		if(s.hasSubscript && s.hasIndexes) startb(MROW)
-		if (s.hasSubscript) symbol(s.subscript.get,true)
+		if (s.hasSubscript) symbol(s.subscript.get,true,true,SYMB_SUB_CLASS_ID)
 		if(s.hasIndexes) {
 		    start(MTEXT)
 		    attr("mathsize","90%")
@@ -306,18 +283,18 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
             end(MTEXT)
 		}
 		if(s.hasSubscript && s.hasIndexes) end(MROW)
-		if (s.hasSuperscript) symbol(s.superscript.get,true)
+		if (s.hasSuperscript) symbol(s.superscript.get,true,true,SYMB_SUB_CLASS_ID)
 		if (s.hasSubAndSupscript || (s.hasSuperscript && s.hasIndexes)) end(MSUBSUP)
 		else if (s.hasSuperscript) end(MSUP)
 		else if (s.hasSubscript || s.hasIndexes) end(MSUB)
 		//sub-super script end
-		if (s.hasUnderscript) symbol(s.underscript.get,true)
-		if (s.hasOverscript) symbol(s.overscript.get,true)
+		if (s.hasUnderscript) symbol(s.underscript.get,true,true,SYMB_UNDER_CLASS_ID)
+		if (s.hasOverscript) symbol(s.overscript.get,true,true,SYMB_OVER_CLASS_ID)
 		if (s.hasOverAndUnderscript) end(MUNDEROVER)
 		else if (s.hasOverscript) end(MOVER)
 		else if (s.hasUnderscript) end(MUNDER)
 		if(printArgs && s.hasArgs){
-		    start(MROW)
+		    start(MROW,SYMB_ARGS_CLASS_ID)
 		    attr("mathsize","85%")
 		    body
             startb(MTEXT)

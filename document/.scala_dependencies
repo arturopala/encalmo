@@ -371,9 +371,6 @@
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/TextToTranslate.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/document/TextToTranslate.class
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/package.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/document/package.class
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/package.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/document/package$.class
-/home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Evaluate.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/document/Evaluate$.class
-/home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Evaluate.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/document/Evaluate$$anonfun$1.class
-/home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Evaluate.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/document/Evaluate.class
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/style/TextStyle.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/style/DefaultTextStyle.class
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/style/TextStyle.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/style/TextStyle$.class
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/style/TextStyle.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/style/DefaultTextStyle$.class

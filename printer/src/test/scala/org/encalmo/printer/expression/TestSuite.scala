@@ -11,6 +11,6 @@ import org.junit.runners.Suite;
 @RunWith(classOf[Suite])
 @Suite.SuiteClasses(Array(
 	classOf[PlainTextExpressionPrinterTest],
-	classOf[MathMLExpressionPrinterTest]
+	classOf[MathMLExpressionPrinterUnitTest]
 ))
 class TestSuite

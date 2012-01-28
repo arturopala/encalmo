@@ -124,9 +124,9 @@ case class log(e:Expression) extends Operation1 with NamedOperation {
 
 /**
  * Rounding operation
- * default strategy: RoundingMode.CEILING
+ * default strategy: RoundingMode.HALF
  */
-case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Operation1 with NamedOperation {
+case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Operation1 with NamedOperation with Transparent {
 	
   override def calculate(v:Value):Expression = v match {
 	  case Number(r,u) => Number(rm.round(r.d),u)
