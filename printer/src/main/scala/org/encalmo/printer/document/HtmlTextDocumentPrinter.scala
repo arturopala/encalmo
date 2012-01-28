@@ -102,8 +102,9 @@ div {padding:5pt 0 2pt 0}
 				return
 			}
 			case chapter:Chapter => {
-			    output.startb(P)
+			    output.startb(DIV,"header")
 				chapter.header.travel(traveler=this)
+				output.end(DIV)
 			}
 			case toc:TableOfContents => {
                 if(toc.parentDocument.isDefined){
@@ -121,7 +122,9 @@ div {padding:5pt 0 2pt 0}
 						output.startb(DIV,ns.styleClassId)
 						output.start(ANCHOR)
 						output.attr("name",label)
-						output.end
+						output.body
+						output.append(" ")
+						output.end(ANCHOR)
 						output.startb(SPAN,"caption")
 						val ens = en.style
 						if(ens!=null){

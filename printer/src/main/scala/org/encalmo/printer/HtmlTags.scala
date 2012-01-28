@@ -7,7 +7,7 @@ package org.encalmo.printer
 object HtmlTags {
 	
 	val HTML 				= "html"
-    val HEADER 				= "header"
+    val HEAD 				= "head"
     val STYLE 				= "style"
     val META 				= "meta"
     val BODY 				= "body"

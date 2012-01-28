@@ -34,6 +34,9 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",java.text.DecimalFormatSymbols.getInstance(locale))
 	
+	val SYMB_CLASS_ID = "symb"
+	val NUM_CLASS_ID = "num"
+	
 	override def open = {
 		start(MATH)
 		if(declare){
@@ -154,6 +157,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 					appendStyleAttributes(numberStyle)
 				}
 			}
+			attr("class",NUM_CLASS_ID)
 			body
 			integerFormat1.format(nf.integer).toCharArray.map{case ' ' => append("&thinsp;"/*MathMLTags.ENTITY_THIN_SPACE*/); case a => append(a)}
 			if(nf.fraction>0){
@@ -262,11 +266,11 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	}
 	
 	def symbol(s:Symbol,script:Boolean=false,printArgs:Boolean=true):Unit = {
+	    start(MROW,SYMB_CLASS_ID)
 	    if(printStyles && !script){
-    	    start(MSTYLE)
     	    attr("mathvariant","italic")
-    	    body
 	    }
+	    body
 		//under-over script start
 		if (s.hasOverAndUnderscript) startb(MUNDEROVER)
 		else if (s.hasOverscript) startb(MOVER)
@@ -335,7 +339,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		    end(MROW)
 		}
 		//under-over script end
-		if(printStyles && !script) end(MSTYLE)
+		end(MROW)
 	}
 	
 	def unit(u:SimpleUnitOfValue):Unit = {

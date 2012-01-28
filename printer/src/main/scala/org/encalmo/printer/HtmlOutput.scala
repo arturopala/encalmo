@@ -25,12 +25,12 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		start(HTML)
 		attr("lang",locale.toString())
 		body
-		startb(HEADER)
+		startb(HEAD)
 		start(META)
 		attr("http-equiv","Content-Type")
 		attr("content","text/html; charset=utf-8")
 		end
-		end(HEADER)
+		end(HEAD)
 		start(BODY)
 		end
 	}
