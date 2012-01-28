@@ -11,6 +11,10 @@ import org.encalmo.printer.expression._
 import org.encalmo.printer._
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
+import org.encalmo.expression.MultipleInfixOperation
+import org.encalmo.expression.Diff
+import org.encalmo.expression.Transparent
+import org.encalmo.expression.Expression
 
 /**
  * Prints document as xsl-fo text 
@@ -40,6 +44,7 @@ extends Traveler[DocumentComponent] {
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
 	
 	val SPACE = " "
+    val THINSPACE = "&thinsp;"
 	val COMMA = dfs.getPatternSeparator
 	
 	val blockExprPrintStrategy:ExpressionPrintStrategy = output.preferences.expressionPrintStrategy match {
@@ -69,30 +74,6 @@ extends Traveler[DocumentComponent] {
 		
 	def write(s:String) = {
 		w.write(s);
-	}
-	
-	def writeExpression(etp:ExpressionToPrint, style:Style):Unit = {
-		if(etp.expression.printable){
-			val mc = mathOutput.mathStyle
-			if(etp.prefix!=null)mathOutput.prefix = etp.prefix
-			if(etp.suffix!=null)mathOutput.suffix = etp.suffix
-			output.start(INSTREAM_FOREIGN_OBJECT)
-	        if (etp.style!=null){
-	            output.attrNoZero("min-width",etp.style.paragraph.width,etp.style.paragraph.unit)
-	            mathOutput.mathStyle = etp.style
-	        }else{
-	            if(style!=null) {
-	                output.attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
-	                mathOutput.mathStyle = style
-	            }
-	        }
-	        output.body
-	        mathOutput.open
-	        etp.expression.travel(traveler = ept)
-	        mathOutput.close
-	        mathOutput.mathStyle = mc
-	        output.end(INSTREAM_FOREIGN_OBJECT)
-		}
 	}
 	
 	var isInFlow:Boolean = false
@@ -280,7 +261,7 @@ extends Traveler[DocumentComponent] {
 			}
 		}
 		// push current style on the stack
-		styleStack.push(node.element.style)
+		styleStack.push(node.element.style.withoutParagraphStyle)
 	}
 	
 	override def onBeforeChildEnter(node:Node[DocumentComponent], position:Int, child:DocumentComponent):Unit = Unit
@@ -375,7 +356,7 @@ extends Traveler[DocumentComponent] {
 	        		case _ => None
 	        	}
 	        	val printable:Boolean = etp1.expression.printable
-	        	val isPrintDescription = printDescription && description.isDefined
+	        	val isPrintDescription = printDescription && description.isDefined && description.get!=""
 	        	val paddingTop = tableRowStyle match {
 	        		case Some(x) => x.paragraph.spaceBefore 
 	        		case None => 3
@@ -484,6 +465,56 @@ extends Traveler[DocumentComponent] {
 		}
     	
 	}
+        
+    def writeExpression(etp:ExpressionToPrint, style:Style, parentNode:Node[Expression] = null, position:Int=0, span:Boolean = true):Unit = {
+        if(etp.expression.printable){
+            etp.expression match {
+                case tr:Transparent => {
+                    val node = Node[Expression](parentNode,tr,position)
+                    tr.children.size match {
+                        case 0 => Unit
+                        case 1 => writeExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,etp.suffix,etp.stylesConfig),style,node,0,span)
+                        case _ => {
+                            writeExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
+                            tr.children.tail.foreach(e => {
+                                writeExpression(ExpressionToPrint(e,etp.style,null,null,etp.stylesConfig),style,node,1,false)
+                            })
+                            if(etp.suffix!=null)output.append(etp.suffix)
+                        }
+                    }
+                }
+                case mio:MultipleInfixOperation if mio.args.size > 1 => {
+                    val node = Node[Expression](parentNode,mio,position)
+                    writeExpression(ExpressionToPrint(mio.args.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
+                    mio.args.tail.foreach(e => {
+                        writeExpression(ExpressionToPrint(e,etp.style,output.convertOperator(mio.operator),null,etp.stylesConfig),style,node,1,false)
+                    })
+                    if(etp.suffix!=null)output.append(etp.suffix)
+                }
+                case _ => {
+                    val mc = mathOutput.mathStyle
+                    output.startNoIndent(INSTREAM_FOREIGN_OBJECT)
+                    if (etp.style!=null){
+                        output.attrNoZero("min-width",etp.style.paragraph.width,etp.style.paragraph.unit)
+                        mathOutput.mathStyle = etp.style
+                    }else{
+                        if(style!=null) {
+                            output.attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
+                            mathOutput.mathStyle = style
+                        }
+                    }
+                    output.body
+                    mathOutput.open
+                    if(etp.prefix!=null && etp.prefix!="") mathOutput.mo(etp.prefix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
+                    etp.expression.travel(traveler = ept, parentNode = parentNode, position = position)
+                    if(etp.suffix!=null && etp.suffix!="") mathOutput.mo(etp.suffix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
+                    mathOutput.close
+                    mathOutput.mathStyle = mc
+                    output.endNoIndent(INSTREAM_FOREIGN_OBJECT)
+                }
+            }
+        }
+    }
 	
 }
 

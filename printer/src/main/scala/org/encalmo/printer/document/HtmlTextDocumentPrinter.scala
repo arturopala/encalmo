@@ -12,6 +12,10 @@ import scala.collection._
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
 import org.encalmo.style.StylesConfig
+import org.encalmo.expression.MultipleInfixOperation
+import org.encalmo.expression.Diff
+import org.encalmo.expression.Transparent
+import org.encalmo.expression.Expression
 
 /**
  * Prints document as html5 text 
@@ -339,16 +343,45 @@ div {padding:5pt 0 2pt 0}
     	
 	}
    
-	def writeExpression(etp:ExpressionToPrint, style:Style):Unit = {
+	def writeExpression(etp:ExpressionToPrint, style:Style, parentNode:Node[Expression] = null, position:Int=0, span:Boolean = true):Unit = {
 		if(etp.expression.printable){
-			if(etp.prefix!=null)output.append(etp.prefix)
-			output.start(SPAN, etp.styleClassId)
-	        output.body
-	        mathOutput.open
-	        etp.expression.travel(traveler = ept)
-	        mathOutput.close
-	        output.end(SPAN)
-			if(etp.suffix!=null)output.append(etp.suffix)
+			etp.expression match {
+			    case tr:Transparent => {
+			        val node = Node[Expression](parentNode,tr,position)
+			        tr.children.size match {
+			            case 0 => Unit
+			            case 1 => writeExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,etp.suffix,etp.stylesConfig),style,node,0,span)
+			            case _ => {
+			                if(span) output.startb(SPAN, etp.styleClassId)
+			                writeExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
+			                tr.children.tail.foreach(e => {
+                                writeExpression(ExpressionToPrint(e,etp.style,null,null,etp.stylesConfig),style,node,1,false)
+                            })
+                            if(etp.suffix!=null)output.append(etp.suffix)
+                            if(span) output.end(SPAN)
+			            }
+			        }
+			    }
+			    case mio:MultipleInfixOperation if mio.args.size > 1 => {
+			        if(span) output.startb(SPAN, etp.styleClassId)
+			        val node = Node[Expression](parentNode,mio,position)
+			        writeExpression(ExpressionToPrint(mio.args.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
+			        mio.args.tail.foreach(e => {
+			            writeExpression(ExpressionToPrint(e,etp.style,output.convertOperator(mio.operator),null,etp.stylesConfig),style,node,1,false)
+			        })
+			        if(etp.suffix!=null)output.append(etp.suffix)
+			        if(span) output.end(SPAN)
+			    }
+			    case _ => {
+			        if(span) output.startb(SPAN, etp.styleClassId)
+                    mathOutput.open
+                    if(etp.prefix!=null && etp.prefix!="") mathOutput.mo(etp.prefix,MathMLTags.INFIX,null,MathMLTags.THICKMATHSPACE)
+                    etp.expression.travel(traveler = ept, parentNode = parentNode, position = position)
+                    if(etp.suffix!=null && etp.suffix!="") mathOutput.mo(etp.suffix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,null)
+                    mathOutput.close
+                    if(span) output.end(SPAN)
+			    }
+			}
 		}
 	}
 	

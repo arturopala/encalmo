@@ -107,7 +107,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val ycd = y|"cd" is "Położenie osi obojętnej przekroju betonowego względem dolnej krawędzi przekroju" unit cm; calc(ycd) = Sc/Ac
     val ycg = y|"cg" is "Położenie osi obojętnej przekroju betonowego względem górnej krawędzi przekroju" unit cm; calc(ycg) = hd-ycd
     
-    val Ic = I|c is "Moment bezwładności przekroju betonowego" unit SI.cm4 acc 1; calc(Ic) = ((bd*(hz1^3))/12) + bd*hz1*((ycg-hz1/2)^2) + ((bd*(hz3^3))/12) + bd*hz3*((ycd-hz3/2)^2) + ((b1*(hz2^3))/12) + b1*hz2*((ycd-(hz3+hz2/2))^2)
+    val Ic = I|c is "Moment bezwładności przekroju betonowego" unit SI.cm4 acc 1; calc(Ic) = round(((bd*(hz1^3))/12) + bd*hz1*((ycg-hz1/2)^2) + ((bd*(hz3^3))/12) + bd*hz3*((ycd-hz3/2)^2) + ((b1*(hz2^3))/12) + b1*hz2*((ycd-(hz3+hz2/2))^2),RoundingMode.FLOOR)
     val Wcd = W|"cd" is "Wskaźnik zginania włókien dolnych przekroju betonowego" unit SI.cm3 acc 1; calc(Wcd) = Ic/ycd
     val Wcg = W|"cg" is "Wskaźnik zginania włókien górnych przekroju betonowego" unit SI.cm3 acc 1; calc(Wcg) = Ic/ycg
     
@@ -119,7 +119,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val yp = y|p is "Położenie osi obojętnej przekroju sprowadzonego względem osi obojętnej przekroju betonowego" unit cm; calc(yp) = Scs/Acs
     val yd = y|"d" is "Położenie osi obojętnej przekroju sprowadzonego względem dolnej krawędzi przekroju" unit cm; calc(yd) = ycd-yp
     val yg = y|"g" is "Położenie osi obojętnej przekroju sprowadzonego względem górnej krawędzi przekroju" unit cm; calc(yg) = ycg+yp
-    val Ics = I|"cs" is "Moment bezwładności przekroju sprowadzonego" unit SI.cm4 acc 1; calc(Ics) = Ic + Ac*(yp^2) + Ap1s*((yd-yp1)^2) + Ap2s*((yg-yp2)^2)
+    val Ics = I|"cs" is "Moment bezwładności przekroju sprowadzonego" unit SI.cm4 acc 1; calc(Ics) = round(Ic + Ac*(yp^2) + Ap1s*((yd-yp1)^2) + Ap2s*((yg-yp2)^2),RoundingMode.FLOOR)
     val Wcsd = W|"csd" is "Wskaźnik zginania włókien dolnych przekroju sprowadzonego" unit SI.cm3 acc 1; calc(Wcsd) = Ics/yd
     val Wcsg = W|"csg" is "Wskaźnik zginania włókien górnych przekroju sprowadzonego" unit SI.cm3 acc 1; calc(Wcsg) = Ics/yg
     

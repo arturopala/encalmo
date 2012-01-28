@@ -5,6 +5,7 @@ import XslFoTags._
 import org.encalmo.style.Style
 import org.encalmo.style.FontStyle
 import org.encalmo.style.DefaultFontStyle
+import org.encalmo.style.DefaultStyle
 
 /**
  * XslFo text output
@@ -82,7 +83,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
         attrNoZero("provisional-label-separation",style.list.distanceLabelSeparation,style.list.unit)
 	}
 	
-	def appendInlineStyleAttributes(style:Style, currentStyle:Style):Unit = {
+	def appendInlineStyleAttributes(style:Style, currentStyle:Style, paragraphStyles:Boolean = true):Unit = {
 		if(style!=null){
 			attrIfChanged("font-family",currentStyle.font.family,style.font.family)
 			attrIfChanged("font-size",currentStyle.font.size,style.font.size,"pt")
@@ -96,10 +97,12 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			attrIfChanged("text-align",currentStyle.text.align,style.text.align)
 			attrIfChanged("text-decoration",currentStyle.text.decoration,style.text.decoration)
 			attrIfChanged("text-transform",currentStyle.text.transform,style.text.transform)
-			attrNoZero("padding-left",style.paragraph.padding.left,style.paragraph.unit)
-			attrNoZero("padding-right",style.paragraph.padding.right,style.paragraph.unit)
-			attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
-			attrNoZero("min-height",style.paragraph.height,style.paragraph.unit)
+			if(paragraphStyles){
+			    attrNoZero("padding-left",style.paragraph.padding.left,style.paragraph.unit)
+			    attrNoZero("padding-right",style.paragraph.padding.right,style.paragraph.unit)
+			    attrNoZero("min-width",style.paragraph.width,style.paragraph.unit)
+			    attrNoZero("min-height",style.paragraph.height,style.paragraph.unit)
+		    }
 		}
 	}
 	
@@ -142,4 +145,22 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 			case _ => ch.text
 		})
 	}
+	
+    def convertOperator(s:String):String = s match {
+        case "-" => "−"
+        case "+" => "+"
+        case "*" => "·"
+        case _ => s
+    }
+
+    def inline(text:String,style:Style, currentStyle:Style, paragraphStyles:Boolean = true): Unit = {
+        start(INLINE)
+        if (style != null) {
+            appendInlineStyleAttributes(style, currentStyle, false)
+        }
+        body
+        append(text)
+        end(INLINE)
+    }
+	
 }

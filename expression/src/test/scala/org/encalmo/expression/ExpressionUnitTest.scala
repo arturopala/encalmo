@@ -21,6 +21,11 @@ class ExpressionUnitTest extends AssertionsForJUnit {
 		assertEquals(Prod(Number(Real(3)),a),z);
 	}
 	
+	@Test def verifyProd3() {
+        val z = Prod(3.0,a,b)
+        assertEquals(11,z.precedence);
+    }
+	
 	@Test def verifyExpr2() {
 		val z = (a+b)/(c*3)
 		assertEquals(Quot(Sum(a,b),Prod(c,3)),z);

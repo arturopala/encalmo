@@ -93,6 +93,8 @@ case class Style(
     
     def setClassId(s:String):Style = {classId = s;this}
 	
+	def withoutParagraphStyle:Style = copy(paragraph = DefaultParagraphStyle)
+	
 }
 
 /**
