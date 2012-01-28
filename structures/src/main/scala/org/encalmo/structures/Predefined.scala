@@ -40,7 +40,7 @@ object Predefined {
     stylesConfig(EXPR_ROW) = style1.useSpaceBefore(2).useSpaceAfter(1)
     stylesConfig(EXPR_SYMBOL) = style1.fontItalic.width(35).useColor(BLUE)
     stylesConfig(EXPR_SYMB_DESCRIPTION) = style1.fontSmaller.fontSmaller
-    stylesConfig(EXPR_UNRESOLVED) = style1.fontSmaller.fontSmaller
+    stylesConfig(EXPR_UNRESOLVED) = style1.fontSmaller
     stylesConfig(EXPR_SUBSTITUTED) = style1.fontSmaller.fontSmaller
     stylesConfig(EXPR_PARTIALLY_EVALUATED) = style1.fontSmaller.fontSmaller
     //stylesConfig(EXPR_NUMBERS) = style1.useColor(java.awt.Color.BLUE)

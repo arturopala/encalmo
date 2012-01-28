@@ -40,7 +40,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if(displayType.isDefined){
 		    attr("display",displayType.get)
 		}
-		attr("scriptsizemultiplier","0.9")
+		attr("scriptsizemultiplier","0.95")
 		attr("scriptminsize","6pt")
 		body
 		if(printStyles && mathStyle!=null){

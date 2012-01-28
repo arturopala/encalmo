@@ -503,6 +503,7 @@ extends Traveler[DocumentComponent] {
                             mathOutput.mathStyle = style
                         }
                     }
+                    output.attr("padding","1.5pt 0")
                     output.body
                     mathOutput.open
                     if(etp.prefix!=null && etp.prefix!="") mathOutput.mo(etp.prefix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)

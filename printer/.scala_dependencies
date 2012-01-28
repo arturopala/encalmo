@@ -9,8 +9,8 @@
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/MathMLOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/MathMLTags.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/MathMLOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/MathMLOutput.scala
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/XslFoTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala
-/home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/XslFoTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Layout.scala
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/XslFoTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/XslFoTextDocumentPrinterTest.scala
+/home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/XslFoTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Layout.scala
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/XslFoTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/document/XslFoTextDocumentPrinter.scala
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/XslFoTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/XslFoOutput.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/document/PdfDocumentPrinter.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala
@@ -66,12 +66,12 @@
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/XslFoTags.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/XslFoTags.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/SectionCounter.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/SectionCounter.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/PdfOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Layout.scala
-/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/PdfOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Output.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/PdfOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/PdfOutput.scala
+/home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/PdfOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Output.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/PdfOutput.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/XslFoOutput.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Output.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Output.scala
-/home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/TestSuite.scala -> /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/MathMLExpressionPrinterUnitTest.scala
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/TestSuite.scala -> /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/PlainTextExpressionPrinterTest.scala
+/home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/TestSuite.scala -> /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/MathMLExpressionPrinterUnitTest.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Layout.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/LayoutFormat.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Layout.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/LayoutOrientation.scala
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Layout.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/Layout.scala
@@ -117,8 +117,8 @@
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/PlainTextExpressionPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/PlainTextExpressionPrinterTest.scala
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/expression/PlainTextExpressionPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/expression/PlainTextExpressionPrinter.scala
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/PlainTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/TextOutput.scala
-/home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/PlainTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/PlainTextDocumentPrinterTest.scala
 /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/PlainTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/document/PlainTextDocumentPrinter.scala
+/home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/PlainTextDocumentPrinterTest.scala -> /home/artur/workspace/encalmo/printer/src/test/scala/org/encalmo/printer/document/PlainTextDocumentPrinterTest.scala
 -------
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/CSS.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/CSS$.class
 /home/artur/workspace/encalmo/printer/src/main/scala/org/encalmo/printer/CSS.scala -> /home/artur/workspace/encalmo/printer/target/classes/org/encalmo/printer/CSS.class

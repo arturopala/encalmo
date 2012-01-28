@@ -15,7 +15,7 @@
 div {padding:5pt 0 2pt 0}
 a {color: #3E5460; text-decoration: none}
 a:hover {color: blue; text-decoration: underline}
-math {white-space: nowrap; padding: 0; margin: 0;}
+math {white-space: nowrap; padding: 0; margin: 1px 0;}
 .header {font-size: 75%}
 .ec1 {width:30%; margin-left:2em; text-align:left; vertical-align:top}
 .ec2 {width:5%; font-size:1em; font-weight: bold; text-align:center;}
@@ -26,8 +26,8 @@ math {white-space: nowrap; padding: 0; margin: 0;}
 .expsymb {font-size:1.1em;font-style:italic;font-weight:normal;color:#000000;min-width:35pt;space-before:1pt;space-after:1pt;}
 .expsymb .symb {color:blue;}
 .expdesc {font-size:0.83em;font-style:normal;font-weight:normal;color:#000000;space-before:1pt;space-after:1pt;}
-.expeval {font-size:1em;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
-.expeval mn.num {font-weight:bold; color: blue}
+.expeval {font-size:1.1em;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
+.expeval mn.num {font-weight:normal; color: blue}
 .ns0 {space-before:1.3em;space-after:1pt;}
 .ns0 .caption {font-size:1em;font-style:normal;font-weight:bold;color:#3E5460;letter-spacing:150%;  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
 .ns1 {space-before:1em;space-after:1pt;}
@@ -50,6 +50,7 @@ math {white-space: nowrap; padding: 0; margin: 0;}
 .numexp {color:#545454;font-size:0.9em;font-weight:normal;}
 .symb {color:black;}
 .ssup,.ssub {font-size:75%}
+.pwri {font-size:80%}
 .comment {font-size:0.94em;}
 .comment1 {font-size:0.83em; padding-left:1em}
 .description {font-size:0.83em;}

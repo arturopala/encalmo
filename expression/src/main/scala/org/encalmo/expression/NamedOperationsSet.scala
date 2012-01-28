@@ -81,6 +81,8 @@ case class hypot(l:Expression,r:Expression) extends Operation2 with NamedOperati
   }*/
   override def copy(le:Expression,re:Expression) = hypot(le,re)
   override val operator = "hypot"
+      
+  def expand:Expression = sqrt(square(l)+square(r))
 }
 
 /**
