@@ -229,9 +229,16 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 					case o:hypot => {
 						output.startb(MSUP)
 						output.startb(MROW)
+						output.leftBracket
 					}
                     case Power(Number(r,u),any) if u!=EmptyUnitOfValue && position==0 => {
                         output.leftBracket
+                    }
+                    case p:Power if position==1 => {
+                        output.start(MROW)
+                        output.attr("mathsize","80%")
+                        output.attr("class","pwri")
+                        output.body
                     }
 					case _ => Unit
 				}
@@ -314,14 +321,23 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 			case _ => {
 				node.element match {
 					case o:hypot => {
+					    output.rightBracket
 						output.end(MROW)
+						output.start(MROW)
+                        output.attr("mathsize","80%")
+                        output.attr("class","pwri")
+                        output.body
 						output.startb(MN)
 						output.append("2")
 						output.end(MN)
+						output.end(MROW)
 						output.end(MSUP)
 					}
                     case Power(Number(r,u),any) if u!=EmptyUnitOfValue && position==0 => {
                         output.rightBracket
+                    }
+                    case p:Power if position==1 => {
+                        output.end(MROW)
                     }
 					case _ => Unit
 				}
