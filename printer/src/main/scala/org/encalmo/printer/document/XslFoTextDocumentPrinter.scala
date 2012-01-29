@@ -37,15 +37,9 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
 class XslFoTextDocumentPrinterTraveler(output:XslFoOutput) 
 extends Traveler[DocumentComponent] {
 	
-	val w = output.asWriter
 	val locale = output.locale
 	val mathOutput = output.toMathMLOutput
 	val ept = new MathMLExpressionPrinterTraveler(mathOutput)
-	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
-	
-	val SPACE = " "
-    val THINSPACE = "&thinsp;"
-	val COMMA = dfs.getPatternSeparator
 	
 	val blockExprPrintStrategy:ExpressionPrintStrategy = output.preferences.expressionPrintStrategy match {
 		case "table" => new ExpressionPrintAsTableStrategy(this)
@@ -66,14 +60,6 @@ extends Traveler[DocumentComponent] {
 			counterMap.put(en,sco.get)
 		}
 		sco.get
-	}
-	
-	def write(ch:Char) = {
-		w.write(ch);
-	}
-		
-	def write(s:String) = {
-		w.write(s);
 	}
 	
 	var isInFlow:Boolean = false
@@ -193,7 +179,7 @@ extends Traveler[DocumentComponent] {
 							output.body
 						}
 						
-						output.append(sc.current.mkString("",".","."+SPACE))
+						output.append(sc.current.mkString("",".","."+output.SPACE))
 						sc.in // counter level increment
 						if(ens!=null){
 							output.end(INLINE)
@@ -269,7 +255,7 @@ extends Traveler[DocumentComponent] {
 	override def onBetweenChildren(node:Node[DocumentComponent], leftChild:DocumentComponent, rightChild:DocumentComponent):Unit = {
 		(leftChild,rightChild) match {
 			case (tl:Text,tr:Text) => {
-				write(SPACE)
+				output.append(output.SPACE)
 			}
 			case _ =>
 		}
@@ -531,18 +517,18 @@ extends XslFoTextDocumentPrinterTraveler(output) {
                 output.attr("font-size", Math.max(11-sc.currentLevel,7)+"pt")
                 output.attr("margin-left",(2*sc.currentLevel)+"em")
                 output.body
-                output.append(sc.current.mkString("",".","."+SPACE))
+                output.append(sc.current.mkString("",".","."+output.SPACE))
                 if(ns.title.isDefined){
                     output.append(ns.title.get)
                 }
                 ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
                     case ttt:TextToTranslate => {
                         output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
-                        output.append(SPACE)
+                        output.append(output.SPACE)
                     }
                     case t:Text => {
                         output.append(t.textContent)
-                        output.append(SPACE)
+                        output.append(output.SPACE)
                     }
                     case _ =>
                 })
