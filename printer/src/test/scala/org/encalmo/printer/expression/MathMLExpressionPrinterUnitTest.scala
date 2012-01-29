@@ -53,17 +53,16 @@ class MathMLExpressionPrinterUnitTest extends AssertionsForJUnit {
         o.open
         MathMLExpressionPrinter.print(e,o)
         o.close
-        assertEquals(o.getResult,"""<ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" scriptsizemultiplier="0.9" scriptminsize="6pt">
+        assertEquals(o.getResult,"""<ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" scriptsizemultiplier="0.95" scriptminsize="6pt">
   <ml:mstyle mathcolor="#000000" mathbackground="" mathsize="11" mathvariant="normal">
     <ml:mrow mathvariant="italic" class="symb">
       <ml:mi>a</ml:mi>
     </ml:mrow>
-    <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
+    <ml:mo form="infix" lspace="thinmathspace" rspace="thinmathspace">&CenterDot;</ml:mo>
     <ml:mrow mathvariant="italic" class="symb">
       <ml:mi>b</ml:mi>
     </ml:mrow>
-  </ml:mstyle>
-</ml:math>""")
+  </ml:mstyle></ml:math>&#8203;""")
     }
     
     @Test def test4() {
@@ -73,17 +72,26 @@ class MathMLExpressionPrinterUnitTest extends AssertionsForJUnit {
         o.open
         MathMLExpressionPrinter.print(e,o)
         o.close
-        assertEquals(o.getResult,"""<ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" scriptsizemultiplier="0.9" scriptminsize="6pt">
+        assertEquals(o.getResult,"""<ml:math xmlns:ml="http://www.w3.org/1998/Math/MathML" scriptsizemultiplier="0.95" scriptminsize="6pt">
   <ml:mstyle mathcolor="#000000" mathbackground="" mathsize="11" mathvariant="normal">
     <ml:mrow mathvariant="italic" class="symb">
       <ml:mi>a</ml:mi>
     </ml:mrow>
-    <ml:mo form="infix" lspace="thickmathspace" rspace="thickmathspace">&CenterDot;</ml:mo>
-    <ml:mrow mathvariant="italic" class="symb">
-      <ml:mi>b</ml:mi>
+    <ml:mo form="infix" lspace="thinmathspace" rspace="thinmathspace">&CenterDot;</ml:mo>
+    <ml:mrow>
+      <ml:mfenced open="(" close=")" separators=";">
+        <ml:mrow>
+          <ml:mrow mathvariant="italic" class="symb">
+            <ml:mi>b</ml:mi>
+          </ml:mrow>
+          <ml:mo form="infix" lspace="thinmathspace" rspace="thinmathspace">&minus;</ml:mo>
+          <ml:mrow mathvariant="italic" class="symb">
+            <ml:mi>c</ml:mi>
+          </ml:mrow>
+        </ml:mrow>
+      </ml:mfenced>
     </ml:mrow>
-  </ml:mstyle>
-</ml:math>""")
+  </ml:mstyle></ml:math>&#8203;""")
     }
 	
 }
