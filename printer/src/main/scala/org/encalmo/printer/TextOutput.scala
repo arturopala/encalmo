@@ -9,9 +9,12 @@ import org.encalmo.common.Translator
  */
 class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val buffer:StringBuilder = new StringBuilder) extends Output[String] {
 	
+    val asWriter:java.io.PrintWriter = new java.io.PrintWriter(new TextOutputWriter(buffer))
+    
+    val DecimalFormatSymbols = java.text.DecimalFormatSymbols.getInstance(locale)
 	val CRLF = "\r\n"
-	
-	val asWriter:java.io.PrintWriter = new java.io.PrintWriter(new TextOutputWriter(buffer))
+	val COMMA = DecimalFormatSymbols.getPatternSeparator
+	val SPACE = " "
 	
 	def getResult:String = buffer.toString
 	

@@ -37,15 +37,10 @@ object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
  */
 class HtmlTextDocumentPrinterTraveler(output:HtmlOutput) 
 extends Traveler[DocumentComponent] {
-	
-	val w = output.asWriter
+
 	val locale = output.locale
 	val mathOutput = output.toMathMLOutput
 	val ept = new MathMLExpressionPrinterTraveler(mathOutput)
-	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
-	
-	val SPACE = " "
-	val COMMA = dfs.getPatternSeparator
 	
 	val customStyles = """ 
 body {font-family:sans-serif;font-size:12pt;background-color: #FFFAD8;}
@@ -77,14 +72,6 @@ div {padding:5pt 0 2pt 0}
 			counterMap.put(en,sco.get)
 		}
 		sco.get
-	}
-	
-	def write(ch:Char) = {
-		w.write(ch);
-	}
-		
-	def write(s:String) = {
-		w.write(s);
 	}
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
@@ -134,7 +121,7 @@ div {padding:5pt 0 2pt 0}
 						if(ens!=null){
 							output.startb(SPAN,en.styleClassId)
 						}
-						output.append(label,SPACE)
+						output.append(label,output.SPACE)
 						sc.in // counter level increment
 						if(ens!=null){
 							output.end(SPAN)
@@ -208,7 +195,7 @@ div {padding:5pt 0 2pt 0}
 	override def onBetweenChildren(node:Node[DocumentComponent], leftChild:DocumentComponent, rightChild:DocumentComponent):Unit = {
 		(leftChild,rightChild) match {
 			case (tl:Text,tr:Text) => {
-				write(SPACE)
+				output.append(output.SPACE)
 			}
 			case _ =>
 		}
@@ -400,18 +387,18 @@ extends HtmlTextDocumentPrinterTraveler(output) {
                 output.start(ANCHOR)
                 output.attr("href","#",label)
                 output.body
-                output.append(label,SPACE)
+                output.append(label,output.SPACE)
                 if(ns.title.isDefined){
                     output.append(ns.title.get)
                 }
                 ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
                     case ttt:TextToTranslate => {
                         output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
-                        output.append(SPACE)
+                        output.append(output.SPACE)
                     }
                     case t:Text => {
                         output.append(t.textContent)
-                        output.append(SPACE)
+                        output.append(output.SPACE)
                     }
                     case _ =>
                 })
