@@ -3,7 +3,7 @@ package org.encalmo.calculation
 import org.encalmo.expression._
 
 /**
- * Future expression
+ * Expression coupled with the resolver
  * @author artur.opala
  */
 case class FutureExpression(er:ExpressionResolver,symbol:Symbol) extends Expression with SymbolLike {
