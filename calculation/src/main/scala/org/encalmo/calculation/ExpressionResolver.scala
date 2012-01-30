@@ -30,7 +30,7 @@ trait ExpressionResolver {
 	val MAX_MAP_ALL_LOOP_COUNT:Int = 256
 	
 	/**
-	 * Replaces symbols with their mappings
+	 * Replaces symbols with their mapped expressions
 	 */
 	def resolve(e:Expression):Expression = {
 		e match {
@@ -63,7 +63,7 @@ trait ExpressionResolver {
 	}
 	
 	/**
-	 * Evaluates expression in the context
+	 * Evaluates expression in this context
 	 */
 	def evaluate(e:Expression):Expression = {
 	    val e1 = e.mapAll(preevaluator)

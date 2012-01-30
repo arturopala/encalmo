@@ -4,12 +4,15 @@ import scala.collection.mutable.Map
 import org.encalmo.expression._
 
 /** 
- * Mutable Context trait
+ * Mutable (updatable) Context trait
  */
 trait MutableContext extends Context {
   
   override def map:Map[Symbol,Expression]
   
+  /**
+   * Maps expression to the symbol in this context
+   */
   def update(s:Symbol, e:Expression) = {
 		if(!opened) throwException else {
 		    val symb = symbol(s)
@@ -19,6 +22,10 @@ trait MutableContext extends Context {
 		    }
 		    map.put(symb,expr)
 		}
+  }
+  
+  def update(s:Symbol,f:(ExpressionResolver)=>Expression) = {
+      
   }
 
 }
