@@ -11,11 +11,15 @@ import org.encalmo.expression.Selection
 import org.encalmo.expression.UnitOfValue
 import org.encalmo.expression.Function
 import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.FutureExpression
-import org.encalmo.calculation.Eval
+import org.encalmo.calculation.BoundExpression
+import org.encalmo.calculation.EvalAt
 import org.encalmo.style.Style
 import org.encalmo.style.StylesConfigSymbols
 import org.encalmo.expression.Transparent
+import org.encalmo.expression.UnitOfValue
+import org.encalmo.expression.EmptyUnitOfValue
+import org.encalmo.expression.Sum
+import org.encalmo.expression.Value
 
 /**
  * Evaluate: symbol = resolved = evaluated
@@ -29,9 +33,9 @@ extends BlockExpr(myStyle,calc,expr:_*){
 		var se = Seq[ExpressionToPrint]()
 		var ue = e // unresolved expression
 		val unit:UnitOfValue = e.unit
-		val evaluated = calc.evaluate(e) // evaluated expression
+		val evaluated = adjustUnitsInSum(calc.evaluate(e),unit) // evaluated expression
 		e match {
-			case future:FutureExpression => {
+			case future:BoundExpression => {
 				se = se :+ ExpressionToPrint(future.symbol,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
 				ue = future.er.getRawExpression(future.symbol) match {
 					case Some(x) => x
@@ -59,12 +63,12 @@ extends BlockExpr(myStyle,calc,expr:_*){
 		}
 		
 		if(evaluated!=e){
-			val substituted = calc.substitute(ue) // expression with substituted symbols
+			val substituted = adjustUnitsInSum(calc.substitute(ue),unit) // expression with substituted symbols
 			if(substituted!=ue && substituted!=evaluated){
 				se = se :+ ExpressionToPrint(substituted,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_SUBSTITUTED),"=",null,parentStylesConfig)
 				val depth = substituted.countTreeLeafs
 				if(depth>3 || substituted.isInstanceOf[Selection]){
-    				val evaluation1 = (substituted match {
+    				val evaluation1 = adjustUnitsInSum((substituted match {
     				    case tr:Transparent => tr.children.first
     				    case x => x
     				}) match { // partialy evaluated expression
@@ -79,7 +83,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
                         	calc.substitute(sel.select)
                         }
                         case _ => calc.evaluate(substituted)
-                    }
+                    },unit)
                     if(evaluation1!=substituted && evaluation1!=evaluated){
                         se = se :+ ExpressionToPrint(evaluation1,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED),"=",null,parentStylesConfig)
                     }
@@ -92,10 +96,21 @@ extends BlockExpr(myStyle,calc,expr:_*){
 	
 	def prepareUnresolved(symbol:Symbol,e:Expression) = {
 	    e match {
-	        case ev:Eval => Eval(ev.expr, ev.er.evaluateWithAndReturnCopy(calc))
+	        case ev:EvalAt => EvalAt(ev.expr, ev.er.evaluateWithAndReturnCopy(calc))
 	        case _ => e
 	    }
 	}
+	
+	def adjustUnitsInSum(e:Expression, unit:UnitOfValue):Expression = unit match {
+	    case EmptyUnitOfValue => e 
+	    case u => e match {
+    	    case s:Sum => if(s.args.exists(_.isInstanceOf[Value])) Sum(s.args.map(b => b match {
+    	        case v:Value => v.convertTo(u) 
+    	        case _ => b
+	        }):_*) else s
+    	    case _ => e
+	}}
+	
 }
 
 /**

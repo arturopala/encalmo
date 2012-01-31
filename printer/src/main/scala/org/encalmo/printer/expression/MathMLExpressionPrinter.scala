@@ -4,7 +4,7 @@ import org.encalmo.common._
 import org.encalmo.printer._
 import org.encalmo.expression._
 import MathMLTags._
-import org.encalmo.calculation.Eval
+import org.encalmo.calculation.EvalAt
 
 /**
  * Prints expressions as MathML
@@ -78,7 +78,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    		case sl: SymbolLike => {
 	    		    if(node.parent!=null){
                         node.parent.element match {
-                            case ev:Eval =>  output.symbol(sl.symbol,false,false)
+                            case ev:EvalAt =>  output.symbol(sl.symbol,false,false)
                             case _ =>  output.symbol(sl.symbol)
                         }
                     }else{
@@ -411,7 +411,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
     	        case ct:CaseExpression => {
     	           output.end(MTD)
     	        }
-                case ev:Eval => {
+                case ev:EvalAt => {
                     output.start(MROW)
                     output.attr("mathsize","85%")
                     output.attr("mathvariant","italic")

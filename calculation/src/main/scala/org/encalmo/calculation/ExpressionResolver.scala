@@ -57,7 +57,7 @@ trait ExpressionResolver {
 			}
 			case _ => map(e,substitutor)
 		}) match {
-		    case ev:Eval => substitute(ev.substitute)
+		    case ev:EvalAt => substitute(ev.substitute)
 		    case x => x
 		}
 	}
@@ -89,6 +89,7 @@ trait ExpressionResolver {
 	 */
 	private val resolver:Transformation = {
 		case s:Symbol => this.getRawExpression(s).getOrElse(s)
+		case de:DynamicExpression => de.f
 		case e => e
 	}
     
@@ -110,6 +111,7 @@ trait ExpressionResolver {
 			case Some(x) => x.eval 
 			case None => s
 		}
+		case de:DynamicExpression => de.f
 		case sl:SymbolLike => sl.eval
 		case e => e.eval
 	}
@@ -123,9 +125,10 @@ trait ExpressionResolver {
 			case Some(x) => x.eval
 			case None => s
 		}
+		case de:DynamicExpression => de.f
 		case sl:SymbolLike => sl.eval
 		case sel:Selection => sel.trim
-		case ev:Eval => ev.substitute
+		case ev:EvalAt => ev.substitute
 		case e => e
 	}
 	

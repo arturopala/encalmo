@@ -20,17 +20,17 @@ trait Context extends ExpressionResolver {
 	protected def throwException = throw new IllegalStateException("This context has been locked.")
 	
 	/** Returns future expression */
-	def apply(s:Symbol):FutureExpression = FutureExpression(this,s)
+	def apply(s:Symbol):BoundExpression = BoundExpression(this,s)
 	
 	/** Returns function evaluation for some arguments */
-	def apply(expr:Expression, args:(Symbol,Expression)*):Eval = {
+	def apply(expr:Expression, args:(Symbol,Expression)*):EvalAt = {
 	    if(args.size>0){
 		    val c = Calculation()
 		    c add this
 		    c put (args:_*)
-		    Eval(expr, c)
+		    EvalAt(expr, c)
 	    }else{
-	        Eval(expr, this)
+	        EvalAt(expr, this)
 	    }
 	}
 	
