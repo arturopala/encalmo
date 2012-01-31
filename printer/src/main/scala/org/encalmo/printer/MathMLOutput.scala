@@ -325,7 +325,9 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	        case _ => {
 	            startb(MSUP)
 				mtext(u.name.toString)
-				mtext(dimensionFormat.format(u.dimension))
+				startb(MN,"pwri")
+				append(dimensionFormat.format(u.dimension))
+				end(MN)
 				end(MSUP)
 	        }
 	    }

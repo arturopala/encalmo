@@ -13,7 +13,7 @@ trait MutableContext extends Context {
   /**
    * Maps expression to the symbol in this context
    */
-  def update(s:Symbol, e:Expression) = {
+  def update(s:Symbol, e:Expression):Unit = {
 		if(!opened) throwException else {
 		    val symb = symbol(s)
 		    val expr:Expression = e match {
@@ -24,8 +24,11 @@ trait MutableContext extends Context {
 		}
   }
   
-  def update(s:Symbol,f:(ExpressionResolver)=>Expression) = {
-      
+  def update(s:Symbol,f: =>Expression):Unit = {
+      if(!opened) throwException else {
+          val symb = symbol(s)
+          map.put(symb,DynamicExpression(symb,f _))
+      }
   }
 
 }

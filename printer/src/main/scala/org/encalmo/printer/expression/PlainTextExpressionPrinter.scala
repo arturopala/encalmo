@@ -2,7 +2,7 @@ package org.encalmo.printer.expression
 
 import org.encalmo.printer._
 import org.encalmo.expression._
-import org.encalmo.calculation.Eval
+import org.encalmo.calculation.EvalAt
 import org.encalmo.common._
 import org.encalmo.common.Translator
 
@@ -96,7 +96,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
     		case sl: SymbolLike => {
     		    if(node.parent!=null){
         		    node.parent.element match {
-        		        case ev:Eval =>   w.write(sl.symbol.simpleFaceNoArgs)
+        		        case ev:EvalAt =>   w.write(sl.symbol.simpleFaceNoArgs)
         		        case _ =>  w.write(sl.symbol.simpleFace)
         		    }
     		    }else{
@@ -210,7 +210,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
                 w.write(ct.operator.last)
                 w.write(")")
             }
-            case ev:Eval => {
+            case ev:EvalAt => {
                 w.write("(")
                 val s = ev.er.toSeq
                 if(s.size<=5){

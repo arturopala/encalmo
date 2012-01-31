@@ -5,7 +5,7 @@ import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
-import org.encalmo.calculation.Eval
+import org.encalmo.calculation.EvalAt
 import org.encalmo.document._
 import org.encalmo.structures.eurocode.concrete.Concrete
 import org.encalmo.structures.eurocode.concrete.ReinforcingSteel

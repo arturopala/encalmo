@@ -3,10 +3,10 @@ package org.encalmo.calculation
 import org.encalmo.expression._
 
 /**
- * Expression coupled with the resolver
+ * Expression bound to the specific resolver
  * @author artur.opala
  */
-case class FutureExpression(er:ExpressionResolver,symbol:Symbol) extends Expression with SymbolLike {
+case class BoundExpression(er:ExpressionResolver,symbol:Symbol) extends Expression with SymbolLike {
 	
 	override def eval = er.evaluate(symbol)
 	

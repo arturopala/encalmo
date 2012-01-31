@@ -5,7 +5,7 @@ import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
-import org.encalmo.calculation.Eval
+import org.encalmo.calculation.EvalAt
 import org.encalmo.document._
 
 
@@ -65,10 +65,10 @@ object RectangularSlenderSilosWithFlatBottomExpressions extends MapContext {
 	this(YJ(1)) = 1-(EUL^(-z/zo(1)))
     this(pho(1)) = (gammau/mu_l)*AU
 	this(phf(1)) = fx(pho(1)*YJ(1),z)
-	this(phf1) = Eval(phf(1), z -> hc/4)
-	this(phf2) = Eval(phf(1), z -> hc/2)
-	this(phf3) = Eval(phf(1), z -> 0.75*hc)
-	this(phft) = Eval(phf(1), z -> hc)
+	this(phf1) = EvalAt(phf(1), z -> hc/4)
+	this(phf2) = EvalAt(phf(1), z -> hc/2)
+	this(phf3) = EvalAt(phf(1), z -> 0.75*hc)
+	this(phft) = EvalAt(phf(1), z -> hc)
 	//  (2) Maximum frictional traction on vertical wall
 	this(zo(2)) = 1/(K_u*mu_u)*AU
     this(YJ(2)) = 1-(EUL^(-z/zo(2)))
@@ -76,13 +76,13 @@ object RectangularSlenderSilosWithFlatBottomExpressions extends MapContext {
     this(phf(2)) = fx(pho(2)*YJ(2),z)
 	this(pwf) = mu_u * phf(2)
     this(nfzSk) = mu_u*pho(2)*(z-zo(2)*YJ(2))
-    this(nfzSkt) = Eval(nfzSk, z -> hc)
+    this(nfzSkt) = EvalAt(nfzSk, z -> hc)
 	//  (3) Maximum vertical load on hopper or silo bottom
 	this(zo(3)) = 1/(K_l*mu_l)*AU
     this(YJ(3)) = 1-(EUL^(-z/zo(3)))
     this(pho(3)) = (gammau/mu_l)*AU
 	this(pvf) = (pho(3)/K_l)*YJ(3)
-	this(pvft) = Eval(pvf, z -> hc)
+	this(pvft) = EvalAt(pvf, z -> hc)
 	
 	//filling patch load
 	this(ef) = dc/4
@@ -90,7 +90,7 @@ object RectangularSlenderSilosWithFlatBottomExpressions extends MapContext {
 	this(Cpf) = 0.21*Cop*(1+2*(Ef^2))*(1-(EUL^(-1.5*(hcdc-1))))
 	this(ppf) = Cpf*phf(1)
 	this(ppfnc) = 0.36*ppf
-	this(ppfnc1) = Eval(ppfnc, z -> hc/2)
+	this(ppfnc1) = EvalAt(ppfnc, z -> hc/2)
 	this(s) = (PI*dc)/16
 	this(Fpf1) = ppfnc1*s
 	
@@ -100,15 +100,15 @@ object RectangularSlenderSilosWithFlatBottomExpressions extends MapContext {
 	this(Cw) = 1+0.1*CS
 	this(phe) = Ch*phf(1)
 	this(pwe) = Cw*pwf
-	this(phet) = Eval(phe, z -> hc)
+	this(phet) = EvalAt(phe, z -> hc)
 	this(nezSk) = Cw*mu_u*pho(2)*(z-zo(2)*YJ(2))
-    this(nezSkt) = Eval(nezSk, z -> hc)
+    this(nezSkt) = EvalAt(nezSk, z -> hc)
 	
 	//discharge patch load
     this(Cpe) = 0.42*Cop*(1+2*(Ef^2))*(1-(EUL^(-1.5*(hcdc-1))))
     this(ppe) = Cpe*phe
     this(ppenc) = 0.36*ppe
-    this(ppenc1) = Eval(ppenc, z -> hc/2)
+    this(ppenc1) = EvalAt(ppenc, z -> hc/2)
     this(Fpe1) = ppenc1*s
 	
 	// end of context initialization
