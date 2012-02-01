@@ -17,7 +17,7 @@ extends InlineExpr(sStyle,null,expr:_*){
 	override def toString = "Symb("+myStyle+","+calc+","+expr.mkString(",")+")"
 	
 	/** Function to implement */
-	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
+	override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
 		Seq[ExpressionToPrint](ExpressionToPrint(e,null,null,null,parentStylesConfig))
 	}
     

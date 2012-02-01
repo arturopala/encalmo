@@ -23,12 +23,5 @@ trait MutableContext extends Context {
 		    map.put(symb,expr)
 		}
   }
-  
-  def update(s:Symbol,f: =>Expression):Unit = {
-      if(!opened) throwException else {
-          val symb = symbol(s)
-          map.put(symb,DynamicExpression(symb,f _))
-      }
-  }
 
 }

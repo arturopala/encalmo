@@ -89,7 +89,7 @@ trait ExpressionResolver {
 	 */
 	private val resolver:Transformation = {
 		case s:Symbol => this.getRawExpression(s).getOrElse(s)
-		case de:DynamicExpression => de.f
+		case de:DynamicExpression => de.f()
 		case e => e
 	}
     
@@ -111,7 +111,7 @@ trait ExpressionResolver {
 			case Some(x) => x.eval 
 			case None => s
 		}
-		case de:DynamicExpression => de.f
+		case de:DynamicExpression => de.f()
 		case sl:SymbolLike => sl.eval
 		case e => e.eval
 	}
@@ -125,7 +125,7 @@ trait ExpressionResolver {
 			case Some(x) => x.eval
 			case None => s
 		}
-		case de:DynamicExpression => de.f
+		case de:DynamicExpression => de.f()
 		case sl:SymbolLike => sl.eval
 		case sel:Selection => sel.trim
 		case ev:EvalAt => ev.substitute
@@ -135,4 +135,14 @@ trait ExpressionResolver {
 	def evaluateWithAndReturnCopy(er:ExpressionResolver):ExpressionResolver = {
 	    Context(toSeq.map(x => (x._1,er.evaluate(x._2))):_*)
 	}
+	
+	def evaluateAndMap(symbols:Symbol*):Map[Symbol,Expression] = {
+	    symbols.zip(symbols.map(s => evaluate(s))).toMap
+	}
+	
+	def evaluateToNumbersMapAndDo(symbols:Symbol*)(doIfTrue:Map[Symbol,Number]=>Expression)(doIfFalse: =>Expression):Expression = {
+	    val evaluated = symbols.map(s => evaluate(s))
+	    val allnumbers = evaluated.forall(_.isInstanceOf[Number])
+        if(allnumbers) doIfTrue(symbols.zip(evaluated.map[Number,Seq[Number]](_.asInstanceOf[Number])).toMap) else doIfFalse
+    }
 }

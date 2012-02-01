@@ -108,6 +108,13 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
         case "-" => "&minus;"
         case "+" => "+"
         case "*" => ENTITY_CENTER_DOT
+        case ">" => "&gt;"
+        case "<" => "&lt;"
+        case "<=" => "&le;"
+        case ">=" => "&geq;"
+        case "!=" => "&ne;"
+        case "=" => "="
+        case "≈" => "&sime;"
         case _ => s
     }
 
@@ -369,6 +376,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	        case "!= 0" => "&ne; 0"
 	        case "= 0" => "&equiv; 0"
 	        case "=" => "="
+	        case "≈" => "&sime;"
 	        case _ => s
 	    }
 	    mo(cs)

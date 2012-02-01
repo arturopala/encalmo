@@ -29,11 +29,11 @@ extends DocumentComponent(exStyle) {
 	
 	/** Resolves this expressions to sequences of ExpressionToPrint objects */
 	final def resolve:Seq[Seq[ExpressionToPrint]] = {
-		for(e <- expr) yield resolveExpression(e)
+		for(e <- expr) yield prepareExpressionToPrint(e)
 	}
 	
 	/** Function to implement */
-	def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
+	def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
 		e match {
 			case s:Symbol => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig))
 			case _ => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null,parentStylesConfig))
@@ -62,8 +62,6 @@ abstract class BlockExpr(exStyle:Style, calc:Calculation, expr:Expression*)
 extends Expr(exStyle,calc,expr:_*) with BlockComponent {
 	
 	def isPrintDescription:Boolean
-	
-	def variant:Int
 	
 }
 
