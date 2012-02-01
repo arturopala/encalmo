@@ -332,6 +332,7 @@ div {padding:5pt 0 2pt 0}
    
 	def writeExpression(etp:ExpressionToPrint, style:Style, parentNode:Node[Expression] = null, position:Int=0, span:Boolean = true):Unit = {
 		if(etp.expression.printable){
+            val numberOfLeafs:Int = etp.expression.countTreeLeafs
 			etp.expression match {
 			    case tr:Transparent => {
 			        val node = Node[Expression](parentNode,tr,position)
@@ -349,7 +350,7 @@ div {padding:5pt 0 2pt 0}
 			            }
 			        }
 			    }
-			    case mio:MultipleInfixOperation if mio.args.size > 1 => {
+			    case mio:MultipleInfixOperation if mio.args.size > 1 && numberOfLeafs>=10 => {
 			        if(span) output.startb(SPAN, etp.styleClassId)
 			        val node = Node[Expression](parentNode,mio,position)
 			        writeExpression(ExpressionToPrint(mio.args.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)

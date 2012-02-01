@@ -44,7 +44,7 @@ package object expression {
 	//helper functions
 	
 	//function definition
-	def fx(expr:Expression, vars:Symbol*) = org.encalmo.expression.Function(expr,vars:_*)
+	def fx(expr:Expression, vars:Symbol*) = Function(expr,vars:_*)
 	//Text value expression
 	def text(s:String):TextValue = TextValue(s)
 	// Power with exponent 2

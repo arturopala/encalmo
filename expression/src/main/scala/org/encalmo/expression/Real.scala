@@ -91,7 +91,7 @@ class Real(val d: Double) {
   def isPositive: Boolean = d > 0
   def isNonNegative: Boolean = d >= 0
   def isNonPositive: Boolean = d <= 0
-  def isZero: Boolean = d == 0
+  def isZero: Boolean = this.equals(Real.zero)
   def rad: Real = Real(Math.toRadians(d))
   def deg: Real = Real(Math.toDegrees(d))
   def isInt = (d.toInt == d)
@@ -132,8 +132,8 @@ class Real(val d: Double) {
   def adjustValue(accuracy:Double): Real = if(accuracy<=0) this else if(d==Double.NaN || d==Double.NegativeInfinity || d==Double.PositiveInfinity) this else {
       try {
           val bd:BigDecimal = BigDecimal(d)
-          val r2 = Real((((bd+(accuracy*0.8)).quot(accuracy))*accuracy).toDouble)
-          if(r2!=this) r2 else this
+          val d2 = (((bd+(accuracy*0.8)).quot(accuracy))*accuracy).toDouble
+          if(Math.abs(d2 - d) > Math.abs(d/1E6)) Real(d2) else this
       }
       catch {
           case e => this

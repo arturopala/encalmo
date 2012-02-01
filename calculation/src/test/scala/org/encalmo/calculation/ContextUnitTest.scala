@@ -98,5 +98,19 @@ class ContextUnitTest extends AssertionsForJUnit {
         assertEquals(Number(12345),r2)
         assertEquals(SI.cm,r2.unit)
     }
+    
+    @Test def testMutableContext1() {
+        val c1 = Context()
+        c1(a) = b
+        assertEquals(b,c1.getRawExpression(a).get)
+        c1(c) = dynamic {
+            c1.evaluate(a) match {
+                case x if x==b => d
+                case _ => e
+            }
+        }
+        assertTrue(c1.getRawExpression(c).get.isInstanceOf[DynamicExpression])
+        assertEquals(d,c1.evaluate(c))
+    }
 	
 }

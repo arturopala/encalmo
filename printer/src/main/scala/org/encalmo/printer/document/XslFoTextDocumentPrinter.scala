@@ -314,7 +314,7 @@ extends Traveler[DocumentComponent] {
     		output.attr("width","100%")
             //output.attr("border-collapse","collapse")
     		if(expr.isFirstBlockComponent){
-    			//output.attr("keep-with-previous","always")
+    			output.attr("keep-with-previous","always")
 			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
 			}
     		output.body
@@ -454,6 +454,7 @@ extends Traveler[DocumentComponent] {
         
     def writeExpression(etp:ExpressionToPrint, style:Style, parentNode:Node[Expression] = null, position:Int=0, span:Boolean = true):Unit = {
         if(etp.expression.printable){
+            val numberOfLeafs:Int = etp.expression.countTreeLeafs
             etp.expression match {
                 case tr:Transparent => {
                     val node = Node[Expression](parentNode,tr,position)
@@ -469,7 +470,7 @@ extends Traveler[DocumentComponent] {
                         }
                     }
                 }
-                case mio:MultipleInfixOperation if mio.args.size > 1 => {
+                case mio:MultipleInfixOperation if mio.args.size > 1 && numberOfLeafs>=10 => {
                     val node = Node[Expression](parentNode,mio,position)
                     writeExpression(ExpressionToPrint(mio.args.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
                     mio.args.tail.foreach(e => {

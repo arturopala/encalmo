@@ -12,6 +12,9 @@ case class Number(
 		override val unit:UnitOfValue = EmptyUnitOfValue
 		
 	) extends Value {
+    
+    private[encalmo] var isRounded:Boolean = false
+    private[encalmo] var original:Option[Real] = None
 	
 	/** 
 	 * Calculates result of the operation with two arguments. 
@@ -219,17 +222,24 @@ case class Number(
         case _ => this
     }
     
+    private def roundedCopy(newr:Real):Number = {
+        val n = Number(newr,unit)
+        n.isRounded = true
+        n.original = Some(r)
+        n
+    }
+    
     def adjustTo(accuracy:Option[Double]):Number = accuracy match {
         case Some(a) => {
             val r2 = r.adjustValue(a)
-            if(r2!=r) Number(r2,unit) else this
+            if(r2!=r) roundedCopy(r2)  else this
         }
         case None => this
     }
     
     def adjustTo(accuracy:Double):Number = if(accuracy<=0) this else {
         val r2 = r.adjustValue(accuracy)
-        if(r2!=r) Number(r2,unit) else this
+        if(r2!=r) roundedCopy(r2) else this
     }
     
     override def convertToBaseUnit:Number = if(unit.isBaseUnit) this else Number(r.convert(unit,unit.baseUnit),unit.baseUnit)
@@ -311,6 +321,9 @@ case class Number(
     }
 	
 	def isInt = r.isInt
+	def toInt:Int = r.toInt
+	def toLong:Long = r.toLong
+	def toDouble:Double = r.d
 	
 	def format:String = Real.format(r)
 	def format(format:java.text.NumberFormat):String = Real.format(r, format);
@@ -426,6 +439,11 @@ case class Number(
 			}
 		}
 	}
+	
+	def mapIfNotZero(doIfTrue: =>Expression):Expression = {
+	    if(r.isZero) Void else doIfTrue
+	}
+	
 }
 
 /**

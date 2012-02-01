@@ -1,7 +1,5 @@
 package org.encalmo.calculation
 
-import org.encalmo.expression._
+import org.encalmo.expression.Expression
 
-case class DynamicExpression(symbol:Symbol,f:()=>Expression) extends Expression with SymbolLike {
-    
-}
+case class DynamicExpression(f:()=>Expression) extends Expression

@@ -17,7 +17,7 @@ extends InlineExpr(rStyle,calc,expr:_*){
 	override def toString = "Result("+myStyle+","+calc+","+expr.mkString(",")+")"
 	
 	/** Function to implement */
-	override def resolveExpression(e:Expression):Seq[ExpressionToPrint] = {
+	override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
 		val evaluated = calc.evaluate(e)
 		e match {
 			case s:Symbol if s.hasUnit => {
