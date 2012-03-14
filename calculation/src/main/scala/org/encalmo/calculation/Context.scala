@@ -43,12 +43,12 @@ trait Context extends ExpressionResolver {
 				s.contextId match {
 					case Some(currId) => {
 						if(!currId.contains(i)){
-							s.at(i)
+							s.id(i)
 						}else{
 							s
 						}
 					}
-					case None => s.at(i)
+					case None => s.id(i)
 				}
 			}
 			case None => s
@@ -67,12 +67,12 @@ trait Context extends ExpressionResolver {
 					s.contextId match {
 						case Some(currId) => {
 							if(!currId.contains(id.get)){
-								getExpression(s.at(id.get))
+								getExpression(s.id(id.get))
 							}else{
 								None
 							}
 						}
-						case None => getExpression(s.at(id.get))
+						case None => getExpression(s.id(id.get))
 					}
 				} else {
 					None
@@ -94,12 +94,12 @@ trait Context extends ExpressionResolver {
 					s.contextId match {
 						case Some(currId) => {
 							if(!currId.contains(id.get)){
-								getRawExpression(s.at(id.get))
+								getRawExpression(s.id(id.get))
 							}else{
 								None
 							}
 						}
-						case None => getRawExpression(s.at(id.get))
+						case None => getRawExpression(s.id(id.get))
 					}
 				}else{
 					None
@@ -116,13 +116,13 @@ trait Context extends ExpressionResolver {
 		map.contains(s) || (id.isDefined && (s.contextId match {
 			case Some(currId) => {
 				if(!currId.contains(id.get)){
-					map.contains(s.at(id.get))
+					map.contains(s.id(id.get))
 				}else{
 					false
 				}
 			}
 			case None => {
-				map.contains(s.at(id.get))
+				map.contains(s.id(id.get))
 			}
 		}))
 	}
