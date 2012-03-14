@@ -12,7 +12,7 @@ trait SymbolConfigurator {
 	val contextId:String
 	
 	def symbol(symbol:Symbol):Symbol = {
-		symbol.dictionary(dictionary).at(contextId)
+		symbol.dictionary(dictionary).id(contextId)
 	}
 
 }

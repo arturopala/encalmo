@@ -140,7 +140,7 @@ class Symbol(
     } else ""
     	
     /** Adds id to the contextId sequence */
-    def at(id:String):Symbol = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
+    def id(id:String):Symbol = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Appends comment to the description */
