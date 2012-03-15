@@ -11,15 +11,10 @@ trait Value extends Expression {
 	
 	override final def eval():Expression = this
 	
-	/** 
-	 * Calculates result of the operation with single argument. 
+	/**
+	 * Unique id of the value type, as registered with ValueCalculator
 	 */
-	def calculate(operator:String, v:Value):Option[Value]
-	
-	/** 
-	 * Calculates result of the operation with two arguments. 
-	 */
-	def calculate(operator:String, v1:Value,v2:Value):Option[Value]
+	def typeId:String
 	
 	/**
 	 * Converts this value to the new units
@@ -37,28 +32,40 @@ trait Value extends Expression {
 	def convertToBaseUnit:Value = this
 }
 
+trait ValueCalculator {
+    
+    /**
+     * Self register as a calculator
+     */
+    def doRegister:Unit
+    
+    /** 
+     * Calculates result of the operation with single argument. 
+     */
+    def calculate(operator:String, v:Value):Option[Value]
+    
+    /** 
+     * Calculates result of the operation with two arguments. 
+     */
+    def calculate(operator:String, v1:Value,v2:Value):Option[Value]
+    
+}
+
+/**
+ * Value calculator
+ */
 object Value {
     
-    type Operator1 = (Value) => Value
-    type Operator2 = (Value,Value) => Value
+    private val registry:scala.collection.mutable.Map[(String,String),ValueCalculator] = Map()
     
-    private val registry1:Map[Tuple2[String,Class[_]],Operator1] = LinkedHashMap()
-    private val registry2:Map[Tuple3[String,Class[_],Class[_]],Operator2] = LinkedHashMap()
+    def register(key:(String,String),calculator:ValueCalculator):Unit = registry.put(key,calculator)
     
-    def register(name:String,c1:Class[_],op:Operator1) = {
-        registry1.put((name,c1), op)
+    def calculate(operator:String, v1:Value,v2:Value):Option[Value] = {
+        registry.get((v1.typeId,v2.typeId)).map(_.calculate(operator,v1,v2)).getOrElse(None)
     }
     
-    def register(name:String,c1:Class[_],c2:Class[_],op:Operator2) = {
-        registry2.put((name,c1,c2), op)
-    }
-    
-    def execute(name:String,v1:Value):Option[Value] = {
-        registry1.get((name,v1.getClass)).map(op => op(v1))
-    }
-    
-    def execute(name:String,v1:Value,v2:Value):Option[Value] = {
-        registry2.get((name,v1.getClass,v2.getClass)).map(op => op(v1,v2))
+    def calculate(operator:String, v:Value):Option[Value] = {
+        registry.get((v.typeId,v.typeId)).map(_.calculate(operator,v)).getOrElse(None)
     }
     
 }

@@ -2,6 +2,11 @@ package org.encalmo.expression
 
 import java.io.PrintWriter
 
+object Number {
+    
+     val typeId = "N"
+}
+
 /**
  * Real number value expression
  * @author artur.opala
@@ -15,184 +20,8 @@ case class Number(
     
     private[encalmo] var isRounded:Boolean = false
     private[encalmo] var original:Option[Real] = None
-	
-	/** 
-	 * Calculates result of the operation with two arguments. 
-	 * Supports arguments of the Number type.
-	 */
-	override def calculate(operator:String, v1:Value, v2:Value):Option[Value] = {
-		(v1,v2) match {
-			case (Number(r1,u1),Number(r2,u2)) => {
-				Option(operator match {
-					case "+" => {
-                        if(u1==u2) Number(r1+r2,u1)
-					    else if(u1.isSameBaseAndDimension(u2)){
-				             if(u1.isLargerThan(u2)) Number(r1+(r2.convert1(u2,u1)),u1) else Number(r1.convert1(u1,u2)+r2,u2)
-					    }
-					    else if (u1.isSameExpandedUnit(u2)){
-					        if(u1.isLargerThan(u2)) Number(r1+(r2.convert2(u2,u1)),u1) else Number(r1.convert2(u1,u2)+r2,u2)
-					    }
-					    else{
-					        Number(r1+r2,u1+u2)
-					    }
-					}
-					case "-" => {
-					    if(u1==u2) Number(r1-r2,u1)
-					    else if(u1.isSameBaseAndDimension(u2)){ 
-                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert1(u2,u1)),u1) else Number(r1.convert1(u1,u2)-r2,u2)
-                        }
-					    else if(u1.isSameExpandedUnit(u2)){ 
-                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert2(u2,u1)),u1) else Number(r1.convert2(u1,u2)-r2,u2)
-                        }
-					    else{
-                            Number(r1-r2,u1-u2)
-                        }
-					}
-					case "*" => {
-					    if(u1.isSameBase(u2)){
-                             if(u1.isSameDimension(u2)){
-                                 if(u1.isLargerScaleThan(u2)) 
-                                     Number(r1*(r2.convert1(u2,u1)),u1.dim(u1.dimension*2)) 
-                                     else Number(r1.convert1(u1,u2)*r2,u2.dim(u1.dimension*2))
-                             }else if(u1.isSameScale(u2)){
-                                 Number(r1*r2,u1.dim(u1.dimension+u2.dimension))
-                             }else{
-                                 if(u1.isLargerScaleThan(u2)) 
-                                     Number(r1*(r2.adjustScale(u2,u1)),u1.dim(u1.dimension+u2.dimension)) 
-                                     else Number((r1.adjustScale(u1,u2)*r2),u2.dim(u1.dimension+u2.dimension))
-                             }
-                        }
-					    else if(u1.isSameExpandedUnit(u2)){ 
-					        if(u1.isLargerThan(u2)) {
-					            val su = (u1*u1).simplifiedUnit
-					            Number(r1*(r2.convert2(u2,u1))*su._2,su._1)
-					        } else {
-					            val su = (u2*u2).simplifiedUnit
-					            Number(r1.convert2(u1,u2)*r2*su._2,su._1)
-					        }
-					    }
-					    else{
-					        val su = (u1*u2).simplifiedUnit
-                            Number(r1*r2*su._2,su._1)
-                        }
-					}
-					case "/" => {
-					   if(u1.isSameBase(u2)){
-                             if(u1.isSameDimension(u2)){
-                                 Number(r1/(r2.convert1(u2,u1)),EmptyUnitOfValue)
-                             }else if(u1.isSameScale(u2)){
-                                 if(u1.dimension>u2.dimension) 
-                                     Number(r1/r2,u1.dim(u1.dimension-u2.dimension)) 
-                                     else Number(r1/r2,ComplexUnitOfValue(Quot(ONE,u1.dim(u2.dimension-u1.dimension))))
-                             }else{
-                                 if(u1.dimension>u2.dimension) {
-                                     if(u1.isLargerScaleThan(u2)) 
-                                         Number(r1/(r2.adjustScale(u2,u1)),u1.dim(u1.dimension-u2.dimension)) 
-                                         else Number((r1.adjustScale(u1,u2)/r2),u2.dim(u1.dimension-u2.dimension))
-                                 }else{
-                                     if(u1.isLargerScaleThan(u2)) 
-                                         Number(r1/(r2.adjustScale(u2,u1)),ComplexUnitOfValue(Quot(ONE,u1.dim(u2.dimension-u1.dimension)))) 
-                                         else Number((r1.adjustScale(u1,u2)/r2),ComplexUnitOfValue(Quot(ONE,u2.dim(u2.dimension-u1.dimension))))
-                                 }
-                             }
-                        }
-                        else if(u1.isSameExpandedUnit(u2)){ 
-                            Number(r1/(r2.convert2(u2,u1)),EmptyUnitOfValue)
-                        }
-					    else{
-					        val su = (u1/u2).simplifiedUnit
-                            Number(r1/r2*su._2,su._1)
-                        }
-					}
-					case "%" => {
-                        if(u1==u2) Number(r1%r2,u1) 
-                        else if(u1.isSameBaseAndDimension(u2)){
-                             if(u1.isLargerThan(u2)) Number(r1.convert1(u1,u2)%r2,u2) else Number(r1%(r2.convert1(u2,u1)),u1)
-                        }
-                        else if(u1.isSameExpandedUnit(u2)){ 
-                            if(u1.isLargerThan(u2)) Number(r1.convert2(u1,u2)%r2,u2) else Number(r1%(r2.convert2(u2,u1)),u1)
-                        }
-                        else{
-                            Number(r1%r2,u1%u2)
-                        }
-                    }
-					case "^" => {
-					    if(r2>=0){
-					        Number(r1^r2,u1.dim(u1.dimension*r2.d))
-					    }else{
-					        Number(r1^r2,EmptyUnitOfValue/(u1.dim(u1.dimension*(-r2.d))))
-					    }
-					}
-					case "root" => {
-					    Number(r1.root(r2),u1.dim(u1.dimension/r2))
-					}
-					case "min" => {
-					    if(u1.isSameBaseAndDimension(u2)){
-                             if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
-                             else if(r1<=r2.convert1(u2,u1)) v1 else v2
-                        }
-					    else if(u1.isSameExpandedUnit(u2)){ 
-					         if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
-                             else if(r1<=r2.convert2(u2,u1)) v1 else v2
-					    }
-					    else{
-                             if(r1<=r2) v1 else v2
-                        }
-					}
-					case "max" => {
-                        if(u1.isSameBaseAndDimension(u2)){
-                             if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
-                             else if(r1<=r2.convert1(u2,u1)) v2 else v1
-                        }
-                        else if(u1.isSameExpandedUnit(u2)){ 
-                            if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
-                            else if(r1<=r2.convert2(u2,u1)) v2 else v1
-                        }
-                        else{
-                             if(r1<=r2) v2 else v1
-                        }
-                    }
-					case "hypot" => Number(Real(java.lang.Math.hypot(r1.d,r2.convert(u2,u1).d)),u1)
-					case _ => null
-				})
-			}
-			case _ => None
-		}
-	}
-	
-	/** 
-	 * Calculates result of the operation with two arguments. 
-	 * Supports arguments of the Number type. 
-	 */
-	override def calculate(operator:String, v:Value):Option[Value] = {
-		v match {
-			case Number(r,u) => {
-				Option(operator match {
-					case "-" => Number(-r,u)
-					case "sqrt" => Number(r.sqrt,u.dim(u.dimension/2))
-					case "cbrt" => Number(r.cbrt,u.dim(u.dimension/3))
-					case "exp" => Number(r.exp)
-					case "ln" => Number(r.ln)
-					case "log" => Number(r.log)
-					case "abs" => Number(r.abs,u)
-					case "sin" => if(u==SI.rad) Number(r.sin) else Number(r.rad.sin)
-					case "cos" => if(u==SI.rad) Number(r.cos) else Number(r.rad.cos)
-					case "tan" => if(u==SI.rad) Number(r.tan) else Number(r.rad.tan)
-					case "cot" => if(u==SI.rad) Number(r.cot) else Number(r.rad.cot)
-					case "arcsin" => Number(r.arcsin.deg,SI.deg)
-					case "arccos" => Number(r.arccos.deg,SI.deg)
-					case "arctan" => Number(r.arctan.deg,SI.deg)
-					case "arccot" => Number(r.arccot.deg,SI.deg)
-					case "sinh" => if(u==SI.rad) Number(r.sinh) else Number(r.rad.sinh)
-					case "cosh" => if(u==SI.rad) Number(r.cosh) else Number(r.rad.cosh)
-					case "tanh" => if(u==SI.rad) Number(r.tanh) else Number(r.rad.tanh)
-					case "coth" => if(u==SI.rad) Number(r.coth) else Number(r.rad.coth)
-					case _ => null
-				})
-			}
-			case _ => None
-		}
-	}
+    
+    val typeId = Number.typeId
 	
     override def equals(a:Any):Boolean = a match {
         case n:Number if this.eq(n) => true
@@ -477,4 +306,190 @@ object ONE extends Number(Real.one){
 	override def ^ (e:Expression):Expression = ONE
 	override def isInt = true
 
+}
+
+object NumberValueCalculator extends ValueCalculator {
+    
+    def doRegister:Unit = {
+        Value.register((Number.typeId,Number.typeId),this)
+    }
+    
+    /** 
+     * Calculates result of the operation with two arguments. 
+     * Supports arguments of the Number type.
+     */
+    override def calculate(operator:String, v1:Value, v2:Value):Option[Value] = {
+        (v1,v2) match {
+            case (Number(r1,u1),Number(r2,u2)) => {
+                Option(operator match {
+                    case "+" => {
+                        if(u1==u2) Number(r1+r2,u1)
+                        else if(u1.isSameBaseAndDimension(u2)){
+                             if(u1.isLargerThan(u2)) Number(r1+(r2.convert1(u2,u1)),u1) else Number(r1.convert1(u1,u2)+r2,u2)
+                        }
+                        else if (u1.isSameExpandedUnit(u2)){
+                            if(u1.isLargerThan(u2)) Number(r1+(r2.convert2(u2,u1)),u1) else Number(r1.convert2(u1,u2)+r2,u2)
+                        }
+                        else{
+                            Number(r1+r2,u1+u2)
+                        }
+                    }
+                    case "-" => {
+                        if(u1==u2) Number(r1-r2,u1)
+                        else if(u1.isSameBaseAndDimension(u2)){ 
+                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert1(u2,u1)),u1) else Number(r1.convert1(u1,u2)-r2,u2)
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert2(u2,u1)),u1) else Number(r1.convert2(u1,u2)-r2,u2)
+                        }
+                        else{
+                            Number(r1-r2,u1-u2)
+                        }
+                    }
+                    case "*" => {
+                        if(u1.isSameBase(u2)){
+                             if(u1.isSameDimension(u2)){
+                                 if(u1.isLargerScaleThan(u2)) 
+                                     Number(r1*(r2.convert1(u2,u1)),u1.dim(u1.dimension*2)) 
+                                     else Number(r1.convert1(u1,u2)*r2,u2.dim(u1.dimension*2))
+                             }else if(u1.isSameScale(u2)){
+                                 Number(r1*r2,u1.dim(u1.dimension+u2.dimension))
+                             }else{
+                                 if(u1.isLargerScaleThan(u2)) 
+                                     Number(r1*(r2.adjustScale(u2,u1)),u1.dim(u1.dimension+u2.dimension)) 
+                                     else Number((r1.adjustScale(u1,u2)*r2),u2.dim(u1.dimension+u2.dimension))
+                             }
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                            if(u1.isLargerThan(u2)) {
+                                val su = (u1*u1).simplifiedUnit
+                                Number(r1*(r2.convert2(u2,u1))*su._2,su._1)
+                            } else {
+                                val su = (u2*u2).simplifiedUnit
+                                Number(r1.convert2(u1,u2)*r2*su._2,su._1)
+                            }
+                        }
+                        else{
+                            val su = (u1*u2).simplifiedUnit
+                            Number(r1*r2*su._2,su._1)
+                        }
+                    }
+                    case "/" => {
+                       if(u1.isSameBase(u2)){
+                             if(u1.isSameDimension(u2)){
+                                 Number(r1/(r2.convert1(u2,u1)),EmptyUnitOfValue)
+                             }else if(u1.isSameScale(u2)){
+                                 if(u1.dimension>u2.dimension) 
+                                     Number(r1/r2,u1.dim(u1.dimension-u2.dimension)) 
+                                     else Number(r1/r2,ComplexUnitOfValue(Quot(ONE,u1.dim(u2.dimension-u1.dimension))))
+                             }else{
+                                 if(u1.dimension>u2.dimension) {
+                                     if(u1.isLargerScaleThan(u2)) 
+                                         Number(r1/(r2.adjustScale(u2,u1)),u1.dim(u1.dimension-u2.dimension)) 
+                                         else Number((r1.adjustScale(u1,u2)/r2),u2.dim(u1.dimension-u2.dimension))
+                                 }else{
+                                     if(u1.isLargerScaleThan(u2)) 
+                                         Number(r1/(r2.adjustScale(u2,u1)),ComplexUnitOfValue(Quot(ONE,u1.dim(u2.dimension-u1.dimension)))) 
+                                         else Number((r1.adjustScale(u1,u2)/r2),ComplexUnitOfValue(Quot(ONE,u2.dim(u2.dimension-u1.dimension))))
+                                 }
+                             }
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                            Number(r1/(r2.convert2(u2,u1)),EmptyUnitOfValue)
+                        }
+                        else{
+                            val su = (u1/u2).simplifiedUnit
+                            Number(r1/r2*su._2,su._1)
+                        }
+                    }
+                    case "%" => {
+                        if(u1==u2) Number(r1%r2,u1) 
+                        else if(u1.isSameBaseAndDimension(u2)){
+                             if(u1.isLargerThan(u2)) Number(r1.convert1(u1,u2)%r2,u2) else Number(r1%(r2.convert1(u2,u1)),u1)
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                            if(u1.isLargerThan(u2)) Number(r1.convert2(u1,u2)%r2,u2) else Number(r1%(r2.convert2(u2,u1)),u1)
+                        }
+                        else{
+                            Number(r1%r2,u1%u2)
+                        }
+                    }
+                    case "^" => {
+                        if(r2>=0){
+                            Number(r1^r2,u1.dim(u1.dimension*r2.d))
+                        }else{
+                            Number(r1^r2,EmptyUnitOfValue/(u1.dim(u1.dimension*(-r2.d))))
+                        }
+                    }
+                    case "root" => {
+                        Number(r1.root(r2),u1.dim(u1.dimension/r2))
+                    }
+                    case "min" => {
+                        if(u1.isSameBaseAndDimension(u2)){
+                             if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
+                             else if(r1<=r2.convert1(u2,u1)) v1 else v2
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                             if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
+                             else if(r1<=r2.convert2(u2,u1)) v1 else v2
+                        }
+                        else{
+                             if(r1<=r2) v1 else v2
+                        }
+                    }
+                    case "max" => {
+                        if(u1.isSameBaseAndDimension(u2)){
+                             if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
+                             else if(r1<=r2.convert1(u2,u1)) v2 else v1
+                        }
+                        else if(u1.isSameExpandedUnit(u2)){ 
+                            if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
+                            else if(r1<=r2.convert2(u2,u1)) v2 else v1
+                        }
+                        else{
+                             if(r1<=r2) v2 else v1
+                        }
+                    }
+                    case "hypot" => Number(Real(java.lang.Math.hypot(r1.d,r2.convert(u2,u1).d)),u1)
+                    case _ => null
+                })
+            }
+            case _ => None
+        }
+    }
+    
+    /** 
+     * Calculates result of the operation with two arguments. 
+     * Supports arguments of the Number type. 
+     */
+    override def calculate(operator:String, v:Value):Option[Value] = {
+        v match {
+            case Number(r,u) => {
+                Option(operator match {
+                    case "-" => Number(-r,u)
+                    case "sqrt" => Number(r.sqrt,u.dim(u.dimension/2))
+                    case "cbrt" => Number(r.cbrt,u.dim(u.dimension/3))
+                    case "exp" => Number(r.exp)
+                    case "ln" => Number(r.ln)
+                    case "log" => Number(r.log)
+                    case "abs" => Number(r.abs,u)
+                    case "sin" => if(u==SI.rad) Number(r.sin) else Number(r.rad.sin)
+                    case "cos" => if(u==SI.rad) Number(r.cos) else Number(r.rad.cos)
+                    case "tan" => if(u==SI.rad) Number(r.tan) else Number(r.rad.tan)
+                    case "cot" => if(u==SI.rad) Number(r.cot) else Number(r.rad.cot)
+                    case "arcsin" => Number(r.arcsin.deg,SI.deg)
+                    case "arccos" => Number(r.arccos.deg,SI.deg)
+                    case "arctan" => Number(r.arctan.deg,SI.deg)
+                    case "arccot" => Number(r.arccot.deg,SI.deg)
+                    case "sinh" => if(u==SI.rad) Number(r.sinh) else Number(r.rad.sinh)
+                    case "cosh" => if(u==SI.rad) Number(r.cosh) else Number(r.rad.cosh)
+                    case "tanh" => if(u==SI.rad) Number(r.tanh) else Number(r.rad.tanh)
+                    case "coth" => if(u==SI.rad) Number(r.coth) else Number(r.rad.coth)
+                    case _ => null
+                })
+            }
+            case _ => None
+        }
+    }
+    
 }

@@ -29,7 +29,7 @@ trait Operation2 extends Operation {
   
   /** Default calculate implementation invokes Value#calculate(v1,v2) */ 
   def calculate(v1:Value,v2:Value):Expression = {
-      v1.calculate(operator,v1,v2).getOrElse(v2.calculate(operator,v1,v2).getOrElse(copy(v1,v2)))
+      Value.calculate(operator,v1,v2).getOrElse(copy(v1,v2))
   }
   
   final override def map(f:Transformation):Expression = {

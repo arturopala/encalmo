@@ -31,7 +31,7 @@ class EvalUnitTest extends AssertionsForJUnit {
 	    calc(d) = (c/a+1)
 	    calc(e) = d+c
 		val f1 = EvalAt(e, a -> 5, b -> 2)
-		assertEquals(Sum(Sum(Number(1.0),Quot(Prod(Number(5.0),Number(2.0)),Number(5.0))),Prod(Number(5.0),Number(2.0))),calc.substitute(f1))
+		assertEquals(Sum(Number(1),Quot(Prod(Symbol(name="a"),Symbol(name="b")),Symbol(name="a")),Prod(Symbol(name="a"),Symbol(name="b"))),calc.substitute(f1))
 	}
 	
 }

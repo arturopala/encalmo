@@ -100,9 +100,9 @@ class DocumentTest extends AssertionsForJUnit {
        assertEquals(2, i3)
        
        val i4 = doc1.countTreeLeafs
-       assertEquals(40, i4)
+       assertEquals(38, i4)
        val i5 = sr4.countTreeLeafs
-       assertEquals(1, i5)
+       assertEquals(0, i5)
     }
     
     @Test def testDocument2() {
