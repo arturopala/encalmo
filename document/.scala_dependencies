@@ -126,8 +126,8 @@
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/NumSection.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/NumSection.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/NumSection.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Section.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/NumSection.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/DocumentComponent.scala
-/home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/NumSection.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Enumerator.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/NumSection.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/EnumeratorProvider.scala
+/home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/NumSection.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Enumerator.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/style/FontStyle.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/style/FontStyle.scala
 -------
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala -> /home/artur/workspace/encalmo/document/target/classes/org/encalmo/document/Document.class

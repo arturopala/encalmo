@@ -42,7 +42,7 @@ package object expression {
 	)
 	
 	//helper functions
-	
+	def frac(m:Int,d:Int) = Quot(m,d)
 	//function definition
 	def fx(expr:Expression, vars:Symbol*) = Function(expr,vars:_*)
 	//Text value expression
