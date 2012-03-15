@@ -91,14 +91,19 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    		        case _ => {
 	    		            output.startb(MROW)
 	    		            output.mn(n)
-	    		            output.start(MROW)
-                            output.attr("mathsize","85%")
-                            output.attr("class","unit")
-                            output.body
-                            output.mtext(ENTITY_THIN_SPACE)
-	    		            n.unit.travel(traveler = this)
-	    		            output.end(MROW)
-	    		            output.end(MROW)
+	    		            n.unit match { 
+	    		                case SI.deg => n.unit.travel(traveler = this)
+	    		                case _ => {
+	    		                    output.start(MROW)
+	    		                    output.attr("mathsize","85%")
+                                    output.attr("class","unit")
+                                    output.body
+                                    output.mtext(ENTITY_THIN_SPACE)
+                                    n.unit.travel(traveler = this)
+                                    output.end(MROW)
+	    		                }
+	    		            }
+                            output.end(MROW)
 	    		        }
 	    		    }
 	    		}
@@ -145,6 +150,8 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    							output.mo(o.operator,PREFIX)
 	    							if (!o.isInstanceOf[Operation1]) {
 	    								output.leftBracket
+	    							}else{
+	    							    output.append(MathMLTags.ENTITY_THIN_SPACE)
 	    							}
 	    						}
 	    					}
@@ -427,7 +434,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
                                if(ic>0) {
                                    output.startb(MTEXT)
                                    output.append(",")
-                                   output.startb(ENTITY_THIN_SPACE)
+                                   output.append(ENTITY_THIN_SPACE)
                                    output.end(MTEXT)
                                }
                                x._1.travel(traveler = this)

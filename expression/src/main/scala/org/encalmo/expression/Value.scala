@@ -32,6 +32,25 @@ trait Value extends Expression {
 	def convertToBaseUnit:Value = this
 }
 
+/**
+ * Value calculator
+ */
+object Value {
+    
+    private val registry:scala.collection.mutable.Map[(String,String),ValueCalculator] = Map()
+    
+    def register(key:(String,String),calculator:ValueCalculator):Unit = registry.put(key,calculator)
+    
+    def calculate(operator:String, v1:Value,v2:Value):Option[Value] = {
+        registry.get((v1.typeId,v2.typeId)).map(_.calculate(operator,v1,v2)).getOrElse(None)
+    }
+    
+    def calculate(operator:String, v:Value):Option[Value] = {
+        registry.get((v.typeId,v.typeId)).map(_.calculate(operator,v)).getOrElse(None)
+    }
+    
+}
+
 trait ValueCalculator {
     
     /**
@@ -51,21 +70,20 @@ trait ValueCalculator {
     
 }
 
-/**
- * Value calculator
- */
-object Value {
+abstract class AbstractValueCalculator[A <: Value, B <: Value] extends ValueCalculator {
     
-    private val registry:scala.collection.mutable.Map[(String,String),ValueCalculator] = Map()
+    private val registry1:scala.collection.mutable.Map[String,Function1[A,Value]] = Map()
+    private val registry2:scala.collection.mutable.Map[String,Function2[A,B,Value]] = Map()
     
-    def register(key:(String,String),calculator:ValueCalculator):Unit = registry.put(key,calculator)
+    def register(operator:String,calculator:Function1[A,Value]) = registry1.put(operator,calculator)
+    def register(operator:String,calculator:Function2[A,B,Value]) = registry2.put(operator,calculator)
     
-    def calculate(operator:String, v1:Value,v2:Value):Option[Value] = {
-        registry.get((v1.typeId,v2.typeId)).map(_.calculate(operator,v1,v2)).getOrElse(None)
+    override final def calculate(operator:String, v:Value):Option[Value] = {
+        registry1.get(operator).map(_(v.asInstanceOf[A]))
     }
     
-    def calculate(operator:String, v:Value):Option[Value] = {
-        registry.get((v.typeId,v.typeId)).map(_.calculate(operator,v)).getOrElse(None)
+    override final def calculate(operator:String, v1:Value,v2:Value):Option[Value] = {
+        registry2.get(operator).map(_(v1.asInstanceOf[A],v2.asInstanceOf[B]))
     }
     
 }

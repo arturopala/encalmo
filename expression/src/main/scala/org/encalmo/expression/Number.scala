@@ -473,8 +473,8 @@ object NumberValueCalculator extends ValueCalculator {
                     case "ln" => Number(r.ln)
                     case "log" => Number(r.log)
                     case "abs" => Number(r.abs,u)
-                    case "sin" => if(u==SI.rad) Number(r.sin) else Number(r.rad.sin)
-                    case "cos" => if(u==SI.rad) Number(r.cos) else Number(r.rad.cos)
+                    case "sin" => if(u==SI.rad) Number(r.sin) else r.d match {case 0 => 0; case 90 => 1; case 180 => 0; case 270 => -1; case _ => Number(r.rad.sin)}
+                    case "cos" => if(u==SI.rad) Number(r.cos) else r.d match {case 0 => 1; case 90 => 0; case 180 => -1; case 270 => 0; case _ => Number(r.rad.cos)}
                     case "tan" => if(u==SI.rad) Number(r.tan) else Number(r.rad.tan)
                     case "cot" => if(u==SI.rad) Number(r.cot) else Number(r.rad.cot)
                     case "arcsin" => Number(r.arcsin.deg,SI.deg)
