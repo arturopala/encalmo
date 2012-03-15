@@ -31,7 +31,7 @@ trait Operation1 extends Operation {
   
   /** Default calculate implementation invokes Value#calculate */ 
   def calculate(v:Value):Expression = {
-      v.calculate(operator,v).getOrElse(copy(v))
+      Value.calculate(operator,v).getOrElse(copy(v))
   }
   
   final override def map(f:Transformation):Expression = {

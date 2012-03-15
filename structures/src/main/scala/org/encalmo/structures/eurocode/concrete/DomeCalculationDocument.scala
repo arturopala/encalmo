@@ -105,6 +105,8 @@ class DomeCalculationDocument extends CalculationDocument {
             )
         )
     )
-                
+       
+    @Test
+    override def printHtml:Unit = super.printHtml
 
 }

@@ -2,8 +2,8 @@
 -------
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/style/StylesConfig.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/BlockComponent.scala
-/home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/style/Style.scala
+/home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/DocumentComponentSeq.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/Document.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/document/DocumentComponent.scala
 /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/graphics/GraphicsElement.scala -> /home/artur/workspace/encalmo/document/src/main/scala/org/encalmo/graphics/GraphicsElement.scala

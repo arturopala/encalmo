@@ -42,7 +42,7 @@ trait OperationN extends Operation {
   
   /** Default calculate implementation invokes reduceLeft with Value#calculate(left,right) */ 
   def calculate(v:Value*):Expression = {
-      v.reduceLeft[Value]((v1,v2) => v1.calculate(operator,v1,v2).getOrElse(v2.calculate(operator,v1,v2).getOrElse(throw new IllegalArgumentException("("+v1+","+v2+")"))))
+      v.reduceLeft[Value]((v1,v2) => Value.calculate(operator,v1,v2).getOrElse(throw new IllegalArgumentException("("+v1+","+v2+")")))
   }
   
   final override def map(f:Transformation):Expression = {

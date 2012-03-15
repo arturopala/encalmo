@@ -107,7 +107,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		val r_a1 = calc.evaluate(context1.a)
 		assertEquals(Number(14),r_a1);
 		val r_a2 = calc.resolve(context1.a)
-		assertEquals(Sum(Prod(Number(2.0),Number(3.0)),Prod(Number(2.0),Number(4.0))),r_a2);
+		assertEquals(Sum(Prod(Number(2),Number(3)),Prod(Number(2),Quot(Number(4),Number(1)))),r_a2);
 	}
 	
 	@Test def testContextSet6() {
@@ -118,7 +118,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		calc(y) = 4
 		calc(z) = 0
 		val r_a2 = calc.resolve(context1.a)
-		assertEquals(Sum(Prod(Number(2),Number(3)),Prod(Number(2),Number(4))),r_a2);
+		assertEquals(Sum(Prod(Number(2),Number(3)),Prod(Number(2),Quot(Number(4),Number(1)))),r_a2);
 		val r_a1 = calc.evaluate(context1.a)
 		assertEquals(Number(14),r_a1);
 	}

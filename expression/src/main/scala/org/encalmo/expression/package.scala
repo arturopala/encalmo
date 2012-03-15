@@ -88,4 +88,6 @@ package object expression {
 		Selection(CaseExpression(),map.toSeq.map(x => Case(CaseExpression(x._2),Equals(e,x._1))))
 	}
 	
+	NumberValueCalculator.doRegister
+	
 }
