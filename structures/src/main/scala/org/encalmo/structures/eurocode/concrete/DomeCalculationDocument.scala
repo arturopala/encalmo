@@ -49,7 +49,7 @@ class DomeCalculationDocument extends CalculationDocument {
 	val Sw = BasicSymbols.S|w
 	
 	calc(r) = 14 unit SI.m
-	calc(φ1) = 60 unit SI.deg
+	calc(φ1) = 90 unit SI.deg
 	calc(h) = 10 unit SI.cm
 	
 	calc(R) = r/sin(φ1)
