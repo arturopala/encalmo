@@ -21,10 +21,10 @@ import scalax.file.Path
 trait CalculationDocument {
     
     /** Documented calculation */
-    val calc:Calculation = Calculation()
+    implicit val calc:Calculation = Calculation()
     
     /** Produced document */
-    val doc:Document
+    implicit val doc:Document
     
     /** Calculation's output files base name */
     val name:String
