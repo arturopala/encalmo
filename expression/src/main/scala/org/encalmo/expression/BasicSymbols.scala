@@ -106,6 +106,8 @@ object BasicSymbols {
 	lazy val Omega:Symbol = Symbol("Omega")
 	lazy val nabla:Symbol = Symbol("nabla")
 	
+	lazy val diam:Symbol = Symbol("⌀");
+	
 	lazy val mi = mu
 	lazy val ni = nu
 	

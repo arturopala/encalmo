@@ -54,6 +54,7 @@ package object expression {
 	// Rounding down with accuracy
 	def floor(e:Expression,accuracy:Double = 1) = round(e,RoundingMode.Step(false,accuracy))
 	// Rounding up with accuracy
+	def ceil(e:Expression) = round(e,RoundingMode.CEILING)
 	def ceil(e:Expression,accuracy:Double = 1) = round(e,RoundingMode.Step(true,accuracy))
 	
 	def rangeChoiceLE(e:Expression,first:Expression,bound:Expression,second:Expression):Expression = {
