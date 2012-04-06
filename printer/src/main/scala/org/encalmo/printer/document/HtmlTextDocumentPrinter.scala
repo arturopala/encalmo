@@ -25,7 +25,7 @@ object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
 	
 	override def print(input:Document,output:HtmlOutput = new HtmlOutput):HtmlOutput = {
 		val t = new HtmlTextDocumentPrinterTraveler(output)
-		input.travel(traveler = t)
+		input.visit(visitor = t)
 		output
 	}
 
@@ -36,7 +36,7 @@ object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
  * @author artur.opala
  */
 class HtmlTextDocumentPrinterTraveler(output:HtmlOutput) 
-extends Traveler[DocumentComponent] {
+extends TreeVisitor[DocumentComponent] {
 
 	val locale = output.locale
 	val mathOutput = output.toMathMLOutput
@@ -94,13 +94,13 @@ div {padding:5pt 0 2pt 0}
 			}
 			case chapter:Chapter => {
 			    output.startb(DIV,"header")
-				chapter.header.travel(traveler=this)
+				chapter.header.visit(visitor=this)
 				output.end(DIV)
 			}
 			case toc:TableOfContents => {
                 if(toc.parentDocument.isDefined){
                     output.startb(DIV,"toc")
-                    toc.parentDocument.get.travel(traveler = new HtmlTableOfContentsPrinterTraveler(output))
+                    toc.parentDocument.get.visit(visitor = new HtmlTableOfContentsPrinterTraveler(output))
                     output.end(DIV)
                 }
             }
@@ -180,7 +180,7 @@ div {padding:5pt 0 2pt 0}
 						val result = a.evaluate
 						val s = Section(a.style,result._2:_*)
 						s.parent = a.parent
-						s.travel(traveler = this);
+						s.visit(visitor = this);
 					}
 					case _ => {}
 				}
@@ -364,7 +364,7 @@ div {padding:5pt 0 2pt 0}
 			        if(span) output.startb(SPAN, etp.styleClassId)
                     mathOutput.open
                     if(etp.prefix!=null && etp.prefix!="") mathOutput.mo(etp.prefix,MathMLTags.INFIX,null,MathMLTags.THICKMATHSPACE)
-                    etp.expression.travel(traveler = ept, parentNode = parentNode, position = position)
+                    etp.expression.visit(visitor = ept, parentNode = parentNode, position = position)
                     if(etp.suffix!=null && etp.suffix!="") mathOutput.mo(etp.suffix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,null)
                     mathOutput.close
                     if(span) output.end(SPAN)

@@ -3,10 +3,10 @@ package org.encalmo.common
 import annotation.tailrec
 
 /**
- * Tree like structure trait
+ * Node of tree-like structure.
  * @author artur.opala
  */
-trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
+trait TreeNode[A<:TreeNode[A]] extends Visitable[A] {
     
     self:A =>
 	
@@ -16,8 +16,8 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
     def children:Seq[A] = Seq.empty
     
 	/**
-	 * Maps this structure once with tranformation function. 
-	 * Subtypes should return own copy with custom arguments after transformation
+	 * Maps this structure once with given tranformation function. 
+	 * Subtypes should apply this transformation to the children and return itself or copy if something has changed.
 	 * @param f transformate
 	 * @return tranformed structure
 	 */
@@ -48,41 +48,41 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
     
     /**
      * Travels internal structure of the expression 
-     * @param t traveler
+     * @param t visitor
      */
-  	final def travel(parentNode:Node[A] = null, traveler:Traveler[A], position:Int=0):Unit = {
-  	    val element = traveler.mapElement(this)
+  	final override def visit(visitor:TreeVisitor[A], parentNode:Node[A] = null, position:Int=0):Unit = {
+  	    val element = visitor.mapElement(this)
 		val node = Node(parentNode,element,position)
-		traveler.onEnter(node)
+		visitor.onEnter(node)
 		val children = element.children
 		if(!children.isEmpty){
 			children.size match {
-				case 1 => travelChild(node,children.head,traveler)
-				case 2 => travel2Children(node,children.head,children.tail.head,traveler)
-				case _ => travelNChildren(node,children,traveler)
+				case 1 => visitChild(node,children.head,visitor)
+				case 2 => visit2Children(node,children.head,children.tail.head,visitor)
+				case _ => visitNChildren(node,children,visitor)
 			}
 			
 		}
-		traveler.onExit(node)
+		visitor.onExit(node)
   	}
   	
-  	private def travelChild(node:Node[A],child:A,traveler:Traveler[A],position:Int = 0):Unit = {
-		traveler.onBeforeChildEnter(node,position,child)
-		child.travel(node,traveler,position)
-		traveler.onAfterChildExit(node,position,child)
+  	private def visitChild(node:Node[A],child:A,visitor:TreeVisitor[A],position:Int = 0):Unit = {
+		visitor.onBeforeChildEnter(node,position,child)
+		child.visit(visitor,node,position)
+		visitor.onAfterChildExit(node,position,child)
   	}
   	
-  	private def travel2Children(node:Node[A],child1:A,child2:A,traveler:Traveler[A]):Unit = {
-		travelChild(node,child1,traveler,0)
-		traveler.onBetweenChildren(node,child1,child2)
-		travelChild(node,child2,traveler,1)
+  	private def visit2Children(node:Node[A],child1:A,child2:A,visitor:TreeVisitor[A]):Unit = {
+		visitChild(node,child1,visitor,0)
+		visitor.onBetweenChildren(node,child1,child2)
+		visitChild(node,child2,visitor,1)
   	}
   	
-  	private def travelNChildren(node:Node[A],children:Seq[A],traveler:Traveler[A]):Unit = {
-		travelChild(node,children.head,traveler,0)
+  	private def visitNChildren(node:Node[A],children:Seq[A],visitor:TreeVisitor[A]):Unit = {
+		visitChild(node,children.head,visitor,0)
 		for(x <- 1 to children.size-1){
-			traveler.onBetweenChildren(node,children(x-1),children(x))
-			travelChild(node,children(x),traveler,x)
+			visitor.onBetweenChildren(node,children(x-1),children(x))
+			visitChild(node,children(x),visitor,x)
 	  	}
   	}
   	
@@ -98,12 +98,12 @@ trait TreeLike[A<:TreeLike[A]] extends Travelable[A] {
   	}
   	
   	/** Collection of all nested level's children of the type A */
-    final def allNestedChildrenOfType[B <: TreeLike[A]](t:Class[B]):Seq[B] = {
+    final def allNestedChildrenOfType[B <: TreeNode[A]](t:Class[B]):Seq[B] = {
         children.filter(e => t.isAssignableFrom(e.getClass)).map(_.asInstanceOf[B]) ++ children.flatMap(_.childrenOfType[B](t))
     }
     
     /** Collection of children of the type A */
-    final def childrenOfType[B <: TreeLike[A]](t:Class[B]):Seq[B] = {
+    final def childrenOfType[B <: TreeNode[A]](t:Class[B]):Seq[B] = {
         children.filter(e => t.isAssignableFrom(e.getClass)).map(_.asInstanceOf[B])
     }
 

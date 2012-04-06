@@ -6,7 +6,7 @@ import org.encalmo.common._
  * Root type of all expressions.
  * @author artur.opala
  */
-trait Expression extends TreeLike[Expression] {
+trait Expression extends TreeNode[Expression] {
   
   /**
    * Evaluates expression. 

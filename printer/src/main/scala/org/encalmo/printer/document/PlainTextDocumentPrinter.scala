@@ -17,7 +17,7 @@ object PlainTextDocumentPrinter extends TextDocumentPrinter {
 	override def print(input:Document,output:TextOutput = new TextOutput):TextOutput = {
 		val t = new PlainTextDocumentPrinterTraveler(output)
 		try{
-			input.travel(traveler = t)
+			input.visit(visitor = t)
 		}
 		catch {
 			case e => {
@@ -35,7 +35,7 @@ object PlainTextDocumentPrinter extends TextDocumentPrinter {
  * @author artur.opala
  */
 class PlainTextDocumentPrinterTraveler(output:TextOutput) 
-extends Traveler[DocumentComponent] {
+extends TreeVisitor[DocumentComponent] {
 	
 	val w = output.asWriter
 	val locale = output.locale
@@ -103,7 +103,7 @@ extends Traveler[DocumentComponent] {
 		        w.write(etp.prefix)
 		        w.write(SPACE)
 		    }
-			etp.expression.travel(traveler = ept)
+			etp.expression.visit(visitor = ept)
 			if(etp.suffix!=null){
 			    w.write(SPACE)
 			    w.write(etp.suffix)
@@ -200,7 +200,7 @@ extends Traveler[DocumentComponent] {
 			case a:Assertion => {
 				val result = a.evaluate
 				val s = Section(a.style,result._2:_*)
-				s.travel(traveler = this);
+				s.visit(visitor = this);
 				result._1 match {
 					case None => throw new IllegalStateException
 					case Some(b) if !b => throw new IllegalStateException("")

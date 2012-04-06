@@ -1,10 +1,10 @@
 package org.encalmo.common
 
 /**
- * Tree structure traveler
+ * Tree structure visitor
  * @author artur.opala
  */
-trait Traveler[A<:AnyRef] {
+trait TreeVisitor[A<:AnyRef] {
 	
 	def onEnter(node:Node[A]):Unit = Unit
 	
@@ -20,7 +20,7 @@ trait Traveler[A<:AnyRef] {
 	
 }
 
-case class AdHocTraveler[A<:AnyRef] (
+case class AdHocVisitor[A<:AnyRef] (
     
     val onEnterFx:Option[Node[A]=>Unit] = None,
     val onExitFx:Option[Node[A]=>Unit] = None,
@@ -29,7 +29,7 @@ case class AdHocTraveler[A<:AnyRef] (
     val onBetweenChildrenFx:Option[(Node[A],A,A)=>Unit] = None,
     val mapElementFx:Option[A=>A] = None
     
-) extends Traveler[A] {
+) extends TreeVisitor[A] {
     
     override def onEnter(node:Node[A]):Unit = onEnterFx.map(_(node))
 	

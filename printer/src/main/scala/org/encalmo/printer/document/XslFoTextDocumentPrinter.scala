@@ -24,7 +24,7 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
 	
 	override def print(input:Document,output:XslFoOutput = new XslFoOutput):XslFoOutput = {
 		val t = new XslFoTextDocumentPrinterTraveler(output)
-		input.travel(traveler = t)
+		input.visit(visitor = t)
 		output
 	}
 
@@ -35,7 +35,7 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
  * @author artur.opala
  */
 class XslFoTextDocumentPrinterTraveler(output:XslFoOutput) 
-extends Traveler[DocumentComponent] {
+extends TreeVisitor[DocumentComponent] {
 	
 	val locale = output.locale
 	val mathOutput = output.toMathMLOutput
@@ -86,7 +86,7 @@ extends Traveler[DocumentComponent] {
                     output.attr("border-bottom","0.3pt solid black")
                     output.body
 					isInFlow = true
-					chapter.header.travel(traveler=this)
+					chapter.header.visit(visitor=this)
 					isInFlow = false
 					output.end(BLOCK)
 					output.end(STATIC_CONTENT)
@@ -100,7 +100,7 @@ extends Traveler[DocumentComponent] {
                     output.attr("border-top","1pt solid black")
                     output.body
 					isInFlow = true
-					chapter.footer.travel(traveler=this)
+					chapter.footer.visit(visitor=this)
 					isInFlow = false
 					output.startb(INLINE)
 					output.elem(PAGE_NUMBER)
@@ -151,7 +151,7 @@ extends Traveler[DocumentComponent] {
                     output.body
                     output.append(toc.title)
                     output.end(BLOCK)
-                    toc.parentDocument.get.travel(traveler = new XslFoTableOfContentsPrinterTraveler(output))
+                    toc.parentDocument.get.visit(visitor = new XslFoTableOfContentsPrinterTraveler(output))
                 }
                 output.end(BLOCK)
             }
@@ -240,7 +240,7 @@ extends Traveler[DocumentComponent] {
 					case a:Assertion => {
 						val result = a.evaluate
 						val s = Section(a.style,result._2:_*)
-						s.travel(traveler = this);
+						s.visit(visitor = this);
 					}
 					case _ => {}
 				}
@@ -494,7 +494,7 @@ extends Traveler[DocumentComponent] {
                     output.body
                     mathOutput.open
                     if(etp.prefix!=null && etp.prefix!="") mathOutput.mo(etp.prefix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
-                    etp.expression.travel(traveler = ept, parentNode = parentNode, position = position)
+                    etp.expression.visit(visitor = ept, parentNode = parentNode, position = position)
                     if(etp.suffix!=null && etp.suffix!="") mathOutput.mo(etp.suffix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
                     mathOutput.close
                     mathOutput.mathStyle = mc
