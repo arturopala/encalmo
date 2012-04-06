@@ -14,7 +14,7 @@ object MathMLExpressionPrinter extends ExpressionPrinter[MathMLOutput, String] {
 
 	override def print(e: Expression, output: MathMLOutput = new MathMLOutput): MathMLOutput = {
 		val t = new MathMLExpressionPrinterTraveler(output)
-		e.travel(traveler = t)
+		e.visit(visitor = t)
 		output
 	}
 
@@ -24,7 +24,7 @@ object MathMLExpressionPrinter extends ExpressionPrinter[MathMLOutput, String] {
  * Simple Traveler printing expression as MathML xml text
  * @author artur.opala
  */
-class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Expression] {
+class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[Expression] {
 	
 	val locale = output.locale
 
@@ -92,14 +92,14 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
 	    		            output.startb(MROW)
 	    		            output.mn(n)
 	    		            n.unit match { 
-	    		                case SI.deg => n.unit.travel(traveler = this)
+	    		                case SI.deg => n.unit.visit(visitor = this)
 	    		                case _ => {
 	    		                    output.start(MROW)
 	    		                    output.attr("mathsize","85%")
                                     output.attr("class","unit")
                                     output.body
                                     output.mtext(ENTITY_THIN_SPACE)
-                                    n.unit.travel(traveler = this)
+                                    n.unit.visit(visitor = this)
                                     output.end(MROW)
 	    		                }
 	    		            }
@@ -437,11 +437,11 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends Traveler[Exp
                                    output.append(ENTITY_THIN_SPACE)
                                    output.end(MTEXT)
                                }
-                               x._1.travel(traveler = this)
+                               x._1.visit(visitor = this)
                                output.startb(MTEXT)
                                output.mo("=",INFIX,THINMATHSPACE,THINMATHSPACE)
                                output.end(MTEXT)
-                               ev.er.evaluate(x._2).travel(traveler = this)
+                               ev.er.evaluate(x._2).visit(visitor = this)
                                ic = ic + 1
                             }
                         )

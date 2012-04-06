@@ -2,7 +2,7 @@ package org.encalmo.document
 
 import org.encalmo.common._
 import annotation.tailrec
-import org.encalmo.common.AdHocTraveler
+import org.encalmo.common.AdHocVisitor
 import org.encalmo.common.Node
 import scala.collection.mutable.{Set,LinkedHashSet}
 import org.encalmo.style.Style
@@ -12,7 +12,7 @@ import org.encalmo.style.DefaultStyle
  * DocumentComponent trait
  * @author artur.opala
  */
-abstract class DocumentComponent(private val dcStyle:Style) extends TreeLikeWithParent[DocumentComponent] {
+abstract class DocumentComponent(private val dcStyle:Style) extends TreeNodeWithParentRef[DocumentComponent] {
     
     /** Component's own style declaration */
     def myStyle:Style = dcStyle
@@ -56,13 +56,13 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeLikeWith
 	    if(dcStyle!=null){
         	stylesSet.add(dcStyle)
         }
-	    val t = AdHocTraveler[DocumentComponent](onEnterFx = Some({n:Node[DocumentComponent] => {
+	    val t = AdHocVisitor[DocumentComponent](onEnterFx = Some({n:Node[DocumentComponent] => {
 	        val style = n.element.dcStyle
 	        if(style!=null){
 	        	stylesSet.add(style)
 	        }
 	    }}))
-	    this.travel(traveler = t)
+	    this.visit(visitor = t)
 	    stylesSet
 	}
 }

@@ -1,6 +1,6 @@
 package org.encalmo.expression
-import org.encalmo.common.{AdHocTraveler,Node}
-import org.encalmo.common.Traveler
+import org.encalmo.common.{AdHocVisitor,Node}
+import org.encalmo.common.TreeVisitor
 import scala.collection.mutable.Stack
 import scala.collection.mutable.Buffer
 import java.text.DecimalFormat
@@ -147,7 +147,7 @@ object EmptyUnitOfValue extends SimpleUnitOfValue() {
     
 }
 
-case class UnitOfValueNameBuilder extends Traveler[Expression] {
+case class UnitOfValueNameBuilder extends TreeVisitor[Expression] {
     
     private val stack = Stack[Buffer[String]]()
     
@@ -227,7 +227,7 @@ case class ComplexUnitOfValue(
     
     override lazy val name:UnitOfValueName = {
         val nb = new UnitOfValueNameBuilder()
-        this.travel(traveler=nb)
+        this.visit(nb)
         UnitOfValueName(nb.toResult)
     }
     

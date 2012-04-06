@@ -15,25 +15,25 @@ class UnitOfValueUnitTest extends AssertionsForJUnit {
     
     @Test def testNameBuilder1 {
     	val nb1 = new UnitOfValueNameBuilder()
-    	Prod(SI.kg,SI.m).travel(traveler=nb1)
+    	Prod(SI.kg,SI.m).visit(nb1)
     	assertEquals("kg*m", nb1.toResult)
     } 
     
     @Test def testNameBuilder2 {
         val nb1 = new UnitOfValueNameBuilder()
-        Quot(Prod(SI.kg,SI.m),SI.N).travel(traveler=nb1)
+        Quot(Prod(SI.kg,SI.m),SI.N).visit(nb1)
         assertEquals("kg*m/N", nb1.toResult)
     }
     
     @Test def testNameBuilder2a {
         val nb1 = new UnitOfValueNameBuilder()
-        Quot(Prod(SI.m,SI.kg),SI.N).travel(traveler=nb1)
+        Quot(Prod(SI.m,SI.kg),SI.N).visit(nb1)
         assertEquals("kg*m/N", nb1.toResult)
     }
     
     @Test def testNameBuilder3 {
         val nb1 = new UnitOfValueNameBuilder()
-        Quot(Prod(SI.kg,SI.m),Prod(SI.N,SI.g)).travel(traveler=nb1)
+        Quot(Prod(SI.kg,SI.m),Prod(SI.N,SI.g)).visit(nb1)
         assertEquals("kg*m/(g*N)", nb1.toResult)
     } 
     

@@ -15,9 +15,9 @@ class TravelUnitTest extends AssertionsForJUnit {
 		val writer = new java.io.PrintWriter(Console.out)
 		val t1 = new PlainTextExpressionPrinterTraveler(new TextOutput(java.util.Locale.ENGLISH))
 		val t2 = new PlainTextExpressionPrinterTraveler(new TextOutput(new java.util.Locale("PL")))
-		e.travel(null,t1)
+		e.visit(t1)
 		writer.write("\r\n")
-		e.travel(null,t2)
+		e.visit(t2)
 		writer.close
 	}
 	

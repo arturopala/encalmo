@@ -3,10 +3,10 @@ package org.encalmo.common
 import annotation.tailrec
 
 /**
- * Tree like structure trait
+ * Node of the tree-like structure with back-reference to the owning parent node.
  * @author artur.opala
  */
-trait TreeLikeWithParent[A<:TreeLikeWithParent[A]] extends TreeLike[A] {
+trait TreeNodeWithParentRef[A<:TreeNodeWithParentRef[A]] extends TreeNode[A] {
     
     self:A =>
 	

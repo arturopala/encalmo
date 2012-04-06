@@ -1,10 +1,10 @@
 package org.encalmo.graphics
 
-import org.encalmo.common.TreeLikeWithParent
+import org.encalmo.common.TreeNodeWithParentRef
 
 /**
  * Graphics element base class
  */
-abstract class GraphicsElement extends TreeLikeWithParent[GraphicsElement] {
+abstract class GraphicsElement extends TreeNodeWithParentRef[GraphicsElement] {
 
 }

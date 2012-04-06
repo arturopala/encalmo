@@ -14,7 +14,7 @@ object PlainTextExpressionPrinter extends TextExpressionPrinter {
 	
 	override def print(e:Expression,output:TextOutput = new TextOutput):TextOutput = {
 		val t = new PlainTextExpressionPrinterTraveler(output)
-		e.travel(traveler = t)
+		e.visit(visitor = t)
 		output
 	}
 
@@ -24,7 +24,7 @@ object PlainTextExpressionPrinter extends TextExpressionPrinter {
  * Simple Traveler printing expression as plain text
  * @author artur.opala
  */
-class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Expression] {
+class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[Expression] {
 	
 	val w = output.asWriter
 	val locale = output.locale
@@ -218,9 +218,9 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends Traveler[Exp
                     s.foreach(
                         x => {
                            if(ic>0) w.write(", ")
-                           x._1.travel(traveler = this)
+                           x._1.visit(visitor = this)
                            w.write("=")
-                           ev.er.evaluate(x._2).travel(traveler = this)
+                           ev.er.evaluate(x._2).visit(visitor = this)
                            ic = ic + 1
                         }
                     )
