@@ -44,7 +44,7 @@ object RoundingMode {
 						if(d2.isEmpty){
 							d
 						}else{
-							d2.first
+							d2.head
 						}
 					}else{
 						val d1 = vals.filter(_ < d)

@@ -22,7 +22,7 @@ trait FiniteElement extends Ordered[FiniteElement] with Numbered {
             (nodes,elem.nodes) match {
                 case (Seq(),Seq()) => 0
                 case (Seq(), _ ) => -1
-                case _ => nodes.first compare elem.nodes.first 
+                case _ => nodes.head compare elem.nodes.head 
             }
         }
     }

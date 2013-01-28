@@ -46,7 +46,7 @@ object JOGL {
             val is = classOf[NativeLibInfo].getResourceAsStream(path)
             val dest = Path(dir) / nativeLibInfo.getNativeLibName(lib)
             if(!dest.exists){
-            	Resource.fromInputStream(is).copyData(dest)
+            	Resource.fromInputStream(is).copyDataTo(dest);
             	Console.println("Lib "+lib+" copied.")
             }
         })

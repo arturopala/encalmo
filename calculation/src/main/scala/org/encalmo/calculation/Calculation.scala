@@ -52,7 +52,7 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 */
 	override def getExpression(s:Symbol):Option[Expression] = {
 	    val c = cache.get(s)
-	    if(c.isDefined) c else findExpression(s,set.elements)
+	    if(c.isDefined) c else findExpression(s,set.iterator)
 	}
 	
 	/**
@@ -70,7 +70,7 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 * Returns expression mapped to that symbol or None
 	 */
 	override def getRawExpression(s:Symbol):Option[Expression] = {
-		findRawExpression(s,set.elements)
+		findRawExpression(s,set.iterator)
 	}
 	
 	/**

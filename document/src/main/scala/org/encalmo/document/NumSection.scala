@@ -17,7 +17,7 @@ extends Section(nsStyle,flow:_*) {
 	override def toString = "NumSection("+nsStyle+","+flow.mkString(",")+")"
 	
 	/** Section's resolved enumerator */
-	@tailrec
+	//TDOD @tailrec
     lazy val enumerator:Enumerator = {
     	if(myEnumerator!=null){
     		myEnumerator
