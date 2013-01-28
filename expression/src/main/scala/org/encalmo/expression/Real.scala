@@ -136,7 +136,7 @@ class Real(val d: Double) {
           if(Math.abs(d2 - d) > Math.abs(d/1E6)) Real(d2) else this
       }
       catch {
-          case e => this
+          case e:Exception => this
       }
   }
 

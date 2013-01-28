@@ -9,6 +9,7 @@ object HtmlTags {
 	val HTML 				= "html"
     val HEAD 				= "head"
     val STYLE 				= "style"
+    val SCRIPT               = "script"
     val META 				= "meta"
     val BODY 				= "body"
     val DIV 				= "div"

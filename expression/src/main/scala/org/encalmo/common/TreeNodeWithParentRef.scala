@@ -80,7 +80,7 @@ trait TreeNodeWithParentRef[A<:TreeNodeWithParentRef[A]] extends TreeNode[A] {
   	 * Checks if this is the first children of type B
   	 */
   	final def isFirstChildrenOfType[B](t:Class[B]):Boolean = {
-  	    this.isInstanceOf[B] && (parent match {
+  	    parent match {
   	    	case None => true
   	    	case Some(p) => {
   	    		p.children.takeWhile(
@@ -89,7 +89,7 @@ trait TreeNodeWithParentRef[A<:TreeNodeWithParentRef[A]] extends TreeNode[A] {
 					z => !(t.isAssignableFrom(t.getClass))
 				)
   	    	}
-  	    })
+  	    }
   	}
 
 }
