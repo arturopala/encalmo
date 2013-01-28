@@ -17,7 +17,7 @@ case class HtmlOutputPreferences(
 	
 	def withSkipDocumentStyles(b:Boolean):HtmlOutputPreferences = copy(skipDocumentStyles=b)
 	
-	def withCustomStyleSheet(path:Path):HtmlOutputPreferences = copy(customStyleSheet = path.slurpString(),skipDocumentStyles=true)
+	def withCustomStyleSheet(path:Path):HtmlOutputPreferences = copy(customStyleSheet = path.string,skipDocumentStyles=true)
 	
 	def withCustomStyleSheet(stylesheet:String):HtmlOutputPreferences = copy(customStyleSheet = stylesheet,skipDocumentStyles=true)
 	

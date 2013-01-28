@@ -185,11 +185,11 @@ extends TextOutput(locale,buffer) {
 	 */
 	def attrNoZero(name:String,value:Any*):Boolean = {
 		if(!value.isEmpty 
-				&& value.first!=null 
-				&& value.first!="0" 
-				&& value.first!=0 
-				&& value.first!=" "
-				&& value.first!=""){
+				&& value.head!=null 
+				&& value.head!="0" 
+				&& value.head!=0 
+				&& value.head!=" "
+				&& value.head!=""){
 			attr(name,value:_*)
 			true
 		} else false
@@ -202,12 +202,12 @@ extends TextOutput(locale,buffer) {
 	 */
 	def attrIfChanged(name:String,template:Any,value:Any*):Boolean = {
 		if(!value.isEmpty 
-				&& value.first!=null 
-				&& value.first!="0" 
-				&& value.first!=0 
-				&& value.first!=" "
-				&& value.first!=""
-				&& value.first!=template){
+				&& value.head!=null 
+				&& value.head!="0" 
+				&& value.head!=0 
+				&& value.head!=" "
+				&& value.head!=""
+				&& value.head!=template){
 			attr(name,value:_*)
 			true
 		} else false

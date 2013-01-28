@@ -18,7 +18,7 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeNodeWith
     def myStyle:Style = dcStyle
     
     /** Component's resolved style */
-    @tailrec
+    //TODO @tailrec
     lazy val style:Style = {
     	if(myStyle!=null){
     		myStyle

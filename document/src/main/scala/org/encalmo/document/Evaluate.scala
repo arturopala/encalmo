@@ -73,7 +73,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 				val depth = substituted.countTreeLeafs
 				if(depth>3 || substituted.isInstanceOf[Selection]){
     				val evaluation1 = adjustUnitsInSum((substituted match {
-    				    case tr:Transparent => tr.children.first
+    				    case tr:Transparent => tr.children.head
     				    case x => x
     				}) match { // partialy evaluated expression
     				    case null => substituted

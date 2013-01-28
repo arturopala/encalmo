@@ -6,7 +6,7 @@ object Real {
   def apply(d: Double): Real = {
     if (d == 0) zero
     else if (d == 1) one
-    else if (d == Math.Pi) pi
+    else if (d == Math.PI) pi
     else if (d == Math.E) e
     else new Real(d)
   }
@@ -15,7 +15,7 @@ object Real {
 
   val zero = new Real(0)
   val one = new Real(1)
-  val pi = new Real(Math.Pi)
+  val pi = new Real(Math.PI)
   val e = new Real(Math.E)
 
   private def getFormat(locale: java.util.Locale): java.text.DecimalFormat = {
@@ -64,7 +64,7 @@ class Real(val d: Double) {
   def arcsin: Real = Real(Math.asin(d))
   def arccos: Real = Real(Math.acos(d))
   def arctan: Real = Real(Math.atan(d))
-  def arccot: Real = Real(Math.Pi / 2 - Math.atan(d))
+  def arccot: Real = Real(Math.PI / 2 - Math.atan(d))
   def min(r: Real): Real = Real(Math.min(d, r.d))
   def max(r: Real): Real = Real(Math.max(d, r.d))
   def avg(r: Real): Real = Real((d + r.d) / 2)

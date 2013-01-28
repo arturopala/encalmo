@@ -2,6 +2,15 @@ glob:.git
 glob:.bzr
 glob:target
 
+syntax: glob
+
+.settings
+.metadata
+.cache
+target
+bin
+out
+
 syntax: regexp
 ^bin$
 syntax: regexp

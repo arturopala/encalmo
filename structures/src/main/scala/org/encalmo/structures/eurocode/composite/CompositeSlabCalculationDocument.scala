@@ -147,5 +147,7 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
 			Section(style1.useAlign("right"),"Opracował: Artur Opala")
         )
     )
+    
+    @Test override def printHtml:Unit = super.printHtml
 
 }

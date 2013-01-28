@@ -26,7 +26,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         createInputFile_Z88I3(0)
         Seq("z88.dyn","z88o.ogl").foreach { f =>
 	        val is = classOf[Z88Project[A]].getResourceAsStream("/"+f)
-	        Resource.fromInputStream(is).copyData(directory / f)
+	        Resource.fromInputStream(is).copyDataTo(directory / f)
         }
 }
     
@@ -83,7 +83,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
                 case None => fit.next
             }))
         })
-        val z88i2 = Z88I2.slurpString // take 2nd input back
+        val z88i2 = Z88I2.toString // take 2nd input back
         Z88I2.write("") // clear previous content
         // 1st input group: Number of the boundary conditions: loads and constraints
         writeLine (Z88I2, bclines.next, LEGEND)
