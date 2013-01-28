@@ -33,7 +33,7 @@ trait CalculationDocument {
     
     @Test def printHtml:Unit = {
         val layout = Predefined.layout
-        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path("src/main/resources/style.css"))
+        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path.fromString("src/main/resources/style.css"))
         val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
         output.open
         HtmlTextDocumentPrinter.print(doc,output)

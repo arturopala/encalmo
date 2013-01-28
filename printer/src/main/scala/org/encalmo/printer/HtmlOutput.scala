@@ -30,6 +30,10 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		attr("http-equiv","Content-Type")
 		attr("content","text/html; charset=utf-8")
 		end
+		/*start(SCRIPT) // Currently work too slow in Chrome
+        attr("type","text/javascript")
+        attr("src","https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
+        end(SCRIPT)*/
 		end(HEAD)
 		start(BODY)
 		end
