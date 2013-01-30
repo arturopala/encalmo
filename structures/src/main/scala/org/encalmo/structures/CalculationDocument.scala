@@ -15,21 +15,19 @@ import org.junit.Test
 import scalax.file.Path
 
 /**
- * Base trait for calculation documentation
+ * Base class for documented calculations
  * @author artur
  */
-trait CalculationDocument {
+abstract class CalculationDocument extends Calculation {
     
     /** Documented calculation */
-    implicit val calc:Calculation = Calculation()
+    val calc:Calculation = this
     
     /** Produced document */
     implicit val doc:Document
     
     /** Calculation's output files base name */
     val name:String
-   
-    def acc(d:Double):Unit = calc.acc(d)
     
     @Test def printHtml:Unit = {
         val layout = Predefined.layout

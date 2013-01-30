@@ -7,6 +7,11 @@ import org.encalmo.expression._
  * Mutable (updatable) Context trait
  */
 trait MutableContext extends Context {
+   
+  self=>  
+    
+  //implicit self-reference
+  implicit val ctx:MutableContext = this
   
   override def map:Map[Symbol,Expression]
   

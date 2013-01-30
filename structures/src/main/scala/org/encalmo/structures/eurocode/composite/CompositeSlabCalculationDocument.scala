@@ -29,7 +29,6 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     import ActionsSymbols.{gammaG,gammaQ}
     
     import CompositeSlabWithProfiledSheetingSymbols.{Gsk,qk,Fk,dmesh,sd}
-    //import ProfiledSteelSheetSymbols
     
     override val name = "kz-strop"
     
