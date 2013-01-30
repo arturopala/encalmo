@@ -1,6 +1,7 @@
 package org.encalmo.structures.eurocode.composite
 
 import org.encalmo.expression._
+import org.encalmo.calculation._
 import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
@@ -112,7 +113,7 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
     import ConcreteSymbols._
     import ActionsSymbols._
 	
-	this(hc) = h-hp
+	hc := h-hp
 	
 	//faza montazu - LOAD
 	this(Qcfk1) = (bs*hc+0.5*(bo+bb)*hp)*gammacf

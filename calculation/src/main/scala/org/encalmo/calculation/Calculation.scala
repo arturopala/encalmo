@@ -2,6 +2,7 @@ package org.encalmo.calculation
 
 import scala.collection.mutable.{Map,LinkedHashSet,LinkedHashMap}
 import org.encalmo.expression._
+import scala.annotation.tailrec
 
 /** 
  * Calculation. Mutable context with evaluated expression's cache.
@@ -58,11 +59,17 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	/**
 	 * Resolves symbol in nested contexts
 	 */
-	def findExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
-		if(it.hasNext){
-			it.next.getExpression(s).orElse(findExpression(s,it))
-		}else{
+	@tailrec
+	final def findExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
+		if(!it.hasNext){
 			None
+		}else{
+			val expr = it.next.getExpression(s)
+			if(expr.isDefined){
+			    expr
+			} else {
+			    findExpression(s,it)
+			}
 		}
 	}
 	
@@ -76,13 +83,18 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	/**
 	 * Resolves symbol in nested contexts
 	 */
-	def findRawExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
-		if(it.hasNext){
-			it.next.getRawExpression(s).orElse(findRawExpression(s,it))
-		}else{
-			None
-		}
-	}
+	@tailrec
+    final def findRawExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
+        if(!it.hasNext) None
+        else {
+            val rawExpr = it.next.getRawExpression(s)
+            if(rawExpr.isDefined) {
+                rawExpr
+            } else {
+                findRawExpression(s,it) 
+            }
+        }
+    }
 	
 	/**
 	 * Adds resolved espresion to cache
