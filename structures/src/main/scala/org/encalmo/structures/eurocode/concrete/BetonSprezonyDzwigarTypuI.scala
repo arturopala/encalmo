@@ -239,63 +239,63 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
                 	Section(styleComment1,"[1] Norma PN-B-03264 \"Konstrukcje betonowe, żelbetowe i sprężone. Obliczenia statyczne i projektowanie.\"")
                 ),
                 PageBreak,
-                NumSection("Parametry zadania",Evaluate(calc,ld,lr,hd,beton(CLASS),phip,phis)),
+                NumSection("Parametry zadania",Evaluate(ld,lr,hd,beton(CLASS),phip,phis)),
                 NumSection("Dane materiałów konstrukcyjnych",
-                        NumSection("Cięgna sprężające z drutu Y1670C",Evaluate(calc,rhop,ap,dsigp,Fpk,Fp,Fp01k,rop,fpk,fp01k,gammas,fpd)),
+                        NumSection("Cięgna sprężające z drutu Y1670C",Evaluate(rhop,ap,dsigp,Fpk,Fp,Fp01k,rop,fpk,fp01k,gammas,fpd)),
                         beton.info/*,
                         zbrojenie.info*/
                 ),
-                NumSection("Rozmieszczenie cięgien i otulina",Evaluate(calc,dg,dxmin,dymin,cminb,cmindur,cmin,dcdev,cnom,cp)),
+                NumSection("Rozmieszczenie cięgien i otulina",Evaluate(dg,dxmin,dymin,cminb,cmindur,cmin,dcdev,cnom,cp)),
                 NumSection("Obciążenia"
-                        ,NumSection("Obciążenia stałe",Evaluate(calc,gpk)))
-                        ,NumSection("Obciążenie śniegiem",Evaluate(calc,HM,sk,mi1,Ce,Ct,qsk))
-                        ,NumSection("Obciążenie technologiczne",Evaluate(calc,qtk))
-                ,NumSection("Wyznaczenie liczby cięgien sprężających",Evaluate(calc,qd1,Myd1,z1,np1,np2,npxmax,np1x,np1y,np1xr,np2x,np2y,np2xr)),
-                NumSection("Geometria przekroju dźwigara",Evaluate(calc,hd,bd,b1,b2,h1,h2,h4,h5,h3,hz1,hz2,hz3)),
-                NumSection("Wyznaczenie charakterystyk przekroju dźwigara",Evaluate(calc,Ap1,Ap2,Ap,Acceff,Act,dps,dp,yp1,yp2,Ac,Sc,ycd,ycg,Ic,Wcd,Wcg,alphae,Ap1s,Ap2s,Acs,Scs,yp,yd,yg,Ics,Wcsd,Wcsg))
+                        ,NumSection("Obciążenia stałe",Evaluate(gpk)))
+                        ,NumSection("Obciążenie śniegiem",Evaluate(HM,sk,mi1,Ce,Ct,qsk))
+                        ,NumSection("Obciążenie technologiczne",Evaluate(qtk))
+                ,NumSection("Wyznaczenie liczby cięgien sprężających",Evaluate(qd1,Myd1,z1,np1,np2,npxmax,np1x,np1y,np1xr,np2x,np2y,np2xr)),
+                NumSection("Geometria przekroju dźwigara",Evaluate(hd,bd,b1,b2,h1,h2,h4,h5,h3,hz1,hz2,hz3)),
+                NumSection("Wyznaczenie charakterystyk przekroju dźwigara",Evaluate(Ap1,Ap2,Ap,Acceff,Act,dps,dp,yp1,yp2,Ac,Sc,ycd,ycg,Ic,Wcd,Wcg,alphae,Ap1s,Ap2s,Acs,Scs,yp,yd,yg,Ics,Wcsd,Wcsg))
                 ,NumSection("Sprawdzenie stanu granicznego nośności (SGN)"
-                    ,NumSection("Rzeczywisty moment zginający od obciążeń zewnętrzych i ciężaru własnego",Evaluate(calc,gk,qd,Myd))
-                    ,NumSection("Obliczenie siły sprężającej",Evaluate(calc,sigma0max,P0max),
+                    ,NumSection("Rzeczywisty moment zginający od obciążeń zewnętrzych i ciężaru własnego",Evaluate(gk,qd,Myd))
+                    ,NumSection("Obliczenie siły sprężającej",Evaluate(sigma0max,P0max),
                             NumSection("Straty doraźne"
-                                    ,Evaluate(calc,dPir,Pmo1,zcp,dPc,Pmo2,sigpmo)
+                                    ,Evaluate(dPir,Pmo1,zcp,dPc,Pmo2,sigpmo)
                                     /*,AssertionLE("Naprężenia w cięgnach po stratach doraźnych",calc,round(sigpmo,RoundingMode.FLOOR),round(min(0.75*fpk,0.85*fp01k),RoundingMode.CEILING))*/)
-                            ,NumSection("Skurcz i pełzanie betonu",Evaluate(calc,betasc,RH,betaRH,epsicsdinf,Uc,ho,betads,epsicsd,epsicsainf,betaas,epsicsa,epsics,pfiRH,betafcm,betat0,phitinf,betaH,betac,phit))
-                            ,NumSection("Straty opóźnione",Evaluate(calc,sigcg,sigcpo,sigpcs1,sigpcs2,sigpcs,dPt,Pmt,sigpmt))
+                            ,NumSection("Skurcz i pełzanie betonu",Evaluate(betasc,RH,betaRH,epsicsdinf,Uc,ho,betads,epsicsd,epsicsainf,betaas,epsicsa,epsics,pfiRH,betafcm,betat0,phitinf,betaH,betac,phit))
+                            ,NumSection("Straty opóźnione",Evaluate(sigcg,sigcpo,sigpcs1,sigpcs2,sigpcs,dPt,Pmt,sigpmt))
                             ,AssertionLE("naprężenia w cięgnach po stratach opóźnionych",calc,sigpmt,0.65*fpk)
                     )
                     ,NumSection("Sprawdzenie naprężeń we włóknach skrajnych przekroju betonowego"
-                            ,Evaluate(calc,Pksup,sigcpd,sigcpg)
+                            ,Evaluate(Pksup,sigcpd,sigcpg)
                             ,AssertionRangeLLE("naprężenia we włóknach dolnych",calc,0,sigcpd,0.7*fcm)
                             ,AssertionRangeLLE("naprężenia we włóknach górnych",calc,0,sigcpg,0.7*fcm))
                     ,NumSection("Sprawdzenie nośności na zginanie"
-                            ,Evaluate(calc,sigp2,/*As2,zbrojenie(fyd),*/xeff)
+                            ,Evaluate(sigp2,/*As2,zbrojenie(fyd),*/xeff)
                             ,AssertionG("przekroju teowego",calc,xeff,hz1)
-                            ,Evaluate(calc,d1,MRd)
+                            ,Evaluate(d1,MRd)
                             ,AssertionLE("stanu granicznego nośności (SGN) ze względu na zginanie",calc,Myd,MRd))
                     ,NumSection("Sprawdzenie nośności na ścinanie"
-                            ,Evaluate(calc,Vsd,rhol,k1,sigcp,VRd1,VRd21,alphac,VRd2RED)
+                            ,Evaluate(Vsd,rhol,k1,sigcp,VRd1,VRd21,alphac,VRd2RED)
                             ,AssertionLE("odcinka ścinanego typu 1",calc,Vsd,VRd1)
                             ,AssertionLE("odcinka ścinanego typu 1",calc,Vsd,VRd2RED)
-                            ,Evaluate(calc,VRd22,Asw1,s1)
+                            ,Evaluate(VRd22,Asw1,s1)
                             ,AssertionLE("odcinka ścinanego typu 2",calc,Vsd,alphac*VRd22)
                             ,AssertionGE("minimalnego rozstawu strzemion",calc,s1,5 unit cm))
                 )
                 ,NumSection("Sprawdzenie stanu granicznego użytkowalności (SGU)"
                         ,NumSection("Sprawdzenie możliwości pojawienia się rys prostopadłych do elementu"
-                                ,Evaluate(calc,qk,Mk,Pkinf,sigcpk,Mcr)
+                                ,Evaluate(qk,Mk,Pkinf,sigcpk,Mcr)
                                 ,AssertionLE("braku zarysowania",calc,Mk,Mcr))
                         ,NumSection("Sprawdzenie możliwości pojawienia się rys ukośnych"
                                 ,NumSection("W punkcie 1 na osi obojętnej"
-                                        ,Evaluate(calc,lbp,lbpd,Vsk1,Scs1,sigx1,tauxy1,sigt1)
+                                        ,Evaluate(lbp,lbpd,Vsk1,Scs1,sigx1,tauxy1,sigt1)
                                         ,AssertionLE("braku zarysowania",calc,-fctm,sigt1))
                                 ,NumSection("W punkcie 2 na styku środnika i półki"
-                                        ,Evaluate(calc,Scs2,sigx2,tauxy2,sigt2)
+                                        ,Evaluate(Scs2,sigx2,tauxy2,sigt2)
                                         ,AssertionLE("braku zarysowania",calc,-fctm,sigt2)))
                         ,NumSection("Sprawdzenie ugięcia dźwigara"
-                               ,Evaluate(calc,umax,Eceff,alphak,alphap,u1)
+                               ,Evaluate(umax,Eceff,alphak,alphap,u1)
                                ,AssertionLE("ugięcia",calc,u1,umax))
                 ),
-                NumSection("Podsumowanie", Evaluate(calc,w1,w2,w3,w4,w5))
+                NumSection("Podsumowanie", Evaluate(w1,w2,w3,w4,w5))
             ),
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),

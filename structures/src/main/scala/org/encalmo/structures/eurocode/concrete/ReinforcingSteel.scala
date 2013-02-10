@@ -47,7 +47,7 @@ class ReinforcingSteel(id:String,data:Context) extends Calculation(Option(id)) {
 	import ReinforcingSteelSymbols._
 	
 	def info = NumSection(TextToTranslate("ReinforcingSteel",dictionary),id,"EN 10080",
-		Evaluate(Seq(fyk,gammaS,fyd,Es),this)
+		Evaluate(fyk,gammaS,fyd,Es)
 	)
 	
 	this add ReinforcingSteelExpressions

@@ -1,6 +1,7 @@
 package org.encalmo.structures.eurocode.steel
 
 import org.encalmo.expression._
+import org.encalmo.calculation._
 import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
@@ -33,11 +34,11 @@ object SteelExpressions extends MapContext {
 
 	import SteelSymbols._
 	
-	this(E) = 210
-	this(gammas) = 78.5
-	this(fyd) = fy/gammaM0
-	this(epsiy) = fy/E
-	this(epsi) = sqrt(Number(235,SI.MPa)/fy)
+	E      := 210
+	gammas := 78.5
+	fyd    := fy/gammaM0
+	epsiy  := fy/E
+	epsi   := sqrt(Number(235,SI.MPa)/fy)
 	lock
 }
 
@@ -47,16 +48,16 @@ class Steel(id:String,data:Context) extends Calculation(Option(id)) {
 	import SteelSymbols._
 	
 	def info = NumSection(TextToTranslate("Steel",dictionary),id,"EN 10025-2",
-		Evaluate(Seq(fy,gammaM0,fyd,E),this)
+		Evaluate(fy,gammaM0,fyd,E)
 	)
 	
 	this add SteelExpressions
 	this add data
 	
-	this(CLASS) = text(id)
-	this(gammaM0) = 1
-	this(gammaM1) = 1
-	this(gammaV) = 1.25
+	CLASS   := text(id)
+	gammaM0 := 1
+	gammaM1 := 1
+	gammaV  := 1.25
 	
 	override def label = this(CLASS)
 }
@@ -83,32 +84,32 @@ object Steel {
 	def S280GD = new Steel("S280 GD",data_S280GD)
 	
 	private lazy val data_S235 = new MapContext {
-		this(fy) = 235
-		this(fu) = 360
+		fy := 235
+		fu := 360
 		lock
 	}
 	
 	private lazy val data_S275 = new MapContext {
-		this(fy) = 275
-		this(fu) = 430
+		fy := 275
+		fu := 430
 		lock
 	}
 	
 	private lazy val data_S355 = new MapContext {
-		this(fy) = 355
-		this(fu) = 510
+		fy := 355
+		fu := 510
 		lock
 	}
 	
 	private lazy val data_S450 = new MapContext {
-		this(fy) = 440
-		this(fu) = 550
+		fy := 440
+		fu := 550
 		lock
 	}
 	
 	private lazy val data_S280GD = new MapContext {
-		this(E) = 210
-		this(fy) = 280
+		E  := 210
+		fy := 280
 		lock
 	}
 }

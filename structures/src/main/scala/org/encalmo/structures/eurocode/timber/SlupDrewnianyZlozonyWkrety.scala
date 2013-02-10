@@ -17,7 +17,7 @@ class SlupDrewnianyZlozonyWkrety {
     
     import BasicSymbols._
     
-    val calc = Calculation()
+    implicit val calc = Calculation()
     val calc2 = Calculation("2")
     val calc3 = Calculation()
     
@@ -298,27 +298,27 @@ class SlupDrewnianyZlozonyWkrety {
                 	Section(styleComment," [2] Aprobata ITB AT-15-7343/2007 \"Wkręty samowiercące SPAX&reg; do konstrukcji drewnianych\""),
                 	Section(styleComment," [3] Norma PN-EN 338:2009")
                 ),
-                NumSection("Dane wejściowe",Evaluate(calc,daneWejsciowe:_*))
+                NumSection("Dane wejściowe",Evaluate(daneWejsciowe:_*))
            ),
            NumSection("Dane do obliczeń",
-                NumSection("Przyjęte wymiary przekroju słupa",Evaluate(calc,przyjetaGeometria:_*)),
-                NumSection("Przyjęte łączniki",Evaluate(calc,przyjeteLaczniki:_*)),
-                NumSection("Właściwości geometryczne przekroju",Evaluate(calc,wlasciwosciGeometryczne:_*)),
-                NumSection("Współczynniki",Evaluate(calc,wspolczynnikiCzesciowe:_*)),
-                NumSection("Właściwości mechaniczne charakterystyczne dla drewna litego klasy C27 wg [3]",Evaluate(calc,wlasciwosciMechaniczneCharakterystyczne:_*)),
-                NumSection("Właściwości mechaniczne obliczeniowe dla 2 klasy użytkowania i obciążeń długotrwałych",Evaluate(calc,wlasciwosciMechaniczneObliczeniowe:_*))),
+                NumSection("Przyjęte wymiary przekroju słupa",Evaluate(przyjetaGeometria:_*)),
+                NumSection("Przyjęte łączniki",Evaluate(przyjeteLaczniki:_*)),
+                NumSection("Właściwości geometryczne przekroju",Evaluate(wlasciwosciGeometryczne:_*)),
+                NumSection("Współczynniki",Evaluate(wspolczynnikiCzesciowe:_*)),
+                NumSection("Właściwości mechaniczne charakterystyczne dla drewna litego klasy C27 wg [3]",Evaluate(wlasciwosciMechaniczneCharakterystyczne:_*)),
+                NumSection("Właściwości mechaniczne obliczeniowe dla 2 klasy użytkowania i obciążeń długotrwałych",Evaluate(wlasciwosciMechaniczneObliczeniowe:_*))),
            NumSection("Sprawdzenie stanów granicznych nośności wg PN-EN 1995-1-1",
-                NumSection("Obliczenie sztywności zastępczej",Evaluate(calc,sztywnoscZastepcza:_*)),
-                NumSection("Sprawdzenie nośności na ściskanie",Evaluate(calc,nosnoscObliczeniowa:_*)),
+                NumSection("Obliczenie sztywności zastępczej",Evaluate(sztywnoscZastepcza:_*)),
+                NumSection("Sprawdzenie nośności na ściskanie",Evaluate(nosnoscObliczeniowa:_*)),
                 AssertionLE("C.1 [1]",calc,sigmac0d,kc*fc0d),
-				NumSection("Sprawdzenie nośności środnika na ścinanie",Evaluate(calc,nosnoscScinanie:_*)),
+				NumSection("Sprawdzenie nośności środnika na ścinanie",Evaluate(nosnoscScinanie:_*)),
 				AssertionLE("6.13 [1]",calc,tau2max,fvd),
-				NumSection("Sprawdzenie nośności łączników (wkrętów)",Evaluate(calc,nosnoscLacznikow:_*)),
+				NumSection("Sprawdzenie nośności łączników (wkrętów)",Evaluate(nosnoscLacznikow:_*)),
 				AssertionLE("nośności wkręta",calc,Fi,FvRd)
 			),
 			NumSection("Badania porównawcze",
-				NumSection("Porównanie ze słupem wielogałęziowym z elementów połączonych niepodatnie (klejonych)",Evaluate(calc,nosnoscSlupaNiepodatnie:_*)),
-				NumSection("Porównanie ze słupem jednorodnym kwadratowym o zbliżonej nośności na ściskanie",Evaluate(calc4,przekrojKwadratowy:_*)),
+				NumSection("Porównanie ze słupem wielogałęziowym z elementów połączonych niepodatnie (klejonych)",Evaluate(nosnoscSlupaNiepodatnie:_*)),
+				NumSection("Porównanie ze słupem jednorodnym kwadratowym o zbliżonej nośności na ściskanie",Evaluate(przekrojKwadratowy:_*)(calc4)),
 				NumSection("Wnioski",
 					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem klejonym wykazało ",Result(calc,round(deltaJW,RoundingMode.HALF)),
 					"% utratę nośności ze względu na podatność łączników."),
