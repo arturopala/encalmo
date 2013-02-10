@@ -6,15 +6,19 @@ import org.encalmo.calculation.Calculation
 import org.encalmo.style.Style
 import org.encalmo.style.StylesConfigSymbols
 import org.encalmo.style.StylesConfig
+import org.encalmo.calculation.Context
 
 /**
- * Expression component class
+ * Document component representing expression sequence
  * @author artur.opala
  */
-abstract class Expr(val exStyle:Style, val calc:Calculation, val expr:Expression*) 
+abstract class Expr(
+        val exStyle:Style, 
+        val context:Context, 
+        val expressions:Expression*) 
 extends DocumentComponent(exStyle) {
 
-	override def toString = "Expr("+exStyle+","+calc+","+expr.mkString(",")+")"
+	override def toString = "Expr("+exStyle+","+context+","+expressions.mkString(",")+")"
 	
 	lazy val parentStylesConfig:Option[StylesConfig] = document.map(_.stylesConfig)
 	
@@ -29,7 +33,7 @@ extends DocumentComponent(exStyle) {
 	
 	/** Resolves this expressions to sequences of ExpressionToPrint objects */
 	final def resolve:Seq[Seq[ExpressionToPrint]] = {
-		for(e <- expr) yield prepareExpressionToPrint(e)
+		for(e <- expressions) yield prepareExpressionToPrint(e)
 	}
 	
 	/** Function to implement */
@@ -58,8 +62,8 @@ extends DocumentComponent(exStyle) {
  * Block-style expression
  * @author artur.opala
  */
-abstract class BlockExpr(exStyle:Style, calc:Calculation, expr:Expression*) 
-extends Expr(exStyle,calc,expr:_*) with BlockComponent {
+abstract class BlockExpr(exStyle:Style, context:Context, expressions:Expression*) 
+extends Expr(exStyle,context,expressions:_*) with BlockComponent {
 	
 	def isPrintDescription:Boolean
 	
@@ -69,7 +73,7 @@ extends Expr(exStyle,calc,expr:_*) with BlockComponent {
  * Inline-style expression
  * @author artur.opala
  */
-abstract class InlineExpr(exStyle:Style, calc:Calculation, expr:Expression*) 
-extends Expr(exStyle,calc,expr:_*) with InlineComponent {
+abstract class InlineExpr(exStyle:Style, context:Context, expressions:Expression*) 
+extends Expr(exStyle,context,expressions:_*) with InlineComponent {
 	
 }

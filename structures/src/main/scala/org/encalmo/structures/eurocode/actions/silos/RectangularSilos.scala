@@ -150,46 +150,46 @@ extends Calculation {
 	
 	//input geometry
 	def inputGeometry = NumSection(TextToTranslate("_inputGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(b1,b2,h1,h2,t,th),this)
+		Evaluate(b1,b2,h1,h2,t,th)
 	)
 	//input assertions
 	
 	//calculated geometry
 	def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(h3,b3,b4,dc,A,U,AU,beta,hh,htp,ho,hc,hb,hcdc),this)
+		Evaluate(h3,b3,b4,dc,A,U,AU,beta,hh,htp,ho,hc,hb,hcdc)
 	)
 	//volumes
 	def volumes = NumSection(TextToTranslate("_volumes",SilosSymbols.dictionary),
-		Evaluate(Seq(Vc,Vh,V,W),this)
+		Evaluate(Vc,Vh,V,W)
 	)
 	//filling symmetrical load
 	def fillingSymmetricalLoad = NumSection(TextToTranslate("_fillingSymmetricalLoad",SilosSymbols.dictionary),
         NumSection(TextToTranslate("_fillingSymmetricalLoad_1",SilosSymbols.dictionary),
-		Evaluate(Seq(zo(1),pho(1),YJ(1),phf(1),phf1,phf2,phf3,phft),this)
+		Evaluate(zo(1),pho(1),YJ(1),phf(1),phf1,phf2,phf3,phft)
 		),
 		NumSection(TextToTranslate("_fillingSymmetricalLoad_2",SilosSymbols.dictionary),
-        Evaluate(Seq(zo(2),pho(2),YJ(2),phf(2),pwf,nfzSk,nfzSkt),this)
+        Evaluate(zo(2),pho(2),YJ(2),phf(2),pwf,nfzSk,nfzSkt)
         ),
         NumSection(TextToTranslate("_fillingSymmetricalLoad_3",SilosSymbols.dictionary),
-        Evaluate(Seq(zo(3),pho(3),YJ(3),pvf,pvft),this)
+        Evaluate(zo(3),pho(3),YJ(3),pvf,pvft)
         )
 	)
 	//filling patch load
 	def fillingPatchLoad = NumSection(TextToTranslate("_fillingPatchLoad",SilosSymbols.dictionary),
-        Evaluate(Seq(ef,Ef,Cpf,ppf,ppfnc,ppfnc1,s,Fpf1),this)
+        Evaluate(ef,Ef,Cpf,ppf,ppfnc,ppfnc1,s,Fpf1)
     )
     //discharge symmetrical load
 	def dischargeSymmetricalLoad = NumSection(TextToTranslate("_dischargeSymmetricalLoad",SilosSymbols.dictionary),
-        Evaluate(Seq(CS,Ch,Cw,phe,phet,pwe,nezSk,nezSkt),this)
+        Evaluate(CS,Ch,Cw,phe,phet,pwe,nezSk,nezSkt)
     )
     //discharge patch load
     def dischargePatchLoad = NumSection(TextToTranslate("_dischargePatchLoad",SilosSymbols.dictionary),
-        Evaluate(Seq(Cpe,ppe,ppenc,ppenc1,Fpe1),this)
+        Evaluate(Cpe,ppe,ppenc,ppenc1,Fpe1)
     )
     
     //loads on silo hoppers
     def loadsOnSiloBottom = NumSection(TextToTranslate("_loadsOnSiloBottom",SilosSymbols.dictionary),
-        Evaluate(Seq(pvft),this)
+        Evaluate(pvft)
     )
     
 }	

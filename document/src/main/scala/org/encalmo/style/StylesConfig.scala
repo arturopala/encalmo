@@ -152,7 +152,6 @@ case class StylesConfig(
     	        r
 	        }
 	    )
-	    a
 	    a.map(v => classId(v)) match {
 	        case None => if(style!=null) Some(style.classId) else None
 	        case some => some

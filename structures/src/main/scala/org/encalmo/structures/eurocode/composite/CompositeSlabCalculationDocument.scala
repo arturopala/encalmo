@@ -39,12 +39,12 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     val zadanie1 = Calculation()
     
     //dane wejsciowe zadania
-    val L1 = L|1 is "Rozpiętośc belki" unit "m"
+    val L1 = L|1 is "Rozpiętośc belki" unit SI.m
     zadanie(L1) = 18
-    val L2 = L|2 is "Rozstaw belek" unit "m"
+    val L2 = L|2 is "Rozstaw belek" unit SI.m
     zadanie(L2) = 2.8
-    val pc = p!c is "Obciążenie charakterystyczne" unit "N/m2"
-    zadanie(pc) = 3000
+    val pc = p!c is "Obciążenie charakterystyczne" unit "kN/m2"
+    zadanie(pc) = 3 unit "kN/m2"
     val daneWejsciowe = Seq(L1,L2,pc)
     
     //przyjete materialy i wymiary
@@ -60,9 +60,9 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     
     zadanie1 add plyta
     
-    plyta(Gsk) = 1E3
+    plyta(Gsk) = 1 unit "kN/m2"
     plyta(qk) = zadanie(pc)
-    plyta(Fk) = 10E3
+    plyta(Fk) = 10 unit SI.kN
     
     //wlasciwosci materialowe plyty
     plyta(gammaG) = 1.35
@@ -101,8 +101,8 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
                 	Section(styleDescription," [4] Norma PN-EN 1993-1-3:2006 \"Eurokod 3. Projektowanie konstrukcji stalowych. Część 1-3: Reguły ogólne. Reguły uzupełniające dla konstrukcji z kształtowników i blach profilowanych na zimno.\""),
                 	Section(styleDescription," [5] Norma PN-EN 1992-1-1:2008 \"Eurokod 2. Projektowanie konstrukcji z betonu. Część 1-1: Reguły ogólne i reguły dla budynków\"")
                 ),
-                NumSection("Dane wejściowe",Evaluate(daneWejsciowe,zadanie),Evaluate(zadanie,stal.label)),
-                NumSection("Przyjęto do obliczeń",Evaluate(zadanie,plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label))
+                NumSection("Dane wejściowe",Evaluate(daneWejsciowe:_*)(zadanie),Evaluate(stal.label)(zadanie)),
+                NumSection("Przyjęto do obliczeń",Evaluate(plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label)(zadanie))
            ),
            NumSection("Wymiarowanie płyty stropowej",
                NumSection("Przyjęte wymiary i właściwości materiałowe",
@@ -138,7 +138,7 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
 	           )
            ),
            NumSection("Podsumowanie",
-           		Evaluate(belka,BeamOfCompositeSlabSymbols.mS)
+           		Evaluate(BeamOfCompositeSlabSymbols.mS)(belka)
            ),
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),
