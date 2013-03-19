@@ -1,0 +1,43 @@
+package org.encalmo.document
+import org.encalmo.style.Style
+
+/**
+ * Character component class
+ */
+class Character(myStyle:Style, val text:String) 
+extends DocumentComponent(myStyle)
+
+/**
+ * Character class companion object
+ * @author artur.opala
+ */
+object Character{
+	
+	def apply(mystyle:Style, text:String) = {
+		new Character(mystyle,text)
+	}
+	
+	def apply(text:String) = {
+		new Character(null,text)
+	}
+	
+	def unapply(t:Character) = Some((t.myStyle,t.text))
+	
+	/** space */
+	val SPACE = Character(" ")
+	/** long space */
+    val LONGSPACE = Character("  ")
+    /** equal character */
+    val EQUAL = Character("=")
+    /** lower character */
+    val LOWER = Character("<")
+    /** greater character */
+    val GREATER = Character(">")
+	/** lower or equal character */
+	val LE = Character("≤")
+	/** greater or equal character */
+    val GE = Character("≥")
+	/** right arrow character */
+    val RARROW = Character("→")
+	
+}
