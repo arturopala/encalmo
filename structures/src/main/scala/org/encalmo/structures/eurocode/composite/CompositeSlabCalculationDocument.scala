@@ -40,20 +40,20 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     
     //dane wejsciowe zadania
     val L1 = L|1 is "Rozpiętośc belki" unit "m"
-    zadanie(L1) = 18
+    zadanie(L1) = 15.5
     val L2 = L|2 is "Rozstaw belek" unit "m"
-    zadanie(L2) = 2.8
+    zadanie(L2) = 2.5
     val pc = p!c is "Obciążenie charakterystyczne" unit "N/m2"
-    zadanie(pc) = 3000
+    zadanie(pc) = 2500
     val daneWejsciowe = Seq(L1,L2,pc)
     
     //przyjete materialy i wymiary
     val height:Expression = 12 unit SI.cm
-    val blacha = FLORSTROP.T59_Z_125
+    val blacha = FLORSTROP.T59_Z_100
     val beton = Concrete.C_20_25
     val stalZbrojeniowa = ReinforcingSteel.B500SP
     val stal = Steel.S355
-    val profil = IPESection.IPE_600
+    val profil = IPESection.IPE_500
     val sworzen = HeadedStud.NELSON_S3L_19_100
     
     val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton,stalZbrojeniowa)
@@ -101,6 +101,7 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
                 	Section(styleDescription," [4] Norma PN-EN 1993-1-3:2006 \"Eurokod 3. Projektowanie konstrukcji stalowych. Część 1-3: Reguły ogólne. Reguły uzupełniające dla konstrukcji z kształtowników i blach profilowanych na zimno.\""),
                 	Section(styleDescription," [5] Norma PN-EN 1992-1-1:2008 \"Eurokod 2. Projektowanie konstrukcji z betonu. Część 1-1: Reguły ogólne i reguły dla budynków\"")
                 ),
+                TableOfContents("Spis treści"),
                 NumSection("Dane wejściowe",Evaluate(daneWejsciowe,zadanie),Evaluate(zadanie,stal.label)),
                 NumSection("Przyjęto do obliczeń",Evaluate(zadanie,plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label))
            ),
