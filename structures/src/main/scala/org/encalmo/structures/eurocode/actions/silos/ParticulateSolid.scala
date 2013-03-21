@@ -123,11 +123,11 @@ extends Calculation(Option(id)) {
 	this(Cop) = v_Cop
 	
 	def properties = NumSection(TextToTranslate("_properties",ParticulateSolidSymbols.dictionary),"(",TextToTranslate(id,ParticulateSolidSymbols.dictionary),")",
-		Evaluate(Seq(gammal,gammau,fir,fiim,afi,Km,aK,mum1,mum2,mum3,amu,Cop),this)
+		Evaluate(gammal,gammau,fir,fiim,afi,Km,aK,mum1,mum2,mum3,amu,Cop)
 	)
 	
 	def characteristicValues = NumSection(TextToTranslate("_characteristicValues",ParticulateSolidSymbols.dictionary),
-	    Evaluate(Seq(D,mum,K_u,K_l,mu_u,mu_l,fi_u,fi_l),this)
+	    Evaluate(D,mum,K_u,K_l,mu_u,mu_l,fi_u,fi_l)
 	)
 }	
 

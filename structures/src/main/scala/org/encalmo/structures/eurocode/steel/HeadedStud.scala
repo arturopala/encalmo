@@ -41,7 +41,7 @@ class HeadedStud(id:String) extends Calculation(Option(id)) {
 	override def label = this(ID)
 	
 	def info = NumSection(TextToTranslate("HeadedStud",dictionary),id,
-		Evaluate(Seq(d,hsc,dh,a),this)
+		Evaluate(d,hsc,dh,a)
 	)
 	
 

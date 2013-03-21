@@ -8,21 +8,28 @@ import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
 import org.encalmo.style.Style
 import org.encalmo.style.StylesConfigSymbols
+import org.encalmo.calculation.Context
 
 /**
  * Resolve: symbol = resolved
  */
-class Resolve(myStyle:Style, val styleOfResolved:Style, val isPrintDescription:Boolean, val variant:Int, calc:Calculation, expr:Expression*) 
-extends BlockExpr(myStyle,calc,expr:_*){
+class Resolve(
+        myStyle:Style, 
+        val styleOfResolved:Style, 
+        val isPrintDescription:Boolean, 
+        val variant:Int, 
+        context:Context, 
+        expressions:Expression*) 
+extends BlockExpr(myStyle,context,expressions:_*){
 	
-	override def toString = "Resolve("+myStyle+","+styleOfResolved+","+calc+","+expr.mkString(",")+")"
+	override def toString = "Resolve("+myStyle+","+styleOfResolved+","+context+","+expressions.mkString(",")+")"
 	
 	override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
 		var se = Seq[ExpressionToPrint]()
 		var ue = e // unresolved expression
 		if(e.isInstanceOf[Symbol]){
 			se = se :+ ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
-			ue = calc.getRawExpression(e.asInstanceOf[Symbol]) match {
+			ue = context.getRawExpression(e.asInstanceOf[Symbol]) match {
 				case Some(x) => x
 				case None => e
 			}
@@ -62,6 +69,6 @@ object Resolve {
 		new Resolve(null,null,isPrintDescription,variant,calc,expr:_*)
 	}
 	
-	def unapply(e:Resolve) = Some(e.myStyle, e.styleOfResolved ,e.calc,e.expr)
+	def unapply(e:Resolve) = Some(e.myStyle, e.styleOfResolved ,e.context)
 	
 }
