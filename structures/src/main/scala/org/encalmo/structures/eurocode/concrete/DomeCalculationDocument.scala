@@ -259,48 +259,48 @@ class DomeCalculationDocument extends CalculationDocument {
                            Section("Klasa konstrukcji S4, klasa ekspozycji XC2. Przyjęto beton klasy C30/37."),
                            Section("Zbrojenie powłoki prętami B500SP #8mm w formie siatki złożonej z prętów obwodowych ciągłych (zewnętrzne) i prętów radialnych (wewnętrzne) zakotwionych w pierścieniu dolnym. 1/2 zbrojenia radialnego doprowadzona do połowy wysokości kopuły, 1/4 do wysości 3/4 kopuły, 1/4 zakotwiona w pierścieniu górnym.")
                     ),
-                    NumSection("Parametry konstrukcji",Evaluate(calc,r,h,ζ,φ1,R,H,r0,φ0,φ2)),
+                    NumSection("Parametry konstrukcji",Evaluate(r,h,ζ,φ1,R,H,r0,φ0,φ2)),
                     NumSection("Właściwości materiałów konstrukcyjnych",
                         concrete.info,
                         reinforcement.info
                     ),
-                    NumSection("Rozmieszczenie cięgien i otulina",Evaluate(calc,phis,cminb,cmindur,cmin,dcdev,cnom)),
+                    NumSection("Rozmieszczenie cięgien i otulina",Evaluate(phis,cminb,cmindur,cmin,dcdev,cnom)),
                     NumSection("Oddziaływania",
-                        NumSection("Ciężar własny powłoki",Evaluate(calc,gammac,g)),
-                        NumSection("Oddziaływania od obciążenia śniegiem",Evaluate(calc,HM,sk,mi1,Ce,Ct,sr,s)),
-                        NumSection("Obciążenie latarnią",Evaluate(calc,P)),
-                        NumSection("Oddziaływania od obciążenia wiatrem",Evaluate(calc,vbo,qbo,coz,cez,qpz,ze,we,cpi,wi,w))
+                        NumSection("Ciężar własny powłoki",Evaluate(gammac,g)),
+                        NumSection("Oddziaływania od obciążenia śniegiem",Evaluate(HM,sk,mi1,Ce,Ct,sr,s)),
+                        NumSection("Obciążenie latarnią",Evaluate(P)),
+                        NumSection("Oddziaływania od obciążenia wiatrem",Evaluate(vbo,qbo,coz,cez,qpz,ze,we,cpi,wi,w))
                     ),
                     NumSection("Siły wewnętrzne w powłoce w stanie błonowym",
                         NumSection("Funkcje sił wewnętrznych",Resolve(calc,Nφg,NΘg,Nφs,NΘs,Nφw,NφΘw,NΘw)),
-                        NumSection("Obliczenie sił na krawędzi dolnej",Evaluate(calc,Nφ1,NΘ1,Nφ2,NΘ2)),
-                        NumSection("Obliczenie sił na poziomie linii przejściowej",Evaluate(calc,Nφ3,NΘ3,Nφ4,NΘ4,Nφ5,NΘ5)),
-                        NumSection("Obliczenie sił na krawędzi górnej",Evaluate(calc,Nφ6,NΘ6,Nφ7,NΘ7,Nφ8,NΘ8))
+                        NumSection("Obliczenie sił na krawędzi dolnej",Evaluate(Nφ1,NΘ1,Nφ2,NΘ2)),
+                        NumSection("Obliczenie sił na poziomie linii przejściowej",Evaluate(Nφ3,NΘ3,Nφ4,NΘ4,Nφ5,NΘ5)),
+                        NumSection("Obliczenie sił na krawędzi górnej",Evaluate(Nφ6,NΘ6,Nφ7,NΘ7,Nφ8,NΘ8))
                     ),
-                    NumSection("Siły w pierścieniu górnym",Evaluate(calc,Sg)),
+                    NumSection("Siły w pierścieniu górnym",Evaluate(Sg)),
                     NumSection("Odkształcenie powłoki i reakcje utwierdzenia",
                         NumSection("Funkcje odkształceń",Resolve(calc,Δrg,Δχg,Δrs,Δχs)),
-                        NumSection("Obliczenie odkształceń na krawędzi dolnej",Evaluate(calc,Δrg1,Δχg1)),
-                        NumSection("Siły reakcji od utwierdzenia krawędzi dolnej",Evaluate(calc,kappa,Hg,Mg))
+                        NumSection("Obliczenie odkształceń na krawędzi dolnej",Evaluate(Δrg1,Δχg1)),
+                        NumSection("Siły reakcji od utwierdzenia krawędzi dolnej",Evaluate(kappa,Hg,Mg))
                     ),
                     NumSection("Wymiarowanie zbrojenia powłoki",
                         NumSection("Zbrojenie obwodowe rozciągane",
-                                Evaluate(calc,NΘt1,Ac,sigt1),
+                                Evaluate(NΘt1,Ac,sigt1),
                                 AssertionLE("naprężeń rozciągających w betonie",calc,sigt1,fctd),
                                 Section(styleComment1,"Naprężenia rozciągające nie przekraczają wytrzymałości obliczeniowej betonu na rozciąganie. " +
                                 		"Sprawdzamy zbrojenie obwodowe #8mm jak dla warunku wytrzymałości stali zbrojeniowej:"),
-                                Evaluate(calc,As1,as,nt1,dt1),
+                                Evaluate(As1,as,nt1,dt1),
                                 Section(styleComment1,"Przyjmujemy zbrojenie obwodowe konstrukcyjne #8mm co 20cm")
                          ),
                                 
-                        NumSection("Zbrojenie południkowe ściskane ",Evaluate(calc,Nφc1,sigc1),
+                        NumSection("Zbrojenie południkowe ściskane ",Evaluate(Nφc1,sigc1),
                             AssertionGE("naprężeń ściskających w betonie",calc,sigc1,-fcd),
                             Section(styleComment1,"Naprężenia ściskające nie przekraczają wytrzymałości obliczeniowej betonu na ściskanie. " +
                             		"Przyjmujemy zbrojenie południkowe konstrukcyjne #8mm co 20cm")
                         )
                         
                     ),
-                    NumSection("Stateczność powłoki",Evaluate(calc,sigcr),
+                    NumSection("Stateczność powłoki",Evaluate(sigcr),
                            AssertionGE("stateczności",calc,sigc1,sigcr/4) 
                     )
                 )

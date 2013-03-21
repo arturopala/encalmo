@@ -1,6 +1,7 @@
 package org.encalmo.structures.eurocode.composite
 
 import org.encalmo.expression._
+import org.encalmo.calculation._
 import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
@@ -130,96 +131,96 @@ object BeamOfCompositeSlabExpressions extends MapContext {
     import IBeamSectionSymbols.{ctw,ctf,bf,tf}
     
     //obciazenia i schemat statyczny w fazie montazu
-    this(gk) = 10*m.setunit("N/m")
-    this(gd) = gk*gammaG
-    this(Qk1) = (Qcfk*SLAB.l)+(Gcck*SLAB.l)+gk+(Qmk*SLAB.l)
-    this(Qd1) = (Qcfk*gammaG*SLAB.l)+(Gccd*SLAB.l)+gd+(Qmd*SLAB.l)
+    gk := 10*m.setunit("N/m")
+    gd := gk*gammaG
+    Qk1 := (Qcfk*SLAB.l)+(Gcck*SLAB.l)+gk+(Qmk*SLAB.l)
+    Qd1 := (Qcfk*gammaG*SLAB.l)+(Gccd*SLAB.l)+gd+(Qmd*SLAB.l)
     //sprawdzenie statecznosci srodnika
-    this(eta) = rangeChoiceLE(fy,1.2,460E6,1.0)
+    eta := rangeChoiceLE(fy,1.2,460E6,1.0)
 	//klasa przekroju
-	this(Cf1)=rangeChoice4LE(ctf,1,9*eta,2,10*eta,3,14*eta,4)
-	this(Cw1)=rangeChoice4LE(ctw,1,72*eta,2,83*eta,3,124*eta,4)
-	this(C) = max(Cf1,Cw1)
+	Cf1 := rangeChoice4LE(ctf,1,9*eta,2,10*eta,3,14*eta,4)
+	Cw1 := rangeChoice4LE(ctw,1,72*eta,2,83*eta,3,124*eta,4)
+	C := max(Cf1,Cw1)
 	//nosnosci
-	this(MelRd) = (Wy*fy)/gammaM0
-	this(VplRd) = (AVz*(fy/sqrt(3)))/gammaM0
-	this(NcRd) = (A*fy)/gammaM0
+	MelRd := (Wy*fy)/gammaM0
+	VplRd := (AVz*(fy/sqrt(3)))/gammaM0
+	NcRd := (A*fy)/gammaM0
 	//sily wewnetrzne w fazie montazu
-	this(MEdm) = (Qd1*(l^2))/8
-	this(VEdm) = (Qd1*l)/2
-	this(MEdm1) = ((Qd1-(Qmd*SLAB.l))*(l^2))/8
-	this(Mkm) = (Qk1*(l^2))/8
-	this(Mkm1) = ((Qk1-(Qmk*SLAB.l))*(l^2))/8
-	this(ΔMk) = (ΔQk*(l^2))/8
+	MEdm := (Qd1*(l^2))/8
+	VEdm := (Qd1*l)/2
+	MEdm1 := ((Qd1-(Qmd*SLAB.l))*(l^2))/8
+	Mkm := (Qk1*(l^2))/8
+	Mkm1 := ((Qk1-(Qmk*SLAB.l))*(l^2))/8
+	ΔMk := (ΔQk*(l^2))/8
 	//naprezenia
-	this(sigmamplus) = MEdm/Wy
-	this(sigmadm1) = MEdm1/Wy
-	this(sigmakm1) = Mkm1/Wy
+	sigmamplus := MEdm/Wy
+	sigmadm1 := MEdm1/Wy
+	sigmakm1 := Mkm1/Wy
 	//ugiecia
-	this(deltam) = (5*Qk1*(l^4))/(384*Iy*E)
-	this(deltam1) = (5*(Qk1-(Qmk*SLAB.l))*(l^4))/(384*Iy*E)
-	this(deltam0) = round(deltam1,RoundingMode.Step(true,0.01))
+	deltam := (5*Qk1*(l^4))/(384*Iy*E)
+	deltam1 := (5*(Qk1-(Qmk*SLAB.l))*(l^4))/(384*Iy*E)
+	deltam0 := round(deltam1,RoundingMode.Step(true,0.01))
 	//obciazenia w fazie eksploatacji
-	this(Qk2) = (SLAB.qk*SLAB.l)+(SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk+(SLAB.Gsk*SLAB.l)
-    this(Qd2) = (SLAB.qd*SLAB.l)+(SLAB.Gcd*SLAB.l)+(Gccd*SLAB.l)+gd+(SLAB.Gsd*SLAB.l)
-    this(ΔQk) = (SLAB.qk*SLAB.l)+(SLAB.Gsk*SLAB.l)
-	this(ΔQd) = (SLAB.qd*SLAB.l)+(SLAB.Gsd*SLAB.l)
-	this(Gk) = (SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk+(SLAB.Gsk*SLAB.l)
+	Qk2 := (SLAB.qk*SLAB.l)+(SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk+(SLAB.Gsk*SLAB.l)
+    Qd2 := (SLAB.qd*SLAB.l)+(SLAB.Gcd*SLAB.l)+(Gccd*SLAB.l)+gd+(SLAB.Gsd*SLAB.l)
+    ΔQk := (SLAB.qk*SLAB.l)+(SLAB.Gsk*SLAB.l)
+	ΔQd := (SLAB.qd*SLAB.l)+(SLAB.Gsd*SLAB.l)
+	Gk := (SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk+(SLAB.Gsk*SLAB.l)
 	//sily wewnetrzne w fazie eksploatacji
-	this(ΔMEd) = (ΔQd*(l^2))/8
-	this(ΔVEd) = (ΔQd*l)/2
-	this(MEde) = (Qd2*(l^2))/8
-	this(VEde) = (Qd2*l)/2
+	ΔMEd := (ΔQd*(l^2))/8
+	ΔVEd := (ΔQd*l)/2
+	MEde := (Qd2*(l^2))/8
+	VEde := (Qd2*l)/2
 	//szerokosc wspolpracujaca
-	this(b0) = 0
-	this(bei) = min(l/8,SLAB.l/2)
-	this(beff) = b0+2*bei
+	b0 := 0
+	bei := min(l/8,SLAB.l/2)
+	beff := b0+2*bei
 	//rownowaga sil w przekroju
-	this(Ncf) = 0.85*fcd*beff*hc
-	this(Npla) = A*fy
-	this(N1pla) = (A-2*b*tf)*fy
-	this(x) = rangeChoiceLE(Ncf,SLAB.h+(Npla-Ncf)/(2*b*fy),Npla,Npla/(beff*fcd))
-	this(MplRd) = rangeChoiceLE(x,Npla*(h/2+(SLAB.h-(x/2))),SLAB.h,Npla*(h/2)+Ncf*(hp+(hc/2))-2*(x-SLAB.h)*b*fy*((x-SLAB.h)/2))
-	this(bn) = beff/nE
-	this(Sy) = bn*hc*(h/2+hp+hc/2)
-	this(z0) = Sy/(A+bn*hc)
-	this(I1) = Iy+A*(z0^2)+(bn*(hc^3))/12+bn*hc*((hc/2+hp+h/2-z0)^2)
-	this(Wel) = I1/(z0+h/2)
+	Ncf := 0.85*fcd*beff*hc
+	Npla := A*fy
+	N1pla := (A-2*b*tf)*fy
+	x := rangeChoiceLE(Ncf,SLAB.h+(Npla-Ncf)/(2*b*fy),Npla,Npla/(beff*fcd))
+	MplRd := rangeChoiceLE(x,Npla*(h/2+(SLAB.h-(x/2))),SLAB.h,Npla*(h/2)+Ncf*(hp+(hc/2))-2*(x-SLAB.h)*b*fy*((x-SLAB.h)/2))
+	bn := beff/nE
+	Sy := bn*hc*(h/2+hp+hc/2)
+	z0 := Sy/(A+bn*hc)
+	I1 := Iy+A*(z0^2)+(bn*(hc^3))/12+bn*hc*((hc/2+hp+h/2-z0)^2)
+	Wel := I1/(z0+h/2)
 	//naprezenia
-	this(sigmake) = ΔMk/Wel
-	this(sigmamax) = sigmakm1+sigmake
+	sigmake := ΔMk/Wel
+	sigmamax := sigmakm1+sigmake
 	//nosnosc sworznia
-	this(s) = bs
-	this(alpha) = rangeChoiceLELE(STUD.hsc/STUD.d,0,3,0.2*((STUD.hsc/STUD.d)+1),4,1)
-	this(PRd) = min((0.8*fu*(PI*square(STUD.d))/4)/gammaV,(0.29*alpha*square(STUD.d)*sqrt(fck*Ecm))/gammaV)
-	this(ktmax) = rangeChoiceLE(t,0.85,1,1)
-	this(kt) = min(ktmax, (0.7*bo)/(sqrt(nr)*hp)*(STUD.hsc/hp-1))
-	this(VEdr) = Ncf
-	this(Ls) = 0.5*l
-	this(nf) = VEdr/(kt*PRd)
-	this(nfprim) = floor(Ls/s)
-	this(smin) = min(5*STUD.d)
-	this(smax) = min(6*SLAB.h,0.8)
-	this(MaRd) = (Wypl*fy)/gammaM0
+	s := bs
+	alpha := rangeChoiceLELE(STUD.hsc/STUD.d,0,3,0.2*((STUD.hsc/STUD.d)+1),4,1)
+	PRd := min((0.8*fu*(PI*square(STUD.d))/4)/gammaV,(0.29*alpha*square(STUD.d)*sqrt(fck*Ecm))/gammaV)
+	ktmax := rangeChoiceLE(t,0.85,1,1)
+	kt := min(ktmax, (0.7*bo)/(sqrt(nr)*hp)*(STUD.hsc/hp-1))
+	VEdr := Ncf
+	Ls := 0.5*l
+	nf := VEdr/(kt*PRd)
+	nfprim := floor(Ls/s)
+	smin := min(5*STUD.d)
+	smax := min(6*SLAB.h,0.8)
+	MaRd := (Wypl*fy)/gammaM0
 	//sciananie podluzne w plycie zespolonej
-	this(VEdc) = 0.5*(kt*PRd)/s
-	this(kphi) = min(1+max(b/2,1.5*1.1*STUD.d)/(1.1*STUD.d),6)
-	this(PpbRd) = kphi*1.1*STUD.d*SHEET.tcor*fypd
-	this(thetat) = 45
-	this(VRdsr) = cot(45)*((((PI*square(dmesh/1000))/4*fyrd)/sd)+min(SHEET.Ap*fypd,PpbRd/s))
-	this(VRdsc) = vc*fcd*sin(thetat)*cos(thetat)*hc
+	VEdc := 0.5*(kt*PRd)/s
+	kphi := min(1+max(b/2,1.5*1.1*STUD.d)/(1.1*STUD.d),6)
+	PpbRd := kphi*1.1*STUD.d*SHEET.tcor*fypd
+	thetat := 45
+	VRdsr := cot(45)*((((PI*square(dmesh/1000))/4*fyrd)/sd)+min(SHEET.Ap*fypd,PpbRd/s))
+	VRdsc := vc*fcd*sin(thetat)*cos(thetat)*hc
 	//ugiecia w fazie eksploatacji
-	this(deltae) = (5*ΔQk*(l^4))/(384*I1*E)
-	this(deltamax) = deltam1-deltam0+deltae
+	deltae := (5*ΔQk*(l^4))/(384*I1*E)
+	deltamax := deltam1-deltam0+deltae
 	//drgania
-	this(bn2) = beff*Ecm/E
-	this(Sy2) = bn2*hc*(h/2+hp+hc/2)
-	this(z2) = Sy2/(A+bn2*hc)
-	this(I2) = Iy+A*(z2^2)+(bn2*(hc^3))/12+bn2*hc*((hc/2+hp+h/2-z2)^2)
-	this(yw) = (5*Gk*(l^4))/(384*I2*E)
-	this(f) = 18/sqrt(yw*1000).nounit
+	bn2 := beff*Ecm/E
+	Sy2 := bn2*hc*(h/2+hp+hc/2)
+	z2 := Sy2/(A+bn2*hc)
+	I2 := Iy+A*(z2^2)+(bn2*(hc^3))/12+bn2*hc*((hc/2+hp+h/2-z2)^2)
+	yw := (5*Gk*(l^4))/(384*I2*E)
+	f := 18/sqrt(yw*1000).nounit
 	//unit mass
-	this(mS) = ((SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk)/(GRAV*SLAB.l)
+	mS := ((SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk)/(GRAV*SLAB.l)
 	
 	// end of context initialization
 	lock
@@ -253,70 +254,70 @@ extends Calculation {
 	this add slab
 	this add stud
 	
-	this(l) = length
-	this(nr) = 1
+	l := length
+	nr := 1
 	
 	def info = NumSection(TextToTranslate("BeamOfCompositeSlab",BeamOfCompositeSlabSymbols.dictionary),
 		Text(section.id.get),
-		Evaluate(Seq(l,SLAB.l,SLAB.h),this),
+		Evaluate(l,SLAB.l,SLAB.h),
 		section.info,
 		steel.info,
 		stud.info
 	)
 	
-	def LOAD1 = Evaluate(Seq(gammaG,gammaQ,gk,gd,Gcck,Gccd,Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Qk1,Qd1),this)
+	def LOAD1 = Evaluate(gammaG,gammaQ,gk,gd,Gcck,Gccd,Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Qk1,Qd1)
 	
 	def ULS1 = NumSection(TextToTranslate("ULS","eurocode"),
 		NumSection("Sprawdzenie stateczności środnika wg PN-EN 1993-1-5 pkt. 5.1(2)",
-			Evaluate(Seq(hw,epsi,eta),this),
+			Evaluate(hw,epsi,eta),
 			AssertionL("stateczności środnika",this,hw/tw,(72*epsi)/eta)
 		),
 		NumSection("Określenie klasy przekroju",
-			Evaluate(Seq(ctf,ctw,Cf1,Cw1,C),this),
+			Evaluate(ctf,ctw,Cf1,Cw1,C),
 			AssertionE("dopuszczalności określania nośności wg nośności plastycznej",this,C,1)
 		),
 		NumSection("Sprawdzenie nośności belki na zginanie w fazie montażu",
-			Evaluate(Seq(MelRd,MEdm),this),
+			Evaluate(MelRd,MEdm),
 			AssertionLE("nośności na zginanie",this,MEdm/MelRd,1),
-			Evaluate(Seq(sigmamplus),this),
+			Evaluate(sigmamplus),
 			AssertionLE("braku uplastycznienia",this,sigmamplus,fy)
 		),
 		NumSection("Sprawdzenie nośności belki na ścinanie w fazie montażu",
-			Evaluate(Seq(AVz,VplRd,VEdm),this),
+			Evaluate(AVz,VplRd,VEdm),
 			AssertionLE("nośności na ścinanie",this,VEdm/VplRd,1)
 		),
 		NumSection("Naprężenia pozostające w belce po fazie montażu",
-			Evaluate(Seq(MEdm1,Mkm1,Mkm,sigmadm1,sigmakm1),this)
+			Evaluate(MEdm1,Mkm1,Mkm,sigmadm1,sigmakm1)
 		)
 	)
 	
 	def SLS1 = NumSection(TextToTranslate("SLS","eurocode"),
 		NumSection("Sprawdzenie ugięć w fazie montażu",
-			Evaluate(Seq(deltam1,deltam0,deltam),this),
+			Evaluate(deltam1,deltam0,deltam),
 			AssertionLE("dopuszczalnych ugięć",this,deltam-deltam0,l/250)
 		)
 	)
 	
-	def LOAD2 = Evaluate(Seq(Qk2,Qd2,ΔQk,ΔQd),this)
+	def LOAD2 = Evaluate(Qk2,Qd2,ΔQk,ΔQd)
 	
 	def ULS2 = NumSection(TextToTranslate("ULS","eurocode"),
 		NumSection("Siły wewnętrzne w belce w fazie eksploatacji",
-			Evaluate(Seq(ΔMEd,ΔVEd,MEde,VEde),this),
+			Evaluate(ΔMEd,ΔVEd,MEde,VEde),
 			AssertionLE("braku interakcji zginania i ścinania",this,VEde,0.5*VplRd)
 		),
 		NumSection("Szerokość współpracująca i położenie osi obojętnej wg PN-EN 1994-1-1 pkt. 5.4.1.2(5)",
-			Evaluate(Seq(b0,bei,beff,Ncf,Npla,N1pla,x),this)
+			Evaluate(b0,bei,beff,Ncf,Npla,N1pla,x)
 		),
 		NumSection("Sprawdzenie nośności belki na zginanie bez uwzględniania zwichrzenia zgodnie z PN-EN 1994-1-1 pkt. 6.4.1(1)",
-			Evaluate(Seq(MplRd),this),
+			Evaluate(MplRd),
 			AssertionLE("nośności na zginanie",this,MEde/MplRd,1)
 		),
 		NumSection("Sprawdzenie naprężeń we włóknach skrajnych belki",
-			Evaluate(Seq(Eceff2,nE,bn,Sy,z0,I1,Wel,ΔMk,sigmake,sigmamax),this),
+			Evaluate(Eceff2,nE,bn,Sy,z0,I1,Wel,ΔMk,sigmake,sigmamax),
 			AssertionLE("naprężeń dopuszczalnych we włóknach skrajnych",this,sigmamax,1.02*fy)
 		),
 		NumSection("Sprawdzenie łączników na ścinanie wg PN-EN 1994-1-1 pkt. 6.6",
-			Evaluate(Seq(MaRd),this),
+			Evaluate(MaRd),
 			AssertionL("PN-EN 1994-1-1 pkt. 6.6.1.3(3)",this,MplRd/MaRd,2.5),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.7(1)",this,STUD.hsc/STUD.d,3),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(1)",this,STUD.hsc,hp+2*STUD.d),			
@@ -324,25 +325,25 @@ extends Calculation {
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,bo,hp),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,hp,85E-5),
 			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,STUD.d,20E-3),
-			Evaluate(Seq(s,alpha,PRd,ktmax,kt,VEdr,Ls,nf,nfprim,smin,smax),this),
+			Evaluate(s,alpha,PRd,ktmax,kt,VEdr,Ls,nf,nfprim,smin,smax),
 			AssertionL("maksymalnego rozstawu łączników",this,bs,smax),
 			AssertionG("minimanego rozstawu łączników",this,bs,smin)
 		),
 		NumSection("Sprawdzenie ścinania podłużnego w płycie zespolonej wg pkt. 6.6.6",
-			Evaluate(Seq(VEdc,kphi,PpbRd,thetat,VRdsr),this),
+			Evaluate(VEdc,kphi,PpbRd,thetat,VRdsr),
 			AssertionLE("nośności prętów zbrojeniowych na ścinanie podłużne",this,VEdc,VRdsr),
-			Evaluate(Seq(vc,VRdsc),this),
+			Evaluate(vc,VRdsc),
 			AssertionLE("nośności ściskanych krzyżulców betonowych",this,VEdc,VRdsc)
 		)
 	)
 	
 	def SLS2 = NumSection(TextToTranslate("SLS","eurocode"),
 		NumSection("Sprawdzenie ugięcia maksymalnego",
-			Evaluate(Seq(deltae,deltamax),this),
+			Evaluate(deltae,deltamax),
 			AssertionLE("ugięcia maksymalnego",this,deltamax,l/250)
 		),
 		NumSection("Sprawdzenie drgań",
-			Evaluate(Seq(bn2,Sy2,z2,I2,Gk,yw,f),this),
+			Evaluate(bn2,Sy2,z2,I2,Gk,yw,f),
 			AssertionG("częstotliwości drgań własnych",this,f,3)
 		)
 	)

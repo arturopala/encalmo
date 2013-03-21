@@ -307,13 +307,13 @@ extends Calculation {
     
 	//input geometry
 	def inputGeometry = NumSection(TextToTranslate("_inputGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(d1,h1,h2,de,t,th,tr,tp,tpp,alpha,h3,h4),this)
+		Evaluate(d1,h1,h2,de,t,th,tr,tp,tpp,alpha,h3,h4)
 	)
 	//input assertions
 	
 	//calculated geometry
 	def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry",SilosSymbols.dictionary),
-		Evaluate(Seq(r,dc,A,U,AU,beta,hh,he,htp,ho,hc,hb,hcdc,Sc,Sh,S),this),
+		Evaluate(r,dc,A,U,AU,beta,hh,he,htp,ho,hc,hb,hcdc,Sc,Sh,S),
 		AssertionL("[1991-4] 1.1.2 (3)",this,hb/dc,10),
 		AssertionL("[1991-4] 1.1.2 (3)",this,hb,100 unit SI.m),
 		AssertionL("[1991-4] 1.1.2 (3)",this,dc,60 unit SI.m),
@@ -321,75 +321,75 @@ extends Calculation {
 	)
 	//volumes
 	def volumes = NumSection(TextToTranslate("_volumes",SilosSymbols.dictionary),
-		Evaluate(Seq(Vc,Vh,V,W),this)
+		Evaluate(Vc,Vh,V,W)
 	)
-    def ciezarWlasny = NumSection("Oddziaływania od ciężaru własnego",Evaluate(this,Gck,Ghk,Grk,Gpk))
-    def obciazenieUzytkowe = NumSection("Obciążenie użytkowe",Evaluate(this,Quk))
-    def obciazenieSniegiem = NumSection("Oddziaływania od obciążenia śniegiem",Evaluate(this,HM,sk,mi1,Ce,Ct,sr,Qsk))
-    def obciazenieWiatrem = NumSection("Oddziaływania od obciążenia wiatrem",Evaluate(this,qbo,cez,qpz,cscd,ze,Re,Aref,cf,Fw,wemax,cpi,wi))
+    def ciezarWlasny = NumSection("Oddziaływania od ciężaru własnego",Evaluate(Gck,Ghk,Grk,Gpk))
+    def obciazenieUzytkowe = NumSection("Obciążenie użytkowe",Evaluate(Quk))
+    def obciazenieSniegiem = NumSection("Oddziaływania od obciążenia śniegiem",Evaluate(HM,sk,mi1,Ce,Ct,sr,Qsk))
+    def obciazenieWiatrem = NumSection("Oddziaływania od obciążenia wiatrem",Evaluate(qbo,cez,qpz,cscd,ze,Re,Aref,cf,Fw,wemax,cpi,wi))
 	//filling symmetrical load
 	def fillingSymmetricalLoad = NumSection(TextToTranslate("_fillingSymmetricalLoad",SilosSymbols.dictionary),"[1991-4] 5.2.1.1",
         NumSection(TextToTranslate("_fillingSymmetricalLoad_1",SilosSymbols.dictionary),
-		Evaluate(Seq(zo(1),pho(1),YJ(1),phf(1),phf1,phf2,phf3,phft),this)
+		Evaluate(zo(1),pho(1),YJ(1),phf(1),phf1,phf2,phf3,phft)
 		),
 		NumSection(TextToTranslate("_fillingSymmetricalLoad_2",SilosSymbols.dictionary),
-        Evaluate(Seq(zo(2),pho(2),YJ(2),phf(2),pwf,nfzSk,nfzSkt),this)
+        Evaluate(zo(2),pho(2),YJ(2),phf(2),pwf,nfzSk,nfzSkt)
         ),
         NumSection(TextToTranslate("_fillingSymmetricalLoad_3",SilosSymbols.dictionary),
-        Evaluate(Seq(zo(3),pho(3),YJ(3),pvf),this)
+        Evaluate(zo(3),pho(3),YJ(3),pvf)
         )
 	)
 	//filling patch load
 	def fillingPatchLoad = NumSection(TextToTranslate("_fillingPatchLoad",SilosSymbols.dictionary),"[1991-4] 5.2.1.2, 5.2.1.4",
-        Evaluate(Seq(ef,Ef,Cpf,ppf,zp,ppfzp,s,Fpf1),this)
+        Evaluate(ef,Ef,Cpf,ppf,zp,ppfzp,s,Fpf1)
     )
     //discharge symmetrical load
 	def dischargeSymmetricalLoad = NumSection(TextToTranslate("_dischargeSymmetricalLoad",SilosSymbols.dictionary),"[1991-4] 5.2.2.1",
-        Evaluate(Seq(Ch,Cw,phe,phet,pwe,nezSk,nezSkt),this)
+        Evaluate(Ch,Cw,phe,phet,pwe,nezSk,nezSkt)
     )
     //discharge patch load
     def dischargePatchLoad = NumSection(TextToTranslate("_dischargePatchLoad",SilosSymbols.dictionary),"[1991-4] 5.2.2.2, 5.2.2.4",
-        Evaluate(Seq(Cpe,ppe,zp,ppezp,Fpe1),this)
+        Evaluate(Cpe,ppe,zp,ppezp,Fpe1)
     )
     //filling loads on silo hoppers
     def fillingHopperLoad = NumSection(TextToTranslate("_fillingHopperLoad",SilosSymbols.dictionary),"[1991-4] 6.1.2, 6.3.2",
         AssertionL("leja stromego [1991-4] 6.1",this,tan(beta),(1-K_l)/(2*mu_u)),    
-        Evaluate(Seq(Cb,pvft,muheff,Ff,nh,pv,pnf,ptf,pnf0,ptf0,pnf1,ptf1),this)
+        Evaluate(Cb,pvft,muheff,Ff,nh,pv,pnf,ptf,pnf0,ptf0,pnf1,ptf1)
     )
     //discharge loads on silo hoppers
     def dischargeHopperLoad = NumSection(TextToTranslate("_dischargeHopperLoad",SilosSymbols.dictionary),"[1991-4] 6.3.3", 
-        Evaluate(Seq(fiwh,epsilon,Fe,pne,pte,pne0,pte0,pne1,pte1),this)
+        Evaluate(fiwh,epsilon,Fe,pne,pte,pne0,pte0,pne1,pte1)
     )
     def statecznosc = Section(
-            Evaluate(this,omega,Cteta),
+            Evaluate(omega,Cteta),
             AssertionRangeLELE("[1993-1-6] D.1.2.1 (4) zastosowania współczynnika Cx=1.0",this,1.7,omega,0.5*(r/t)),
             AssertionRangeLELE("[1993-1-6] D.1.3.1 (3) skorzystania ze wzoru D.21",this,20,omega/Cteta,1.63*(r/t)),
-            Evaluate(this,Cx)
+            Evaluate(Cx)
     )
     def naprezeniaKrytycznePoludnikowe = Section(
-            Evaluate(this,sigxRcr,Qx,dwk,alphax,betax,etax,lambdax0,lambdax,lambdapx,chix,sigxRd),
+            Evaluate(sigxRcr,Qx,dwk,alphax,betax,etax,lambdax0,lambdax,lambdapx,chix,sigxRd),
             AssertionLE("[1993-1-6] D.18 możliwości rezygnacji ze sprawdzania wyboczenia południkowego",this,r/t,0.03*(E/fy)) 
     )
     def naprezeniaKrytyczneRownoleznikowe = Section(
-            Evaluate(this,sigtRcr,alphat,betat,etat,lambdat0,lambdat,lambdapt,chiteta,sigtRd),
+            Evaluate(sigtRcr,alphat,betat,etat,lambdat0,lambdat,lambdapt,chiteta,sigtRd),
             AssertionLE("[1993-1-6] D.27 możliwości rezygnacji ze sprawdzania wyboczenia równoleżnikowego",this,r/t,0.21*(E/fy)),
-            Evaluate(this,kw)
+            Evaluate(kw)
     )
     def naprezeniaKrytyczneScinajace = Section(
             AssertionRangeLELE("[1993-1-6] D.33 zastosowania współczynnika Cτ=1.0",this,10,omega,8.7*(r/t)),
-            Evaluate(this,Ctau,tauxtRcr,alphatau,betatau,etatau,lambdatau0,lambdatau,lambdaptau,chitau,tauRd),
+            Evaluate(Ctau,tauxtRcr,alphatau,betatau,etatau,lambdatau0,lambdatau,lambdaptau,chitau,tauRd),
             AssertionLE("[1993-1-6] D.40 możliwości rezygnacji ze sprawdzania wyboczenia przy ścinaniu",this,r/t,0.16*((E/fy)^0.67))
     )
     def statecznoscKombinacja1 = Section(
-            Evaluate(this,lR,lf,qwzd,NxEd1,MwEd,QtauEd1,sigmaxEd1,sigmatEd1,tauEd1,kx,kt,ktau,ki,zeta1),
+            Evaluate(lR,lf,qwzd,NxEd1,MwEd,QtauEd1,sigmaxEd1,sigmatEd1,tauEd1,kx,kt,ktau,ki,zeta1),
             AssertionLE("interakcji naprężeń [1993-1-6] 8.19",this,zeta1,1)
     )
     def statecznoscKombinacja2 = Section(
-            Evaluate(this,NxEd2,MeEd,QtauEd2,sigmaxEd2,sigmatEd2,tauEd2,zeta2),
+            Evaluate(NxEd2,MeEd,QtauEd2,sigmaxEd2,sigmatEd2,tauEd2,zeta2),
             AssertionLE("interakcji naprężeń [1993-1-6] 8.19",this,zeta2,1)
     )
     def statecznoscLokalnaPodpory = Section(
-            Evaluate(this,tp,tpp,s1,hpp,s2,ns,N1,sigmax1,sigmax1cr,lambdax1,chix1,sigxRd1,sigmax2),
+            Evaluate(tp,tpp,s1,hpp,s2,ns,N1,sigmax1,sigmax1cr,lambdax1,chix1,sigxRd1,sigmax2),
             AssertionLE("nośności lokalnej przy podporze",this,sigmax1,sigxRd1),
             AssertionLE("nośności lokalnej przy podporze",this,sigmax2,sigxRd)
     )

@@ -24,20 +24,28 @@ import org.encalmo.expression.min
 import org.encalmo.expression.Value
 import org.encalmo.expression.Number
 import org.encalmo.calculation.DynamicExpression
+import org.encalmo.calculation.ExpressionResolver
+import org.encalmo.calculation.Context
 
 /**
  * Evaluate: symbol = unresolved = resolved = substituted = evaluated
  */
-class Evaluate(myStyle:Style, val styleOfResolved:Style, val styleOfEvaluated:Style, val isPrintDescription:Boolean, calc:Calculation, expr:Expression*) 
-extends BlockExpr(myStyle,calc,expr:_*){
+class Evaluate(
+        myStyle:Style, 
+        val styleOfResolved:Style, 
+        val styleOfEvaluated:Style, 
+        val isPrintDescription:Boolean, 
+        context:Context, 
+        expressions:Expression*) 
+extends BlockExpr(myStyle,context,expressions:_*){
 	
-	override def toString = "Evaluate("+myStyle+","+styleOfResolved+","+styleOfEvaluated+","+calc+","+expr.mkString(",")+")"
+	override def toString = "Evaluate("+myStyle+","+styleOfResolved+","+styleOfEvaluated+","+context+","+expressions.mkString(",")+")"
 	
 	override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
 		var se = Seq[ExpressionToPrint]()
 		var ue = e // unresolved expression
 		val unit:UnitOfValue = e.unit
-		val evaluated = adjustUnitsInSum(calc.evaluate(e),unit) // evaluated expression
+		val evaluated = adjustUnitsInSum(context.evaluate(e),unit) // evaluated expression
 		e match {
 			case boundexpr:BoundExpression => {
 				se = se :+ ExpressionToPrint(boundexpr.symbol,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig)
@@ -50,7 +58,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 				}
 			}
 			case symbol:Symbol => {
-				ue = processUnresolved(symbol, calc.getRawExpression(symbol) match {
+				ue = processUnresolved(symbol, context.getRawExpression(symbol) match {
 					case Some(x) => x
 					case None => e
 				})
@@ -67,7 +75,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 		}
 		
 		if(evaluated!=e){
-			val substituted = adjustUnitsInSum(calc.substitute(ue),unit) // expression with substituted symbols
+			val substituted = adjustUnitsInSum(context.substitute(ue),unit) // expression with substituted symbols
 			if(substituted!=ue && substituted!=evaluated){
 				se = se :+ ExpressionToPrint(substituted,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_SUBSTITUTED),"=",null,parentStylesConfig)
 				val depth = substituted.countTreeLeafs
@@ -78,15 +86,15 @@ extends BlockExpr(myStyle,calc,expr:_*){
     				}) match { // partialy evaluated expression
     				    case null => substituted
                         case o:Operation2 => {
-                            o.copy(calc.evaluate(o.l),calc.evaluate(o.r))
+                            o.copy(context.evaluate(o.l),context.evaluate(o.r))
                         }
                         case o:OperationN => {
-                            o.copy(o.args.map(calc.evaluate(_)):_*)
+                            o.copy(o.args.map(context.evaluate(_)):_*)
                         }
                         case sel:Selection => {
-                        	calc.substitute(sel.select)
+                        	context.substitute(sel.select)
                         }
-                        case _ => calc.evaluate(substituted)
+                        case _ => context.evaluate(substituted)
                     },unit)
                     if(evaluation1!=substituted && evaluation1!=evaluated){
                         se = se :+ ExpressionToPrint(evaluation1,resolveStyle(styleOfResolved,StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED),"=",null,parentStylesConfig)
@@ -104,7 +112,7 @@ extends BlockExpr(myStyle,calc,expr:_*){
 	
 	def processUnresolved(symbol:Symbol,e:Expression):Expression = {
 	    e match {
-	        case ev:EvalAt => EvalAt(ev.expr, ev.er.evaluateWithAndReturnCopy(calc))
+	        case ev:EvalAt => EvalAt(ev.expr, ev.er.evaluateWithAndReturnCopy(context))
 	        case de:DynamicExpression => de.f()
 	        case _ => e
 	    }
@@ -136,30 +144,30 @@ extends BlockExpr(myStyle,calc,expr:_*){
  */
 object Evaluate {
 	
-	def apply(mystyle:Style, styleOfResolved:Style, styleOfEvaluated:Style, calc:Calculation, expr:Expression*) = {
-		new Evaluate(mystyle,styleOfResolved,styleOfEvaluated,true,calc,expr:_*)
+	def apply(mystyle:Style, styleOfResolved:Style, styleOfEvaluated:Style, calc:Calculation, expressions:Expression*) = {
+		new Evaluate(mystyle,styleOfResolved,styleOfEvaluated,true,calc,expressions:_*)
 	}
 	
-	def apply(mystyle:Style, style2:Style, calc:Calculation, expr:Expression*) = {
-		new Evaluate(mystyle,style2,style2,true,calc,expr:_*)
+	def apply(mystyle:Style, style2:Style, calc:Calculation, expressions:Expression*) = {
+		new Evaluate(mystyle,style2,style2,true,calc,expressions:_*)
 	}
 	
-	def apply(mystyle:Style, calc:Calculation, expr:Expression*) = {
-		new Evaluate(mystyle,mystyle,mystyle,true,calc,expr:_*)
+	def apply(mystyle:Style, calc:Calculation, expressions:Expression*) = {
+		new Evaluate(mystyle,mystyle,mystyle,true,calc,expressions:_*)
 	}
 	
-	def apply(calc:Calculation, expr:Expression*) = {
-        new Evaluate(null,null,null,true,calc,expr:_*)
+	/*def apply(calc:Calculation, expressions:Expression*) = {
+        new Evaluate(null,null,null,true,calc,expressions:_*)
+    }*/
+	
+	def apply(expressions:Expression*)(implicit context:Context) = {
+        new Evaluate(null,null,null,true,context,expressions:_*)
     }
 	
-	def apply(expr:Seq[Expression],calc:Calculation) = {
-        new Evaluate(null,null,null,true,calc,expr:_*)
-    }
-	
-	def apply(isPrintDescription:Boolean, calc:Calculation, expr:Expression*) = {
-		new Evaluate(null,null,null,isPrintDescription,calc,expr:_*)
+	def apply(isPrintDescription:Boolean, calc:Calculation, expressions:Expression*) = {
+		new Evaluate(null,null,null,isPrintDescription,calc,expressions:_*)
 	}
 	
-	def unapply(e:Evaluate) = Some(e.myStyle,e.styleOfResolved,e.styleOfEvaluated,e.calc,e.expr)
+	def unapply(e:Evaluate) = Some(e.myStyle,e.styleOfResolved,e.styleOfEvaluated,e.context,e.expressions)
 	
 }

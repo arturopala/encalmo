@@ -20,7 +20,7 @@ object PlainTextDocumentPrinter extends TextDocumentPrinter {
 			input.visit(visitor = t)
 		}
 		catch {
-			case e => {
+			case e: Throwable => {
 				output.append("\r\n")
 				output.append(e.getClass.getName+": "+e.getMessage)
 			}

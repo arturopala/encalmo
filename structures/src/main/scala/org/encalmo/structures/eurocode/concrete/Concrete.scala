@@ -94,10 +94,10 @@ class Concrete(id:String,data:Context) extends Calculation(Option(id)) {
 	import ConcreteSymbols._
 
 	def info = NumSection(TextToTranslate("Concrete",ConcreteSymbols.dictionary),id,
-		Evaluate(Seq(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1),this)
+		Evaluate(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1)
 	)
 	
-	def skurcz  = Evaluate(this,betasc,RH,betaRH,epsicsdinf,ho,dtimec,betads,epsicsd,epsicsainf,betaas,epsicsa,epsics,pfiRH,betafcm,betat0,phitinf,betaH,betac,phit)
+	def skurcz  = Evaluate(betasc,RH,betaRH,epsicsdinf,ho,dtimec,betads,epsicsd,epsicsainf,betaas,epsicsa,epsics,pfiRH,betafcm,betat0,phitinf,betaH,betac,phit)
 	
 	this add ConcreteExpressions
 	this add data

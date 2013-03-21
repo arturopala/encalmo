@@ -14,7 +14,7 @@ extends InlineExpr(sStyle,null,expr:_*){
 	
     override lazy val myStyle:Style = sStyle
     
-	override def toString = "Symb("+myStyle+","+calc+","+expr.mkString(",")+")"
+	override def toString = "Symb("+myStyle+","+context+","+expr.mkString(",")+")"
 	
 	/** Function to implement */
 	override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {

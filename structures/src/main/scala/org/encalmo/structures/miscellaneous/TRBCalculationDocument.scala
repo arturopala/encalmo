@@ -131,24 +131,24 @@ class TRBCalculationDocument extends CalculationDocument {
                 Section("Prowadzący: dr inż. Michał Podolski, Instytut Budownictwa Politechniki Wrocławskiej. Semestr zimowy 2011/2012.")),
             Section(""),
             
-            NumSection("Parametry zadania",Evaluate(calc,HS,BS,HL,BL,KG,T,tzm,Lu)),
+            NumSection("Parametry zadania",Evaluate(HS,BS,HL,BL,KG,T,tzm,Lu)),
 
             NumSection("Roboty ziemne",
-                NumSection("Parametry wykopu",Evaluate(calc,HW,Aw,Ow,l,lo,VB,VZ,VC)),
-                NumSection("Parametry koparki CAT 315D R3.1",Evaluate(calc,Qk,Rk)),
-                NumSection("Praca koparek",Evaluate(calc,Vzm,Vh,Qk,tk,nk,Sn,Ss,Sw,We,Nk,Bk,Mk,Ml,Mkl)),
-                NumSection("Czas robót ziemnych",Evaluate(calc,Tk)),
-                NumSection("Transport urobku samochodem MAN TGS 18",Evaluate(calc,Vw,gammao,Ns,Pjt,tp,nc,tz,vj,tj,tw,Tj,Nj))
+                NumSection("Parametry wykopu",Evaluate(HW,Aw,Ow,l,lo,VB,VZ,VC)),
+                NumSection("Parametry koparki CAT 315D R3.1",Evaluate(Qk,Rk)),
+                NumSection("Praca koparek",Evaluate(Vzm,Vh,Qk,tk,nk,Sn,Ss,Sw,We,Nk,Bk,Mk,Ml,Mkl)),
+                NumSection("Czas robót ziemnych",Evaluate(Tk)),
+                NumSection("Transport urobku samochodem MAN TGS 18",Evaluate(Vw,gammao,Ns,Pjt,tp,nc,tz,vj,tj,tw,Tj,Nj))
             ),
             
             NumSection("Roboty betonowe",
-                NumSection("Objętość mieszanki betonowej",Evaluate(calc,LS,Vb,Vzbr,wz,Vbet)),
-                NumSection("Środek transportu betonu LIEBHERR HTM 604",Evaluate(calc,Ptb)),
-                NumSection("Pompa do betonu CIFA KZR/24",Evaluate(calc,Qpb,Rpb)),
-                NumSection("Układanie mieszanki betonowej",Evaluate(calc,db,twiaz,ttb,Qbet,Lmax)),
-                NumSection("Zagęszczanie mieszanki betonowej",Evaluate(calc,Qwibr,Dwibr,Lwibr,tz1,tz2,Sww,Qw,Nw)),
-                NumSection("Deskowanie i rozdeskowanie",Evaluate(calc,Fd,tdm,tdd,nprac,Tdm,Tdd)),
-                NumSection("Czas robót betonowych",Evaluate(calc,Tprzer,Npb,Tbet,Tb))
+                NumSection("Objętość mieszanki betonowej",Evaluate(LS,Vb,Vzbr,wz,Vbet)),
+                NumSection("Środek transportu betonu LIEBHERR HTM 604",Evaluate(Ptb)),
+                NumSection("Pompa do betonu CIFA KZR/24",Evaluate(Qpb,Rpb)),
+                NumSection("Układanie mieszanki betonowej",Evaluate(db,twiaz,ttb,Qbet,Lmax)),
+                NumSection("Zagęszczanie mieszanki betonowej",Evaluate(Qwibr,Dwibr,Lwibr,tz1,tz2,Sww,Qw,Nw)),
+                NumSection("Deskowanie i rozdeskowanie",Evaluate(Fd,tdm,tdd,nprac,Tdm,Tdd)),
+                NumSection("Czas robót betonowych",Evaluate(Tprzer,Npb,Tbet,Tb))
             ),
 
             Section(style1.marginTop(20), ""),
