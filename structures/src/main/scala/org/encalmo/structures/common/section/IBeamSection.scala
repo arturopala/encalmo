@@ -11,16 +11,16 @@ object IBeamSectionSymbols extends SymbolConfigurator {
     
     val ID = symbol("ID").makeNonPrintable
     //Dimensions for detailing
-    val tw = symbol(BasicSymbols.t|BasicSymbols.w) unit "m"
-    val tf = symbol(BasicSymbols.t|BasicSymbols.f) unit "m"
-    val r = symbol(BasicSymbols.r) unit "m"
-    val r2 = symbol(BasicSymbols.r|2) unit "m"
-    val hw = symbol(BasicSymbols.h|BasicSymbols.w) unit "m"
-    val bf = symbol(BasicSymbols.b|BasicSymbols.f) unit "m"
-    val hd = symbol(BasicSymbols.h|BasicSymbols.d) unit "m"
-    val ss = symbol(BasicSymbols.s|BasicSymbols.s) unit "m"
-    val pmin = symbol(BasicSymbols.p|"min") unit "m"
-    val pmax = symbol(BasicSymbols.p|"max") unit "m"
+    val tw = symbol(BasicSymbols.t|BasicSymbols.w) unit "mm"
+    val tf = symbol(BasicSymbols.t|BasicSymbols.f) unit "mm"
+    val r = symbol(BasicSymbols.r) unit "mm"
+    val r2 = symbol(BasicSymbols.r|2) unit "mm"
+    val hw = symbol(BasicSymbols.h|BasicSymbols.w) unit "mm"
+    val bf = symbol(BasicSymbols.b|BasicSymbols.f) unit "mm"
+    val hd = symbol(BasicSymbols.h|BasicSymbols.d) unit "mm"
+    val ss = symbol(BasicSymbols.s|BasicSymbols.s) unit "mm"
+    val pmin = symbol(BasicSymbols.p|"min") unit "mm"
+    val pmax = symbol(BasicSymbols.p|"max") unit "mm"
     val phi = symbol(BasicSymbols.phi) unit "mm"
     //Classification ENV 1993-1-1
     val ctf = symbol("c/t"|"f")

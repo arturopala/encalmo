@@ -32,13 +32,13 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "beamOfCompositeSlab"
 	
 	val l = symbol(BasicSymbols.l) unit "m"
-	val gk = symbol(BasicSymbols.g|BasicSymbols.k) unit "N/m"
-	val gd = symbol(BasicSymbols.g|BasicSymbols.d) unit "N/m"
-	val Qk1 = symbol(Q|"k|m") unit "N/m"
-    val Qd1 = symbol(Q|"d|m") unit "N/m"
-    val Qk2 = symbol(Q|"k|e") unit "N/m"
-    val Qd2 = symbol(Q|"d|e") unit "N/m"
-    val Gk = symbol(G|"k") unit "N/m"
+	val gk = symbol(BasicSymbols.g|BasicSymbols.k) unit "kN/m"
+	val gd = symbol(BasicSymbols.g|BasicSymbols.d) unit "kN/m"
+	val Qk1 = symbol(Q|"k|m") unit "kN/m"
+    val Qd1 = symbol(Q|"d|m") unit "kN/m"
+    val Qk2 = symbol(Q|"k|e") unit "kN/m"
+    val Qd2 = symbol(Q|"d|e") unit "kN/m"
+    val Gk = symbol(G|"k") unit "kN/m"
     val eta = symbol(BasicSymbols.eta)
     val Cf1 = symbol("C"|"f,1")
     val Cw1 = symbol("C"|"w,1")
@@ -47,68 +47,68 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
     val Cf3 = symbol("C"|"f,3")
     val Cw3 = symbol("C"|"w,3")
     val C = symbol(BasicSymbols.C)
-    val MelRd = symbol(M|"el,Rd") unit "Nm"
-    val VplRd = symbol(V|"pl,Rd") unit "N"
-    val NcRd = symbol(N|"c,Rd") unit "N"
-    val MEdm = symbol(M|("Ed|m")) unit "Nm"
-    val VEdm = symbol(V|("Ed|m")) unit "N"
-    val MEde = symbol(M|("Ed|e")) unit "Nm"
-    val VEde = symbol(V|("Ed|e")) unit "N"
-    val ΔMEd = symbol("ΔM"|("Ed")) unit "Nm"
-    val ΔVEd = symbol("ΔV"|("Ed")) unit "N"
-    val sigmamplus = symbol(BasicSymbols.sigma|("m","+")) unit "Pa"
-    val MEdm1 = symbol(BasicSymbols.M|("Ed|m,1")) unit "Nm"
-    val Mkm = symbol(BasicSymbols.M|("k|m")) unit "Nm"
-    val Mkm1 = symbol(BasicSymbols.M|("k|m,1")) unit "Nm"
-    val ΔMk = symbol("ΔM"|("k")) unit "Nm"
-    val Mke = symbol(BasicSymbols.M|("k|e")) unit "Nm"
-    val sigmadm1 = symbol(BasicSymbols.sigma|("d|m,1")) unit "Pa"
-    val sigmakm1 = symbol(BasicSymbols.sigma|("k|m,1")) unit "Pa"
-    val deltam0 = symbol(BasicSymbols.delta|"m,0") unit "m"
-    val deltam = symbol(BasicSymbols.delta|"m") unit "m"
-    val deltam1 = symbol(BasicSymbols.delta|"m,1") unit "m"
-    val deltamax = symbol(BasicSymbols.delta|"max") unit "m"
-    val deltae = symbol(BasicSymbols.delta|"e") unit "m"
-    val ΔQk = symbol(("ΔQ")|"k") unit "N/m"
-    val ΔQd = symbol(("ΔQ")|"d") unit "N/m"
+    val MelRd = symbol(M|"el,Rd") unit "kNm"
+    val VplRd = symbol(V|"pl,Rd") unit "kN"
+    val NcRd = symbol(N|"c,Rd") unit "kN"
+    val MEdm = symbol(M|("Ed|m")) unit "kNm"
+    val VEdm = symbol(V|("Ed|m")) unit "kN"
+    val MEde = symbol(M|("Ed|e")) unit "kNm"
+    val VEde = symbol(V|("Ed|e")) unit "kN"
+    val ΔMEd = symbol("ΔM"|("Ed")) unit "kNm"
+    val ΔVEd = symbol("ΔV"|("Ed")) unit "kN"
+    val sigmamplus = symbol(BasicSymbols.sigma|("m","+")) unit "MPa"
+    val MEdm1 = symbol(BasicSymbols.M|("Ed|m,1")) unit "kNm"
+    val Mkm = symbol(BasicSymbols.M|("k|m")) unit "kNm"
+    val Mkm1 = symbol(BasicSymbols.M|("k|m,1")) unit "kNm"
+    val ΔMk = symbol("ΔM"|("k")) unit "kNm"
+    val Mke = symbol(BasicSymbols.M|("k|e")) unit "kNm"
+    val sigmadm1 = symbol(BasicSymbols.sigma|("d|m,1")) unit "MPa"
+    val sigmakm1 = symbol(BasicSymbols.sigma|("k|m,1")) unit "MPa"
+    val deltam0 = symbol(BasicSymbols.delta|"m,0") unit "mm"
+    val deltam = symbol(BasicSymbols.delta|"m") unit "mm"
+    val deltam1 = symbol(BasicSymbols.delta|"m,1") unit "mm"
+    val deltamax = symbol(BasicSymbols.delta|"max") unit "mm"
+    val deltae = symbol(BasicSymbols.delta|"e") unit "mm"
+    val ΔQk = symbol(("ΔQ")|"k") unit "kN/m"
+    val ΔQd = symbol(("ΔQ")|"d") unit "kN/m"
     val b0 = symbol(BasicSymbols.b|"0") unit "m"
     val beff = symbol(BasicSymbols.b|"eff") unit "m"
     val bei = symbol(BasicSymbols.b|"ei") unit "m"
-    val Ncf = symbol(BasicSymbols.N|"c,f") unit "N"
-    val Npla = symbol(BasicSymbols.N|"pl,a") unit "N"
-    val N1pla = symbol(BasicSymbols.N|("pl,a","'")) unit "N"
-    val x = symbol(BasicSymbols.x) unit "m"
-    val MplRd = symbol(BasicSymbols.M|"pl,Rd") unit "Nm"
+    val Ncf = symbol(BasicSymbols.N|"c,f") unit "kN"
+    val Npla = symbol(BasicSymbols.N|"pl,a") unit "kN"
+    val N1pla = symbol(BasicSymbols.N|("pl,a","'")) unit "kN"
+    val x = symbol(BasicSymbols.x) unit "cm"
+    val MplRd = symbol(BasicSymbols.M|"pl,Rd") unit "kNm"
     val bn = symbol(BasicSymbols.b|"E") unit "m"
-    val Sy = symbol(BasicSymbols.S|"y") unit "m3"
+    val Sy = symbol(BasicSymbols.S|"y") unit "cm3"
     val z0 = symbol(BasicSymbols.z|"0") unit "m"
-    val I1 = symbol(BasicSymbols.I|"1") unit "m4"
-    val Wel = symbol(BasicSymbols.W|"el") unit "m3"
-    val sigmake = symbol(BasicSymbols.sigma|"k|e") unit "Pa"
-    val sigmamax = symbol(BasicSymbols.sigma|"max") unit "Pa"
-	val PRd = symbol(BasicSymbols.P|"Rd") unit "N"
+    val I1 = symbol(BasicSymbols.I|"1") unit "cm4"
+    val Wel = symbol(BasicSymbols.W|"el") unit "cm3"
+    val sigmake = symbol(BasicSymbols.sigma|"k|e") unit "MPa"
+    val sigmamax = symbol(BasicSymbols.sigma|"max") unit "MPa"
+	val PRd = symbol(BasicSymbols.P|"Rd") unit "kN"
 	val alpha = symbol(BasicSymbols.alpha)
 	val kt = symbol(BasicSymbols.k|"t")
 	val ktmax = symbol(BasicSymbols.k|"t,max")
 	val nr = symbol(BasicSymbols.n|"r")
-	val VEdr = symbol(BasicSymbols.V|"Ed,r") unit "N"
+	val VEdr = symbol(BasicSymbols.V|"Ed,r") unit "kN"
 	val Ls = symbol(BasicSymbols.L|"s") unit "m"
 	val nf = symbol(BasicSymbols.n|"f")
 	val nfprim = symbol(BasicSymbols.n|("f","'"))
 	val s = symbol(BasicSymbols.s) unit "m"
 	val smax = symbol(BasicSymbols.s|"max") unit "m"
 	val smin = symbol(BasicSymbols.s|"min") unit "m"
-	val MaRd = symbol(BasicSymbols.M|"a,Rd") unit "Nm"
-	val VEdc = symbol(BasicSymbols.V|"Ed,c") unit "N"
+	val MaRd = symbol(BasicSymbols.M|"a,Rd") unit "kNm"
+	val VEdc = symbol(BasicSymbols.V|"Ed,c") unit "kN"
 	val kphi = symbol(BasicSymbols.k|BasicSymbols.phi)
-	val PpbRd = symbol(BasicSymbols.P|"pb,Rd") unit "N"
-	val VRdsr = symbol(BasicSymbols.V|"Rd,s,r") unit "N/m"
+	val PpbRd = symbol(BasicSymbols.P|"pb,Rd") unit "kN"
+	val VRdsr = symbol(BasicSymbols.V|"Rd,s,r") unit "kN/m"
 	val thetat = symbol(BasicSymbols.theta|"t") unit "°"
-	val VRdsc = symbol(BasicSymbols.V|"Rd,s,c") unit "N/m"
+	val VRdsc = symbol(BasicSymbols.V|"Rd,s,c") unit "kN/m"
 	val bn2 = symbol(BasicSymbols.b|"E,2") unit "m"
-    val Sy2 = symbol(BasicSymbols.S|"y,2") unit "m3"
+    val Sy2 = symbol(BasicSymbols.S|"y,2") unit "cm3"
     val z2 = symbol(BasicSymbols.z|"2") unit "m"
-    val I2 = symbol(BasicSymbols.I|"2") unit "m4"
+    val I2 = symbol(BasicSymbols.I|"2") unit "cm4"
 	val yw = symbol(BasicSymbols.y|"w") unit "m"
 	val f = symbol(BasicSymbols.f) unit "Hz"
 	val mS = symbol(BasicSymbols.m|"S") unit "kg/m2" acc 1
@@ -321,10 +321,10 @@ extends Calculation {
 			AssertionL("PN-EN 1994-1-1 pkt. 6.6.1.3(3)",this,MplRd/MaRd,2.5),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.7(1)",this,STUD.hsc/STUD.d,3),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(1)",this,STUD.hsc,hp+2*STUD.d),			
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(2)",this,bo,50E-3),			
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(2)",this,bo,50 unit SI.mm),			
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,bo,hp),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,hp,85E-5),
-			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,STUD.d,20E-3),
+			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,STUD.d,20 unit SI.mm),
 			Evaluate(s,alpha,PRd,ktmax,kt,VEdr,Ls,nf,nfprim,smin,smax),
 			AssertionL("maksymalnego rozstawu łączników",this,bs,smax),
 			AssertionG("minimanego rozstawu łączników",this,bs,smin)

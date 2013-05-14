@@ -144,6 +144,7 @@ object SI extends UnitOfValueSystem {
 	        kN/m,kN/m2,kN/m3,kNm/m,
 	        MN/m,MN/m2,MN/m3,MNm/m,
 	        m2/m,m3/m,m4/m,m6/m,m8/m,
+	        cm2/m,cm3/m,cm4/m,
 	        m3/min,m3/h
     )
     
