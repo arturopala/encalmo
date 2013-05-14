@@ -82,6 +82,7 @@ object Steel {
 	def S355 = new Steel("S355",data_S355)
 	def S450 = new Steel("S450",data_S450)
 	def S280GD = new Steel("S280 GD",data_S280GD)
+	def S350GD = new Steel("S350 GD",data_S350GD)
 	
 	private lazy val data_S235 = new MapContext {
 		fy := 235
@@ -112,4 +113,10 @@ object Steel {
 		fy := 280
 		lock
 	}
+	
+	private lazy val data_S350GD = new MapContext {
+        E  := 210
+        fy := 350
+        lock
+    }
 }

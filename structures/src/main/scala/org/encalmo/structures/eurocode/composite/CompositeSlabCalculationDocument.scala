@@ -40,20 +40,20 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     
     //dane wejsciowe zadania
     val L1 = L|1 is "Rozpiętośc belki" unit SI.m
-    zadanie(L1) = 18
+    zadanie(L1) = 15
     val L2 = L|2 is "Rozstaw belek" unit SI.m
-    zadanie(L2) = 2.8
+    zadanie(L2) = 2.5
     val pc = p!c is "Obciążenie charakterystyczne" unit "kN/m2"
-    zadanie(pc) = 3 unit "kN/m2"
+    zadanie(pc) = 2.5 unit "kN/m2"
     val daneWejsciowe = Seq(L1,L2,pc)
     
     //przyjete materialy i wymiary
-    val height:Expression = 12 unit SI.cm
-    val blacha = FLORSTROP.T59_Z_100
+    val height:Expression = 11 unit SI.cm
+    val blacha = FLORSTROP.COFRAPLUS_60_100
     val beton = Concrete.C_20_25
     val stalZbrojeniowa = ReinforcingSteel.B500SP
     val stal = Steel.S355
-    val profil = IPESection.IPE_500
+    val profil = IPESection.IPE_450
     val sworzen = HeadedStud.NELSON_S3L_19_100
     
     val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton,stalZbrojeniowa)
@@ -87,8 +87,8 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
         Predefined.stylesConfig,
         Chapter("",
         	Section(
-            	Section("Ćwiczenie projektowe z przedmiotu \"Konstrukcje Zespolone\". Autor: Artur Opala, album 61315."),
-        		Section("Prowadzący: dr inż. Wojciech Lorenc, Instytut Budownictwa Politechniki Wrocławskiej. Semestr zimowy 2010/2011.")
+            	Section("Praca magisterska \"Konstrukcja stropu zespolonego garażu wielopoziomowego\". Autor: Artur Opala, album 61315."),
+        		Section("Prowadzący: dr hab. inż. Wojciech Lorenc, Instytut Budownictwa Politechniki Wrocławskiej. Semestr letni 2012/2013.")
         	),
             Section(""),
             NumSection("Zadanie",
@@ -149,5 +149,6 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     )
     
     @Test override def printHtml:Unit = super.printHtml
+    @Test override def printPdf:Unit = super.printPdf
 
 }

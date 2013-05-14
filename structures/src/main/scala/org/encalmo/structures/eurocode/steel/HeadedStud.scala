@@ -14,10 +14,10 @@ object HeadedStudSymbols extends SymbolConfigurator {
 	val dictionary, contextId = "headedstud"
 	
 	val ID = symbol("ID").makeNonPrintable
-	val d = symbol(BasicSymbols.d) unit "m"
-	val hsc = symbol(BasicSymbols.h|"sc") unit "m"
-	val a = symbol(BasicSymbols.a) unit "m"
-	val dh = symbol(BasicSymbols.d|"h") unit "m"
+	val d = symbol(BasicSymbols.d) unit "mm"
+	val hsc = symbol(BasicSymbols.h|"sc") unit "mm"
+	val a = symbol(BasicSymbols.a) unit "mm"
+	val dh = symbol(BasicSymbols.d|"h") unit "mm"
 
 }
 
@@ -59,10 +59,10 @@ object HeadedStud {
 	)
 	
 	lazy val NELSON_S3L_19_100 = new HeadedStud("NELSON S3L 3/4 X 4 3/16 MS"){
-		this(d) = 19E-3
-		this(hsc) = 100E-3
-		this(a) = 9E-3
-		this(dh) = 31E-3
+		this(d) = 19
+		this(hsc) = 100
+		this(a) = 9
+		this(dh) = 31
 		lock
 	}
 
