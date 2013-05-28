@@ -5,19 +5,12 @@ import scala.collection.Map
 import org.encalmo.expression._
 
 /** 
- * Context trait
+ * Context is a Map-based ExpressionResolver with identity
  */
 trait Context extends ExpressionResolver {
 	
 	def id:Option[String]
 	def map:Map[Symbol,Expression]
-	
-	protected var opened:Boolean = true
-	
-	/** Locks context content */
-	def lock = {opened = false}
-	
-	protected def throwException = throw new IllegalStateException("This context has been locked.")
 	
 	/** Returns future expression */
 	def apply(s:Symbol):BoundExpression = BoundExpression(this,s)
@@ -127,7 +120,8 @@ trait Context extends ExpressionResolver {
 		}))
 	}
 	
-	override def toSeq = map.toSeq
+	override def listMappings: Seq[(Symbol,Expression)] = map.toSeq
+	override def listSymbols: Seq[Symbol] = map.keySet.toSeq
   
 }
 

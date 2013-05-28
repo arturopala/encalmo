@@ -5,35 +5,27 @@ import org.encalmo.expression._
 import scala.annotation.tailrec
 
 /** 
- * Calculation. Mutable context with evaluated expression's cache.
+ * Calculation. Hierarchical mutable context caching evaluted expressions.
  */
-class Calculation(val id:Option[String] = None) extends ContextSet with MutableContext {
-	
-	override val set:LinkedHashSet[ExpressionResolver] = LinkedHashSet[ExpressionResolver]()
+class Calculation(val id:Option[String] = None) extends MutableContext with MutableExpressionResolverSeq {
 	
 	private val context = new MapContext(id)
 	private val cache = new LinkedHashMap[Symbol,Expression]
 	
-	private var accuracy:Option[Double] = None
-	def acc(d:Double):Calculation = {
-	    accuracy = Some(d)
-	    this
-	}
+	override val map = context.map
 	
-	val map = context.map
-	
-	set.add(context)
+	add(context)
 	
 	/** Maps symbols to the expressions */
 	def put(ts:(Symbol,Expression)*):Unit = {
-		if(opened) for(t <- ts){
-		    update(t._1,t._2)
-		} else throwException
+		if(opened) for((s,e) <- ts){
+		    update(s,e)
+		} else throwContextAlreadyLockedException
 	}
 	
 	/** Inserts new ExpressionResolver */
-	def add(er:ExpressionResolver):Unit = {
-		if(opened) set.add(er) else throwException
+	override def add(er:ExpressionResolver):Unit = {
+		if(opened) super.add(er) else throwContextAlreadyLockedException
 	}
 	
 	/**
@@ -53,47 +45,14 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 	 */
 	override def getExpression(s:Symbol):Option[Expression] = {
 	    val c = cache.get(s)
-	    if(c.isDefined) c else findExpression(s,set.iterator)
+	    if(c.isDefined) c else super.getExpression(s)
 	}
-	
-	/**
-	 * Resolves symbol in nested contexts
-	 */
-	@tailrec
-	final def findExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
-		if(!it.hasNext){
-			None
-		}else{
-			val expr = it.next.getExpression(s)
-			if(expr.isDefined){
-			    expr
-			} else {
-			    findExpression(s,it)
-			}
-		}
-	}
-	
-	/**
-	 * Returns expression mapped to that symbol or None
-	 */
-	override def getRawExpression(s:Symbol):Option[Expression] = {
-		findRawExpression(s,set.iterator)
-	}
-	
-	/**
-	 * Resolves symbol in nested contexts
-	 */
-	@tailrec
-    final def findRawExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
-        if(!it.hasNext) None
-        else {
-            val rawExpr = it.next.getRawExpression(s)
-            if(rawExpr.isDefined) {
-                rawExpr
-            } else {
-                findRawExpression(s,it) 
-            }
-        }
+    
+    /**
+     * Returns true if exists expression mapped to that symbol
+     */
+    override def hasExpression(s:Symbol):Boolean = {
+        cache.get(s).isDefined || super.hasExpression(s)
     }
 	
 	/**
@@ -112,14 +71,13 @@ class Calculation(val id:Option[String] = None) extends ContextSet with MutableC
 		ec
 	}
 	
-	/**
-	 * Returns true if exists expression mapped to that symbol
-	 */
-	override def hasExpression(s:Symbol):Boolean = {
-		cache.get(s).isDefined || set.find(c => c.hasExpression(s)).isDefined
-	}
-	
 	def label:Expression = id.map(text(_)).getOrElse(null)
+	
+    private var accuracy:Option[Double] = None
+    def acc(d:Double):Calculation = {
+        accuracy = Some(d)
+        this
+    }
 
 
 }
@@ -133,7 +91,7 @@ object Calculation{
 	
 	def apply(index:String):Calculation = new Calculation(Option(index))
 	
-	def apply(vmap:Map[Symbol,Expression]) = {
+	def apply(vmap:scala.collection.Map[Symbol,Expression]) = {
 	    val c = new Calculation()
 	    c.put(vmap.toSeq:_*)
 	    c

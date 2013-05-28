@@ -212,7 +212,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
             }
             case ev:EvalAt => {
                 w.write("(")
-                val s = ev.er.toSeq
+                val s = ev.er.listMappings
                 if(s.size<=5){
                     var ic = 0
                     s.foreach(
