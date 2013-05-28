@@ -58,4 +58,19 @@ class ExpressionResolverUnitTest extends AssertionsForJUnit {
 		assertEquals(Sum(Quot(Prod(Number(5.0),Number(2.0)),Number(5.0)),Number(1.0)),context.substitute(d))
 	}
 	
+	@Test def testListMappings1() {
+	    val args: Seq[(Symbol,Expression)] = List(a -> 5, b -> 2, c -> a*b, d -> (c/a+1), e -> sin(d), f -> (e-1))
+        val context = Calculation(args:_*) 
+        val mappings = context.listMappings
+        assertTrue(mappings.sameElements(args))
+    }
+	
+	@Test def testListSymbols1() {
+        val args: Seq[(Symbol,Expression)] = List(a -> 5, b -> 2, c -> a*b, d -> (c/a+1), e -> sin(d), f -> (e-1))
+        val symbolArgs = args map {case (s,e) => s}
+        val context = Calculation(args:_*) 
+        val symbols = context.listSymbols
+        assertTrue(symbols.sameElements(symbolArgs))
+    }
+	
 }

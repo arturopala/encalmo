@@ -426,7 +426,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
                     output.startb(MTEXT)
                     output.append("(")
                     output.end(MTEXT)
-                    val s = ev.er.toSeq
+                    val s = ev.er.listMappings
                     if(s.size<=5){
                         var ic = 0
                         s.foreach(

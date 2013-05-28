@@ -6,6 +6,8 @@ import org.encalmo.expression._
  * Expression resolver trait
  */
 trait ExpressionResolver {
+    
+    val MAX_MAP_ALL_LOOP_COUNT:Int = 256
   
 	/**
 	 * Should return expression mapped to that symbol or None
@@ -25,12 +27,15 @@ trait ExpressionResolver {
 	/**
 	 * Should return sequence of used mappings
 	 */
-	def toSeq:Seq[(Symbol,Expression)]
-	
-	val MAX_MAP_ALL_LOOP_COUNT:Int = 256
+	def listMappings:Seq[(Symbol,Expression)]
 	
 	/**
-	 * Replaces symbols with their mapped expressions
+     * Should return sequence of mapped symbols
+     */
+    def listSymbols:Seq[Symbol]
+	
+	/**
+	 * Replaces symbols with raw expressions
 	 */
 	def resolve(e:Expression):Expression = {
 		e match {
@@ -45,7 +50,7 @@ trait ExpressionResolver {
 	}
 	
 	/**
-	 * Substitutes symbols with their evaluations
+	 * Replaces symbols with their evaluated values.
 	 */
 	def substitute(e:Expression):Expression = {
 		(e match {
@@ -63,13 +68,16 @@ trait ExpressionResolver {
 	}
 	
 	/**
-	 * Evaluates expression in this context
+	 * Evaluates given expression with substituted symbols.
 	 */
 	def evaluate(e:Expression):Expression = {
 	    val e1 = e.mapAll(preevaluator)
 		map(e1,evaluator)
 	}
 	
+	/**
+	 * Maps expressions with given transformation.
+	 */
 	def map(e1:Expression, t:Transformation, c:Int = 0):Expression = {
 		val e2 = e1.map(t)
 		if(c>=MAX_MAP_ALL_LOOP_COUNT){
@@ -85,7 +93,7 @@ trait ExpressionResolver {
 	
 	/**
 	 * Single-pass resolving transformation. 
-	 * Replaces symbols with mapped expressions
+	 * Replaces symbols with raw expressions
 	 */
 	private val resolver:Transformation = {
 		case s:Symbol => this.getRawExpression(s).getOrElse(s)
@@ -95,7 +103,8 @@ trait ExpressionResolver {
     
 	
 	/**
-	 * Single-pass pre-evaluating transformation. 
+	 * Single-pass pre-evaluating transformation.
+	 * Replaces symbols with expressions 
 	 */
     private val preevaluator:Transformation = {
         case s:Symbol => this.getExpression(s).getOrElse(s)
@@ -104,7 +113,7 @@ trait ExpressionResolver {
 	
 	/**
 	 * Single-pass evaluating transformation. 
-	 * Evaluates expressions
+	 * Evaluates expressions with substituted symbols.
 	 */
 	private val evaluator:Transformation = {
 		case s:Symbol => this.getExpression(s) match {
@@ -133,7 +142,7 @@ trait ExpressionResolver {
 	}
 	
 	def evaluateWithAndReturnCopy(er:ExpressionResolver):ExpressionResolver = {
-	    Context(toSeq.map(x => (x._1,er.evaluate(x._2))):_*)
+	    Context(listMappings.map(x => (x._1,er.evaluate(x._2))):_*)
 	}
 	
 	def evaluateAndMap(symbols:Symbol*):Map[Symbol,Expression] = {
@@ -145,4 +154,8 @@ trait ExpressionResolver {
 	    val allnumbers = evaluated.forall(_.isInstanceOf[Number])
         if(allnumbers) doIfTrue(symbols.zip(evaluated.map[Number,Seq[Number]](_.asInstanceOf[Number])).toMap) else doIfFalse
     }
+}
+
+object ExpressionResolver {
+    
 }
