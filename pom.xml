@@ -12,12 +12,12 @@
   </properties>
   
   <modules>
+    <module>graph</module>
     <module>expression</module>
     <module>calculation</module>
     <module>document</module>
     <module>fop</module>
     <module>printer</module>
-    <module>examples</module>
     <module>chart</module>
     <module>fea</module>
     <module>structures</module>
@@ -73,6 +73,19 @@
   				</lifecycleMappingMetadata>
   			</configuration>
   		</plugin>
+        <plugin>
+            <groupId>net.alchim31.maven</groupId>
+            <artifactId>scala-maven-plugin</artifactId>
+            <version>3.1.5</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>compile</goal>
+                        <goal>testCompile</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
   	</plugins>
   </pluginManagement>
   </build>
