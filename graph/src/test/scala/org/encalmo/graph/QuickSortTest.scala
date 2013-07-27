@@ -1,9 +1,10 @@
-package org.encalmo.algorithms
+package org.encalmo.graph
 
 import collection.mutable.{ArrayBuffer,Seq}
 import org.junit.Assert._
 import org.junit.Test
 import scalax.file.Path
+import org.encalmo.graph.QuickSort
 
 class QuickSortTest {
 

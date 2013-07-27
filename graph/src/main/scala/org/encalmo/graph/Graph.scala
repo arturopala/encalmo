@@ -1,4 +1,4 @@
-package org.encalmo.algorithms
+package org.encalmo.graph
 
 import scala.specialized
 import scalax.file.Path

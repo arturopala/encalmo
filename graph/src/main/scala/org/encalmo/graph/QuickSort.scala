@@ -1,6 +1,6 @@
-package org.encalmo.algorithms
+package org.encalmo.graph
 
-import collection.mutable.{Seq}
+import collection.mutable.Seq
 
 /** Sorts mutable sequences in-place */
 object QuickSort {
