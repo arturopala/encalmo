@@ -10,6 +10,7 @@ syntax: glob
 target
 bin
 out
+SCC.txt
 
 syntax: regexp
 ^bin$
