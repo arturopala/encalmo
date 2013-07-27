@@ -1,4 +1,4 @@
-package org.encalmo.algorithms
+package org.encalmo.graph
 
 import annotation.tailrec
 import collection.mutable
