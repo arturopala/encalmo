@@ -4,7 +4,7 @@ import scala.collection.mutable.Map
 import org.encalmo.expression._
 
 /** 
- * MutableContext is an updatable and closable Context
+ * MutableContext is a mutable and lockable Context
  */
 trait MutableContext extends Context {
    

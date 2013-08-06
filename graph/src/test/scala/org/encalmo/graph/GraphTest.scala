@@ -3,7 +3,6 @@ package org.encalmo.graph
 import org.scalatest.FunSpec
 import scala.Predef._
 import scalax.file.Path
-import org.encalmo.graph.Graph
 
 class GraphTest extends FunSpec {
 
