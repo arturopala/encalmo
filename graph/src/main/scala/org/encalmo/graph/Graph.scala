@@ -94,6 +94,8 @@ object Graph {
 	class GenericGraphImpl[@specialized(Int) N](val nodes:Iterable[N], val adjacent: N => Traversable[N]) extends GenericGraph[N]
 	class WeightedGraphImpl[@specialized(Int) N, @specialized(Double,Int) V:Numeric](val nodes:Iterable[N], val adjacent: N => Traversable[N], val weight: (N,N) => V) extends GenericGraph[N] with Weighted[N,V]
 
+    def mutable[N]:MutableMapGraph[N] = new MutableMapGraph[N]()
+
 	def apply[@specialized(Int) N](): Graph[N] = new MutableMapGraph[N]()
 	def apply[@specialized(Int) N](map: Map[N,Traversable[N]]): Graph[N] = new MapGraph(map)
     def apply[@specialized(Int) N](mappings:(N,Traversable[N])*): Graph[N] = new MapGraph(mappings.toMap)

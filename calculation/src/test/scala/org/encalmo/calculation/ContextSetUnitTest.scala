@@ -93,7 +93,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 			fail
 		}
 		catch{
-			case _ =>
+			case _ : Throwable =>
 		}
 	}
 	

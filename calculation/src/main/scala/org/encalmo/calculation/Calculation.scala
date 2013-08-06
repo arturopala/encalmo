@@ -5,7 +5,7 @@ import org.encalmo.expression._
 import scala.annotation.tailrec
 
 /** 
- * Calculation. Hierarchical mutable context caching evaluted expressions.
+ * Calculation is a hierarchical, mutable context caching already evaluated expressions.
  */
 class Calculation(val id:Option[String] = None) extends MutableContext with MutableExpressionResolverSeq {
 	
@@ -85,7 +85,7 @@ class Calculation(val id:Option[String] = None) extends MutableContext with Muta
 /** 
  * Calculation factory. 
  */
-object Calculation{
+object Calculation {
 	
 	def apply():Calculation = new Calculation()
 	
