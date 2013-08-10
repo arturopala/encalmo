@@ -5,13 +5,13 @@ import org.encalmo.expression._
 import org.encalmo.common.{Node, TreeVisitor}
 import scala.collection.generic.Growable
 
-object SymbolsGraph {
+object SymbolGraph {
 
     class ExpressionTreeVisitor(rootSymbol:Symbol, graph:Growable[(Symbol,Symbol)]) extends TreeVisitor[Expression] {
 
         override def onEnter(node:Node[Expression]):Unit = {
             node.element match {
-                case symbol:Symbol => graph += ((rootSymbol,symbol))
+                case symbol:Symbol => graph += ((symbol,rootSymbol))
                 case _ => Unit
             }
         }
