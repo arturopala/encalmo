@@ -37,29 +37,29 @@ trait ExpressionResolverSeq extends ExpressionResolver {
     /**
      * Returns expression mapped to that symbol or None
      */
-    override def getExpression(s:Symbol):Option[Expression] = {
-        findExpression(s,resolvers.iterator)
+    override def getExpression(s:Symbol, cache: ResultsCache):Option[Expression] = {
+        findExpression(s,resolvers.iterator, cache)
     }
     
     /**
      * Resolves symbol in nested contexts
      */
     @tailrec
-    private def findExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
+    private def findExpression(s:Symbol, it:Iterator[ExpressionResolver], cache: ResultsCache):Option[Expression] = {
         if(!it.hasNext){
             None
         }else{
-            val expr = it.next.getExpression(s)
+            val expr = it.next().getExpression(s, cache)
             if(expr.isDefined){
                 expr
             } else {
-                findExpression(s,it)
+                findExpression(s, it, cache)
             }
         }
     }
     
     override def hasExpression(s:Symbol):Boolean = {
-        resolvers.find(c => c.hasExpression(s)).isDefined
+        resolvers.exists(c => c.hasExpression(s))
     }
     
     override def listMappings: Seq[(Symbol,Expression)] = {

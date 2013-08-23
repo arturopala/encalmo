@@ -10,8 +10,8 @@ class EvalAt(val expr:Expression, val er:ExpressionResolver) extends Expression 
     
     override def children = Seq(expr)
 	
-	override def eval = {
-	    er.evaluate(expr)
+	override def eval() = {
+	    er.evaluate(expr)(new ResultsCache())
 	}
 	
 	override def map(f:Transformation):Expression = {
@@ -19,9 +19,13 @@ class EvalAt(val expr:Expression, val er:ExpressionResolver) extends Expression 
 		if(ve==expr) f(this) else f(new EvalAt(ve, er))
 	}
 	
-	def resolve = er.resolve(expr)
+	def resolve = {
+        er.resolve(expr)(new ResultsCache())
+    }
 	
-	def substitute = er.substitute(expr)
+	def substitute = {
+        er.substitute(expr)(new ResultsCache())
+    }
 	
 	override def toString = "EvalAt("+expr+","+er+")"
   

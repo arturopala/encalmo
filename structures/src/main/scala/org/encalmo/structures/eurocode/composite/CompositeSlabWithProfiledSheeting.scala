@@ -94,11 +94,11 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val dmesh = symbol(BasicSymbols.d|"mesh") unit "mm"
 	val sd = symbol(BasicSymbols.s|"d") unit SI.m
 	val sdmax = symbol(BasicSymbols.s|"d,max") unit SI.m
-	val Eceff2 = symbol(BasicSymbols.E|"ceff") unit "MPa"
+	val Eceff2 = symbol(BasicSymbols.E|"ceff") unit "GPa"
 	val nE = symbol(BasicSymbols.n|"E")
-	val e0 = symbol(BasicSymbols.e|"0") unit SI.m
-	val I0 = symbol(BasicSymbols.I|"0") unit "m4/m"
-	val W0 = symbol(BasicSymbols.W|"0") unit "m3/m"
+	val e0 = symbol(BasicSymbols.e|"0") unit SI.cm
+	val I0 = symbol(BasicSymbols.I|"0") unit "cm4/m"
+	val W0 = symbol(BasicSymbols.W|"0") unit "cm3/m"
 	val Mk = symbol(BasicSymbols.M|"k") unit "kNm/m"
 	val sigmactplus = symbol(BasicSymbols.sigma|("ct","+")) unit "MPa"
 	val fyrd = symbol(BasicSymbols.f|"yr,d") unit "MPa"
@@ -219,9 +219,9 @@ extends Calculation {
 	h := height
 	fyrd := reinforcingSteel(ReinforcingSteelSymbols.fyd)
 	
-	val beamULS = new ContinuousBeam_5_LinearLoad(null,l,Qd1)
-	val beamSLS1 = new ContinuousBeam_5_LinearLoad(null,l,Qk1)
-	val beamSLS2 = new ContinuousBeam_5_LinearLoad(null,l,Gcck + Qcfk)
+	val beamULS = new ContinuousBeam_5_LinearLoad("ULS",l,Qd1)
+	val beamSLS1 = new ContinuousBeam_5_LinearLoad("SLS1",l,Qk1)
+	val beamSLS2 = new ContinuousBeam_5_LinearLoad("SLS2",l,Gcck + Qcfk)
 	
 	//faza montazu - ULS
 	MEdmm := beamULS(Beam.Mmin)

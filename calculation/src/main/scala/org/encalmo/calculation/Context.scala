@@ -1,6 +1,5 @@
 package org.encalmo.calculation
 
-import annotation.tailrec
 import scala.collection.Map
 import org.encalmo.expression._
 
@@ -13,7 +12,7 @@ trait Context extends ExpressionResolver {
 	def map:Map[Symbol,Expression]
 	
 	/** Returns future expression */
-	def apply(s:Symbol):BoundExpression = BoundExpression(this,s)
+	def apply(s:Symbol):PinnedExpression = PinnedExpression(this,s)
 	
 	/** Returns function evaluation for some arguments */
 	def apply(expr:Expression, args:(Symbol,Expression)*):EvalAt = {
@@ -51,55 +50,23 @@ trait Context extends ExpressionResolver {
 	/**
 	 * Returns expression mapped to that symbol or None
 	 */
-	override def getExpression(s:Symbol):Option[Expression] = {
-		val oe:Option[Expression] = map.get(s) 
-		oe match {
-			case Some(x) => oe
-			case None => {
-				if(id.isDefined){
-					s.contextId match {
-						case Some(currId) => {
-							if(!currId.contains(id.get)){
-								getExpression(s.id(id.get))
-							}else{
-								None
-							}
-						}
-						case None => getExpression(s.id(id.get))
-					}
-				} else {
-					None
-				}
-				
-			}
-		}
-	}
-	
-	/**
-	 * Returns expression mapped to that symbol or None
-	 */
 	override def getRawExpression(s:Symbol):Option[Expression] = {
-		val oe:Option[Expression] = map.get(s) 
-		oe match {
-			case Some(x) => oe
-			case None => {
-				if(id.isDefined){
-					s.contextId match {
-						case Some(currId) => {
-							if(!currId.contains(id.get)){
-								getRawExpression(s.id(id.get))
-							}else{
-								None
-							}
-						}
-						case None => getRawExpression(s.id(id.get))
-					}
-				}else{
-					None
-				}
-				
-			}
-		}
+		map.get(s) orElse {
+            if(id.isDefined){
+                s.contextId match {
+                    case Some(currId) => {
+                        if(!currId.contains(id.get)){
+                            getRawExpression(s.id(id.get))
+                        }else{
+                            None
+                        }
+                    }
+                    case None => getRawExpression(s.id(id.get))
+                }
+            }else{
+                None
+            }
+        }
 	}
 
 	/**

@@ -16,6 +16,7 @@ import org.encalmo.expression.MultipleInfixOperation
 import org.encalmo.expression.Diff
 import org.encalmo.expression.Transparent
 import org.encalmo.expression.Expression
+import org.encalmo.calculation.FormulaSetCache
 
 /**
  * Prints document as html5 text 
@@ -36,7 +37,7 @@ object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
  * @author artur.opala
  */
 class HtmlTextDocumentPrinterTraveler(output:HtmlOutput) 
-extends TreeVisitor[DocumentComponent] {
+extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 
 	val locale = output.locale
 	val mathOutput = output.toMathMLOutput
@@ -104,87 +105,83 @@ div {padding:5pt 0 2pt 0}
                     output.end(DIV)
                 }
             }
-			case _ => {
-				node.element match {
-					case ns:NumSection => {
-						val en:Enumerator = ns.enumerator
-						val sc = counterFor(en)
-						val label = sc.current.mkString("",".",".")
-						output.startb(DIV,ns.styleClassId)
-						output.start(ANCHOR)
-						output.attr("name",label)
-						output.body
-						output.append(" ")
-						output.end(ANCHOR)
-						output.startb(SPAN,"caption")
-						val ens = en.style
-						if(ens!=null){
-							output.startb(SPAN,en.styleClassId)
-						}
-						output.append(label,output.SPACE)
-						sc.in // counter level increment
-						if(ens!=null){
-							output.end(SPAN)
-						}
-						if(ns.title.isDefined){
-						    output.append(ns.title.get)
-						}
-						output.end(SPAN)
-					}
-					case s:Section => {
-						output.startb(DIV, s.styleClassId)
-					}
-					case ch:Character => {
-						output.append(ch)
-					}
-					case ttt:TextToTranslate => {
-					    val first = node.parent.element.isInstanceOf[NumSection] && 
-					    node.parent.element.asInstanceOf[NumSection].title==None && 
-					    node.element.isFirstInlineComponent
-					    if(first)output.startb(SPAN,"caption")
-						output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
-						if(first)output.end(SPAN)
-					}
-					case t:TextContent => {
-						if(t.myStyle!=null){
-							output.startb(SPAN,t.myStyleClassId)
-						}
-						output.append(t.textContent);
-						if(t.myStyle!=null){
-							output.end(SPAN)
-						}
-					}
-					case expr:InlineExpr => {
-						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
-						ess.foreach(es => {
-							if(expr.myStyle!=null){
-								output.start(SPAN,expr.myStyleClassId)
-								output.attr("style","padding-end:1em")
-								output.body
-							}
-							es.foreach(etp => {
-			                    writeExpression(etp, expr.style)
-			                })
-							if(expr.myStyle!=null){
-								output.end(SPAN)
-							}
-						})
-					}
-					case expr:BlockExpr => {
-						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
-						if(!ess.isEmpty){
-							blockExprPrintStrategy.print(node,expr,ess)
-						}
-					}
-					case a:Assertion => {
-						val result = a.evaluate
-						val s = Section(a.style,result._2:_*)
-						s.parent = a.parent
-						s.visit(visitor = this);
-					}
-					case _ => {}
-				}
-			}
+            case ns:NumSection => {
+                val en:Enumerator = ns.enumerator
+                val sc = counterFor(en)
+                val label = sc.current.mkString("",".",".")
+                output.startb(DIV,ns.styleClassId)
+                output.start(ANCHOR)
+                output.attr("name",label)
+                output.body
+                output.append(" ")
+                output.end(ANCHOR)
+                output.startb(SPAN,"caption")
+                val ens = en.style
+                if(ens!=null){
+                    output.startb(SPAN,en.styleClassId)
+                }
+                output.append(label,output.SPACE)
+                sc.in // counter level increment
+                if(ens!=null){
+                    output.end(SPAN)
+                }
+                if(ns.title.isDefined){
+                    output.append(ns.title.get)
+                }
+                output.end(SPAN)
+            }
+            case s:Section => {
+                output.startb(DIV, s.styleClassId)
+            }
+            case ch:Character => {
+                output.append(ch)
+            }
+            case ttt:TextToTranslate => {
+                val first = node.parent.element.isInstanceOf[NumSection] &&
+                    node.parent.element.asInstanceOf[NumSection].title==None &&
+                    node.element.isFirstInlineComponent
+                if(first)output.startb(SPAN,"caption")
+                output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
+                if(first)output.end(SPAN)
+            }
+            case t:TextContent => {
+                if(t.myStyle!=null){
+                    output.startb(SPAN,t.myStyleClassId)
+                }
+                output.append(t.textContent);
+                if(t.myStyle!=null){
+                    output.end(SPAN)
+                }
+            }
+            case expr:InlineExpr => {
+                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
+                ess.foreach(es => {
+                    if(expr.myStyle!=null){
+                        output.start(SPAN,expr.myStyleClassId)
+                        output.attr("style","padding-end:1em")
+                        output.body
+                    }
+                    es.foreach(etp => {
+                        writeExpression(etp, expr.style)
+                    })
+                    if(expr.myStyle!=null){
+                        output.end(SPAN)
+                    }
+                })
+            }
+            case expr:BlockExpr => {
+                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
+                if(!ess.isEmpty){
+                    blockExprPrintStrategy.print(node,expr,ess)
+                }
+            }
+            case a:Assertion => {
+                val result = a.evaluate(resultCacheFor(a.calc))
+                val s = Section(a.style,result._2:_*)
+                s.parent = a.parent
+                s.visit(visitor = this);
+            }
+            case _ => {}
 		}
 		// push current style on the stack
 		styleStack.push(node.element.style)

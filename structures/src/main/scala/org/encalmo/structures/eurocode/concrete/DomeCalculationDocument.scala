@@ -74,7 +74,7 @@ class DomeCalculationDocument extends CalculationDocument {
     
     //obciazenie sniegiem
     HM := 140 unit SI.m
-    sk := max(0.7,0.007*HM-1.4)
+    sk := max(0.7,(0.007*HM-1.4).nounit)
     mi1 := 0.8
     Ce := 0.8
     Ct := 1.0
@@ -108,18 +108,18 @@ class DomeCalculationDocument extends CalculationDocument {
     
     val P = BasicSymbols.P unit "kN/m" is "Obciążenie otworu kopuły" := (-1 unit "kN/m") - s*(r0/2)
     
-    val Nφ = N|"φ" unit SI.kN is "Siła południkowa"
-    val NΘ = N|"Θ" unit SI.kN is "Siła równoleżnikowa"
+    val Nφ = N|"φ" unit "kN/m" is "Siła południkowa"
+    val NΘ = N|"Θ" unit "kN/m" is "Siła równoleżnikowa"
     
-    val Nφg = N|"φ,g" args(φ) unit SI.kN is "Funkcja siły południkowej od ciężaru własnego"
-    val NΘg = N|"Θ,g" args(Θ) unit SI.kN is "Funkcja siły równoleżnikowej od ciężaru własnego"
+    val Nφg = N|"φ,g" args(φ) unit "kN/m" is "Funkcja siły południkowej od ciężaru własnego"
+    val NΘg = N|"Θ,g" args(Θ) unit "kN/m" is "Funkcja siły równoleżnikowej od ciężaru własnego"
     
-    val Nφs = N|"φ,s" args(φ) unit SI.kN is "Funkcja siły południkowej od obciążenia śniegiem"
-    val NΘs = N|"Θ,s" args(Θ) unit SI.kN is "Funkcja siły równoleżnikowej od obciążenia śniegiem"
+    val Nφs = N|"φ,s" args(φ) unit "kN/m" is "Funkcja siły południkowej od obciążenia śniegiem"
+    val NΘs = N|"Θ,s" args(Θ) unit "kN/m" is "Funkcja siły równoleżnikowej od obciążenia śniegiem"
     
-    val Nφw = N|"φ,w" args(φ,Θ) unit SI.kN is "Funkcja siły południkowej od oddziaływania wiatru"
-    val NφΘw = N|"φΘ,w" args(φ,Θ) unit SI.kN is "Funkcja siły ścinającej od oddziaływania wiatru"
-    val NΘw = N|"Θ,w" args(φ,Θ) unit SI.kN is "Funkcja siły równoleżnikowej od oddziaływania wiatru"
+    val Nφw = N|"φ,w" args(φ,Θ) unit "kN/m" is "Funkcja siły południkowej od oddziaływania wiatru"
+    val NφΘw = N|"φΘ,w" args(φ,Θ) unit "kN/m" is "Funkcja siły ścinającej od oddziaływania wiatru"
+    val NΘw = N|"Θ,w" args(φ,Θ) unit "kN/m" is "Funkcja siły równoleżnikowej od oddziaływania wiatru"
     
     Nφg := -g*R*((cos(φ0)-cos(φ))/(sin(φ)^2))+P*(sin(φ0)/(sin(φ)^2)) // sila poludnikowa od ciezaru wlasnego
     NΘg := g*R*(((cos(φ0)-cos(φ))/(sin(φ)^2))-cos(φ))-P*(sin(φ0)/(sin(φ)^2)) // sila rownoleznikowa od ciezaru wlasnego

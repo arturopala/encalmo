@@ -8,7 +8,7 @@ import org.encalmo.graph.Graph
 
 class SymbolGraphUnitTest extends AssertionsForJUnit {
 
-  @Test def shouldBuildGraphFromSingleCalculation = {
+  @Test def shouldBuildGraphFromSingleCalculation() = {
     //given
     import BasicSymbols._
     implicit val calc = Calculation()
@@ -21,14 +21,14 @@ class SymbolGraphUnitTest extends AssertionsForJUnit {
     val graph = SymbolGraph.build(calc)
     //then
     for (symbol <- calc.listSymbols) {
-      assertTrue(graph.contains(symbol));
+      assertTrue(graph.contains(symbol))
     }
-    assertFalse(Graph.hasCycles(graph));
+    assertFalse(Graph.hasCycles(graph))
     val list = Graph.sortTopologically(graph)
     assertTrue(list.sameElements(List(h, z, e, f, c, b, d, a)))
   }
 
-  @Test def shouldBuildGraphFromCompositeCalculation = {
+  @Test def shouldBuildGraphFromCompositeCalculation() = {
     //given
     import BasicSymbols._
     val calc = Calculation()
@@ -45,14 +45,14 @@ class SymbolGraphUnitTest extends AssertionsForJUnit {
     val graph = SymbolGraph.build(calc)
     //then
     for (symbol <- calc.listSymbols) {
-      assertTrue(graph.contains(symbol));
+      assertTrue(graph.contains(symbol))
     }
-    assertFalse(Graph.hasCycles(graph));
+    assertFalse(Graph.hasCycles(graph))
     val list = Graph.sortTopologically(graph)
     assertTrue(list.sameElements(List(h, z, e, f, c, b, d, a)))
   }
 
-  @Test def shouldBuildGraphAndFindCycle = {
+  @Test def shouldBuildGraphAndFindCycle() = {
     //given
     import BasicSymbols._
     implicit val calc = Calculation()
@@ -65,10 +65,36 @@ class SymbolGraphUnitTest extends AssertionsForJUnit {
     val graph = SymbolGraph.build(calc)
     //then
     for (symbol <- calc.listSymbols) {
-      assertTrue(graph.contains(symbol));
+      assertTrue(graph.contains(symbol))
     }
-    assertTrue(Graph.hasCycles(graph));
+    assertTrue(Graph.hasCycles(graph))
     assertTrue(Graph.findCycles(graph).sameElements(Vector(a,a,a)))
   }
+
+    @Test def shouldBuildGraphFromSingleCalculationWithDynamic() = {
+        //given
+        import BasicSymbols._
+        implicit val calc = Calculation()
+        a := b * (c - d)
+        b := c + 10
+        c := hypot(-e, abs(f))
+        d := h * (e / 10)
+        e := sin(z) - 0.3
+        g := dynamic(a,b) { results =>
+            results(a).toInt match {
+                case 0 => b
+                case _ => a*b
+            }
+        }
+        //when
+        val graph = SymbolGraph.build(calc)
+        //then
+        for (symbol <- calc.listSymbols) {
+            assertTrue(graph.contains(symbol))
+        }
+        assertFalse(Graph.hasCycles(graph))
+        val list = Graph.sortTopologically(graph)
+        assertEquals(List(h, z, e, f, c, b, d, a, g), list)
+    }
 
 }

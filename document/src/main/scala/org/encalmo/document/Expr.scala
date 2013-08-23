@@ -1,69 +1,40 @@
 package org.encalmo.document
-import scala.collection.mutable.LinkedList
+
 import org.encalmo.expression.Expression
-import org.encalmo.expression.Symbol
-import org.encalmo.calculation.Calculation
-import org.encalmo.style.Style
-import org.encalmo.style.StylesConfigSymbols
-import org.encalmo.style.StylesConfig
 import org.encalmo.calculation.Context
+import org.encalmo.style.Style
+import org.encalmo.style.StylesConfig
 
 /**
  * Document component representing expression sequence
  * @author artur.opala
  */
-abstract class Expr(
-        val exStyle:Style, 
+abstract class Expr (
+        val customStyle:Style,
         val context:Context, 
         val expressions:Expression*) 
-extends DocumentComponent(exStyle) {
+extends DocumentComponent(customStyle) with StylesResolver {
 
-	override def toString = "Expr("+exStyle+","+context+","+expressions.mkString(",")+")"
+	override def toString = "Expr("+customStyle+","+context+","+expressions.mkString(",")+")"
 	
 	lazy val parentStylesConfig:Option[StylesConfig] = document.map(_.stylesConfig)
 	
 	override lazy val myStyle:Style = {
-        Option(exStyle).getOrElse(
+        Option(customStyle).getOrElse(
             parentStylesConfig match {
                 case Some(psc) => psc.expression.getOrElse(null)
                 case None => null
             }
         )
     }
-	
-	/** Resolves this expressions to sequences of ExpressionToPrint objects */
-	final def resolve:Seq[Seq[ExpressionToPrint]] = {
-		for(e <- expressions) yield prepareExpressionToPrint(e)
-	}
-	
-	/** Function to implement */
-	def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
-		e match {
-			case s:Symbol => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_SYMBOL),null,null,parentStylesConfig))
-			case _ => Seq[ExpressionToPrint](ExpressionToPrint(e,resolveStyle(myStyle,StylesConfigSymbols.EXPR_EVALUATED),null,null,parentStylesConfig))
-		}
-	}
-	
-	/**
-	 * Resolves style for this expression part
-	 */
-	final def resolveStyle(defaultStyle:Style, part:StylesConfigSymbols.Value):Style = {
-		Option(defaultStyle).getOrElse(
-			parentStylesConfig match {
-				case Some(psc) => psc.part(part).getOrElse(psc.expression.getOrElse(null))
-				case None => null
-			}
-		)
-	}
-	
 }
 
 /**
  * Block-style expression
  * @author artur.opala
  */
-abstract class BlockExpr(exStyle:Style, context:Context, expressions:Expression*) 
-extends Expr(exStyle,context,expressions:_*) with BlockComponent {
+abstract class BlockExpr(customStyle:Style, context:Context, expressions:Expression*)
+extends Expr(customStyle,context,expressions:_*) with BlockComponent {
 	
 	def isPrintDescription:Boolean
 	
@@ -73,7 +44,7 @@ extends Expr(exStyle,context,expressions:_*) with BlockComponent {
  * Inline-style expression
  * @author artur.opala
  */
-abstract class InlineExpr(exStyle:Style, context:Context, expressions:Expression*) 
-extends Expr(exStyle,context,expressions:_*) with InlineComponent {
+abstract class InlineExpr(customStyle:Style, context:Context, expressions:Expression*)
+extends Expr(customStyle,context,expressions:_*) with InlineComponent {
 	
 }

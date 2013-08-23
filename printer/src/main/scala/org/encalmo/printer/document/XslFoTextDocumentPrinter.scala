@@ -15,6 +15,7 @@ import org.encalmo.expression.MultipleInfixOperation
 import org.encalmo.expression.Diff
 import org.encalmo.expression.Transparent
 import org.encalmo.expression.Expression
+import org.encalmo.calculation.FormulaSetCache
 
 /**
  * Prints document as xsl-fo text 
@@ -35,7 +36,7 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
  * @author artur.opala
  */
 class XslFoTextDocumentPrinterTraveler(output:XslFoOutput) 
-extends TreeVisitor[DocumentComponent] {
+extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 	
 	val locale = output.locale
 	val mathOutput = output.toMathMLOutput
@@ -215,7 +216,7 @@ extends TreeVisitor[DocumentComponent] {
 						}
 					}
 					case expr:InlineExpr => {
-						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
+						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
 						ess.foreach(es => {
 							if(expr.myStyle!=null){
 								output.start(INLINE)
@@ -232,13 +233,13 @@ extends TreeVisitor[DocumentComponent] {
 						})
 					}
 					case expr:BlockExpr => {
-						val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
+						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
 						if(!ess.isEmpty){
 							blockExprPrintStrategy.print(node,expr,ess)
 						}
 					}
 					case a:Assertion => {
-						val result = a.evaluate
+						val result = a.evaluate(resultCacheFor(a.calc))
 						val s = Section(a.style,result._2:_*)
 						s.visit(visitor = this);
 					}

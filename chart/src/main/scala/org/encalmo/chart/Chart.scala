@@ -55,7 +55,7 @@ case class Chart (
             ImageIO.write(chart.getCanvas().screenshot(), "png", new File(pathString));
             Console.println("Image saved in: " + path);
         } catch {
-            case e => {
+            case e: Throwable => {
                 e.printStackTrace
                 throw e
             }

@@ -1,24 +1,15 @@
 package org.encalmo.structures.eurocode.concrete
 
-import org.junit.Test
 import org.encalmo.expression._
-import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.printer._
-import org.encalmo.printer.document._
-import org.encalmo.fop.FOPHelper
-import org.encalmo.style.StylesConfigSymbols._
-import org.encalmo.structures.Predefined
+import org.encalmo.structures.{CalculationDocument, Predefined}
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.actions.silos.ParticulateSolid
 import org.encalmo.structures.eurocode.actions.silos.RectangularSlenderSilosWithFlatBottom
-import scalax.file.Path
 
-class ZbiornikZelbetowyProstopadloscienny {
-    
-    import BasicSymbols._
-    
-    val calc = Calculation()
+class ZbiornikZelbetowyProstopadloscienny extends CalculationDocument {
+
+    val name = "kb-silos"
    
     val solid = ParticulateSolid.Flyash
     val concrete = Concrete.C_20_25
@@ -27,7 +18,7 @@ class ZbiornikZelbetowyProstopadloscienny {
     
     calc add silos
     
-    val doc1 = Document("",
+    val doc = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(
@@ -63,33 +54,5 @@ class ZbiornikZelbetowyProstopadloscienny {
 			Section(style1.useAlign("right"),"Opracował: XXX")*/
         )
     )
-    
-    @Test def printHtml:Unit = {
-        val layout = Predefined.layout
-        val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path("src/main/resources/style.css"))
-        val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
-        output.open
-        HtmlTextDocumentPrinter.print(doc1,output)
-        output.close
-        output.printConsole
-        output.saveToFile(new java.io.File("target/test-results/kb-silos.html"))
-    }
-    
-    @Test def printPdf:Unit = {
-        val layout = Predefined.layout
-        val output:XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
-        output.open
-        XslFoTextDocumentPrinter.print(doc1,output)
-        output.close
-        output.printConsole
-        output.saveToFile(new java.io.File("target/test-results/kb-silos.fo"))
-        FOPHelper.buildPDF(output.getResult, "target/test-results/kb-silos.pdf")
-    }
-    
-    @Test def printText:Unit = {
-        val o:TextOutput = new TextOutput(new java.util.Locale("PL"))
-        PlainTextDocumentPrinter.print(doc1,o)
-        o.printConsole
-    }
 
 }

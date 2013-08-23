@@ -79,26 +79,28 @@ trait UnitOfValue extends Expression {
 	    if(this==EmptyUnitOfValue) u 
 	    else if(u == EmptyUnitOfValue) this 
 	    else if(this.isSame(u)) this 
-	    else new IllegalUnitOfValue(this,"+",u)
+	    else /*new IllegalUnitOfValue(this,"+",u)*/ throw new IllegalUnitOperationException(this,"+",u)
 	}
 	
 	def -(u:UnitOfValue):UnitOfValue = {
 	    if(this==EmptyUnitOfValue) u 
 	    else if(u == EmptyUnitOfValue) this 
 	    else if(this.isSame(u)) this 
-	    else new IllegalUnitOfValue(this,"-",u)
+	    else /*new IllegalUnitOfValue(this,"-",u)*/ throw new IllegalUnitOperationException(this,"-",u)
 	}
     
     def %(u:UnitOfValue):UnitOfValue = {
         if(u == EmptyUnitOfValue) this 
         else if(this==EmptyUnitOfValue) this
         else if(this.isSame(u)) this
-        else new IllegalUnitOfValue(this,"%",u)
+        else /*new IllegalUnitOfValue(this,"%",u)*/ throw new IllegalUnitOperationException(this,"%",u)
     }
 	
 	def toNameString:String = name.toString + (if(dimension == 1) "" else UnitOfValue.dimensionFormat.format(dimension))
     
 }
+
+class IllegalUnitOperationException(u1: UnitOfValue, op: String, u2: UnitOfValue) extends RuntimeException(s"${u1.toNameString} $op ${u2.toNameString}")
 
 /**
  * BaseUnitOfValue class
@@ -111,7 +113,7 @@ case class SimpleUnitOfValue (
 		override val dimension:Double = 1,
 		system:UnitOfValueSystem = EmptyUnitOfValueSystem,
 		override val characteristic:Characteristic = Characteristics.None,
-		val customName:Option[UnitOfValueName] = None
+		customName:Option[UnitOfValueName] = None
 		
 		
 ) extends UnitOfValue {
@@ -147,7 +149,7 @@ object EmptyUnitOfValue extends SimpleUnitOfValue() {
     
 }
 
-case class UnitOfValueNameBuilder extends TreeVisitor[Expression] {
+case class UnitOfValueNameBuilder() extends TreeVisitor[Expression] {
     
     private val stack = Stack[Buffer[String]]()
     
@@ -249,7 +251,7 @@ case class ComplexUnitOfValue(
     override lazy val toString:String = toNameString
 }
 
-case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
+/*case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
     
     def this(u1:UnitOfValue,operator:String,u2:UnitOfValue) = this(u1.toNameString+operator+u2.toNameString)
     
@@ -259,7 +261,7 @@ case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
     override lazy val simplifiedUnit:(UnitOfValue,Double) = (this,1)
     override lazy val expandedUnit:(UnitOfValue,Double) = (this,1)
     
-}
+}*/
 
 /**
  * UnitOfValueScale class
@@ -390,7 +392,6 @@ object UnitOfValue {
     
     private def numberFx:(Expression)=>Expression = {
         case EmptyUnitOfValue => ONE
-        case iu:IllegalUnitOfValue => ZERO
         case su:SimpleUnitOfValue => ONE
         case ComplexUnitOfValue(expression,1,0) => expression
         case ComplexUnitOfValue(unit:UnitOfValue,dimension,scale) => dimension match {
@@ -404,7 +405,6 @@ object UnitOfValue {
     
     private def multiplierFx:(Expression)=>Expression = {
         case EmptyUnitOfValue => ONE
-        case iu:IllegalUnitOfValue => ZERO
         case su:SimpleUnitOfValue => Number(su.multiplier)
         case ComplexUnitOfValue(expression,1,0) => expression
         case ComplexUnitOfValue(unit:UnitOfValue,dimension,scale) => dimension match {

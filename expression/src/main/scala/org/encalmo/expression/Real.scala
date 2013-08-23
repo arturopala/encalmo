@@ -120,7 +120,7 @@ class Real(val d: Double) {
       if(u1.isSameBaseAndDimension(u2)) convert1(u1,u2)
       else if(u1.isSameExpandedUnit(u2)) convert2(u1,u2) 
       else if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this
-      else throw new IllegalArgumentException("Cannot convert value of unit ["+u1.toNameString+"] to ["+u2.toNameString+"]")
+      else throw new IllegalArgumentException("Cannot convert unit of value: "+this.d+" ["+u1.toNameString+"] to ["+u2.toNameString+"]")
   
   private[expression] def convert1(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this else if(u1.multiplier==u2.multiplier) this else Real(d * u1.multiplier/u2.multiplier)
   private[expression] def convert2(u1: UnitOfValue, u2: UnitOfValue): Real = if(u1==EmptyUnitOfValue || u2==EmptyUnitOfValue) this else if(u1.expandedUnitMultiplier==u2.expandedUnitMultiplier) this else Real(d * u1.expandedUnitMultiplier/u2.expandedUnitMultiplier)

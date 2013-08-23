@@ -1,7 +1,6 @@
 package org.encalmo.document
-import scala.collection.mutable.LinkedList
+
 import org.encalmo.expression.Expression
-import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
 import org.encalmo.style.Style
 
@@ -17,7 +16,7 @@ extends InlineExpr(rStyle,calc,expr:_*){
 	override def toString = "Result("+myStyle+","+calc+","+expr.mkString(",")+")"
 	
 	/** Function to implement */
-	override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
+	/*override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
 		val evaluated = calc.evaluate(e)
 		e match {
 			case s:Symbol if s.hasUnit => {
@@ -28,7 +27,7 @@ extends InlineExpr(rStyle,calc,expr:_*){
 			}
 		}
 		
-	}
+	}*/
 	
 }
 

@@ -2,7 +2,6 @@ package org.encalmo.graph
 
 import org.scalatest.FunSpec
 import scalax.file.Path
-import org.encalmo.graph.{MaxHeap, MinHeap}
 
 class HeapTest extends FunSpec {
 	

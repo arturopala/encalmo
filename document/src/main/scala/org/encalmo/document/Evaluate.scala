@@ -1,48 +1,27 @@
 package org.encalmo.document
 
-import scala.collection.mutable.LinkedList
 import org.encalmo.expression.Expression
-import org.encalmo.expression.Transformations
-import org.encalmo.expression.Operation2
-import org.encalmo.expression.OperationN
-import org.encalmo.expression.Symbol
-import org.encalmo.expression.SymbolLike
-import org.encalmo.expression.Selection
-import org.encalmo.expression.UnitOfValue
-import org.encalmo.expression.Function
-import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.BoundExpression
-import org.encalmo.calculation.EvalAt
+import org.encalmo.calculation._
+import scala.Some
 import org.encalmo.style.Style
-import org.encalmo.style.StylesConfigSymbols
-import org.encalmo.expression.Transparent
-import org.encalmo.expression.UnitOfValue
-import org.encalmo.expression.EmptyUnitOfValue
-import org.encalmo.expression.Sum
-import org.encalmo.expression.max
-import org.encalmo.expression.min
-import org.encalmo.expression.Value
-import org.encalmo.expression.Number
-import org.encalmo.calculation.DynamicExpression
-import org.encalmo.calculation.ExpressionResolver
-import org.encalmo.calculation.Context
 
 /**
- * Evaluate: symbol = unresolved = resolved = substituted = evaluated
+ * Evaluate: symbol = unresolved = substituted = partially evaluated = evaluated
  */
 class Evaluate(
-        myStyle:Style, 
+        customStyle:Style,
         val styleOfResolved:Style, 
         val styleOfEvaluated:Style, 
         val isPrintDescription:Boolean, 
         context:Context, 
         expressions:Expression*) 
-extends BlockExpr(myStyle,context,expressions:_*){
+extends BlockExpr(customStyle,context,expressions:_*){
 	
-	override def toString = "Evaluate("+myStyle+","+styleOfResolved+","+styleOfEvaluated+","+context+","+expressions.mkString(",")+")"
+	override def toString = "Evaluate("+customStyle+","+styleOfResolved+","+styleOfEvaluated+","+context+","+expressions.mkString(",")+")"
 	
-	override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
-		var se = Seq[ExpressionToPrint]()
+	/*override def prepareExpressionToPrint(e:Expression, formulaSetCache: FormulaSetCache):Seq[ExpressionToPrint] = {
+		val toPrints = scala.collection.mutable.Seq[ExpressionToPrint]()
+        formulaSetCache.formulaSetFor(context).get(e)
 		var ue = e // unresolved expression
 		val unit:UnitOfValue = e.unit
 		val evaluated = adjustUnitsInSum(context.evaluate(e),unit) // evaluated expression
@@ -107,34 +86,8 @@ extends BlockExpr(myStyle,context,expressions:_*){
 			}
 			se = se :+ ExpressionToPrint(evaluated,resolveStyle(styleOfEvaluated,StylesConfigSymbols.EXPR_EVALUATED),evalchar,null,parentStylesConfig)
 		}
-		se
-	}
-	
-	def processUnresolved(symbol:Symbol,e:Expression):Expression = {
-	    e match {
-	        case ev:EvalAt => EvalAt(ev.expr, ev.er.evaluateWithAndReturnCopy(context))
-	        case de:DynamicExpression => de.f()
-	        case _ => e
-	    }
-	}
-	
-	def adjustUnitsInSum(e:Expression, unit:UnitOfValue):Expression = unit match {
-	    case EmptyUnitOfValue => e 
-	    case u => e match {
-    	    case s:Sum => if(s.args.exists(_.isInstanceOf[Value])) Sum(s.args.map(b => b match {
-    	        case v:Value => v.convertTo(u) 
-    	        case _ => b
-	        }):_*) else s
-    	    case s:min => if(s.args.exists(_.isInstanceOf[Value])) min(s.args.map(b => b match {
-                case v:Value => v.convertTo(u) 
-                case _ => b
-            }):_*) else s
-            case s:max => if(s.args.exists(_.isInstanceOf[Value])) max(s.args.map(b => b match {
-                case v:Value => v.convertTo(u) 
-                case _ => b
-            }):_*) else s
-    	    case _ => e
-	}}
+		toPrints
+	}*/
 	
 }
 
@@ -144,21 +97,17 @@ extends BlockExpr(myStyle,context,expressions:_*){
  */
 object Evaluate {
 	
-	def apply(mystyle:Style, styleOfResolved:Style, styleOfEvaluated:Style, calc:Calculation, expressions:Expression*) = {
-		new Evaluate(mystyle,styleOfResolved,styleOfEvaluated,true,calc,expressions:_*)
+	def apply(customStyle:Style, styleOfResolved:Style, styleOfEvaluated:Style, calc:Calculation, expressions:Expression*) = {
+		new Evaluate(customStyle,styleOfResolved,styleOfEvaluated,true,calc,expressions:_*)
 	}
 	
-	def apply(mystyle:Style, style2:Style, calc:Calculation, expressions:Expression*) = {
-		new Evaluate(mystyle,style2,style2,true,calc,expressions:_*)
+	def apply(customStyle:Style, style2:Style, calc:Calculation, expressions:Expression*) = {
+		new Evaluate(customStyle,style2,style2,true,calc,expressions:_*)
 	}
 	
-	def apply(mystyle:Style, calc:Calculation, expressions:Expression*) = {
-		new Evaluate(mystyle,mystyle,mystyle,true,calc,expressions:_*)
+	def apply(customStyle:Style, calc:Calculation, expressions:Expression*) = {
+		new Evaluate(customStyle,customStyle,customStyle,true,calc,expressions:_*)
 	}
-	
-	/*def apply(calc:Calculation, expressions:Expression*) = {
-        new Evaluate(null,null,null,true,calc,expressions:_*)
-    }*/
 	
 	def apply(expressions:Expression*)(implicit context:Context) = {
         new Evaluate(null,null,null,true,context,expressions:_*)

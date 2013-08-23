@@ -36,7 +36,6 @@ abstract class CalculationDocument extends Calculation {
         output.open
         HtmlTextDocumentPrinter.print(doc,output)
         output.close
-        output.printConsole
         output.saveToFile(new java.io.File("target/test-results/"+name+".html"))
     }
     
@@ -46,7 +45,6 @@ abstract class CalculationDocument extends Calculation {
         output.open
         XslFoTextDocumentPrinter.print(doc,output)
         output.close
-        output.printConsole
         output.saveToFile(new java.io.File("target/test-results/"+name+".fo"))
         FOPHelper.buildPDF(output.getResult, "target/test-results/"+name+".pdf")
     }

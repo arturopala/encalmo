@@ -1,6 +1,6 @@
 package org.encalmo.chart
 
-import org.junit.Test
+import org.junit.{Ignore, Test}
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
 import java.io.File
@@ -37,6 +37,7 @@ import org.jzy3d.plot3d.builder.concrete.SphereScatterGenerator
 import java.util.Random
 
 /** Tests chart generation with jyz3d */
+@Ignore
 class ChartUnitTest {
     
     // JOGL initialization
@@ -190,7 +191,7 @@ class ChartUnitTest {
             ImageIO.write(ic.screenshot(), "png", path);
             Console.println("Dumped screenshot in: " + path);
         } catch {
-            case e => {
+            case e: Throwable => {
                 e.printStackTrace
                 throw e
             }

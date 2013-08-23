@@ -18,19 +18,17 @@ trait MutableContext extends Context {
   protected var opened:Boolean = true
   /** Locks context content */
   def lock = {opened = false}  
-  protected def throwContextAlreadyLockedException = throw new IllegalStateException("This context has been alredy locked.")
+  protected def throwContextAlreadyLockedException = throw new IllegalStateException("This context is locked.")
   
   /**
    * Maps expression to the symbol in this context
    */
-  def update(s:Symbol, e:Expression):Unit = {
+  def update(symb: Symbol, expression: Expression):Unit = {
 		if(opened){
-		    val symb = symbol(s)
-		    val expr:Expression = e match {
-		        case v:Value => v.convertTo(s.unit)
-		        case _ => e
-		    }
-		    map.put(symb,expr)
+		    map.put(symbol(symb),expression match {
+                case v:Value => v.convertTo(symb.unit)
+                case other => other
+            })
 		} else throwContextAlreadyLockedException
   }
 

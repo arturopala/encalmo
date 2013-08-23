@@ -11,16 +11,18 @@ object SymbolGraph {
 
         override def onEnter(node:Node[Expression]):Unit = {
             node.element match {
-                case symbol:Symbol => graph += ((symbol,rootSymbol))
+                case symbol: Symbol => graph += ((symbol,rootSymbol))
+                case DynamicExpression(symbols, _) => for(symbol <- symbols) {graph += ((symbol,rootSymbol))}
                 case _ => Unit
             }
         }
 
     }
 
-    def build(context:Context):Graph[Symbol] = {
-        val graph = Graph.mutable[Symbol]
+    def build(context:ExpressionResolver):Graph[Symbol] = {
+        val graph = Graph[Symbol]()
         for(symbol <- context.listSymbols) {
+            graph.add(symbol)
             context.getRawExpression(symbol).map(
                 expr => {
                     val visitor = new ExpressionTreeVisitor(symbol, graph)

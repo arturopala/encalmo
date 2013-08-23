@@ -4,7 +4,7 @@ import org.encalmo.common._
 import org.encalmo.printer._
 import org.encalmo.expression._
 import MathMLTags._
-import org.encalmo.calculation.EvalAt
+import org.encalmo.calculation.{ResultsCache, EvalAt}
 
 /**
  * Prints expressions as MathML
@@ -195,9 +195,6 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
                         }
                     }
                    output.startb(MROW)
-                }
-                case iu:IllegalUnitOfValue => {
-                    output.mtextClass("illegalunit",iu.desc)
                 }
 	    		case _ => Unit
 		    }
@@ -441,7 +438,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
                                output.startb(MTEXT)
                                output.mo("=",INFIX,THINMATHSPACE,THINMATHSPACE)
                                output.end(MTEXT)
-                               ev.er.evaluate(x._2).visit(visitor = this)
+                               ev.er.evaluate(x._2)(new ResultsCache()).visit(visitor = this)
                                ic = ic + 1
                             }
                         )

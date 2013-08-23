@@ -1,9 +1,9 @@
 package org.encalmo.document
-import scala.collection.mutable._
+
+import scala.collection.mutable._
 import org.encalmo.expression.Expression
-import org.encalmo.expression.Symbol
 import org.encalmo.expression.Number
-import org.encalmo.calculation.Calculation
+import org.encalmo.calculation.{ResultsCache, Calculation}
 import org.encalmo.style.StylesConfig
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
@@ -28,8 +28,8 @@ extends DocumentComponent(null){
 	def operator:Seq[Character]
 	def assert(results:Seq[Expression]):Option[Boolean]
 	
-	override def myStyle:Style = {
-		val results = expressions.map(calc.evaluate(_))
+	/*override def myStyle:Style = {
+		val results = expressions.map(calc.evaluate)
 		val ob = assert(results)
 		ob match {
 			case Some(b) => b match {
@@ -38,11 +38,11 @@ extends DocumentComponent(null){
 			}
 			case None => unknownStyle
 		}
-	}
+	}*/
 	
-	def evaluate:(Option[Boolean],Seq[DocumentComponent]) = {
+	def evaluate(cache: ResultsCache):(Option[Boolean],Seq[DocumentComponent]) = {
 		val seq:ListBuffer[DocumentComponent] = ListBuffer()
-		val results = expressions.map(calc.evaluate(_))
+		val results = expressions.map(calc.evaluate(_)(cache))
 		val ob = assert(results)
 		if(text!=null){
 			seq += TextToTranslate("requirement","document")

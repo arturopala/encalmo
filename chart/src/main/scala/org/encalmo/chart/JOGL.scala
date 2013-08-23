@@ -75,7 +75,7 @@ object JOGL {
     	                beginMethod.invoke(null)
     	            }
 	            }
-	            catch { case _ => }
+	            catch { case  _: Throwable => }
     	
 	        }
 	        // Load core JOGL native library
@@ -88,7 +88,7 @@ object JOGL {
     	                endMethod.invoke(null)
     	            }
     	        }
-	            catch { case _ => }
+	            catch { case _: Throwable => }
 	        }
 	        if (!info.isMacOS) {
 	            // borrowed from NativeLibLoader
@@ -101,7 +101,7 @@ object JOGL {
 	                //Thread.sleep(3000)
 	                Console.println("JAWT loaded.")
 	            } catch {
-	            	case e => 
+	            	case e: Throwable =>
 	                // Accessibility technologies load JAWT themselves; safe to continue
 	                // as long as JAWT is loaded by any loader
 	                if (e.getMessage().indexOf("already loaded") == -1) {
@@ -115,7 +115,7 @@ object JOGL {
 	        //Thread.sleep(1000)
         }
         catch {
-            case e => {
+            case e: Throwable => {
                 e.printStackTrace
                 throw e
             }

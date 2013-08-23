@@ -1,5 +1,4 @@
 package org.encalmo.printer
-import org.encalmo.style.Style
 
 /**
  * XML text output
