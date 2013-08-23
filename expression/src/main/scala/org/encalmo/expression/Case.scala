@@ -1,7 +1,7 @@
 package org.encalmo.expression
 
 /**
- * Case is a part of the Selection. 
+ * Case is a part of the Selection expression.
  * If case test evaluates to true then expression is used by parent Selection.
  * @author artur.opala
  */

@@ -1,7 +1,6 @@
 package org.encalmo.printer.document
 
 import org.scalatest.junit.AssertionsForJUnit
-import org.junit.Assert._
 import org.junit.Test
 import org.encalmo.expression._
 import org.encalmo.calculation._
@@ -12,14 +11,13 @@ import org.encalmo.style.DefaultFontStyle
 import org.encalmo.style.DefaultStyle
 import org.encalmo.style.StylesConfig
 
-class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
+class HtmlTextDocumentPrinterTest extends AssertionsForJUnit  {
 	
 	@Test def test1() {
 		
 		import BasicSymbols._
-		import org.encalmo.style.StylesConfigSymbols._
-		
-		val font1 = DefaultFontStyle.++.makeBold
+
+        val font1 = DefaultFontStyle.++.makeBold
 		val font2 = DefaultFontStyle.makeItalic
 		val font3 = DefaultFontStyle.fontSize(9)
 		val font4 = DefaultFontStyle.fontSize(8).makeItalic
@@ -209,12 +207,11 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
             )
        )
 		
-		val output:XslFoOutput = new XslFoOutput(Layout(),new java.util.Locale("PL"))
+		val output:HtmlOutput = new HtmlOutput(Layout(),new java.util.Locale("PL"))
 		output.open
-		XslFoTextDocumentPrinter.print(doc1,output)
+		HtmlTextDocumentPrinter.print(doc1,output)
 		output.close
-		output.saveToFile(new java.io.File("target/test-results/xslFoTextDocumentPrinterTest1.fo"))
-		FOPHelper.buildPDF(output.getResult, "target/test-results/xslFoTextDocumentPrinterTest1.pdf")
+		output.saveToFile(new java.io.File("target/test-results/htmlTextDocumentPrinterTest1.html"))
 	}
 	
 	@Test def test2() {
@@ -279,12 +276,6 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	    c1 put (fi -> ( (1+(lambdad^(2*n)))^(-(1/n)) ))
 	    c1 put (Nmax -> ( fi*NRc ))
 		
-		val c2 = c1
-		val c3 = c1
-		val c4 = c1
-		val c5 = c1
-		val c6 = c1
-		
 		val style1 = DefaultStyle.fontSize(11).useSpaceBefore(2).useSpaceAfter(2)
 		val BOLD = style1.fontBold
 		val ITALIC = style1.fontItalic
@@ -334,59 +325,8 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
 		              Section(Evaluate(Nfcr)))
 		          ),
-		          
-		          NumSection("Obliczenia dla l = 4m :",
-		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Evaluate(lambdax,lambdaf)(c2))),
-		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nxcr)(c2))),
-		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nfcr)(c2)))
-		          ),
-		          
-		          NumSection("Obliczenia dla l = 5m :",
-		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Evaluate(lambdax,lambdaf)(c3))),
-		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nxcr)(c3))),
-		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nfcr)(c3)))
-		          ),
-		          
-		          NumSection("Obliczenia dla l = 6m :",
-		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Evaluate(lambdax,lambdaf)(c4))),
-		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nxcr)(c4))),
-		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nfcr)(c4)))
-		          ),
-		          
-		          NumSection("Obliczenia dla l = 7m :",
-		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Evaluate(lambdax,lambdaf)(c4))),
-		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nxcr)(c4))),
-		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nfcr)(c4)))
-		          ),
-		          
-		          NumSection("K. Obliczenia dla l = 8m :",
-		            NumSection("Smukłość wyboczenia giętnego i skrętnego:",
-		              Section(Evaluate(lambdax,lambdaf)(c4))),
-		            NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nxcr)(c4))),
-		            NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-		              Section(Evaluate(Nfcr)(c4)))
-		          ),
-		          
 		          NumSection("Podsumowanie obliczeń :",
-		            Section("dla l = 3m : ",Evaluate(Nxcr,lambdax,Nfcr,lambdaf)),
-		            Section("dla l = 4m : ",Evaluate(Nxcr,lambdax,Nfcr,lambdaf)(c2)),
-		            Section("dla l = 5m : ",Evaluate(Nxcr,lambdax,Nfcr,lambdaf)(c3)),
-		            Section("dla l = 6m : ",Evaluate(Nxcr,lambdax,Nfcr,lambdaf)(c4)),
-		            Section("dla l = 7m : ",Evaluate(Nxcr,lambdax,Nfcr,lambdaf)(c5)),
-		            Section("dla l = 8m : ",Evaluate(Nxcr,lambdax,Nfcr,lambdaf)(c6))
+		            Section("dla l = 3m : ",Evaluate(Nxcr,lambdax,Nfcr,lambdaf))
 		          ),
 		          
 		          NumSection("Wnioski z obliczeń :",
@@ -404,53 +344,8 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		          NumSection("Maksymalna osiowa siła ściskająca:",
 		            Section(Evaluate(Nmax)))
 		        ),
-		        NumSection("Obliczenia dla l = 4m :",
-		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Evaluate(lambdad)(c2))),
-		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Evaluate(fi)(c2))),
-		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Evaluate(Nmax)(c2)))
-		        ),
-		        NumSection("Obliczenia dla l = 5m :",
-		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Evaluate(lambdad)(c3))),
-		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Evaluate(fi)(c3))),
-		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Evaluate(Nmax)(c3)))
-		        ),
-		        NumSection("Obliczenia dla l = 6m :",
-		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Evaluate(lambdad)(c4))),
-		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Evaluate(fi)(c4))),
-		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Evaluate(Nmax)(c4)))
-		        ),
-		        NumSection("Obliczenia dla l = 7m :",
-		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Evaluate(lambdad)(c5))),
-		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Evaluate(fi)(c5))),
-		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Evaluate(Nmax)(c5)))
-		        ),
-		        NumSection("Obliczenia dla l = 8m :",
-		          NumSection("Smukłość względna pręta przy wyboczeniu:",
-		            Section(Evaluate(lambdad)(c6))),
-		          NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
-		            Section(Evaluate(fi)(c6))),
-		          NumSection("Maksymalna osiowa siła ściskająca:",
-		            Section(Evaluate(Nmax)(c6)))
-		        ),
 		        NumSection("Podsumowanie wymiarowania :",
-		            Section("dla l = 3m : ",Evaluate(fi,Nmax)),
-		            Section("dla l = 4m : ",Evaluate(fi,Nmax)(c2)),
-		            Section("dla l = 5m : ",Evaluate(fi,Nmax)(c3)),
-		            Section("dla l = 6m : ",Evaluate(fi,Nmax)(c4)),
-		            Section("dla l = 7m : ",Evaluate(fi,Nmax)(c5)),
-		            Section("dla l = 8m : ",Evaluate(fi,Nmax)(c6))
+		            Section("dla l = 3m : ",Evaluate(fi,Nmax))
 		          )
 		      ),
 		      EmptySection,
@@ -464,13 +359,12 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		      )
 	      )
 		)
-		
-		val output:XslFoOutput = new XslFoOutput(Layout(), new java.util.Locale("PL"))
-		output.open
-		XslFoTextDocumentPrinter.print(doc1,output)
-		output.close
-		output.saveToFile(new java.io.File("target/test-results/xslFoTextDocumentPrinterTest2.fo"))
-		FOPHelper.buildPDF(output.getResult, "target/test-results/xslFoTextDocumentPrinterTest2.pdf")
+
+        val output:HtmlOutput = new HtmlOutput(Layout(),new java.util.Locale("PL"))
+        output.open
+        HtmlTextDocumentPrinter.print(doc1,output)
+        output.close
+        output.saveToFile(new java.io.File("target/test-results/htmlTextDocumentPrinterTest2.html"))
 	}
 
 }

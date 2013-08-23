@@ -1,13 +1,8 @@
 package org.encalmo.document
 
 import org.encalmo.expression.Expression
-import org.encalmo.expression.Transformations
-import org.encalmo.expression.Operation2
-import org.encalmo.expression.OperationN
-import org.encalmo.expression.Symbol
 import org.encalmo.calculation.Calculation
 import org.encalmo.style.Style
-import org.encalmo.style.StylesConfigSymbols
 import org.encalmo.calculation.Context
 
 /**
@@ -24,7 +19,7 @@ extends BlockExpr(myStyle,context,expressions:_*){
 	
 	override def toString = "Resolve("+myStyle+","+styleOfResolved+","+context+","+expressions.mkString(",")+")"
 	
-	override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
+	/*override def prepareExpressionToPrint(e:Expression):Seq[ExpressionToPrint] = {
 		var se = Seq[ExpressionToPrint]()
 		var ue = e // unresolved expression
 		if(e.isInstanceOf[Symbol]){
@@ -40,7 +35,7 @@ extends BlockExpr(myStyle,context,expressions:_*){
 			se = se :+ ExpressionToPrint(ue,resolveStyle(myStyle,StylesConfigSymbols.EXPR_UNRESOLVED),null,null,parentStylesConfig)
 		}
 		se
-	}
+	}*/
 }
 
 /**

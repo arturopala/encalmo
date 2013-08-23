@@ -1,11 +1,8 @@
 package org.encalmo.fea
 
 import java.io.File
-import scalax.io.{Output,Resource,Seekable}
-import scalax.file.{Path}
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
+import scalax.io.{Resource,Seekable}
+import scalax.file.Path
 import java.io.InputStreamReader
 
 /**
@@ -83,7 +80,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
                 case None => fit.next
             }))
         })
-        val z88i2 = Z88I2.toString // take 2nd input back
+        val z88i2 = Z88I2.string // take 2nd input back
         Z88I2.write("") // clear previous content
         // 1st input group: Number of the boundary conditions: loads and constraints
         writeLine (Z88I2, bclines.next, LEGEND)
@@ -117,7 +114,6 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     
     /** Runs displacements, stresses and nodal forces calculations: z88f-c, z88d and z88e */
     def runCalculations(debug:Boolean = false) = {
-        import scala.collection.JavaConversions._
         val dir = new File(directory.toURL.getFile)
         // displacements calculation
         execute("z88f -c",dir)
@@ -138,16 +134,16 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     /** Executes system command */
     private def execute(command:String,dir:File) = {
         Console.println("Running "+command+" ...")
-        val p = Runtime.getRuntime().exec(command,Array[String](), dir)
-        var r = new InputStreamReader(p.getInputStream)
+        val p = Runtime.getRuntime.exec(command,Array[String](), dir)
+        val r = new InputStreamReader(p.getInputStream)
         var ch:Int = 0
-        var sb = new StringBuilder
+        val sb = new StringBuilder
         while({ch = r.read; ch} != -1){
            sb.append(ch.asInstanceOf[Char])
         }
         val o = p.waitFor
+        Console.println(sb.toString())
         if(o!=0){
-            Console.println(sb.toString)
             throw new IllegalStateException("Error executing system command: "+command)
         }
     }
@@ -193,7 +189,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     def readOutputFile_Z88O2:Seq[(Int, Seq[Option[Double]])] = {
         val Z88O2 = directory / "z88o2.txt"
         if(Z88O2.exists){
-            val lines = Z88O2.lines().dropWhile(s => !(s.trim.startsWith("1")))
+            val lines = Z88O2.lines().filter(s => !s.isEmpty).dropWhile(s => !(s.trim.startsWith("1")))
             val displacements = lines.map(line => {
 	                val l = line.trim.replaceAll("\\s+"," ").split(" ")
 	                (l.head.toInt,l.tail.map(x => Option(x.toDouble)).toSeq)
@@ -211,7 +207,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     def readOutputFile_Z88O3(mode:Int) = {
         val Z88O3 = directory / ("z88o3"+(mode match {case 0 => "_c"; case _ => ""})+".txt")
         if(Z88O3.exists){
-            val stresses = Z88O3.lines().dropWhile(s => !(s.trim.startsWith("element # = ")))
+            val stresses = Z88O3.lines().filter(s => !s.isEmpty).dropWhile(s => !s.trim.startsWith("element # = "))
                 .grouped((mode match {case 0 => elemtype.corners; case _ => elemtype.gausspoints}) + 2)
                 .map(seq => {
                     val elemno = seq.head.drop(12).split(" ")(0).toInt
@@ -233,7 +229,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     def readOutputFile_Z88O4:Seq[(Int, Seq[Option[Double]])] = {
         val Z88O4 = directory / "z88o4.txt"
         if(Z88O4.exists){
-            val lines = Z88O4.lines().dropWhile(s => !(s.trim.startsWith("now the nodal sums for each node")))
+            val lines = Z88O4.lines().filter(s => !s.isEmpty).dropWhile(s => !(s.trim.startsWith("now the nodal sums for each node")))
             val forces = lines.drop(3).map(line => {
                     val l = line.trim.replaceAll("\\s+"," ").split(" ")
                     (l.head.toInt,l.tail.take(3).map(x => Option(x.toDouble)).toSeq)

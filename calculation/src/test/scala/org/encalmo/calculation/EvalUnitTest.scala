@@ -11,6 +11,7 @@ class EvalUnitTest extends AssertionsForJUnit {
 	import BasicSymbols._
 	
 	@Test def testEval1() {
+        implicit val cache = new ResultsCache()
 	    val calc = Calculation()
 	    calc(c) = a*b
 	    calc(d) = (c/a+1)
@@ -26,12 +27,14 @@ class EvalUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testEval2() {
+        implicit val cache = new ResultsCache()
 	    val calc = Calculation()
 	    calc(c) = a*b
 	    calc(d) = (c/a+1)
 	    calc(e) = d+c
+        val n = ((a*b)/a+1)+a*b
 		val f1 = EvalAt(e, a -> 5, b -> 2)
-		assertEquals(Sum(Number(1),Quot(Prod(Symbol(name="a"),Symbol(name="b")),Symbol(name="a")),Prod(Symbol(name="a"),Symbol(name="b"))),calc.substitute(f1))
+		assertEquals(Sum(Number(1),Quot(Prod(Number(5),Number(2)),Number(5)),Prod(Number(5),Number(2))),calc.substitute(f1))
 	}
 	
 }

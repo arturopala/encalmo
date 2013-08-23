@@ -217,7 +217,7 @@ case class LowerOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
             val v2 = t2.eval
             (v1,v2) match {
             case (n1:Number,n2:Number) => n1<=n2
-            case _ => throw new IllegalArgumentException("LowerOrEqualThan("+v1+","+v2+")")
+            case _ => throw new IllegalArgumentException("Cannot evaluate test LowerOrEqualThan("+v1+","+v2+")")
             }
     }
 

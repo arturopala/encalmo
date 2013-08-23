@@ -1,6 +1,5 @@
 package org.encalmo.expression
 
-import java.io.PrintWriter
 
 object Number {
     
@@ -36,19 +35,19 @@ case class Number(
     override def convertTo(newunit:UnitOfValue):Number = newunit match {
         case u:UnitOfValue if this.unit==u => this
         case u:UnitOfValue if newunit==EmptyUnitOfValue => this
-        case u:UnitOfValue if (this.unit.isSameBaseAndDimension(u)) => Number(r.convert1(unit,newunit),newunit)
-        case u:UnitOfValue if (this.unit.isSameExpandedUnit(u)) => Number(r.convert2(unit,newunit),newunit)
         case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit)
-        case _ => this
+        case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert1(unit,newunit),newunit)
+        case u:UnitOfValue if this.unit.isSameExpandedUnit(u) => Number(r.convert2(unit,newunit),newunit)
+        case _ => throw new IllegalValueConversionException(s"Could not convert value ${r.d} from ${this.unit.toNameString} to ${newunit.toNameString}")
     }
     
     override def convertTo(newunit:UnitOfValue,accuracy:Option[Double]):Number = newunit match {
         case u:UnitOfValue if this.unit==u => this.adjustTo(accuracy)
         case u:UnitOfValue if newunit==EmptyUnitOfValue => this.adjustTo(accuracy)
-        case u:UnitOfValue if (this.unit.isSameBaseAndDimension(u)) => Number(r.convert1(unit,newunit),newunit).adjustTo(accuracy)
-        case u:UnitOfValue if (this.unit.isSameExpandedUnit(u)) => Number(r.convert2(unit,newunit),newunit).adjustTo(accuracy)
         case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit).adjustTo(accuracy)
-        case _ => this
+        case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert1(unit,newunit),newunit).adjustTo(accuracy)
+        case u:UnitOfValue if this.unit.isSameExpandedUnit(u) => Number(r.convert2(unit,newunit),newunit).adjustTo(accuracy)
+        case _ => throw new IllegalValueConversionException(s"Could not convert value ${r.d} from ${this.unit.toNameString} to ${newunit.toNameString}")
     }
     
     private def roundedCopy(newr:Real):Number = {
@@ -319,6 +318,7 @@ object NumberValueCalculator extends ValueCalculator {
      * Supports arguments of the Number type.
      */
     override def calculate(operator:String, v1:Value, v2:Value):Option[Value] = {
+        try {
         (v1,v2) match {
             case (Number(r1,u1),Number(r2,u2)) => {
                 Option(operator match {
@@ -455,6 +455,13 @@ object NumberValueCalculator extends ValueCalculator {
                 })
             }
             case _ => None
+        }
+        }
+        catch {
+            case exc:Exception => {
+                Console.println(s"Cannot calculate number value: $operator($v1,$v2).\r\nCause: "+exc.getMessage)
+                throw exc
+            }
         }
     }
     

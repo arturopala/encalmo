@@ -6,7 +6,7 @@ import org.encalmo.calculation.DynamicExpression
 
 package object calculation {
     
-    def dynamic(f: =>Expression) = DynamicExpression(f _)
+    def dynamic(symbols: Symbol*)(f: (ResultsCache)=>Expression) = DynamicExpression(symbols,f)
     
     /** Symbol class functionality extension */
     implicit class SymbolExt(symbol:Symbol) {

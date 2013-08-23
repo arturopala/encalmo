@@ -1,6 +1,6 @@
 package org.encalmo.chart
 
-import org.junit.Test
+import org.junit.{Ignore, Test}
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
 import java.io.File
@@ -13,6 +13,7 @@ import java.util.Random
 import org.jzy3d.plot3d.builder.Mapper
 
 /** Tests chart generation */
+@Ignore
 class ChartUnitTest2 {
     
     // JOGL initialization

@@ -3,7 +3,6 @@ package org.encalmo.expression
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
 import org.junit.Test
-import org.encalmo.expression._
 
 class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
     
@@ -71,17 +70,10 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertEquals(SI.km,d.unit)
     }
 	
-	@Test def testSum4 {
+	@Test(expected = classOf[IllegalUnitOperationException]) def testSum4 {
         val a:Number = 1.2 unit SI.m
         val b:Number = 2.1 unit SI.g
         val c = (a+b).eval
-        assertEquals(Number(3.3),c);
-        assertTrue(c.unit.isInstanceOf[IllegalUnitOfValue])
-        assertEquals("!m+g!",c.unit.toNameString);
-        val d = (b+a).eval
-        assertEquals(Number(3.3),d);
-        assertTrue(d.unit.isInstanceOf[IllegalUnitOfValue])
-        assertEquals("!g+m!",d.unit.toNameString);
     }
 	
 	@Test def testSum5 {
@@ -146,17 +138,10 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertEquals(SI.km,d.unit)
     }
     
-    @Test def testSubtract4 {
+    @Test(expected = classOf[IllegalUnitOperationException]) def testSubtract4 {
         val a:Number = 1.2 unit SI.m
         val b:Number = 2.1 unit SI.g
         val c = (a-b).eval
-        assertEquals(Number(-0.9),c.eval);
-        assertTrue(c.unit.isInstanceOf[IllegalUnitOfValue])
-        assertEquals("!m-g!",c.unit.toNameString);
-        val d = (b-a).eval
-        assertEquals(Number(0.9),d);
-        assertTrue(d.unit.isInstanceOf[IllegalUnitOfValue])
-        assertEquals("!g-m!",d.unit.toNameString);
     }
     
     @Test def testSubtract5 {

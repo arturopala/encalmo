@@ -1,15 +1,10 @@
 package org.encalmo.structures.eurocode.concrete
 
-import org.junit.Test
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.printer._
-import org.encalmo.printer.document._
-import org.encalmo.fop.FOPHelper
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
-import org.encalmo.structures.eurocode.actions.ActionsSymbols
 import org.encalmo.structures.CalculationDocument
 
 class BetonSprezonyDzwigarTypuI extends CalculationDocument {
@@ -19,8 +14,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     import BasicSymbols._
     import ConcreteSymbols._
     import SI.{mm,mm2,cm,cm2,kN,MPa}
-    import ReinforcingSteelSymbols.{fyd}
-    
+
     val beton = Concrete.C_40_50
     //val zbrojenie = ReinforcingSteel.B500SP
     calc add beton
@@ -73,7 +67,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     
     val npxmax = n|"pxmax" is "Maksymalna liczba cięgien w rzędzie"; calc(npxmax) = 8
     val np1x = n|"p1x" is "Liczba cięgien dolnych w rzędzie"; calc(np1x) = min(np1,npxmax)
-    val np1y = n|"p1y" is "Liczba pełnych rzędów cięgiem dolnych"; calc(np1y) = round(np1/np1x,RoundingMode.FLOOR)
+    val np1y = n|"p1y" is "Liczba pełnych rzędów cięgien dolnych"; calc(np1y) = round(np1/np1x,RoundingMode.FLOOR)
     val np1xr = n|"p1xr" is "Liczba cięgien dolnych w niepełnym rzędzie"; calc(np1xr) = np1-(np1x*np1y)
     val np2x = n|"p2x" is "Liczba cięgien górnych w rzędzie"; calc(np2x) = min(np2,npxmax-2)
     val np2y = n|"p2y" is "Liczba pełnych rzędów cięgiem górnych"; calc(np2y) = round(np2/np2x,RoundingMode.FLOOR)
@@ -101,16 +95,12 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val dp = d|"p" is "Ogległość osi rzędów cięgien" unit cm; calc(dp) = dymin+phip
     
     val yp1 = y|"p1" is "Położenie wypadkowej cięgien dolnych względem dolnej krawędzi przekroju"; 
-    calc(yp1) = dynamic {
-        calc.evaluateToNumbersMapAndDo(np1y,np1xr){
-            rmap => (np1x*dps)/np1 + Sum((for (x <- 1 to rmap(np1y).toInt-1) yield (np1x*(dps+x*dp))/np1):_*) + rmap(np1xr).mapIfNotZero{(np1xr*(dps+(np1y)*dp))/np1}
-        }{Ic}
+    yp1 := dynamic(np1y,np1xr) { cache =>
+        (np1x*dps)/np1 + Sum((for (x <- 1 to cache(np1y).toInt-1) yield (np1x*(dps+x*dp))/np1):_*) + cache(np1xr).mapIfNotZero{(np1xr*(dps+ np1y *dp))/np1}
     }
     val yp2 = y|"p2" is "Położenie wypadkowej cięgien górnych względem górnej krawędzi przekroju";
-    calc(yp2) = dynamic {
-        calc.evaluateToNumbersMapAndDo(np2y,np2xr){
-            rmap => (np2x*dps)/np2 + Sum((for (x <- 1 to rmap(np2y).toInt-1) yield (np2x*(dps+x*dp))/np2):_*) + rmap(np2xr).mapIfNotZero{(np2xr*(dps+(np2y)*dp))/np2}
-        }{Ic}
+    yp2 := dynamic(np2y,np2xr) { cache =>
+        (np2x*dps)/np2 + Sum((for (x <- 1 to cache(np2y).toInt-1) yield (np2x*(dps+x*dp))/np2):_*) + cache(np2xr).mapIfNotZero{(np2xr*(dps+ np2y *dp))/np2}
     }
 
     val Ac = A|c is "Pole przekroju betonowego" unit SI.cm2; calc(Ac) = hz1*bd+hz2*b1+hz3*bd
@@ -165,8 +155,8 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val Pmt = P|"mt" is "Siła sprężająca po uwzględnieniu strat reologicznych betonu" unit kN acc 0.1; calc(Pmt) = Pmo2 - dPt
     val sigpmt = sigma|"pmt" is "Naprężenia w cięgnach" unit MPa; calc(sigpmt) = Pmt/Ap
     
-    val Pksup = P|"k,sup" is "Górna wartość siły sprężającej" unit MPa; calc(Pksup) = 1.1 * Pmt
-    val Pkinf = P|"k,inf" is "Dolna wartość siły sprężającej" unit MPa; calc(Pkinf) = 0.9 * Pmt
+    val Pksup = P|"k,sup" is "Górna wartość siły sprężającej" unit kN; calc(Pksup) = 1.1 * Pmt
+    val Pkinf = P|"k,inf" is "Dolna wartość siły sprężającej" unit kN; calc(Pkinf) = 0.9 * Pmt
     val sigcpd = sigma|"cpd" is "Naprężenia w dolnych włóknach skrajnych przekroju betonowego" unit MPa; calc(sigcpd) = Pksup/Acs + (Pksup*zcp)/Wcsd
     val sigcpg = sigma|"cpg" is "Naprężenia w górnych włóknach skrajnych przekroju betonowego" unit MPa; calc(sigcpg) = Pksup/Acs - (Pksup*zcp)/Wcsg
     
@@ -201,13 +191,13 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val lbpd = l|"bpd" is "obliczeniowa długość zakotwienia cięgien" unit cm; calc(lbpd) = 0.9 * lbp
     
     val Vsk1 = V|"sk1" is "Siła ścinająca w punkcie 1" unit kN; calc(Vsk1) = 0.5*qk*(leff-2*(20 unit cm)-2*yd)
-    val Scs1 = S|"cs1" is "Moment statyczny części odciętej przekroju w punkcie 1" unit kN; calc(Scs1) = bd*hz1*(yg-0.5*hz1)+b1*(yg-hz1)*0.5*(yd-hz1)
+    val Scs1 = S|"cs1" is "Moment statyczny części odciętej przekroju w punkcie 1" unit SI.cm3; calc(Scs1) = bd*hz1*(yg-0.5*hz1)+b1*(yg-hz1)*0.5*(yd-hz1)
     val sigx1 = sigma|"x1" is "Naprężenie normalne w punkcie 1" unit MPa; calc(sigx1) = Pkinf/Acs
     val tauxy1 = tau|"xy1" is "Naprężenie styczne w punkcie 1" unit MPa; calc(tauxy1) = Vsk1*Scs1/(Ics*b1)
     val sigt1 = sigma|"t1" is "" unit MPa; calc(sigt1) = sigx1/2-hypot(sigx1/2,tauxy1)
     
     val Vsk2 = V|"sk2" is "Siła ścinająca w punkcie 2" unit kN; calc(Vsk2) = 0.5*qk*(leff-2*(20 unit cm)-2*(hd-hz1))
-    val Scs2 = S|"cs2" is "Moment statyczny części odciętej przekroju w punkcie 2" unit kN; calc(Scs2) = bd*hz1*(0.5*hz3)
+    val Scs2 = S|"cs2" is "Moment statyczny części odciętej przekroju w punkcie 2" unit SI.cm3; calc(Scs2) = bd*hz1*(0.5*hz3)
     val sigx2 = sigma|"x2" is "Naprężenie w punkcie 2" unit MPa; calc(sigx2) = Pkinf/Acs - (Pkinf*(yd-0.5*hz1)*(yd-hz1))/Ics
     val tauxy2 = tau|"xy2" is "Naprężenie ścinające w punkcie 2" unit MPa; calc(tauxy2) = Vsk2*Scs2/(Ics*b1)
     val sigt2 = sigma|"t2" is "" unit MPa; calc(sigt2) = sigx2/2-hypot(sigx2/2,tauxy2)
@@ -217,11 +207,11 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val alphap = alpha|"p" is "Współczynnik zależny od trasy cięgna"; calc(alphap) = Quot(1,8)
     val u1 = u|"1" is "Ugięcie dźwigara od ciężaru własnego i obciążeń zewnętrznych" unit mm; calc(u1) = alphak*((Mk*(leff^2))/(Eceff*Ics)) - alphap*((Pkinf*zcp*(leff^2))/(Eceff*Ics))
         
-    val w1 = w|1 is "Wytężenie dźwigara ze względu na zginanie" acc 0.1;calc(w1) = (100*(Myd/MRd)).setunit(SI.percent)
-    val w2 = w|2 is "Wytężenie dźwigara ze względu na naprężenia we włóknach dolnych" acc 0.01;calc(w2) = (100*(sigcpd/(0.7*fcm))).setunit(SI.percent)
-    val w3 = w|3 is "Wytężenie dźwigara ze względu na ścinanie przy podporze" acc 0.1;calc(w3) = (100*(Vsd/(alphac*VRd22))).setunit(SI.percent)
-    val w4 = w|4 is "Wytężenie dźwigara ze względu na dopuszczalne ugięcie" acc 0.1;calc(w4) = (100*(u1/umax)).setunit(SI.percent)
-    val w5 = w|5 is "Wytężenie dźwigara ze względu na brak zarysowania" acc 0.1;calc(w5) = (100*(Mk/Mcr)).setunit(SI.percent)
+    val w1 = w|1 is "Wytężenie dźwigara ze względu na zginanie" acc 0.1 unit SI.percent := 100*(Myd/MRd)
+    val w2 = w|2 is "Wytężenie dźwigara ze względu na naprężenia we włóknach dolnych" acc 0.01 unit SI.percent := 100*(sigcpd/(0.7*fcm))
+    val w3 = w|3 is "Wytężenie dźwigara ze względu na ścinanie przy podporze" acc 0.1 unit SI.percent := 100*(Vsd/(alphac*VRd22))
+    val w4 = w|4 is "Wytężenie dźwigara ze względu na dopuszczalne ugięcie" acc 0.1 unit SI.percent := 100*(u1/umax)
+    val w5 = w|5 is "Wytężenie dźwigara ze względu na brak zarysowania" acc 0.1 unit SI.percent := 100*(Mk/Mcr)
     
     
     val doc = Document("",

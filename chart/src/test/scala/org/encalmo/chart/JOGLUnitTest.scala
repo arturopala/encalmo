@@ -1,10 +1,11 @@
 package org.encalmo.chart
 
-import org.junit.Test
+import org.junit.{Ignore, Test}
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
 
 /** JOGL initialization test */
+@Ignore
 class JOGLUnitTest {
     
     @Test def testJOGLInit:Unit = {
@@ -12,7 +13,7 @@ class JOGLUnitTest {
         	JOGL
         }
         catch {
-            case e => fail(e.getMessage)
+            case e: Throwable => fail(e.getMessage)
         }
     }
 	

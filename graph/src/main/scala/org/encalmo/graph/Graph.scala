@@ -37,6 +37,10 @@ trait GenericGraph[@specialized(Int) N] extends Graph[N] {
     override def edgesCount: Long = nodes.foldLeft(0L){case (sum,node) => sum + adjacent(node).size}
 }
 
+trait MutableGraph[@specialized(Int) N] extends GenericGraph[N] with Growable[(N,N)] with Shrinkable[(N,N)] {
+    def add(node: N): this.type
+}
+
 class GenericReverseGraph[@specialized(Int) N](origin: Graph[N]) extends GenericGraph[N] {
     override def nodes: Traversable[N] = origin.nodes
     override val adjacent: N => Traversable[N] = node => new Traversable[N]{
@@ -64,12 +68,17 @@ class MapGraph[@specialized(Int) N](val nodeMap: Map[N,Traversable[N]] = Map[N,T
 
 class MutableMapGraph[@specialized(Int) N](
     val nodeMap: MutableMap[N,ArrayBuffer[N]] = new HashMap[N,ArrayBuffer[N]]()
-) extends GenericGraph[N] with Growable[(N,N)] with Shrinkable[(N,N)]{
+) extends MutableGraph[N] {
     override def nodes:Iterable[N] =  nodeMap.keys
     override val adjacent: N => ArrayBuffer[N] = nodeMap
 	override def reverse: Graph[N] = Graph.hardCopyReversed[N](this)
 	override def nodesCount: Int = nodeMap.size
 	override def contains(node: N): Boolean = nodeMap.contains(node)
+
+    override def add(node: N): this.type = {
+        nodeMap.getOrElseUpdate(node,{new ArrayBuffer[N]()})
+        this
+    }
 
 	override def +=(edge: (N,N)): this.type = {
         nodeMap.getOrElseUpdate(edge._1,{new ArrayBuffer[N]()}) += (edge._2)
@@ -94,13 +103,11 @@ object Graph {
 	class GenericGraphImpl[@specialized(Int) N](val nodes:Iterable[N], val adjacent: N => Traversable[N]) extends GenericGraph[N]
 	class WeightedGraphImpl[@specialized(Int) N, @specialized(Double,Int) V:Numeric](val nodes:Iterable[N], val adjacent: N => Traversable[N], val weight: (N,N) => V) extends GenericGraph[N] with Weighted[N,V]
 
-    def mutable[N]:MutableMapGraph[N] = new MutableMapGraph[N]()
-
-	def apply[@specialized(Int) N](): Graph[N] = new MutableMapGraph[N]()
+	def apply[@specialized(Int) N](): MutableGraph[N] = new MutableMapGraph[N]()
 	def apply[@specialized(Int) N](map: Map[N,Traversable[N]]): Graph[N] = new MapGraph(map)
     def apply[@specialized(Int) N](mappings:(N,Traversable[N])*): Graph[N] = new MapGraph(mappings.toMap)
 	def apply[@specialized(Int) N](nodes:Iterable[N], adjacent: N => Traversable[N]): Graph[N] = new GenericGraphImpl[N](nodes,adjacent)
-    def apply[@specialized(Int) N](edges:Traversable[(N,N)]): Graph[N] = new MutableMapGraph[N]() ++= edges
+    def apply[@specialized(Int) N](edges:Traversable[(N,N)]): MutableGraph[N] = new MutableMapGraph[N]() ++= edges
 	def apply[@specialized(Int) N, @specialized(Double,Int) V:Numeric](mappings:(N,Iterable[(N,V)])*): Graph[N] with Weighted[N,V] = {
 		val nodeWeightMap = mappings.toMap map {case (k,v) => (k,v.toMap)}
 		new WeightedGraphImpl[N,V](nodeWeightMap.keys, nodeWeightMap.mapValues{case m => m.keys}, (t:N,h:N) => nodeWeightMap(t)(h))

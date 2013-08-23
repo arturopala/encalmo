@@ -87,3 +87,5 @@ abstract class AbstractValueCalculator[A <: Value, B <: Value] extends ValueCalc
     }
     
 }
+
+class IllegalValueConversionException(message: String) extends Exception(message)

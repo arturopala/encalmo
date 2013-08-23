@@ -105,22 +105,20 @@ class UnitOfValueUnitTest extends AssertionsForJUnit {
     }
     
     @Test def testAddUnits {
-    	assertEquals("!m+kg!",(SI.m+SI.kg).toNameString)
     	assertEquals("m",(SI.m+SI.m).toNameString)
     	assertEquals("m",(SI.m+EmptyUnitOfValue).toNameString)
     	assertEquals("m",(EmptyUnitOfValue+SI.m).toNameString)
     }
     
     @Test def testSubtractUnits {
-    	assertEquals("!m-kg!",(SI.m-SI.kg).toNameString)
     	assertEquals("m",(SI.m-SI.m).toNameString)
     	assertEquals("m",(SI.m-EmptyUnitOfValue).toNameString)
     	assertEquals("m",(EmptyUnitOfValue-SI.m).toNameString)
     }
     
-    @Test def testIllegalUnit {
+    @Test(expected = classOf[IllegalUnitOperationException])
+    def testIllegalUnit {
     	assertEquals("!m+kg!",(SI.m+SI.kg).toNameString)
-    	assertEquals("!m+kg!*N",((SI.m+SI.kg)*SI.N).toNameString)
     }
     
     @Test def testPercent{

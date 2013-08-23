@@ -11,6 +11,7 @@ class ContextUnitTest extends AssertionsForJUnit {
 	import BasicSymbols._
 	
 	@Test def testContext1() {
+        implicit val cache = new ResultsCache()
 		val context = TestContext("1")
 		context(context.p1) = 3
 		context(context.p2) = 4
@@ -30,6 +31,7 @@ class ContextUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testContext2() {
+        implicit val cache = new ResultsCache()
 		val context = TestContext("1")
 		context(context.p1) = 3
 		context(context.p2) = 4
@@ -41,6 +43,7 @@ class ContextUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testContext3() {
+        implicit val cache = new ResultsCache()
 		val context = TestContext("1")
 		context(context.p1) = 3
 		context(context.p2) = 4
@@ -52,6 +55,7 @@ class ContextUnitTest extends AssertionsForJUnit {
 	}
 	
 	@Test def testUnitConversion1() {
+        implicit val cache = new ResultsCache()
         val c1 = Context()
         val c2 = Context()
         val s1 = Symbol("s1") unit SI.kg
@@ -68,6 +72,7 @@ class ContextUnitTest extends AssertionsForJUnit {
     }
     
     @Test def testUnitConversion2() {
+        implicit val cache = new ResultsCache()
         val c1 = Context()
         val c2 = Context()
         val s1 = Symbol("s1") unit SI.kg
@@ -84,6 +89,7 @@ class ContextUnitTest extends AssertionsForJUnit {
     }
     
     @Test def testUnitConversion3() {
+        implicit val cache = new ResultsCache()
         val c1 = Context()
         val c2 = Context()
         val s1 = Symbol("s1") unit SI.km
@@ -100,10 +106,11 @@ class ContextUnitTest extends AssertionsForJUnit {
     }
     
     @Test def testMutableContext1() {
+        implicit val cache = new ResultsCache()
         val c1 = Context()
         c1(a) = b
         assertEquals(b,c1.getRawExpression(a).get)
-        c1(c) = dynamic {
+        c1(c) = dynamic(a,b,d,e) { implicit cache =>
             c1.evaluate(a) match {
                 case x if x==b => d
                 case _ => e

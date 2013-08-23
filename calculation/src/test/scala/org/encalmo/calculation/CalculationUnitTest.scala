@@ -30,7 +30,7 @@ class CalculationUnitTest extends AssertionsForJUnit {
 	
 	@Test def test1 = {
 		import BasicSymbols._
-		
+        implicit val cache = new ResultsCache()
 		val c1 = Calculation("1") 
 		
 	    val fi = phiv
@@ -102,8 +102,8 @@ class CalculationUnitTest extends AssertionsForJUnit {
 		assertEquals(hypot(sqrt(Quot(Number(3.037E-4),Number(0.02339))),sqrt(Quot(Number(3.037E-4),Number(0.02339)))),re21)
 		assertEquals(hypot(Number(0.11394815169211275),Number(0.11394815169211275)),re22)
 		assertEquals(Number(0.6002191097678474),re30)
-		//assertEquals(Prod(Number(1.15),sqrt(Quot(Prod(Number(0.02339),Number(2.15E8)),min(Quot(Prod(Power(Constant(Symbol(Π),Number(3.141592653589793)),Number(2.0)),Number(2.05E11),Number(3.037E-4)),Power(Prod(Number(1.0),Number(3.0)),Number(2.0))), Prod(Quot(Number(1.0),Power(hypot(sqrt(Quot(Number(3.037E-4),Number(0.02339))),sqrt(Quot(Number(3.037E-4),Number(0.02339)))),Number(2.0))),Sum(Quot(Prod(Power(Constant(Symbol(Π),Number(3.141592653589793)),Number(2.0)),Number(2.05E11),Number(8.3E-7)),Power(Prod(Number(1.0),Number(3.0)),Number(2.0))),Prod(Number(8.0E10),Number(3.66E-6)))))))),re31)
-		assertEquals(Prod(Number(1.15),sqrt(Quot(Prod(Number(0.02339),Number(2.15E8)),min(Quot(Prod(Number(9.869604401089358),Number(2.05E11),Number(3.037E-4)),Power(Prod(Number(1.0),Number(3.0)),Number(2.0))), Prod(Quot(Number(1.0),Power(Number(0.16114702153033258),Number(2.0))),Sum(Quot(Prod(Number(9.869604401089358),Number(2.05E11),Number(8.3E-7)),Power(Prod(Number(1.0),Number(3.0)),Number(2.0))),Prod(Number(8.0E10),Number(3.66E-6)))))))),re32)
+		//assertEquals(???,re31)
+		assertEquals(Prod(Number(1.15),sqrt(Quot(Number(5028850),min(Number(68274085.06724685), Number(18460553.81536839))))),re32)
 		
 	}
 

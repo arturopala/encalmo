@@ -71,11 +71,10 @@ case class Selection(ce:CaseExpression,cases:Seq[Case]) extends Expression with 
   final override def map(f:Transformation):Expression = {
 	  val m:Seq[Case] = cases.map(c => {
 	 	  val vc =c.mapAll(f)
-	 	  if(vc.isInstanceOf[Case]){
-	 	 	  vc.asInstanceOf[Case]
-	 	  }else{
-	 	 	  EmptyCase
-	 	  }
+	 	  vc match {
+              case value: Case => value
+              case _ => EmptyCase
+          }
 	  })
 	  if(cases.zip(m).forall(t => t._1 eq t._2)){
 	 	  f(this)

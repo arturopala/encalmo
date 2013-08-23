@@ -2,7 +2,7 @@ package org.encalmo.printer.expression
 
 import org.encalmo.printer._
 import org.encalmo.expression._
-import org.encalmo.calculation.EvalAt
+import org.encalmo.calculation.{ResultsCache, EvalAt}
 import org.encalmo.common._
 import org.encalmo.common.Translator
 
@@ -220,7 +220,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
                            if(ic>0) w.write(", ")
                            x._1.visit(visitor = this)
                            w.write("=")
-                           ev.er.evaluate(x._2).visit(visitor = this)
+                           ev.er.evaluate(x._2)(new ResultsCache()).visit(visitor = this)
                            ic = ic + 1
                         }
                     )

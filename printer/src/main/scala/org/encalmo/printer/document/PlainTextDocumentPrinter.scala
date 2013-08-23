@@ -7,6 +7,7 @@ import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
 import scala.collection.mutable.LinkedHashMap
+import org.encalmo.calculation.FormulaSetCache
 
 /**
  * Prints document as plain text 
@@ -35,7 +36,7 @@ object PlainTextDocumentPrinter extends TextDocumentPrinter {
  * @author artur.opala
  */
 class PlainTextDocumentPrinterTraveler(output:TextOutput) 
-extends TreeVisitor[DocumentComponent] {
+extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 	
 	val w = output.asWriter
 	val locale = output.locale
@@ -168,11 +169,11 @@ extends TreeVisitor[DocumentComponent] {
 				plus
 			}
 			case expr:InlineExpr => {
-				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
+				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
 				ess.foreach(e => {write(" ");writeExpression(e);write(" ")})
 			}
 			case expr:BlockExpr => {
-				val ess:Seq[Seq[ExpressionToPrint]] = expr.resolve
+				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
 				//plus
 			    ess.foreach(es => {
 			        canNewLine = true;
@@ -198,7 +199,7 @@ extends TreeVisitor[DocumentComponent] {
 			    //writeLineEnd
 			}
 			case a:Assertion => {
-				val result = a.evaluate
+				val result = a.evaluate(resultCacheFor(a.calc))
 				val s = Section(a.style,result._2:_*)
 				s.visit(visitor = this);
 				result._1 match {

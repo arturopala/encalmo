@@ -1,7 +1,5 @@
 package org.encalmo.printer
 
-import org.encalmo.common.Translator
-
 /**
  * Text printer output class
  * @param locale - a Locale object representing a specific geographical, political, or cultural region
@@ -16,7 +14,7 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	val COMMA = DecimalFormatSymbols.getPatternSeparator
 	val SPACE = " "
 	
-	def getResult:String = buffer.toString
+	def getResult:String = buffer.toString()
 	
 	/**
 	 * Appends string to the buffer
@@ -30,7 +28,7 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	 * Appends optional string to the buffer
 	 */
 	def append(opt:Option[String]):Unit = {
-		opt.map(buffer.append(_))
+		opt.map(buffer.append)
 	}
 	
 	/**
@@ -89,7 +87,7 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	
 	override def close = Unit
 	
-	def printConsole = Console.println(getResult)
+	def printConsole() = Console.println(getResult)
 	
 	def saveToFile(file:java.io.File) = {
 	    file.getParentFile.mkdirs
@@ -106,11 +104,11 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 
 class TextOutputWriter(buffer:StringBuilder) extends java.io.Writer {
 	
-	def write(cbuf:Array[Char],offset:Int,len:Int) = {
-		buffer.append(cbuf, offset, len);
+	override def write(cbuf:Array[Char],offset:Int,len:Int) = {
+		buffer.appendAll(cbuf, offset, len)
 	}
-	
-	def close = Unit
-	
-	def flush = Unit
+
+    override def close() = Unit
+
+    override def flush() = Unit
 }

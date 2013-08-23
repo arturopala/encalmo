@@ -99,7 +99,7 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
 	val smax = symbol(BasicSymbols.s|"max") unit "m"
 	val smin = symbol(BasicSymbols.s|"min") unit "m"
 	val MaRd = symbol(BasicSymbols.M|"a,Rd") unit "kNm"
-	val VEdc = symbol(BasicSymbols.V|"Ed,c") unit "kN"
+	val VEdc = symbol(BasicSymbols.V|"Ed,c") unit "kN/m"
 	val kphi = symbol(BasicSymbols.k|BasicSymbols.phi)
 	val PpbRd = symbol(BasicSymbols.P|"pb,Rd") unit "kN"
 	val VRdsr = symbol(BasicSymbols.V|"Rd,s,r") unit "kN/m"
@@ -108,8 +108,8 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
 	val bn2 = symbol(BasicSymbols.b|"E,2") unit "m"
     val Sy2 = symbol(BasicSymbols.S|"y,2") unit "cm3"
     val z2 = symbol(BasicSymbols.z|"2") unit "m"
-    val I2 = symbol(BasicSymbols.I|"2") unit "cm4"
-	val yw = symbol(BasicSymbols.y|"w") unit "m"
+    val I2 = symbol(BasicSymbols.I|"2") unit "cm4" acc 1
+	val yw = symbol(BasicSymbols.y|"w") unit "mm"
 	val f = symbol(BasicSymbols.f) unit "Hz"
 	val mS = symbol(BasicSymbols.m|"S") unit "kg/m2" acc 1
 }
@@ -218,7 +218,7 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	z2 := Sy2/(A+bn2*hc)
 	I2 := Iy+A*(z2^2)+(bn2*(hc^3))/12+bn2*hc*((hc/2+hp+h/2-z2)^2)
 	yw := (5*Gk*(l^4))/(384*I2*E)
-	f := 18/sqrt(yw*1000).nounit
+	f := 18/sqrt(yw).nounit
 	//unit mass
 	mS := ((SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk)/(GRAV*SLAB.l)
 	

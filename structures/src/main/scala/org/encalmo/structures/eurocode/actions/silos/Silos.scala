@@ -95,7 +95,7 @@ object SilosSymbols extends SymbolConfigurator {
     lazy val ppfnc = symbol(BasicSymbols.p|"pf,nc") args (z) unit "kPa"
     lazy val ppfnc1 = symbol(BasicSymbols.p|"pf,nc,1") unit "kPa"
     lazy val ppfzp = symbol(BasicSymbols.p|"pf,zp") unit "kPa"
-    lazy val Fpf1 = symbol(BasicSymbols.F|"pf,1") unit "kN"
+    lazy val Fpf1 = symbol(BasicSymbols.F|"pf,1") unit "kN/m"
     lazy val zp = symbol(BasicSymbols.z|"p") unit SI.mm acc 1
     
     //discharge symmetrical load
@@ -114,7 +114,7 @@ object SilosSymbols extends SymbolConfigurator {
     lazy val ppenc = symbol(BasicSymbols.p|"pe,nc") args (z) unit "kPa"
     lazy val ppenc1 = symbol(BasicSymbols.p|"pe,nc,1") unit "kPa"
     lazy val ppezp = symbol(BasicSymbols.p|"pe,zp") unit "kPa"
-    lazy val Fpe1 = symbol(BasicSymbols.F|"pe,1") unit "kN"
+    lazy val Fpe1 = symbol(BasicSymbols.F|"pe,1") unit "kN/m"
     
     //loads on silo hoppers
     lazy val x = symbol(BasicSymbols.x)
