@@ -4,11 +4,7 @@ package org.encalmo.expression
  * Square root operation
  */
 case class sqrt(e:Expression) extends Operation1 with NamedOperation {
-	
-  /*override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.sqrt)
-	  case _ => copy(v)
-  }*/
+
   override def copy(x:Expression) = sqrt(x)
   override val operator = "sqrt"
 }
@@ -17,11 +13,7 @@ case class sqrt(e:Expression) extends Operation1 with NamedOperation {
  * Cube root operation
  */
 case class cbrt(e:Expression) extends Operation1 with NamedOperation {
-	
-  /*override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.cbrt)
-	  case _ => copy(v)
-  }*/
+
   override def copy(e:Expression) = cbrt(e)
   override val operator = "cbrt"
 }
@@ -30,11 +22,7 @@ case class cbrt(e:Expression) extends Operation1 with NamedOperation {
  * Free root operation
  */
 case class root(l:Expression,r:Expression) extends Operation2 with NamedOperation {
-	
-  /*override def calculate(lv:Value,rv:Value):Expression = (lv,rv) match {
-	  case (Number(lr),Number(rr)) => Number(lr.root(rr))
-	  case _ => copy(lv,rv)
-  }*/
+
   override def copy(l:Expression,r:Expression) = root(l,r)
   override val operator = "root"
 }
@@ -43,13 +31,7 @@ case class root(l:Expression,r:Expression) extends Operation2 with NamedOperatio
  * Minimum function
  */
 case class min(args:Expression*) extends OperationN with NamedOperation {
-	
-  /*override def calculate(v:Value*):Expression = {
-	  if(v.forall(_.isInstanceOf[Number]))
-	 	  new Number(v.map(_.asInstanceOf[Number].r.d).reduceLeft[Double]((b,a) => Math.min(a,b)))
-	  else
-	 	  copy(v:_*)
-  }*/
+
   override def copy(x:Expression*):min = min(x:_*)
   override val operator = "min"
 }
@@ -58,27 +40,17 @@ case class min(args:Expression*) extends OperationN with NamedOperation {
  * Maximum function
  */
 case class max(args:Expression*) extends OperationN with NamedOperation {
-	
-  /*override def calculate(v:Value*):Expression = {
-	  if(v.forall(_.isInstanceOf[Number]))
-	 	  new Number(v.map(_.asInstanceOf[Number].r.d).reduceLeft[Double]((b,a) => Math.max(a,b)))
-	  else
-	 	  copy(v:_*)
-  }*/
+
   override def copy(x:Expression*) = max(x:_*)
   override val operator = "max"
 }
 
 /**
- * {@link java.lang.Math}
+ *
  * @author artur.opala
  */
 case class hypot(l:Expression,r:Expression) extends Operation2 with NamedOperation  {
-  
-  /*override def calculate(lv:Value,rv:Value):Expression = (lv,rv) match {
-	  case (Number(lr),Number(rr)) => Number(lr.hypot(rr))
-	  case _ => copy(lv,rv)
-  }*/
+
   override def copy(le:Expression,re:Expression) = hypot(le,re)
   override val operator = "hypot"
       
@@ -89,11 +61,7 @@ case class hypot(l:Expression,r:Expression) extends Operation2 with NamedOperati
  * Exponent function
  */
 case class exp(e:Expression) extends Operation1 with NamedOperation {
-	
-  /*override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.exp)
-	  case _ => copy(v)
-  }*/
+
   override def copy(e:Expression) = exp(e)
   override val operator = "exp"
 }
@@ -102,11 +70,7 @@ case class exp(e:Expression) extends Operation1 with NamedOperation {
  * Natural logarithm (base is e) function
  */
 case class ln(e:Expression) extends Operation1 with NamedOperation {
-	
-  /*override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.ln)
-	  case _ => copy(v)
-  }*/
+
   override def copy(e:Expression) = ln(e)
   override val operator = "ln"
 }
@@ -115,11 +79,7 @@ case class ln(e:Expression) extends Operation1 with NamedOperation {
  * Common logarithm (base is 10) function
  */
 case class log(e:Expression) extends Operation1 with NamedOperation {
-	
-  /*override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.log)
-	  case _ => copy(v)
-  }*/
+
   override def copy(e:Expression) = log(e)
   override val operator = "log"
 }
@@ -131,11 +91,17 @@ case class log(e:Expression) extends Operation1 with NamedOperation {
 case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Operation1 with NamedOperation with Transparent {
 	
   override def calculate(v:Value):Expression = v match {
-	  case Number(r,u) => {
-	       val n = Number(rm.round(r.d),u)
-	       n.isRounded = true
-	       n.original = Some(r)
-	       n
+	  case number: Number => {
+          val rounded: Double = rm.round(number.r.d)
+          if(number.r.sameValue(rounded)){
+              number
+          } else {
+              val n = Number(Real(rounded),number.unit)
+              n.isRounded = true
+              n.original = Some(number.r)
+              n
+          }
+
 	  }
 	  case _ => copy(v)
   }
@@ -147,11 +113,7 @@ case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Opera
  * Absolute value operation
  */
 case class abs(e:Expression) extends Operation1 with NamedOperation {
-	
-  /*override def calculate(v:Value):Expression = v match {
-	  case Number(r) => Number(r.abs)
-	  case _ => copy(v)
-  }*/
+
   override def copy(e:Expression) = abs(e)
   override val operator = "abs"
 }

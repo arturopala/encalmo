@@ -55,13 +55,13 @@ case class Selection(ce:CaseExpression,cases:Seq[Case]) extends Expression with 
 	 * or default expression if neither case succeeds.
 	 * @return
 	 */
-  override def eval:Expression = {
+  override def eval():Expression = {
     for(cas:Case <- cases){
-    	if(cas.test)return cas.ce.eval
+    	if(cas.test)return cas.ce.eval()
     }
     ce.expr match {
 	  	case Unknown => this
-	  	case _ => ce.eval
+	  	case _ => ce.eval()
 	  }
   }
   

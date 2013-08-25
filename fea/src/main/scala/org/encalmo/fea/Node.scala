@@ -34,7 +34,7 @@ case class Node(
     /** Z coordinate */
     def z:Double = coordinates.z
     /** Print out node's coordinates */
-    def printout = {
+    def printout() = {
         val c = coordinates
         Console.print(x)
         Console.print(" ")
@@ -42,7 +42,7 @@ case class Node(
         Console.print(" ")
         Console.print(z)
     }
-    /** from {@link Ordered} */
+    /** from */
     override def compare(node:Node):Int = {
         if(no>=0 && node.no>=0){
             no compare node.no

@@ -27,7 +27,7 @@ class Calculation(val id:Option[String] = None) extends MutableContext with Muta
 		if(opened) super.add(er) else throwContextAlreadyLockedException
 	}
 	
-	def label:Expression = id.map(text(_)).getOrElse(null)
+	def label:Expression = id.map(text).getOrElse(null)
 	
     private var accuracy:Option[Double] = None
     def acc(d:Double):Calculation = {

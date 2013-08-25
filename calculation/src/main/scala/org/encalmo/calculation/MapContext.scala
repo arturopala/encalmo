@@ -5,7 +5,7 @@ import org.encalmo.expression._
 import scala.collection.mutable
 
 /** 
- * Base {@link org.encalmo.calculation.Context} implementation
+ * Base  implementation
  */
 class MapContext(val id:Option[String] = None) extends MutableContext {
 	

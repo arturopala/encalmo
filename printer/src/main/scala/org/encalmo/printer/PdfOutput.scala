@@ -1,6 +1,7 @@
 package org.encalmo.printer
 
-import java.io.OutputStream;import java.io.ByteArrayOutputStream;
+import java.io.OutputStream
+import java.io.ByteArrayOutputStream
 
 /**
  * PDF output class
@@ -16,7 +17,7 @@ class PdfOutput(
 	/**
 	 * Opens the output (ex: writes initial statement)
 	 */
-	override def open = {}
+	override def open() = {}
 	
 	/**
 	 * Appends the content to the output and returns output object
@@ -29,13 +30,13 @@ class PdfOutput(
 	/**
 	 * Closes the output (ex: writes final statement)
 	 */
-	def close = {}
+	def close() = {}
 	
 	/**
 	 * Returns the resulting data
 	 */
 	def getResult:Array[Byte] = {
-		stream.flush
+		stream.flush()
 		stream.toByteArray
 	}
 	

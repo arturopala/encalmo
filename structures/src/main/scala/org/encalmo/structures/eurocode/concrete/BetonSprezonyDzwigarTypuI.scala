@@ -16,13 +16,12 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     import SI.{mm,mm2,cm,cm2,kN,MPa}
 
     val beton = Concrete.C_40_50
-    //val zbrojenie = ReinforcingSteel.B500SP
     calc add beton
     
     val lr = l|r is "Rozstaw osi dźwigarów" unit SI.m; calc(lr) = 5.5
     val ld = l|d is "Rozpiętość dźwigara w osi podpór" unit SI.m; calc(ld) = 14
     val leff = l|"eff" is "Długość efektywna dźwigara do obliczeń" unit SI.m; calc(leff) = ld
-    val hd = h|d is "Wysokość przekroju dźwigara" unit SI.cm acc 1; calc(hd) = 85
+    val hd = h|d is "Wysokość przekroju dźwigara" unit SI.cm acc 1; calc(hd) = 86
     
     val phis = phi|s is "Średnica strzemion" unit SI.mm; calc(phis) = 6
     
@@ -94,11 +93,11 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val dps = d|"ps" is "Ogległość osi skrajnych cięgien od krawedzi przekroju" unit cm; calc(dps) = cp+phip/2
     val dp = d|"p" is "Ogległość osi rzędów cięgien" unit cm; calc(dp) = dymin+phip
     
-    val yp1 = y|"p1" is "Położenie wypadkowej cięgien dolnych względem dolnej krawędzi przekroju"; 
+    val yp1 = y|"p1" is "Położenie wypadkowej cięgien dolnych względem dolnej krawędzi przekroju"
     yp1 := dynamic(np1y,np1xr) { cache =>
         (np1x*dps)/np1 + Sum((for (x <- 1 to cache(np1y).toInt-1) yield (np1x*(dps+x*dp))/np1):_*) + cache(np1xr).mapIfNotZero{(np1xr*(dps+ np1y *dp))/np1}
     }
-    val yp2 = y|"p2" is "Położenie wypadkowej cięgien górnych względem górnej krawędzi przekroju";
+    val yp2 = y|"p2" is "Położenie wypadkowej cięgien górnych względem górnej krawędzi przekroju"
     yp2 := dynamic(np2y,np2xr) { cache =>
         (np2x*dps)/np2 + Sum((for (x <- 1 to cache(np2y).toInt-1) yield (np2x*(dps+x*dp))/np2):_*) + cache(np2xr).mapIfNotZero{(np2xr*(dps+ np2y *dp))/np2}
     }
@@ -108,8 +107,8 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val ycd = y|"cd" is "Położenie osi obojętnej przekroju betonowego względem dolnej krawędzi przekroju" unit cm; calc(ycd) = Sc/Ac
     val ycg = y|"cg" is "Położenie osi obojętnej przekroju betonowego względem górnej krawędzi przekroju" unit cm; calc(ycg) = hd-ycd
     
-    val Ic = I|c is "Moment bezwładności przekroju betonowego" unit SI.cm4 acc 1;
-    calc(Ic) = round(((bd*(hz1^3))/12) + bd*hz1*((ycg-hz1/2)^2) + ((bd*(hz3^3))/12) + bd*hz3*((ycd-hz3/2)^2) + ((b1*(hz2^3))/12) + b1*hz2*((ycd-(hz3+hz2/2))^2),RoundingMode.FLOOR)
+    val Ic = I|c is "Moment bezwładności przekroju betonowego" unit SI.cm4 acc 1
+    calc(Ic) = ((bd*(hz1^3))/12) + bd*hz1*((ycg-hz1/2)^2) + ((bd*(hz3^3))/12) + bd*hz3*((ycd-hz3/2)^2) + ((b1*(hz2^3))/12) + b1*hz2*((ycd-(hz3+hz2/2))^2)
     
     val Wcd = W|"cd" is "Wskaźnik zginania włókien dolnych przekroju betonowego" unit SI.cm3 acc 1; calc(Wcd) = Ic/ycd
     val Wcg = W|"cg" is "Wskaźnik zginania włókien górnych przekroju betonowego" unit SI.cm3 acc 1; calc(Wcg) = Ic/ycg
@@ -149,7 +148,7 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val sigcpo = sigma|"cpo" is "Napreżenia w betonie wywołane działaniem siły sprężajacej" unit MPa; calc(sigcpo) = Pmo2/Acs+(Pmo2*(zcp^2))/Ics
     val sigpcs1 = sigma|"p,C+S,1" is "Wartość licznika do obliczenia σp,C+S"; calc(sigpcs1) = (epsics*(200 unit SI.GPa)+alphae*phit*(sigcg+sigcpo))
     val sigpcs2 = sigma|"p,C+S,2" is "Wartość mianownika do obliczenia σp,C+S"; calc(sigpcs2) = (1+alphae*(Ap/Acs)*(1+(zcp^2)*(Acs/Ics))*(1+0.8*phit))
-    val sigpcs = sigma|"p,C+S" is "Naprężenie po stratach wywołanych skurczem i pełzaniem betonu" unit MPa; 
+    val sigpcs = sigma|"p,C+S" is "Naprężenie po stratach wywołanych skurczem i pełzaniem betonu" unit MPa
     calc(sigpcs) = sigpcs1/sigpcs2
     val dPt = "ΔP"|"t" is "Strata reologiczna wywołana skurczem i pełzaniem betonu" unit kN acc 0.1; calc(dPt) = sigpcs*Ap
     val Pmt = P|"mt" is "Siła sprężająca po uwzględnieniu strat reologicznych betonu" unit kN acc 0.1; calc(Pmt) = Pmo2 - dPt
@@ -170,15 +169,15 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val k1 = k|1 is ""; calc(k1) = max((1.6 - (d1.nounit)/100),1)
     val sigcp = sigma|"cp" is "Średnie naprężenie ściskające w betonie" unit MPa; calc(sigcp) = min((0.9*Pmt)/Acs,0.2*fcd)
     val Vsd = V|"sd" is "Siła ścinająca w odległości d od podpory wg [1] 5.5.1.2" unit kN; calc(Vsd) = qd*(leff)/2 - qd*(d1+(20 unit cm))
-    val VRd1 = V|"Rd1" is "Nośność obliczeniowa na ścinanie ze względu na rozciąganie betonu powstające przy ścinaniu w elemencie nie mającym poprzecznego zbrojenia na ścinanie" unit kN; 
+    val VRd1 = V|"Rd1" is "Nośność obliczeniowa na ścinanie ze względu na rozciąganie betonu powstające przy ścinaniu w elemencie nie mającym poprzecznego zbrojenia na ścinanie" unit kN
     calc(VRd1) = (0.35*k1*fctd*(1.2+40*rhol)+0.15*sigcp)*b1*d1
-    val VRd21 = (V|"Rd2")(1) is "Nośność obliczeniowa na ścinanie ze względu na ściskanie betonu powstające przy ścinaniu w elementach zginanych dla odcinka typu 1" unit kN; 
+    val VRd21 = (V|"Rd2")(1) is "Nośność obliczeniowa na ścinanie ze względu na ściskanie betonu powstające przy ścinaniu w elementach zginanych dla odcinka typu 1" unit kN
     calc(VRd21) = 0.5*vc*fcd*b1*d1
-    val VRd22 = (V|"Rd2")(2) is "Nośność obliczeniowa na ścinanie ze względu na ściskanie betonu powstające przy ścinaniu w elementach zginanych dla odcinka typu 2" unit kN; 
+    val VRd22 = (V|"Rd2")(2) is "Nośność obliczeniowa na ścinanie ze względu na ściskanie betonu powstające przy ścinaniu w elementach zginanych dla odcinka typu 2" unit kN
     calc(VRd22) = 0.5*vc*fcd*b1*d1*(1d/(1+1))
     val alphac = alpha|c is "Współczynnik redukcji nośności na ścinanie"; calc(alphac) = 1+sigcp/fcd
     val VRd2RED = V|"Rd2,RED" is "Nośność VRd2 w elementach obciążonych dodatkowo siłami ściskającymi dla odcinka typu 1" unit kN; calc(VRd2RED) = alphac*VRd21
-    val VRd3 = V|"Rd3" is "Nośność obliczeniowa na ścinanie ze względu na rozciąganie poprzecznego zbrojenia na ścinanie" unit kN; 
+    val VRd3 = V|"Rd3" is "Nośność obliczeniowa na ścinanie ze względu na rozciąganie poprzecznego zbrojenia na ścinanie" unit kN
     val Asw1 = A|"sw1" is "Przekrój zbrojenia poprzecznego" unit mm2; calc(Asw1) = 2*((PI*(phis^2))/4)
     val s1 = s|"1" is "Rozstaw strzemion zbrojenia poprzecznego" unit cm acc 0.5; calc(s1) = ((Asw1*(210 unit MPa))*d1*1)/Vsd
     
@@ -277,10 +276,10 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
                         ,NumSection("Sprawdzenie możliwości pojawienia się rys ukośnych"
                                 ,NumSection("W punkcie 1 na osi obojętnej"
                                         ,Evaluate(lbp,lbpd,Vsk1,Scs1,sigx1,tauxy1,sigt1)
-                                        ,AssertionLE("braku zarysowania",calc,-fctm,sigt1))
+                                        ,AssertionLE("braku zarysowania",calc,-sigt1,fctm))
                                 ,NumSection("W punkcie 2 na styku środnika i półki"
                                         ,Evaluate(Scs2,sigx2,tauxy2,sigt2)
-                                        ,AssertionLE("braku zarysowania",calc,-fctm,sigt2)))
+                                        ,AssertionLE("braku zarysowania",calc,-sigt2,fctm)))
                         ,NumSection("Sprawdzenie ugięcia dźwigara"
                                ,Evaluate(umax,Eceff,alphak,alphap,u1)
                                ,AssertionLE("ugięcia",calc,u1,umax))

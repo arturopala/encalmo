@@ -17,7 +17,7 @@ trait MutableContext extends Context {
   
   protected var opened:Boolean = true
   /** Locks context content */
-  def lock = {opened = false}  
+  def lock() = {opened = false}
   protected def throwContextAlreadyLockedException = throw new IllegalStateException("This context is locked.")
   
   /**

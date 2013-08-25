@@ -7,6 +7,7 @@ import org.encalmo.common.Node
 import scala.collection.mutable.{Set,LinkedHashSet}
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
+import scala.collection.mutable
 
 /**
  * DocumentComponent trait
@@ -51,8 +52,8 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeNodeWith
         }
     }
     
-	lazy val allStyles:Set[Style] = {
-	    val stylesSet:Set[Style] = LinkedHashSet()
+	lazy val allStyles:mutable.Set[Style] = {
+	    val stylesSet:mutable.Set[Style] = mutable.LinkedHashSet()
 	    if(dcStyle!=null){
         	stylesSet.add(dcStyle)
         }

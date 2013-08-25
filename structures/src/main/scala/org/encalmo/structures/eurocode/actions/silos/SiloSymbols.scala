@@ -1,20 +1,11 @@
 package org.encalmo.structures.eurocode.actions.silos
 
 import org.encalmo.expression._
-import org.encalmo.calculation.Context
-import org.encalmo.calculation.MapContext
-import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
-import org.encalmo.calculation.EvalAt
-import org.encalmo.document._
-import org.encalmo.structures.eurocode.concrete.Concrete
-import org.encalmo.structures.eurocode.concrete.ReinforcingSteel
-import org.encalmo.structures.eurocode.concrete.ConcreteSymbols
 
 /** Silos symbols */
-object SilosSymbols extends SymbolConfigurator {
+object SiloSymbols extends SymbolConfigurator {
 
-	import BasicSymbols._
 	val dictionary, contextId = "silos"
 	    
 	//input geometry    
@@ -95,7 +86,7 @@ object SilosSymbols extends SymbolConfigurator {
     lazy val ppfnc = symbol(BasicSymbols.p|"pf,nc") args (z) unit "kPa"
     lazy val ppfnc1 = symbol(BasicSymbols.p|"pf,nc,1") unit "kPa"
     lazy val ppfzp = symbol(BasicSymbols.p|"pf,zp") unit "kPa"
-    lazy val Fpf1 = symbol(BasicSymbols.F|"pf,1") unit "kN/m"
+    lazy val Fpf1 = symbol(BasicSymbols.F|"pf,1") unit "kN"
     lazy val zp = symbol(BasicSymbols.z|"p") unit SI.mm acc 1
     
     //discharge symmetrical load
@@ -114,7 +105,7 @@ object SilosSymbols extends SymbolConfigurator {
     lazy val ppenc = symbol(BasicSymbols.p|"pe,nc") args (z) unit "kPa"
     lazy val ppenc1 = symbol(BasicSymbols.p|"pe,nc,1") unit "kPa"
     lazy val ppezp = symbol(BasicSymbols.p|"pe,zp") unit "kPa"
-    lazy val Fpe1 = symbol(BasicSymbols.F|"pe,1") unit "kN/m"
+    lazy val Fpe1 = symbol(BasicSymbols.F|"pe,1") unit "kN"
     
     //loads on silo hoppers
     lazy val x = symbol(BasicSymbols.x)

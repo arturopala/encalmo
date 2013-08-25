@@ -29,7 +29,7 @@ trait TreeNode[A<:TreeNode[A]] extends Visitable[A] {
 	 * Subtypes should return own copy with custom arguments after transformation
 	 * @param f transformate
 	 * @return fully tranformed structure
-	 * @throw CycleDetectedException if loop count exceeds max allowed number (256)
+	 * @throws CycleDetectedException if loop count exceeds max allowed number (256)
 	 */
 	@tailrec
 	final def mapAll(f:A=>A, c:Int = 0, source:A = this):A = {
@@ -39,7 +39,7 @@ trait TreeNode[A<:TreeNode[A]] extends Visitable[A] {
 			throw new CycleDetectedException[A](source,source.toString+" -> "+e.toString)
 		}else{
 			if(this.eq(e)) {
-				return e
+				e
 			}else{
 				e.mapAll(f, c+1, source)
 			}
@@ -47,8 +47,7 @@ trait TreeNode[A<:TreeNode[A]] extends Visitable[A] {
 	}
     
     /**
-     * Travels internal structure of the expression 
-     * @param t visitor
+     * Travels internal structure of the expression
      */
   	final override def visit(visitor:TreeVisitor[A], parentNode:Node[A] = null, position:Int=0):Unit = {
   	    val element = visitor.mapElement(this)

@@ -33,30 +33,30 @@ case class Chart (
     lazy val surface:Shape = Builder.buildDelaunay(coords).asInstanceOf[Shape]
     
     def writeImage(path:Path,width:Int = 1024,height:Int = 1024,options:ChartOptions = ChartOptions()) = {
-        val max = Math.max(surface.getBounds().getZmin(),surface.getBounds().getZmax())
+        val max = Math.max(surface.getBounds.getZmin,surface.getBounds.getZmax)
         val myColorMapper:ColorMapper = new ColorMapper(options.colorMap, -max, max, new Color(1,1,1,.5f))
         surface.setColorMapper(myColorMapper)
         surface.setFaceDisplayed(options.faceDisplayed)
-        surface.setWireframeDisplayed(options.wireframeDisplayed);
+        surface.setWireframeDisplayed(options.wireframeDisplayed)
         surface.setWireframeColor(options.wireframeColor)
         val chart = new org.jzy3d.chart.Chart(Quality.Advanced,"offscreen,"+width+","+height+"")
-        chart.getView().setAxeBoxDisplayed(options.axeBox);
-        chart.getView().setCameraMode(options.cameraMode);
-        chart.getView().setBoundMode(options.boundMode);
-        chart.getView().setViewPositionMode(ViewPositionMode.FREE);
-        chart.getView().setViewPoint(options.viewPoint);
-        chart.getScene().getGraph().add(surface);
+        chart.getView.setAxeBoxDisplayed(options.axeBox)
+        chart.getView.setCameraMode(options.cameraMode)
+        chart.getView.setBoundMode(options.boundMode)
+        chart.getView.setViewPositionMode(ViewPositionMode.FREE)
+        chart.getView.setViewPoint(options.viewPoint)
+        chart.getScene.getGraph.add(surface)
         createImageFile(chart,path)
     }
     
     private def createImageFile(chart:org.jzy3d.chart.Chart, path:Path) {
         try {
             val pathString = path.toAbsolute.path
-            ImageIO.write(chart.getCanvas().screenshot(), "png", new File(pathString));
-            Console.println("Image saved in: " + path);
+            ImageIO.write(chart.getCanvas.screenshot(), "png", new File(pathString))
+            Console.println("Image saved in: " + path)
         } catch {
             case e: Throwable => {
-                e.printStackTrace
+                e.printStackTrace()
                 throw e
             }
         }

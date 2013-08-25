@@ -15,8 +15,8 @@ class EvalAt(val expr:Expression, val er:ExpressionResolver) extends Expression 
 	}
 	
 	override def map(f:Transformation):Expression = {
-		val ve = f(expr.map(f));
-		if(ve==expr) f(this) else f(new EvalAt(ve, er))
+		val ve = f(expr.map(f))
+        if(ve==expr) f(this) else f(new EvalAt(ve, er))
 	}
 	
 	def resolve = {

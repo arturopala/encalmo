@@ -29,7 +29,7 @@ abstract class CalculationDocument extends Calculation {
     /** Calculation's output files base name */
     val name:String
     
-    @Test def printHtml:Unit = {
+    @Test def printHtml():Unit = {
         val layout = Predefined.layout
         val prefs:HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path.fromString("src/main/resources/style.css"))
         val output:HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"),prefs)
@@ -39,7 +39,7 @@ abstract class CalculationDocument extends Calculation {
         output.saveToFile(new java.io.File("target/test-results/"+name+".html"))
     }
     
-    @Test def printPdf:Unit = {
+    @Test def printPdf():Unit = {
         val layout = Predefined.layout
         val output:XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open
@@ -49,10 +49,10 @@ abstract class CalculationDocument extends Calculation {
         FOPHelper.buildPDF(output.getResult, "target/test-results/"+name+".pdf")
     }
     
-    @Test def printText:Unit = {
+    @Test def printText():Unit = {
         val o:TextOutput = new TextOutput(new java.util.Locale("PL"))
         PlainTextDocumentPrinter.print(doc,o)
-        o.printConsole
+        o.printConsole()
     }
     
 }

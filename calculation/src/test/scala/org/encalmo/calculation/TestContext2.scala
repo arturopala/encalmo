@@ -18,7 +18,7 @@ class TestContext2(id:String,coeff:Double) extends MapContext() {
 	val e_b:Expression = x*yy
 	val e_c:Expression = hypot(x,yy)
 	val e_d:Expression = 2*org.encalmo.expression.min(a,b,c)
-	val e_e:Expression = x*yy or (IsZero(z) then x^yy)
+	val e_e:Expression = x*yy or (IsZero(z) thenUse x^yy)
 	
 	this(a) = e_a
 	this(b) = e_b

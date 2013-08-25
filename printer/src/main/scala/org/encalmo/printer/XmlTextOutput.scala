@@ -1,5 +1,7 @@
 package org.encalmo.printer
 
+import scala.language.postfixOps
+
 /**
  * XML text output
  * @author artur.opala
@@ -12,9 +14,9 @@ class XmlTextOutput(
 ) 
 extends TextOutput(locale,buffer) {	
 	
-	var attrCounter = 0;
-	
-	override def open = {
+	var attrCounter = 0
+
+    override def open() = {
 		append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 	}
 	
@@ -39,8 +41,8 @@ extends TextOutput(locale,buffer) {
 		} else {
 			indent.isFirst = false
 		}
-		indent ++;
-		buffer.append("<")
+		indent ++()
+        buffer.append("<")
 		appendTagName(name)
 	}
 	
@@ -50,7 +52,7 @@ extends TextOutput(locale,buffer) {
         } else {
             indent.isFirst = false
         }
-        indent ++;
+        indent ++()
         buffer.append("<")
         appendTagName(name)
     }
@@ -60,7 +62,7 @@ extends TextOutput(locale,buffer) {
 	 */
 	def startb(name:String):Unit = {
 		start(name)
-		body
+		body()
 	}
 	
 	/**
@@ -88,7 +90,7 @@ extends TextOutput(locale,buffer) {
 	 */
 	def startb(name:String, classId:Option[String]*):Unit = {
 		start(name,classId:_*)
-		body
+		body()
 	}
 	
 	/**
@@ -96,13 +98,13 @@ extends TextOutput(locale,buffer) {
 	 */
 	def startb(name:String, classId:String):Unit = {
 		start(name,classId)
-		body
+		body()
 	}
 	
 	/**
 	 * Appends opening tag's closing bracket to the buffer
 	 */
-	def body:Unit = {
+	def body():Unit = {
 		buffer.append(">")
 		indent.inBody = true
 		attrCounter = 0
@@ -111,9 +113,9 @@ extends TextOutput(locale,buffer) {
 	/**
 	 * Appends element's end tag to the buffer
 	 */
-	def end:Unit = {
+	def end():Unit = {
 		buffer.append("/>")
-		indent --;
+		indent --()
 		indent.inBody = false
 	}
 	
@@ -121,8 +123,8 @@ extends TextOutput(locale,buffer) {
 	 * Appends element's end tag to the buffer
 	 */
 	def end(name:String):Unit = {
-		indent --;
-		if(!indent.inBody){
+		indent.--()
+        if(!indent.inBody){
 			indent.append(buffer)
 		}
 		buffer.append("</")
@@ -132,7 +134,7 @@ extends TextOutput(locale,buffer) {
 	}
 	
 	def endNoIndent(name:String):Unit = {
-        indent --;
+        indent --()
         buffer.append("</")
         appendTagName(name)
         buffer.append(">")
@@ -145,7 +147,7 @@ extends TextOutput(locale,buffer) {
 	 */
 	def elem(name:String):Unit = {
 		start(name)
-		end
+		end()
 	}
 	
 	/**
@@ -174,7 +176,7 @@ extends TextOutput(locale,buffer) {
 	 */
 	def attr(name:String,value:Any*):Unit = {
 		startAttr(name)
-		value.foreach(buffer.append(_))
+		value.foreach(buffer.append)
 		endAttr()
 	}
 	
@@ -281,10 +283,10 @@ class Indent(spaceCount:Int) {
 	
 	private var size = 0 
 	
-	def ++ = {size = size + 1}
-	def -- = {size = size - 1}
+	def ++() = {size = size + 1}
+	def --() = {size = size - 1}
 	
-	def reset = {size = 0}
+	def reset() = {size = 0}
 	
 	def append(buffer:StringBuilder) = {
 		buffer.append("\r\n")

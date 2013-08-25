@@ -1,5 +1,6 @@
 package org.encalmo.printer
-import java.io.Writer
+
+import java.io.Writer
 import org.encalmo.expression._
 import org.encalmo.style.Style
 import org.encalmo.style.FontStyle
@@ -42,48 +43,48 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		}
 		attr("scriptsizemultiplier","0.95")
 		attr("scriptminsize","6pt")
-		body
+		body()
 		if(printStyles && mathStyle!=null){
 			start(MSTYLE)
 			appendStyleAttributes(mathStyle)
-			body
+			body()
 		}
 	}
 	
-	override def close = {
+	override def close() = {
 		if(printStyles && mathStyle!=null){
 			end(MSTYLE)
 		}
 		endNoIndent(MATH)
 	}
 	
-	def thickspace = {
+	def thickspace() = {
 		start(MSPACE)
 		attr("width",THICKMATHSPACE)
-		body
+		body()
 	}
 
-	def thinspace = {
+	def thinspace() = {
 		start(MSPACE)
 		attr("width",THINMATHSPACE)
-		body
+		body()
 	}
 
-	def leftBracket = {
+	def leftBracket() = {
 		start(MFENCED)
 		attr("open","(")
 		attr("close",")")
 		attr("separators",";")
-		body
+		body()
 		startb(MROW)
 	}
 
-	def rightBracket = {
+	def rightBracket() = {
 		end(MROW)
 		end(MFENCED)
 	}
 	
-	def separator = {
+	def separator() = {
 		end(MROW)
 		startb(MROW)
 	}
@@ -99,7 +100,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if (rspace != null) {
 			attr("rspace",rspace)
 		}
-		body
+		body()
 		buffer append convertOperator(s)
 		end(MO)
 	}
@@ -114,18 +115,20 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
         case ">=" => "&geq;"
         case "!=" => "&ne;"
         case "=" => "="
-        case "≈" => "&sime;"
+        case "≈" => "&asymp;"
+        case "≃" => "&sime;"
+        case "~" => "&sim;"
         case _ => s
     }
 
 	def mn(n: Number):Unit = {
-		val nf:NumberFormatted = n.formatForPrint
+		val nf:NumberFormatted = n.formattedForPrint
 		if(nf.hasExponent || nf.isNegative) {
 			start(MROW)
 			if(numberStyle!=null){
 				appendStyleAttributes(numberStyle)
 			}
-			body
+			body()
 		}
 		val omit = !nf.isNegative && nf.integer==1 && nf.fraction==0 && nf.exponent!=0
 		if(!omit){
@@ -139,7 +142,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 				}
 			}
 			attr("class",NUM_CLASS_ID)
-			body
+			body()
 			integerFormat1.format(nf.integer).toCharArray.map{case ' ' => append("&thinsp;"/*MathMLTags.ENTITY_THIN_SPACE*/); case a => append(a)}
 			if(nf.fraction>0){
 				nf.decimals match {
@@ -156,14 +159,14 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 				start(MO)
 				attr("class","numexp")
 				attr("mathsize",resolveStyle.font.size-2)
-				body
+				body()
 				append(ENTITY_CENTER_DOT)
 				end(MO)
 			}
 			start(MSUP)
 			attr("mathsize",resolveStyle.font.size-2)
 			attr("class","numexp")
-			body
+			body()
 			startb(MN)
 			append("10")
 			end(MN)
@@ -198,7 +201,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if(variant!=null){
 		    attr("mathvariant",variant)
 		}
-		body
+		body()
 		append(s)
 		end(MI)
 	}
@@ -206,7 +209,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	def mtextClass(classId:String,s:String*):Unit = {
 		start(MTEXT)
 		attr("class",classId)
-		body
+		body()
 		s.foreach(append(_))
 		end(MTEXT)
 	}
@@ -220,7 +223,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	def mtext(s:String, size: Int):Unit = {
 		start(MTEXT)
 		if(size>0) attr("mathsize",size,"%")
-		body
+		body()
 		append(s)
 		end(MTEXT)
 	}
@@ -228,7 +231,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	def mtext2(s:String, lspace:String=null,rspace:String=null, size: Int = 0):Unit = {
 		start(MTEXT)
 		if(size>0) attr("mathsize",size,"%")
-		body
+		body()
 		if (lspace != null) append(lspace)
 		append(s)
 		if (rspace != null) append(rspace)
@@ -238,7 +241,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	def msup(s1:String,s2:String,lspace:String=null,rspace:String=null,size:Int = 0){
 		start(MSUP)
 		if(size>0) attr("mathsize",size,"%")
-		body
+		body()
 		if (lspace != null) append(lspace)
 		mtext(s1)
 		mtext(s2)
@@ -254,7 +257,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	    if(classId!=null){
 	        attr("class",classId)
 	    }
-	    body
+	    body()
 		//under-over script start
 		if (s.hasOverAndUnderscript) startb(MUNDEROVER)
 		else if (s.hasOverscript) startb(MOVER)
@@ -276,7 +279,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		    start(MTEXT)
 		    attr("mathsize","90%")
 		    //attr("mathvariant","italic")
-		    body
+		    body()
             append("[")
             var ic = 0
             s.indexes.get.foreach(i => {
@@ -303,7 +306,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		if(printArgs && s.hasArgs){
 		    start(MROW,SYMB_ARGS_CLASS_ID)
 		    attr("mathsize","85%")
-		    body
+		    body()
             startb(MTEXT)
 		    append("(")
 		    end(MTEXT)

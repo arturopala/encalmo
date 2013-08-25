@@ -64,11 +64,11 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
     val Mke = symbol(BasicSymbols.M|("k|e")) unit "kNm"
     val sigmadm1 = symbol(BasicSymbols.sigma|("d|m,1")) unit "MPa"
     val sigmakm1 = symbol(BasicSymbols.sigma|("k|m,1")) unit "MPa"
-    val deltam0 = symbol(BasicSymbols.delta|"m,0") unit "mm"
-    val deltam = symbol(BasicSymbols.delta|"m") unit "mm"
-    val deltam1 = symbol(BasicSymbols.delta|"m,1") unit "mm"
-    val deltamax = symbol(BasicSymbols.delta|"max") unit "mm"
-    val deltae = symbol(BasicSymbols.delta|"e") unit "mm"
+    val deltam0 = symbol(BasicSymbols.delta|"m,0") unit "mm" acc 1
+    val deltam = symbol(BasicSymbols.delta|"m") unit "mm" acc 1
+    val deltam1 = symbol(BasicSymbols.delta|"m,1") unit "mm" acc 1
+    val deltamax = symbol(BasicSymbols.delta|"max") unit "mm" acc 1
+    val deltae = symbol(BasicSymbols.delta|"e") unit "mm" acc 1
     val ΔQk = symbol(("ΔQ")|"k") unit "kN/m"
     val ΔQd = symbol(("ΔQ")|"d") unit "kN/m"
     val b0 = symbol(BasicSymbols.b|"0") unit "m"
@@ -223,7 +223,7 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 	mS := ((SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk)/(GRAV*SLAB.l)
 	
 	// end of context initialization
-	lock
+	lock()
 
 }
 
@@ -240,12 +240,12 @@ extends Calculation {
 	val STUD = HeadedStudSymbols
 
 	import BeamOfCompositeSlabSymbols._
-	import ConcreteSymbols.{vc}
+	import ConcreteSymbols.vc
 	import SteelSymbols.{E,fyd,epsi,fy}
 	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff2,nE}
 	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,bo,bs}
     import ActionsSymbols.{gammaG,gammaQ}
-    import SectionSymbols.{AVz}
+    import SectionSymbols.AVz
     import IBeamSectionSymbols.{hw,tw,ctf,ctw}
 
 	this add BeamOfCompositeSlabExpressions

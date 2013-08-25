@@ -1,5 +1,8 @@
 package org.encalmo.printer
 
+import scala.language.postfixOps
+import scala.language.reflectiveCalls
+
 /**
  * Printer output trait
  * A - data type
@@ -15,7 +18,7 @@ trait Output[A] {
 	/**
 	 * Opens the output (ex: writes initial statement)
 	 */
-	def open
+	def open()
 	
 	/**
 	 * Appends the content to the output and returns output object
@@ -27,7 +30,7 @@ trait Output[A] {
 	/**
 	 * Closes the output (ex: writes final statement)
 	 */
-	def close
+	def close()
 	
 	/**
 	 * Returns the resulting data

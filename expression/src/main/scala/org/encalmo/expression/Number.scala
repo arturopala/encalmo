@@ -3,7 +3,8 @@ package org.encalmo.expression
 
 object Number {
     
-     val typeId = "N"
+    val typeId = "N"
+
 }
 
 /**
@@ -24,29 +25,29 @@ case class Number(
 	
     override def equals(a:Any):Boolean = a match {
         case n:Number if this.eq(n) => true
-        case Number(r,u) => if(u==unit || u == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r==r else {
-            if (u.isSameBaseAndDimension(this.unit)) r==this.r.convert1(this.unit,u)
-            else if (u.isSameExpandedUnit(this.unit))r==this.r.convert2(this.unit,u)
+        case Number(real,u) => if((u eq unit) || u == unit || (u eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r==real else {
+            if (u.isSameBaseAndDimension(this.unit)) real==this.r.convert1(this.unit,u)
+            else if (u.isSameExpandedUnit(this.unit))real==this.r.convert2(this.unit,u)
             else false
         }
         case _ => false
     }
     
     override def convertTo(newunit:UnitOfValue):Number = newunit match {
-        case u:UnitOfValue if this.unit==u => this
-        case u:UnitOfValue if newunit==EmptyUnitOfValue => this
-        case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit)
+        case u:UnitOfValue if this.unit eq u => this
+        case u:UnitOfValue if newunit eq EmptyUnitOfValue => this
+        case u:UnitOfValue if this.unit eq EmptyUnitOfValue => Number(r,newunit)
         case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert1(unit,newunit),newunit)
         case u:UnitOfValue if this.unit.isSameExpandedUnit(u) => Number(r.convert2(unit,newunit),newunit)
         case _ => throw new IllegalValueConversionException(s"Could not convert value ${r.d} from ${this.unit.toNameString} to ${newunit.toNameString}")
     }
     
     override def convertTo(newunit:UnitOfValue,accuracy:Option[Double]):Number = newunit match {
-        case u:UnitOfValue if this.unit==u => this.adjustTo(accuracy)
-        case u:UnitOfValue if newunit==EmptyUnitOfValue => this.adjustTo(accuracy)
-        case u:UnitOfValue if this.unit==EmptyUnitOfValue => Number(r,newunit).adjustTo(accuracy)
-        case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert1(unit,newunit),newunit).adjustTo(accuracy)
-        case u:UnitOfValue if this.unit.isSameExpandedUnit(u) => Number(r.convert2(unit,newunit),newunit).adjustTo(accuracy)
+        case u:UnitOfValue if this.unit eq u => this.convertTo(accuracy)
+        case u:UnitOfValue if newunit eq EmptyUnitOfValue => this.convertTo(accuracy)
+        case u:UnitOfValue if this.unit eq EmptyUnitOfValue => Number(r,newunit).convertTo(accuracy)
+        case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert1(unit,newunit),newunit).convertTo(accuracy)
+        case u:UnitOfValue if this.unit.isSameExpandedUnit(u) => Number(r.convert2(unit,newunit),newunit).convertTo(accuracy)
         case _ => throw new IllegalValueConversionException(s"Could not convert value ${r.d} from ${this.unit.toNameString} to ${newunit.toNameString}")
     }
     
@@ -56,21 +57,26 @@ case class Number(
         n.original = Some(r)
         n
     }
-    
-    def adjustTo(accuracy:Option[Double]):Number = accuracy match {
+
+    override def convertTo(accuracy:Option[Double]):Number = accuracy match {
         case Some(a) => {
             val r2 = r.adjustValue(a)
-            if(r2!=r) roundedCopy(r2)  else this
+            if(r2 ne r) roundedCopy(r2)  else this
         }
         case None => this
     }
     
     def adjustTo(accuracy:Double):Number = if(accuracy<=0) this else {
         val r2 = r.adjustValue(accuracy)
-        if(r2!=r) roundedCopy(r2) else this
+        if(r2 ne r) roundedCopy(r2) else this
     }
     
     override def convertToBaseUnit:Number = if(unit.isBaseUnit) this else Number(r.convert(unit,unit.baseUnit),unit.baseUnit)
+
+    override def setUnit(newunit:UnitOfValue) = newunit match {
+        case u if u eq unit => this
+        case _ => copy(unit=newunit)
+    }
 
 	override def ^ (e:Expression):Expression = e match {
 		case Number(r2,u2) if r2==Real.zero => ONE
@@ -103,7 +109,7 @@ case class Number(
 	}
 
 	override def < (e:Expression):Boolean = e match {
-	    case Number(r1,u1) =>  if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r<r1 
+	    case Number(r1,u1) =>  if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r<r1
     	    else {
     	        if(u1.isSameBaseAndDimension(unit)) r<r1.convert1(u1,unit) 
     	        else if(u1.isSameExpandedUnit(this.unit)) r<r1.convert2(u1,unit) 
@@ -112,7 +118,7 @@ case class Number(
 	    case _ => false
     }
 	override def > (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r>r1 
+	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r>r1
             else {
                 if(u1.isSameBaseAndDimension(unit)) r>r1.convert1(u1,unit) 
                 else if(u1.isSameExpandedUnit(this.unit)) r>r1.convert2(u1,unit) 
@@ -121,7 +127,7 @@ case class Number(
 	    case _ => false
     }
 	override def >= (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r>=r1 
+	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r>=r1
             else {
                 if(u1.isSameBaseAndDimension(unit)) r>=r1.convert1(u1,unit) 
                 else if(u1.isSameExpandedUnit(this.unit)) r>=r1.convert2(u1,unit) 
@@ -130,7 +136,7 @@ case class Number(
 	    case _ => false
     }
 	override def <= (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r<=r1 
+	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r<=r1
             else {
                 if(u1.isSameBaseAndDimension(unit)) r<=r1.convert1(u1,unit) 
                 else if(u1.isSameExpandedUnit(this.unit)) r<=r1.convert2(u1,unit) 
@@ -139,7 +145,7 @@ case class Number(
 	    case _ => false
     }
 	override def <> (e:Expression):Boolean = e match {
-	    case Number(r1,u1) => if(u1==unit || u1 == EmptyUnitOfValue || this.unit == EmptyUnitOfValue) this.r<>r1 
+	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r<>r1
             else {
                 if(u1.isSameBaseAndDimension(unit)) r<>r1.convert1(u1,unit) 
                 else if(u1.isSameExpandedUnit(this.unit)) r<>r1.convert2(u1,unit) 
@@ -154,7 +160,7 @@ case class Number(
 	def toDouble:Double = r.d
 	
 	def format:String = Real.format(r)
-	def format(format:java.text.NumberFormat):String = Real.format(r, format);
+	def format(format:java.text.NumberFormat):String = Real.format(r, format)
 	def format(locale:java.util.Locale):String = Real.format(r,locale)
 	def format(pattern:String,locale:java.util.Locale):String = Real.format(r,pattern,locale)
 	def asString:String = r.toString()
@@ -162,115 +168,12 @@ case class Number(
 	/** Sets unit */
     def unit(name:String):Number = copy(unit = SI(name).getOrElse(SimpleUnitOfValue(UnitOfValueName(name),0,1,SI)))
     def unit(unit:UnitOfValue):Number = copy(unit = unit)
-	
-	private final def analyze(d:Double):(Long,Double) = {
-		val ad = Math.abs(d)
-		val fd = Math.floor(ad).toLong
-		val fr = ad-fd
-		if(fr+0.0001>=1) {
-		    (fd+1,0)
-		} else {
-		    (fd,ad-fd)
-		}
-	}
-		
-	final def getScale(d:Double):Int = java.lang.Math.log10(d).toInt
-	
-	final lazy val formatForPrint:NumberFormatted = {
-		val rif = analyze(r.d)
-		val si:Int = if(rif._1==0) 0 else getScale(rif._1)
-		val sf:Int = if(rif._2==0) 0 else Math.abs(getScale(rif._2))
-		if(si>6){
-			val nsi = (si%3)
-			val nrif = analyze(rif._1/Math.pow(10,si-nsi))
-			NumberFormatted(
-				r.isNegative,
-				true,
-				nrif._1,
-				nrif._2,
-				si-nsi,
-				2,
-				EmptyUnitOfValue
-			)
-		}else{
-			if(si==0){
-				if(rif._1>0){
-					NumberFormatted(
-						r.isNegative,
-						false,
-						rif._1,
-						rif._2,
-						0,
-						3,
-						EmptyUnitOfValue
-					)
-				}else{
-					if(sf>1){
-						val nsf = (sf/3)*3+3
-						val nrif = analyze(rif._2*Math.pow(10,nsf))
-						if(nrif._2==0 && sf%3d==0){
-							val n2rif = analyze(rif._2*Math.pow(10,nsf-3))
-							NumberFormatted(
-								r.isNegative,
-								true,
-								n2rif._1,
-								n2rif._2,
-								-(nsf-3),
-								3,
-								EmptyUnitOfValue
-							)
-						}else{
-							NumberFormatted(
-								r.isNegative,
-								true,
-								nrif._1,
-								nrif._2,
-								-nsf,
-								3,
-								EmptyUnitOfValue
-							)
-						}
-					}else{
-						NumberFormatted(
-							r.isNegative,
-							false,
-							0,
-							rif._2,
-							0,
-							3,
-							EmptyUnitOfValue
-						)
-					}
-				}
-			}else{
-				if(si+sf>6){
-					NumberFormatted(
-						r.isNegative,
-						false,
-						rif._1,
-						0,
-						0,
-						0,
-						EmptyUnitOfValue
-					)
-				}else{
-					NumberFormatted(
-						r.isNegative,
-						false,
-						rif._1,
-						rif._2,
-						0,
-						2,
-						EmptyUnitOfValue
-					)
-				}
-			}
-		}
-	}
-	
+
 	def mapIfNotZero(doIfTrue: =>Expression):Expression = {
 	    if(r.isZero) Void else doIfTrue
 	}
+
+    lazy val formattedForPrint: NumberFormatted = NumberFormatted.formatForPrint(this)
 	
 }
 
@@ -284,7 +187,7 @@ object ZERO extends Number(Real.zero){
 	override def + (e:Expression):Expression = e
 	override def - (e:Expression):Expression = -e
 	override def ^ (e:Expression):Expression = e match {
-		case ZERO => ONE; 
+		case ZERO => ONE
 		case _ => ZERO
 	}
 
@@ -309,7 +212,7 @@ object ONE extends Number(Real.one){
 
 object NumberValueCalculator extends ValueCalculator {
     
-    def doRegister:Unit = {
+    def doRegister():Unit = {
         Value.register((Number.typeId,Number.typeId),this)
     }
     
@@ -325,10 +228,10 @@ object NumberValueCalculator extends ValueCalculator {
                     case "+" => {
                         if(u1==u2) Number(r1+r2,u1)
                         else if(u1.isSameBaseAndDimension(u2)){
-                             if(u1.isLargerThan(u2)) Number(r1+(r2.convert1(u2,u1)),u1) else Number(r1.convert1(u1,u2)+r2,u2)
+                             if(u1.isLargerThan(u2)) Number(r1+ r2.convert1(u2, u1),u1) else Number(r1.convert1(u1,u2)+r2,u2)
                         }
                         else if (u1.isSameExpandedUnit(u2)){
-                            if(u1.isLargerThan(u2)) Number(r1+(r2.convert2(u2,u1)),u1) else Number(r1.convert2(u1,u2)+r2,u2)
+                            if(u1.isLargerThan(u2)) Number(r1+ r2.convert2(u2, u1),u1) else Number(r1.convert2(u1,u2)+r2,u2)
                         }
                         else{
                             Number(r1+r2,u1+u2)
@@ -337,10 +240,10 @@ object NumberValueCalculator extends ValueCalculator {
                     case "-" => {
                         if(u1==u2) Number(r1-r2,u1)
                         else if(u1.isSameBaseAndDimension(u2)){ 
-                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert1(u2,u1)),u1) else Number(r1.convert1(u1,u2)-r2,u2)
+                             if(u1.isLargerThan(u2)) Number(r1- r2.convert1(u2, u1),u1) else Number(r1.convert1(u1,u2)-r2,u2)
                         }
                         else if(u1.isSameExpandedUnit(u2)){ 
-                             if(u1.isLargerThan(u2)) Number(r1-(r2.convert2(u2,u1)),u1) else Number(r1.convert2(u1,u2)-r2,u2)
+                             if(u1.isLargerThan(u2)) Number(r1- r2.convert2(u2, u1),u1) else Number(r1.convert2(u1,u2)-r2,u2)
                         }
                         else{
                             Number(r1-r2,u1-u2)
@@ -350,20 +253,20 @@ object NumberValueCalculator extends ValueCalculator {
                         if(u1.isSameBase(u2)){
                              if(u1.isSameDimension(u2)){
                                  if(u1.isLargerScaleThan(u2)) 
-                                     Number(r1*(r2.convert1(u2,u1)),u1.dim(u1.dimension*2)) 
+                                     Number(r1* r2.convert1(u2, u1),u1.dim(u1.dimension*2))
                                      else Number(r1.convert1(u1,u2)*r2,u2.dim(u1.dimension*2))
                              }else if(u1.isSameScale(u2)){
                                  Number(r1*r2,u1.dim(u1.dimension+u2.dimension))
                              }else{
                                  if(u1.isLargerScaleThan(u2)) 
-                                     Number(r1*(r2.adjustScale(u2,u1)),u1.dim(u1.dimension+u2.dimension)) 
-                                     else Number((r1.adjustScale(u1,u2)*r2),u2.dim(u1.dimension+u2.dimension))
+                                     Number(r1* r2.adjustScale(u2, u1),u1.dim(u1.dimension+u2.dimension))
+                                     else Number(r1.adjustScale(u1, u2) * r2,u2.dim(u1.dimension+u2.dimension))
                              }
                         }
                         else if(u1.isSameExpandedUnit(u2)){ 
                             if(u1.isLargerThan(u2)) {
                                 val su = (u1*u1).simplifiedUnit
-                                Number(r1*(r2.convert2(u2,u1))*su._2,su._1)
+                                Number(r1* r2.convert2(u2, u1) *su._2,su._1)
                             } else {
                                 val su = (u2*u2).simplifiedUnit
                                 Number(r1.convert2(u1,u2)*r2*su._2,su._1)
@@ -377,7 +280,7 @@ object NumberValueCalculator extends ValueCalculator {
                     case "/" => {
                        if(u1.isSameBase(u2)){
                              if(u1.isSameDimension(u2)){
-                                 Number(r1/(r2.convert1(u2,u1)),EmptyUnitOfValue)
+                                 Number(r1/ r2.convert1(u2, u1),EmptyUnitOfValue)
                              }else if(u1.isSameScale(u2)){
                                  if(u1.dimension>u2.dimension) 
                                      Number(r1/r2,u1.dim(u1.dimension-u2.dimension)) 
@@ -385,17 +288,17 @@ object NumberValueCalculator extends ValueCalculator {
                              }else{
                                  if(u1.dimension>u2.dimension) {
                                      if(u1.isLargerScaleThan(u2)) 
-                                         Number(r1/(r2.adjustScale(u2,u1)),u1.dim(u1.dimension-u2.dimension)) 
-                                         else Number((r1.adjustScale(u1,u2)/r2),u2.dim(u1.dimension-u2.dimension))
+                                         Number(r1/ r2.adjustScale(u2, u1),u1.dim(u1.dimension-u2.dimension))
+                                         else Number(r1.adjustScale(u1, u2) / r2,u2.dim(u1.dimension-u2.dimension))
                                  }else{
                                      if(u1.isLargerScaleThan(u2)) 
-                                         Number(r1/(r2.adjustScale(u2,u1)),ComplexUnitOfValue(Quot(ONE,u1.dim(u2.dimension-u1.dimension)))) 
-                                         else Number((r1.adjustScale(u1,u2)/r2),ComplexUnitOfValue(Quot(ONE,u2.dim(u2.dimension-u1.dimension))))
+                                         Number(r1/ r2.adjustScale(u2, u1),ComplexUnitOfValue(Quot(ONE,u1.dim(u2.dimension-u1.dimension))))
+                                         else Number(r1.adjustScale(u1, u2) / r2,ComplexUnitOfValue(Quot(ONE,u2.dim(u2.dimension-u1.dimension))))
                                  }
                              }
                         }
                         else if(u1.isSameExpandedUnit(u2)){ 
-                            Number(r1/(r2.convert2(u2,u1)),EmptyUnitOfValue)
+                            Number(r1/ r2.convert2(u2, u1),EmptyUnitOfValue)
                         }
                         else{
                             val su = (u1/u2).simplifiedUnit
@@ -405,10 +308,10 @@ object NumberValueCalculator extends ValueCalculator {
                     case "%" => {
                         if(u1==u2) Number(r1%r2,u1) 
                         else if(u1.isSameBaseAndDimension(u2)){
-                             if(u1.isLargerThan(u2)) Number(r1.convert1(u1,u2)%r2,u2) else Number(r1%(r2.convert1(u2,u1)),u1)
+                             if(u1.isLargerThan(u2)) Number(r1.convert1(u1,u2)%r2,u2) else Number(r1% r2.convert1(u2, u1),u1)
                         }
                         else if(u1.isSameExpandedUnit(u2)){ 
-                            if(u1.isLargerThan(u2)) Number(r1.convert2(u1,u2)%r2,u2) else Number(r1%(r2.convert2(u2,u1)),u1)
+                            if(u1.isLargerThan(u2)) Number(r1.convert2(u1,u2)%r2,u2) else Number(r1% r2.convert2(u2, u1),u1)
                         }
                         else{
                             Number(r1%r2,u1%u2)
@@ -416,21 +319,21 @@ object NumberValueCalculator extends ValueCalculator {
                     }
                     case "^" => {
                         if(r2>=0){
-                            Number(r1^r2,u1.dim(u1.dimension*r2.d))
+                            Number(r1^r2,u1.multiplyDimension(r2.d))
                         }else{
-                            Number(r1^r2,EmptyUnitOfValue/(u1.dim(u1.dimension*(-r2.d))))
+                            Number(r1^r2,EmptyUnitOfValue/ u1.multiplyDimension(-r2.d))
                         }
                     }
                     case "root" => {
-                        Number(r1.root(r2),u1.dim(u1.dimension/r2))
+                        Number(r1.root(r2),u1.divideDimension(r2.d))
                     }
                     case "min" => {
                         if(u1.isSameBaseAndDimension(u2)){
-                             if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
+                             if(u1==u2) if (r1 <= r2) v1 else v2
                              else if(r1<=r2.convert1(u2,u1)) v1 else v2
                         }
                         else if(u1.isSameExpandedUnit(u2)){ 
-                             if(u1==u2) ( if(r1<=r2) v1 else v2 ) 
+                             if(u1==u2) if (r1 <= r2) v1 else v2
                              else if(r1<=r2.convert2(u2,u1)) v1 else v2
                         }
                         else{
@@ -439,11 +342,11 @@ object NumberValueCalculator extends ValueCalculator {
                     }
                     case "max" => {
                         if(u1.isSameBaseAndDimension(u2)){
-                             if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
+                             if(u1==u2) if (r1 <= r2) v2 else v1
                              else if(r1<=r2.convert1(u2,u1)) v2 else v1
                         }
                         else if(u1.isSameExpandedUnit(u2)){ 
-                            if(u1==u2) ( if(r1<=r2) v2 else v1 ) 
+                            if(u1==u2) if (r1 <= r2) v2 else v1
                             else if(r1<=r2.convert2(u2,u1)) v2 else v1
                         }
                         else{
@@ -474,8 +377,8 @@ object NumberValueCalculator extends ValueCalculator {
             case Number(r,u) => {
                 Option(operator match {
                     case "-" => Number(-r,u)
-                    case "sqrt" => Number(r.sqrt,u.dim(u.dimension/2))
-                    case "cbrt" => Number(r.cbrt,u.dim(u.dimension/3))
+                    case "sqrt" => Number(r.sqrt,u.divideDimension(2))
+                    case "cbrt" => Number(r.cbrt,u.divideDimension(3))
                     case "exp" => Number(r.exp)
                     case "ln" => Number(r.ln)
                     case "log" => Number(r.log)

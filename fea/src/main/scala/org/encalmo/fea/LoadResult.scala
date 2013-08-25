@@ -14,7 +14,7 @@ case class LoadResults[A <: FiniteElement](
     private val collector:scala.collection.mutable.Map[Selector,Option[NodeResult]] = scala.collection.mutable.Map(Selector.selectors.map((_,None)):_*)
     
     // Processes all node's results by selectors
-    nodeResults.values.foreach(process(_))
+    nodeResults.values.foreach(process)
     
     /** Processes single node's result by selectors */
     private def process(nr:NodeResult):Unit = Selector.selectors.foreach(s => {collector(s) = s.select(collector(s),nr)})
@@ -136,7 +136,7 @@ case class LoadResults[A <: FiniteElement](
             }
             case None =>
         })
-        sb.toString
+        sb.toString()
     }
 }
 

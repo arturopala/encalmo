@@ -38,7 +38,7 @@ object ReinforcingSteelExpressions extends MapContext {
 	this(fyd) = fyk/gammaS
 	this(epsiu) = epsiuk/gammaS
 	
-	lock
+	lock()
 }
 
 /** ReinforcingSteel context class */
@@ -74,6 +74,6 @@ object ReinforcingSteel {
 		this(fyk) = 500
 		this(ft) = 575
 		this(epsiuk) = 0.08
-		lock
+		lock()
 	}
 }

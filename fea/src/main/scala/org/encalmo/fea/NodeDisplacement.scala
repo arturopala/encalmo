@@ -22,7 +22,7 @@ case class NodeDisplacement(
     /** Displacement component's sequence paired with labels*/
     def explainseq = Seq(("dx",dx),("dy",dy),("dz",dz),("rx",rx),("ry",ry),("rz",rz))
     /** Verbose explanation of displacement */
-    def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) (s + p._1+"="+DoubleFormat.short(p._2.get)+" ") else s})
+    def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) s + p._1 + "=" + DoubleFormat.short(p._2.get) + " " else s})
     /** Returns true if this displacement meets argument's displacement conditions */
     def meets(nd:NodeDisplacement) = nd.seq.zip(seq).forall(_ match {
         case (None,None) => true

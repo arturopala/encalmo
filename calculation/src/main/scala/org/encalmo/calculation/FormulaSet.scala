@@ -2,11 +2,12 @@ package org.encalmo.calculation
 
 import scala.collection.mutable.Map
 import org.encalmo.expression._
+import scala.collection.mutable
 
 case class FormulaSet(contextId: Option[String] = None) {
 
     private var formulaSet = Vector[Formula]()
-    private val formulaMap = Map[Expression, Formula]()
+    private val formulaMap = mutable.Map[Expression, Formula]()
 
     def +=(formula: Formula): FormulaSet = {
         formulaSet = formulaSet :+ formula

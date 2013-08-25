@@ -16,10 +16,10 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     val CRLF = "\r\n"
     val LEGEND = "Written by ENCALMO Legend: C - at the corner, E - on the edge, S - on the surface, I - inside solid"
 
-    def createInput:Unit = {
+    def createInput():Unit = {
         Console.println("Creating Z88 project at "+directory.toURL)
-        createInputFile_Z88I1
-        createInputFile_Z88I2
+        createInputFile_Z88I1()
+        createInputFile_Z88I2()
         createInputFile_Z88I3(0)
         Seq("z88.dyn","z88o.ogl").foreach { f =>
 	        val is = classOf[Z88Project[A]].getResourceAsStream("/"+f)
@@ -28,7 +28,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
 }
     
     /** In Z88I1.TXT the geometry and material data of the structure are deposited */
-    def createInputFile_Z88I1:Unit = {
+    def createInputFile_Z88I1():Unit = {
         // GENERAL STRUCTURE DATA Z88I1.TXT
         val Z88I1 = directory / "z88i1.txt"
         Z88I1.createFile(true,false)
@@ -58,7 +58,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     }
     
     /** In Z88I2.TXT the boundary conditions and nodal forces are deposited */
-    def createInputFile_Z88I2:Unit = {
+    def createInputFile_Z88I2():Unit = {
         // BOUNDARY CONDITIONS Z88I2.TXT
         val Z88I2 = directory / "z88i2.txt"
         Z88I2.createFile(true,false)
@@ -70,20 +70,20 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
             // boundary conditions
             val dit = Iterator.from(1)
             nc.displacement.map(disp => convertToInputDisplacement(disp).foreach (di => di match {
-                case Some(d) => { writeLine (Z88I2, nc.node.no, dit.next, 2, d, nc.node.positionSymbol); bclines.next }
-                case None => dit.next
+                case Some(d) => { writeLine (Z88I2, nc.node.no, dit.next(), 2, d, nc.node.positionSymbol); bclines.next() }
+                case None => dit.next()
             }))
             // nodal forces
             val fit = Iterator.from(1)
             nc.force.map( force => force.seq.foreach (fi => fi match {
-                case Some(f) => { writeLine (Z88I2, nc.node.no, fit.next, 1, f, nc.node.positionSymbol); bclines.next }
-                case None => fit.next
+                case Some(f) => { writeLine (Z88I2, nc.node.no, fit.next(), 1, f, nc.node.positionSymbol); bclines.next() }
+                case None => fit.next()
             }))
         })
         val z88i2 = Z88I2.string // take 2nd input back
         Z88I2.write("") // clear previous content
         // 1st input group: Number of the boundary conditions: loads and constraints
-        writeLine (Z88I2, bclines.next, LEGEND)
+        writeLine (Z88I2, bclines.next(), LEGEND)
         Z88I2.append(z88i2)
         Console.println("Boundary conditions file (z88i2.txt) created.")
     }
@@ -179,7 +179,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
         val elementsResultsMap:Map[Int,ElementResult[A]]  = mesh.elements.map(
             element => (element.no, ElementResult(element,
                     element.nodesnumbers.map(nodeResultsMap(_)),
-                    gaussPointsStresses(element.no).map(convertFromOutputGaussPointStress(_))))
+                    gaussPointsStresses(element.no).map(convertFromOutputGaussPointStress)))
         ).toMap
         Console.println("Elements results prepared.")
         LoadResults[A](loadCase,nodeResultsMap,elementsResultsMap)
@@ -189,7 +189,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     def readOutputFile_Z88O2:Seq[(Int, Seq[Option[Double]])] = {
         val Z88O2 = directory / "z88o2.txt"
         if(Z88O2.exists){
-            val lines = Z88O2.lines().filter(s => !s.isEmpty).dropWhile(s => !(s.trim.startsWith("1")))
+            val lines = Z88O2.lines().filter(s => !s.isEmpty).dropWhile(s => !s.trim.startsWith("1"))
             val displacements = lines.map(line => {
 	                val l = line.trim.replaceAll("\\s+"," ").split(" ")
 	                (l.head.toInt,l.tail.map(x => Option(x.toDouble)).toSeq)
@@ -229,7 +229,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     def readOutputFile_Z88O4:Seq[(Int, Seq[Option[Double]])] = {
         val Z88O4 = directory / "z88o4.txt"
         if(Z88O4.exists){
-            val lines = Z88O4.lines().filter(s => !s.isEmpty).dropWhile(s => !(s.trim.startsWith("now the nodal sums for each node")))
+            val lines = Z88O4.lines().filter(s => !s.isEmpty).dropWhile(s => !s.trim.startsWith("now the nodal sums for each node"))
             val forces = lines.drop(3).map(line => {
                     val l = line.trim.replaceAll("\\s+"," ").split(" ")
                     (l.head.toInt,l.tail.take(3).map(x => Option(x.toDouble)).toSeq)
@@ -273,7 +273,7 @@ case class Z88Project[A <: FiniteElement](elemtype:FiniteElementType, loadCase:L
     }
     
     private def leftPad(out:Seekable,size:Int,text:String):Unit = {
-        (size - text.length) match {
+        size - text.length match {
             case x if x>0 => out.append(" " * x)
             case _ => Unit
         }

@@ -14,9 +14,9 @@ class Sum(val args:Expression*) extends MultipleInfixOperation {
 	override def + (e:Expression):Expression = e match {
 	  	case Void => this
 	  	case Unknown => Unknown
-	  	case _ if ZERO eq e => this; 
-	  	case Sum(seq@_*) => Sum((args++seq):_*)
-	  	case _ => Sum((args.:+(e)):_*)
+	  	case _ if ZERO eq e => this
+        case Sum(seq@_*) => Sum(args ++ seq:_*)
+	  	case _ => Sum(args.:+(e):_*)
 	}
 
     override def equals(a:Any):Boolean = a match {
@@ -67,9 +67,9 @@ class Prod(val args:Expression*) extends MultipleInfixOperation {
 	override def * (e:Expression):Expression = e match {
 	  	case Void => this
 	  	case Unknown => Unknown
-	  	case _ if ONE eq e => this; 
-	  	case Prod(seq@_*) => Prod((args ++ seq):_*)
-	  	case _ => Prod((args :+ e):_*)
+	  	case _ if ONE eq e => this
+        case Prod(seq@_*) => Prod(args ++ seq:_*)
+	  	case _ => Prod(args :+ e:_*)
 	}
 	
 	override def equals(a:Any):Boolean = a match {

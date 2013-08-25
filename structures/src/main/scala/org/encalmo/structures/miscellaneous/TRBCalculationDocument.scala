@@ -1,24 +1,10 @@
 package org.encalmo.structures.miscellaneous
 
-import org.junit.Test
 import org.encalmo.expression._
-import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.printer._
-import org.encalmo.printer.document._
-import org.encalmo.fop.FOPHelper
+import org.encalmo.calculation._
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
-import org.encalmo.structures.eurocode.concrete.ReinforcingSteel
-import org.encalmo.structures.eurocode.concrete.Concrete
-import org.encalmo.structures.eurocode.concrete.ConcreteSymbols
-import org.encalmo.structures.eurocode.actions.ActionsSymbols
-import org.encalmo.structures.eurocode.steel.SteelSymbols
-import org.encalmo.structures.eurocode.steel.IPESection
-import org.encalmo.structures.eurocode.steel.HeadedStud
-import org.encalmo.structures.eurocode.steel.Steel
-import org.encalmo.structures.eurocode.steel.FLORSTROP
-import scalax.file.Path
 import org.encalmo.structures.CalculationDocument
 
 class TRBCalculationDocument extends CalculationDocument {
@@ -28,11 +14,11 @@ class TRBCalculationDocument extends CalculationDocument {
         
     // roboty ziemne
     
-    val T = BasicSymbols.T is "Planowany czas robót ziemnych (w dniach)"; calc(T) = 13
-    val tzm = BasicSymbols.t|"zm" is "Czas trwania zmiany roboczej w ciągu dnia"; calc(tzm) = 10 unit SI.h
-    val Lu = L|u is "Odległość odwozu urobku"; calc(Lu) = 14 unit SI.km
-    val Aw = A|w is "Powierzchnia obrysu zewnętrznego ścian wg projektu" acc 1; calc(Aw) = 1061.5 unit SI.m2
-    val Ow = O|w is "Obwód obrysu zewnętrznego ścian wg projektu" acc 1; calc(Ow) = 133.23 unit SI.m
+    val T = BasicSymbols.T is "Planowany czas robót ziemnych (w dniach)" := 13
+    val tzm = BasicSymbols.t|"zm" is "Czas trwania zmiany roboczej w ciągu dnia" := 10 unit SI.h
+    val Lu = L|u is "Odległość odwozu urobku" := 14 unit SI.km
+    val Aw = A|w is "Powierzchnia obrysu zewnętrznego ścian wg projektu" acc 1 := 1061.5 unit SI.m2
+    val Ow = O|w is "Obwód obrysu zewnętrznego ścian wg projektu" acc 1 := 133.23 unit SI.m
     val HS = Symbol("HS") is "Wysokość ściany fundamentowej"; calc(HS) = 4.20 unit SI.m
     val BS = Symbol("BS") is "Szerokość ściany fundamentowej"; calc(BS) = 0.40 unit SI.m
     val HL = Symbol("HL") is "Wysokość ławy fundamentowej"; calc(HL) = 0.70 unit SI.m
@@ -99,7 +85,7 @@ class TRBCalculationDocument extends CalculationDocument {
     val db = d|"b" is "Grubość betonowanej pojedyńczo warstwy"; calc(db) = 50 unit SI.cm
     val twiaz = t|"wiaz" is "Czas do rozpoczęcia wiązania mieszanki betonowej w temp. niższej od 20 C"; calc(twiaz) = 1.5 unit SI.h
     val ttb = t|"tb" is "Czas transportu mieszanki betonowej z wytwórni"; calc(ttb) = 0.5 unit SI.h
-    val Qbet = Q|"bet" is "Maksymalna wydajność betonowania"; calc(Qbet) = min(Qpb,(20 unit SI.m3/SI.h))
+    val Qbet = Q|"bet" is "Maksymalna wydajność betonowania"; calc(Qbet) = min(Qpb, 20 unit SI.m3 / SI.h)
     val Lmax = L|"max" is "Maksymalna długość odcinka betonowania do rozpoczęcia procesu wiązania" acc 1; calc(Lmax) = (Qbet*(twiaz-ttb))/(db*BS)
     
     val Qwibr = Q|"wibr" is "Nominalna wydajność zagęszczania mieszanki betonowej za pomocą wibratora pogrążalnego Wacker-Neuson z głowicą typu H35"; calc(Qwibr) = 9 unit SI.m3/SI.h
@@ -108,18 +94,18 @@ class TRBCalculationDocument extends CalculationDocument {
     val tz1 = t|"z1" is "Czas zagęszczania mieszanki na pojedyńczym stanowisku"; calc(tz1) = 15 unit SI.s
     val tz2 = t|"z2" is "Czas przełożenia wibratora na nowe stanowisko"; calc(tz2) = 5 unit SI.s
     val Sww = S|"ww" is "Współczynnik wykorzystania czasu pracy wibratora"; calc(Sww) = 0.85
-    val Qw = Q|w is "Obliczona intensywność godzinowa zagęszczania mieszanki betonowej" unit SI.m3; calc(Qw) = (Lwibr*BS*db*((3600 unit SI.s)/(tz1+tz2))*Sww).setunit(SI.m3/SI.h)
-    val Nw = N|w is "Liczba potrzebnych wibratorów (na pojedyńczą pracującą pompę do betonu)" acc 1; calc(Nw) = Qbet/min(Qw,Qwibr)
+    val Qw = Q|w is "Obliczona intensywność godzinowa zagęszczania mieszanki betonowej" unit SI.m3/SI.h; calc(Qw) = (Lwibr*BS*db*((3600 unit SI.s)/(tz1+tz2))*Sww).setunit(SI.m3/SI.h)
+    val Nw = N|w is "Liczba potrzebnych wibratorów (na pojedyńczą pracującą pompę do betonu)" acc 1; calc(Nw) = ceil(Qbet/min(Qw,Qwibr))
     
     val Fd = F|"d" is "Powierzchnia deskowania" acc 1; calc(Fd) = LS*HS*2
     val tdm = t|"dm" is "Czas jednostkowy montażu deskowania"; calc(tdm) = 1.6 unit SI.m2/SI.h
     val tdd = t|"dd" is "Czas jednostkowy demontażu deskowania"; calc(tdd) = 3.3 unit SI.m2/SI.h
     val nprac = n|"prac" is "Liczba osób pracujących przy deskowaniu"; calc(nprac) = 8
-    val Tdm = T|"dm" is "Całkowity czas montażu deskowania (w dniach)" acc 1; calc(Tdm) = Fd/(tdm*nprac*tzm)
-    val Tdd = T|"dd" is "Całkowity czas demontażu deskowania (w dniach)" acc 1; calc(Tdd) = Fd/(tdd*nprac*tzm)
+    val Tdm = T|"dm" is "Całkowity czas montażu deskowania (w dniach)" acc 1; calc(Tdm) = ceil(Fd/(tdm*nprac*tzm))
+    val Tdd = T|"dd" is "Całkowity czas demontażu deskowania (w dniach)" acc 1; calc(Tdd) = ceil(Fd/(tdd*nprac*tzm))
     
     val Npb = N|"pb" is "Liczba pomp do betonu"; calc(Npb) = 1
-    val Tbet = T|"bet" is "Czas układania mieszanki betonowej (w dniach)" acc 1; calc(Tbet) = Vbet/(Npb*Qbet*tzm)
+    val Tbet = T|"bet" is "Czas układania mieszanki betonowej (w dniach)" acc 1; calc(Tbet) = ceil(Vbet/(Npb*Qbet*tzm))
     val Tprzer = T|"przer" is "Czas przerwy roboczej do osiągnięcia wymaganej wytrzymałości betonu (w dniach)"; calc(Tprzer) = 4
     val Tb = T|"b" is "Rzeczywisty czas róbót betonowych (w dniach)"; calc(Tb) = Tdm+Tbet+Tprzer+Tdd
 

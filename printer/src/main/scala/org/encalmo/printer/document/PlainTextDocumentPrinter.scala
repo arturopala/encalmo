@@ -8,6 +8,7 @@ import org.encalmo.printer.expression._
 import org.encalmo.document._
 import scala.collection.mutable.LinkedHashMap
 import org.encalmo.calculation.FormulaSetCache
+import scala.collection.mutable
 
 /**
  * Prints document as plain text 
@@ -43,7 +44,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 	val ept = new PlainTextExpressionPrinterTraveler(output)
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
 	/** Section counters map */
-	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
+	private val counterMap:mutable.LinkedHashMap[Enumerator,SectionCounter] = mutable.LinkedHashMap[Enumerator,SectionCounter]()
 	
 	/** Returns counter linked to the enumerator */
 	private def counterFor(en:Enumerator):SectionCounter = {
@@ -61,40 +62,40 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 	val TAB = "  "
 		
 	def write(ch:Char) = {
-		w.write(ch);
-		canNewLine = true
+		w.write(ch)
+        canNewLine = true
 	}
 	
 	def write(os:Option[String]) = {
 		os.map(s => {
-			w.write(s);
-		})
+			w.write(s)
+        })
 		canNewLine = true
 	}
 		
 	def write(sq:String*) = {
 		for(s <- sq){
-			w.write(s);
-		}
+			w.write(s)
+        }
 		canNewLine = true
 	}
 	
-	def writeTabs = {
+	def writeTabs() = {
 		for(x <- 1 to tabs){
 			w.write(TAB)
 		}
 	}
 	
-	def writeLineEnd = {
+	def writeLineEnd() = {
 		if(canNewLine){
-			w.write(SEP);
-			writeTabs
+			w.write(SEP)
+            writeTabs()
 			canNewLine = false
 		}
 	}
 	
 	def writeExpression(se:Seq[ExpressionToPrint]){
-		se.foreach(writeExpressionPart(_))
+		se.foreach(writeExpressionPart)
 	}
 	
 	def writeExpressionPart(etp:ExpressionToPrint){
@@ -113,8 +114,8 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 		}
 	}
 	
-	def plus = {tabs = tabs+1}
-	def minus = {tabs = tabs-1}
+	def plus() = {tabs = tabs+1}
+	def minus() = {tabs = tabs-1}
 	
 	var tabs:Int = 0
 	var canNewLine:Boolean = true
@@ -151,22 +152,22 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			}
 			case ns:NumSection => {
 				val sc = counterFor(ns.enumerator)
-				val max = (2-ns.enumeratorLevel)
+				val max = 2 - ns.enumeratorLevel
 				for(x <- 0 to (if(max>0) max else 1)){
-					writeLineEnd
-					canNewLine = true;
-				}
-				canNewLine = false;
-				write(sc.current.mkString("",".","."+SPACE))
-				sc.in // counter level increment
+					writeLineEnd()
+					canNewLine = true
+                }
+				canNewLine = false
+                write(sc.current.mkString("",".","."+SPACE))
+				sc.in() // counter level increment
 				if(ns.title.isDefined){
 				    write(ns.title.get)
 				}
-				plus
+				plus()
 			}
 			case s:Section => {
-				writeLineEnd
-				plus
+				writeLineEnd()
+				plus()
 			}
 			case expr:InlineExpr => {
 				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
@@ -176,18 +177,18 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
 				//plus
 			    ess.foreach(es => {
-			        canNewLine = true;
-			        writeLineEnd;
-			        es.head.expression match {
+			        canNewLine = true
+                    writeLineEnd()
+                    es.head.expression match {
 			        	case s:SymbolLike if s.symbol.hasLocalizedDescription(locale) => {
 			        		write(s.symbol.localizedDescription(locale))
-	                        plus
+	                        plus()
 	                        if(s.symbol.printable) {
-	                        	canNewLine = true;
-	                        	writeLineEnd;
-	                        }
+	                        	canNewLine = true
+                                writeLineEnd()
+                            }
 	                        writeExpression(es)
-	                        minus
+	                        minus()
 			        	}
 			        	case _ => {
 			        		writeExpression(es)
@@ -201,14 +202,14 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			case a:Assertion => {
 				val result = a.evaluate(resultCacheFor(a.calc))
 				val s = Section(a.style,result._2:_*)
-				s.visit(visitor = this);
-				result._1 match {
+				s.visit(visitor = this)
+                result._1 match {
 					case None => throw new IllegalStateException
 					case Some(b) if !b => throw new IllegalStateException("")
 					case _=>
 				}
-				canNewLine = true;
-			}
+				canNewLine = true
+            }
 			case _ =>
 		}
 	}
@@ -236,14 +237,14 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			}
 			case ns:NumSection => {
 				canNewLine = true
-				minus
+				minus()
 				val sc = counterFor(ns.enumerator)
-				sc.out //counter level decrement
-				sc.next // counter increment
+				sc.out() //counter level decrement
+				sc.next() // counter increment
 			}
 			case s:Section => {
 				canNewLine = true
-				minus
+				minus()
 			}
 			case _ =>
 		}

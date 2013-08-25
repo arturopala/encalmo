@@ -1,8 +1,7 @@
 package org.encalmo.structures.common.section
 
 import org.encalmo.expression._
-import org.encalmo.calculation._
-import org.encalmo.document._
+import org.encalmo.document.{NumSection, TextToTranslate}
 
 class Square(id:String,a:Expression) extends Section(id) {
 
@@ -14,8 +13,7 @@ class Square(id:String,a:Expression) extends Section(id) {
     this(Imin) = Iz
     this(imin) = sqrt(Imin/A)
     
-    def info = NumSection(TextToTranslate("Square",SectionSymbols.dictionary)
-	)
+    def info = NumSection(TextToTranslate("Square",SectionSymbols.dictionary))
 
 }
 

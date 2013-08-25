@@ -1,5 +1,6 @@
 package org.encalmo.style
 
+import scala.language.postfixOps
 import java.awt.Color
 
 /**
@@ -21,7 +22,7 @@ case class Style(
         case null => ""
 		case _ => "#"+Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {
 			val h:String = x.toHexString
-			if(h.size>1) h else ("0"+h)
+			if(h.size>1) h else "0" + h
 		}).mkString
 	}
 	
@@ -29,7 +30,7 @@ case class Style(
 	    case null => ""
 	    case _ => "#"+Seq[Int](background.getRed,background.getGreen,background.getBlue).map(x => {
 			val h:String = x.toHexString
-			if(h.size>1) h else ("0"+h)
+			if(h.size>1) h else "0" + h
 		}).mkString
 	}
 	
@@ -43,8 +44,8 @@ case class Style(
 	
 	def fontBold:Style = copy(font = font.makeBold)
 	def fontItalic:Style = copy(font = font.makeItalic)
-	def fontBigger:Style = copy(font = font++)
-	def fontSmaller:Style = copy(font = font--)
+	def fontBigger:Style = copy(font = font.++())
+	def fontSmaller:Style = copy(font = font.--())
 	def fontSize(d:Int):Style = copy(font = font.fontSize(d))
 	def fontFamily(f:String):Style = copy(font = font.useFamily(f))
 	

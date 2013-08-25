@@ -36,14 +36,17 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
 	lazy val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",java.text.DecimalFormatSymbols.getInstance(locale))
 	
-	def writeOpeningBracket = w.write('(');
-	def writeClosingBracket = w.write(')');
-	def writeSpace = w.write(' ');
-	def writeSymbol(s:Symbol) = w.write(s.simpleFace)
+	def writeOpeningBracket() = w.write('(')
+
+    def writeClosingBracket() = w.write(')')
+
+    def writeSpace() = w.write(' ')
+
+    def writeSymbol(s:Symbol) = w.write(s.simpleFace)
 	def writeNumber(n:Number) = {
-		val nf:NumberFormatted = n.formatForPrint
-		if (nf.isNegative)w.write("-");
-		w.write(integerFormat1.format(nf.integer))
+		val nf:NumberFormatted = n.formattedForPrint
+		if (nf.isNegative)w.write("-")
+        w.write(integerFormat1.format(nf.integer))
 		if(nf.fraction>0){
 			nf.decimals match {
 				case 1 => w.write(fractionFormat1.format(nf.fraction))
@@ -57,17 +60,17 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 			w.write(""+nf.exponent)
 		}
 	}
-	def writeListSeparator = w.write(';');
-	
-	def writeOpeningBracketIfNeeded(node:Node[Expression],o:Operation):Unit = {
+	def writeListSeparator() = w.write(';')
+
+    def writeOpeningBracketIfNeeded(node:Node[Expression],o:Operation):Unit = {
 		if(isBracketNeeded(node,o)){
-			writeOpeningBracket
+			writeOpeningBracket()
 		}
 	}
 	
 	def writeClosingBracketIfNeeded(node:Node[Expression],o:Operation):Unit = {
 		if(isBracketNeeded(node,o)){
-			writeClosingBracket
+			writeClosingBracket()
 		}
 	}
 	
@@ -117,7 +120,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
     				case o:NamedOperation => {
     					w.write(o.operator)
     					if(!o.isInstanceOf[Operation1]){
-    						writeOpeningBracket
+    						writeOpeningBracket()
     					}
     				}
     				case _ =>
@@ -153,17 +156,17 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 	
 	override def onBetweenChildren(node:Node[Expression], leftChild:Expression, rightChild:Expression):Unit = node.element match {
 		case o:MultipleInfixOperation => {
-            writeSpace
+            writeSpace()
             w.write(o.operator)
-            writeSpace
+            writeSpace()
         }
 	    case o:InfixOperation => {
-			writeSpace
+			writeSpace()
 			w.write(o.operator)
-			writeSpace
+			writeSpace()
 		}
 		case o:OperationN => {
-			writeListSeparator
+			writeListSeparator()
 		}
         case s:Selection => {
             w.write(" or ")
@@ -193,7 +196,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 					}
 					case o:NamedOperation => {
 						if(!o.isInstanceOf[Operation1]){
-							writeClosingBracket
+							writeClosingBracket()
 						}
 					}
 					case _ =>

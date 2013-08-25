@@ -20,6 +20,9 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
         assertFalse((1.2 unit SI.m) == (1.2 unit SI.m2))
         assertFalse((1.2 unit SI.percent) == Number(0.012))
         assertFalse((1.2 unit SI.permille) == Number(0.0012))
+        assertEquals(1 unit SI.cm2, ((2 unit SI.cm)*(1 / sqrt((16 unit SI.cm4)/(4 unit SI.cm2)))).eval())
+        val e1: Expression = (2 unit SI.cm) * (1 / sqrt((16 unit SI.cm2) / (4 unit SI.cm4)))
+        assertEquals(1 unit SI.cm2, e1.eval())
     }
     
     @Test def testInequals {
@@ -423,8 +426,9 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
     @Test def testPower1 {
         val a:Number = 4 unit SI.cm
         val b:Number = 3
-        val c = (a^b).eval
-        assertEquals(Number(64),c);
+        val e1 = a ^ b
+        val c = e1.eval()
+        assertEquals(Number(64),c)
         assertEquals(SI.cm3,c.unit)
     }
     
@@ -487,9 +491,9 @@ class NumberUnitOfValueUnitTest extends AssertionsForJUnit {
     @Test def testRoot2 {
         val a:Number = 16 unit SI.cm2
         val b:Number = 2.1
-        val c = root(a,b).eval
-        assertEquals(Number(3.74447097),c);
-        assertEquals(SI.cm,c.unit)
+        val c = root(a, b).eval()
+        assertEquals(Number(3.74447097),c)
+        assertNotSame(SI.cm,c.unit)
     }
     
     @Test def testMin1 {

@@ -46,7 +46,7 @@ object ExpressionToPrint {
 
     val ALL_PARTS: FormulaPart => Boolean = {part => true}
     val ONLY_LEFT: FormulaPart => Boolean = {part => part.position == FormulaPosition.LEFT}
-    val ONLY_RIGHT: FormulaPart => Boolean = {part => part.position == FormulaPosition.LEFT}
+    val ONLY_RIGHT: FormulaPart => Boolean = {part => part.position == FormulaPosition.RIGHT}
     val ONLY_LEFT_AND_UNRESOLVED: FormulaPart => Boolean = {part => part.position == FormulaPosition.LEFT || part.position == FormulaPosition.EXPR_UNRESOLVED}
 
     private def partFilterForElement(element: Expr): FormulaPart => Boolean = {
@@ -86,7 +86,7 @@ object ExpressionToPrint {
     private def prefixForPartRelation(relation: FormulaPartRelation.Value): String = {
         relation match {
             case FormulaPartRelation.APPROXIMATELY_EQUAL => "≈"
-            case FormulaPartRelation.ASYMPTOTICALLY_EQUAL => "≈"
+            case FormulaPartRelation.ASYMPTOTICALLY_EQUAL => "≃"
             case FormulaPartRelation.EQUAL => "="
             case FormulaPartRelation.GREATER => ">"
             case FormulaPartRelation.GREATER_OR_EQUAL => ">="

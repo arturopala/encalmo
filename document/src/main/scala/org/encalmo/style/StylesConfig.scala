@@ -1,6 +1,7 @@
 package org.encalmo.style
 
 import scala.collection.mutable.Map
+import scala.collection.mutable
 
 /**
  * Document's styles config
@@ -122,7 +123,7 @@ case class StylesConfig(
         assert_unknown
     )
 
-	lazy val part:Map[StylesConfigSymbols.Value,Option[Style]] = Map(
+	lazy val part:mutable.Map[StylesConfigSymbols.Value,Option[Style]] = mutable.Map(
 		StylesConfigSymbols.EXPR_SYMBOL -> symbol,
 		StylesConfigSymbols.EXPR_UNRESOLVED -> unresolved,
 		StylesConfigSymbols.EXPR_SUBSTITUTED -> substituted,
@@ -130,7 +131,7 @@ case class StylesConfig(
 		StylesConfigSymbols.EXPR_EVALUATED -> evaluated
 	)
 	
-	lazy val level:Map[Int,Option[Style]] = Map(
+	lazy val level:mutable.Map[Int,Option[Style]] = mutable.Map(
 		0 -> level0,
 		1 -> level1,
 		2 -> level2,
@@ -146,9 +147,8 @@ case class StylesConfig(
 	def matchStyleClassId(style:Style):Option[String] = {
 	    val a = StylesConfigSymbols.values.find(v => {
 	            val so = apply(v)
-    	        val r = so.map(s => 
-    	            (s.classId==style.classId)
-    	        ).getOrElse(false)
+    	        val r = so.exists(s =>
+                    s.classId == style.classId)
     	        r
 	        }
 	    )

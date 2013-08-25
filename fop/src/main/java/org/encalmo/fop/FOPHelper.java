@@ -35,12 +35,13 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+@SuppressWarnings("deprecated")
 public class FOPHelper {
     
-	private static Configuration cfg;
-    private static FopFactory FOP_FACTORY = FopFactory.newInstance();
-    private static Map<String,String> LOCAL_DTD_MAP = new HashMap<String,String>();
-	private static SAXParserFactory SAX_PARSER_FACTORY;
+	private static final Configuration cfg;
+    private static final FopFactory FOP_FACTORY = FopFactory.newInstance();
+    private static final Map<String,String> LOCAL_DTD_MAP = new HashMap<String,String>();
+	private static final SAXParserFactory SAX_PARSER_FACTORY;
 
     static{
         cfg = new Configuration();
@@ -53,9 +54,11 @@ public class FOPHelper {
             fopcfg = fopcfgBuilder.build(FOPHelper.class.getResourceAsStream("/fop.xconf"));
             FOP_FACTORY.setUserConfig(fopcfg);
             FOP_FACTORY.setBaseURL(FOPHelper.class.getResource("/").toExternalForm());
+            //noinspection deprecation
             FOP_FACTORY.setFontBaseURL(FOPHelper.class.getResource("/fonts/").toExternalForm());
             FOP_FACTORY.setHyphenBaseURL(FOPHelper.class.getResource("/hyph/").toExternalForm());
             FOP_FACTORY.setBreakIndentInheritanceOnReferenceAreaBoundary(true);
+            //noinspection deprecation
             FOP_FACTORY.setUseCache(true);
         } 
         catch(RuntimeException re){
@@ -113,13 +116,12 @@ public class FOPHelper {
 		}
 	}
 
-	public static FormattingResults buildPDF(final StringBuffer fo, final String pdf)
-			throws IOException, FOPException {
+	public static FormattingResults buildPDF(final StringBuffer fo, final String pdf) {
 		return buildPDF(fo.toString(), pdf);
 	}
 
 	public static FormattingResults buildPDF(final String foString, final String pdfFile) {
-		OutputStream out = null;
+		OutputStream out;
 		File file = new File(pdfFile);
 		file.getParentFile().mkdirs();
 		try {
@@ -155,7 +157,7 @@ public class FOPHelper {
 	}
 
 	private static XMLReader configureXmlReader(final Fop fop)
-			throws ParserConfigurationException, SAXException, FOPException {
+			throws ParserConfigurationException, SAXException {
 		SAXParser saxParser = SAX_PARSER_FACTORY.newSAXParser();
 		XMLReader xmlReader = saxParser.getXMLReader();
 		DefaultHandler fopHandler = fop.getDefaultHandler();

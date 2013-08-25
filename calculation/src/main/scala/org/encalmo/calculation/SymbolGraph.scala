@@ -1,6 +1,6 @@
 package org.encalmo.calculation
 
-import org.encalmo.graph.{Graph}
+import org.encalmo.graph.Graph
 import org.encalmo.expression._
 import org.encalmo.common.{Node, TreeVisitor}
 import scala.collection.generic.Growable

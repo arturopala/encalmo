@@ -1,6 +1,6 @@
 package org.encalmo.calculation
 
-import scala.collection.{Set}
+import scala.collection.Set
 import scala.annotation.tailrec
 import org.encalmo.expression._
 
@@ -25,7 +25,7 @@ trait ExpressionResolverSeq extends ExpressionResolver {
     private def findRawExpression(s:Symbol,it:Iterator[ExpressionResolver]):Option[Expression] = {
         if(!it.hasNext) None
         else {
-            val rawExpr = it.next.getRawExpression(s)
+            val rawExpr = it.next().getRawExpression(s)
             if(rawExpr.isDefined) {
                 rawExpr
             } else {

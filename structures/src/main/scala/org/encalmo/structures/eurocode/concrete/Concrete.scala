@@ -171,7 +171,7 @@ object Concrete {
 		this(fctk095) = 2.0
 		this(Ecm) = 27
 		this(epsic1) = 1.8
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_16_20 = new NormalConcrete{
@@ -183,7 +183,7 @@ object Concrete {
 		this(fctk095) = 2.5
 		this(Ecm) = 29
 		this(epsic1) = 1.9
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_20_25 = new NormalConcrete{
@@ -195,7 +195,7 @@ object Concrete {
 		this(fctk095) = 2.9
 		this(Ecm) = 30
 		this(epsic1) = 2
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_25_30 = new NormalConcrete{
@@ -207,7 +207,7 @@ object Concrete {
 		this(fctk095) = 3.3
 		this(Ecm) = 31
 		this(epsic1) = 2.1
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_30_37 = new NormalConcrete{
@@ -219,7 +219,7 @@ object Concrete {
 		this(fctk095) = 3.8
 		this(Ecm) = 32
 		this(epsic1) = 2.2
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_35_45 = new NormalConcrete{
@@ -231,7 +231,7 @@ object Concrete {
 		this(fctk095) = 4.2
 		this(Ecm) = 34
 		this(epsic1) = 2.25
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_40_50 = new NormalConcrete{
@@ -243,7 +243,7 @@ object Concrete {
 		this(fctk095) = 4.6
 		this(Ecm) = 35
 		this(epsic1) = 2.3
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_45_55 = new NormalConcrete{
@@ -255,7 +255,7 @@ object Concrete {
 		this(fctk095) = 4.9
 		this(Ecm) = 36
 		this(epsic1) = 2.4
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_50_60 = new NormalConcrete{
@@ -267,7 +267,7 @@ object Concrete {
 		this(fctk095) = 5.3
 		this(Ecm) = 37
 		this(epsic1) = 2.45
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_55_67 = new MapContext{
@@ -285,7 +285,7 @@ object Concrete {
 		this(nc) = 1.75
 		this(epsic3) = 1.8
 		this(epsicu3) = 3.1
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_60_75 = new MapContext{
@@ -303,7 +303,7 @@ object Concrete {
 		this(nc) = 1.6
 		this(epsic3) = 1.9
 		this(epsicu3) = 2.9
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_70_85 = new MapContext{
@@ -321,7 +321,7 @@ object Concrete {
 		this(nc) = 1.45
 		this(epsic3) = 2.0
 		this(epsicu3) = 2.7
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_80_95 = new MapContext{
@@ -339,7 +339,7 @@ object Concrete {
 		this(nc) = 1.4
 		this(epsic3) = 2.2
 		this(epsicu3) = 2.6
-		lock
+		lock()
 	}
 	
 	private lazy val data_C_90_105 = new MapContext{
@@ -357,7 +357,7 @@ object Concrete {
 		this(nc) = 1.4
 		this(epsic3) = 2.3
 		this(epsicu3) = 2.6
-		lock
+		lock()
 	}
 	
 }

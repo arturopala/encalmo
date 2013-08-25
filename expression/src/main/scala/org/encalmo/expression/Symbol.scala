@@ -140,7 +140,10 @@ class Symbol(
     } else ""
     	
     /** Adds id to the contextId sequence */
-    def id(id:String):Symbol = copy(contextId = (contextId match {case None => Some(Seq(id)); case Some(seq) => Some(seq :+ id)}))
+    def id(id:String):Symbol = copy(contextId = contextId match {
+        case None => Some(Seq(id))
+        case Some(seq) => Some(seq :+ id)
+    })
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Appends comment to the description */
@@ -192,9 +195,9 @@ class Symbol(
     }
     
     override lazy val hashCode:Int = {
-		val prime = 31;
-		var result = 1;
-		result = prime * result + name.hashCode
+		val prime = 31
+        var result = 1
+        result = prime * result + name.hashCode
 		subscript.map(x => result = prime * result + x.hashCode)
 		superscript.map(x => result = prime * result + x.hashCode)
 		underscript.map(x => result = prime * result + x.hashCode)
@@ -219,9 +222,9 @@ class Symbol(
     	description.map(x => {sb.append(",description=\"");sb.append(x.toString);sb.append("\"")})
     	if(unit.isDefined){sb.append(",unit=\"");sb.append(unit.toString);sb.append("\"")}
     	dictionary.map(x => {sb.append(",dictionary=\"");sb.append(x.toString);sb.append("\"")})
-    	contextId.map(x => {sb.append(",contextId=");sb.append(x.toString)})
+    	contextId.map(x => {sb.append(",contextId=");sb.append(x.toString())})
 		sb.append(")")
-		sb.toString
+		sb.toString()
     }
 
 }

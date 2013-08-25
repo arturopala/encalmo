@@ -23,7 +23,7 @@ extends Section(nsStyle,flow:_*) {
     		myEnumerator
     	}else{
     		if(!parentNumSection.isDefined){
-    			parentEnumeratorProvider.getOrElse(NumSection.defaultEnumerator).asInstanceOf[EnumeratorProvider].enumerator
+    			parentEnumeratorProvider.getOrElse(NumSection.defaultEnumerator).enumerator
     		}else{
     			parentNumSection.get.enumerator
     		}
