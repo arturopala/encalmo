@@ -9,7 +9,7 @@ trait CaseTest extends Expression with Auxiliary {
 
     def test:Boolean
 
-    def then(e:Expression):Case = e match {
+    def thenUse(e:Expression):Case = e match {
         case s:Symbol => Case(CaseExpression(s),this)
         case _ => Case(CaseExpression(e),this)
     }
@@ -73,10 +73,10 @@ case class IsZero(e:Expression) extends CaseTest {
 
     override def operator:Seq[String] = Seq("","= 0")
 
-    override def test:Boolean = ZERO.eq(e.eval)
+    override def test:Boolean = ZERO.eq(e.eval())
 
     override def map(f:Transformation):Expression = {
-        val ve = e.map(f);
+        val ve = e.map(f)
         if(ve==e) f(this) else f(IsZero(ve))
     }
 
@@ -92,10 +92,10 @@ case class IsNotZero(e:Expression) extends CaseTest {
 
     override def operator:Seq[String] = Seq("","!= 0")
 
-    override def test:Boolean = ZERO.ne(e.eval)
+    override def test:Boolean = ZERO.ne(e.eval())
 
     override def map(f:Transformation):Expression = {
-        val ve = e.map(f);
+        val ve = e.map(f)
         if(ve==e) f(this) else f(IsNotZero(ve))
     }
 
@@ -111,11 +111,11 @@ case class Equals(t1:Expression,t2:Expression) extends CaseTest {
 
     override def operator:Seq[String] = Seq("","=","")
 
-    override def test:Boolean = (t1==t2)
+    override def test:Boolean = t1 == t2
 
     override def map(f:Transformation):Expression = {
-        val vl = t1.map(f); 
-        val vr = t2.map(f);
+        val vl = t1.map(f)
+        val vr = t2.map(f)
         if(vl==t1 && vr==t2) f(this) else f(Equals(vl,vr))
     }
 
@@ -132,8 +132,8 @@ case class GreaterThan(t1:Expression,t2:Expression) extends CaseTest {
     override def operator:Seq[String] = Seq("",">","")
 
     override def test:Boolean = {
-            val v1 = t1.eval
-            val v2 = t2.eval
+            val v1 = t1.eval()
+            val v2 = t2.eval()
             (v1,v2) match {
             case (n1:Number,n2:Number) => n1>n2
                 case _ => throw new IllegalArgumentException
@@ -141,9 +141,9 @@ case class GreaterThan(t1:Expression,t2:Expression) extends CaseTest {
     }
 
     override def map(f:Transformation):Expression = {
-            val vl = t1.map(f); 
-            val vr = t2.map(f);
-            if(vl==t1 && vr==t2) f(this) else f(GreaterThan(vl,vr))
+            val vl = t1.map(f)
+        val vr = t2.map(f)
+        if(vl==t1 && vr==t2) f(this) else f(GreaterThan(vl,vr))
     }
 
 }
@@ -159,8 +159,8 @@ case class GreaterOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
     override def operator:Seq[String] = Seq("",">=","")
 
     override def test:Boolean = {
-            val v1 = t1.eval
-            val v2 = t2.eval
+            val v1 = t1.eval()
+            val v2 = t2.eval()
             (v1,v2) match {
             case (n1:Number,n2:Number) => n1>=n2
             case _ => throw new IllegalArgumentException
@@ -168,9 +168,9 @@ case class GreaterOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
     }
 
     override def map(f:Transformation):Expression = {
-            val vl = t1.map(f); 
-            val vr = t2.map(f);
-            if(vl==t1 && vr==t2) f(this) else f(GreaterOrEqualThan(vl,vr))
+            val vl = t1.map(f)
+        val vr = t2.map(f)
+        if(vl==t1 && vr==t2) f(this) else f(GreaterOrEqualThan(vl,vr))
     }
 
 }
@@ -186,8 +186,8 @@ case class LowerThan(t1:Expression,t2:Expression) extends CaseTest {
     override def operator:Seq[String] = Seq("","<","")
 
     override def test:Boolean = {
-            val v1 = t1.eval
-            val v2 = t2.eval
+            val v1 = t1.eval()
+            val v2 = t2.eval()
             (v1,v2) match {
             case (n1:Number,n2:Number) => n1<=n2
             case _ => throw new IllegalArgumentException
@@ -195,9 +195,9 @@ case class LowerThan(t1:Expression,t2:Expression) extends CaseTest {
     }
 
     override def map(f:Transformation):Expression = {
-            val vl = t1.map(f); 
-            val vr = t2.map(f);
-            if(vl==t1 && vr==t2) f(this) else f(LowerThan(vl,vr))
+            val vl = t1.map(f)
+        val vr = t2.map(f)
+        if(vl==t1 && vr==t2) f(this) else f(LowerThan(vl,vr))
     }
 
 }
@@ -213,8 +213,8 @@ case class LowerOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
     override def operator:Seq[String] = Seq("","<=","")
 
     override def test:Boolean = {
-            val v1 = t1.eval
-            val v2 = t2.eval
+            val v1 = t1.eval()
+            val v2 = t2.eval()
             (v1,v2) match {
             case (n1:Number,n2:Number) => n1<=n2
             case _ => throw new IllegalArgumentException("Cannot evaluate test LowerOrEqualThan("+v1+","+v2+")")
@@ -222,9 +222,9 @@ case class LowerOrEqualThan(t1:Expression,t2:Expression) extends CaseTest {
     }
 
     override def map(f:Transformation):Expression = {
-            val vl = t1.map(f); 
-            val vr = t2.map(f);
-            if(vl==t1 && vr==t2) f(this) else f(LowerOrEqualThan(vl,vr))
+            val vl = t1.map(f)
+        val vr = t2.map(f)
+        if(vl==t1 && vr==t2) f(this) else f(LowerOrEqualThan(vl,vr))
     }
 
 }
@@ -240,9 +240,9 @@ case class InRangeLEL(t1:Expression,t2:Expression,t3:Expression) extends CaseTes
     override def operator:Seq[String] = Seq("","<=","<","")
 
     override def test:Boolean = {
-            val v1 = t1.eval
-            val v2 = t2.eval
-            val v3 = t3.eval
+            val v1 = t1.eval()
+            val v2 = t2.eval()
+            val v3 = t3.eval()
             (v1,v2,v3) match {
             case (n1:Number,n2:Number,n3:Number) => n1<=n2 && n2<n3
             case _ => throw new IllegalArgumentException("InRangeLEL("+v1+","+v2+","+v3+")")
@@ -250,10 +250,10 @@ case class InRangeLEL(t1:Expression,t2:Expression,t3:Expression) extends CaseTes
     }
 
     override def map(f:Transformation):Expression = {
-            val v1 = t1.map(f); 
-            val v2 = t2.map(f);
-            val v3 = t3.map(f);
-            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLEL(v1,v2,v3))
+            val v1 = t1.map(f)
+        val v2 = t2.map(f)
+        val v3 = t3.map(f)
+        if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLEL(v1,v2,v3))
     }
 
 }
@@ -269,9 +269,9 @@ case class InRangeLLE(t1:Expression,t2:Expression,t3:Expression) extends CaseTes
     override def operator:Seq[String] = Seq("","<","<=","")
 
     override def test:Boolean = {
-            val v1 = t1.eval
-            val v2 = t2.eval
-            val v3 = t3.eval
+            val v1 = t1.eval()
+            val v2 = t2.eval()
+            val v3 = t3.eval()
             (v1,v2,v3) match {
             case (n1:Number,n2:Number,n3:Number) => n1<n2 && n2<=n3
             case _ => throw new IllegalArgumentException("InRangeLLE("+v1+","+v2+","+v3+")")
@@ -279,10 +279,10 @@ case class InRangeLLE(t1:Expression,t2:Expression,t3:Expression) extends CaseTes
     }
 
     override def map(f:Transformation):Expression = {
-            val v1 = t1.map(f); 
-            val v2 = t2.map(f);
-            val v3 = t3.map(f);
-            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLLE(v1,v2,v3))
+            val v1 = t1.map(f)
+        val v2 = t2.map(f)
+        val v3 = t3.map(f)
+        if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLLE(v1,v2,v3))
     }
 
 }
@@ -298,9 +298,9 @@ case class InRangeLL(t1:Expression,t2:Expression,t3:Expression) extends CaseTest
     override def operator:Seq[String] = Seq("","<","<","")
 
     override def test:Boolean = {
-            val v1 = t1.eval
-            val v2 = t2.eval
-            val v3 = t3.eval
+            val v1 = t1.eval()
+            val v2 = t2.eval()
+            val v3 = t3.eval()
             (v1,v2,v3) match {
             case (n1:Number,n2:Number,n3:Number) => n1<n2 && n2<n3
             case _ => throw new IllegalArgumentException("InRangeLL("+v1+","+v2+","+v3+")")
@@ -308,10 +308,10 @@ case class InRangeLL(t1:Expression,t2:Expression,t3:Expression) extends CaseTest
     }
 
     override def map(f:Transformation):Expression = {
-            val v1 = t1.map(f); 
-            val v2 = t2.map(f);
-            val v3 = t3.map(f);
-            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLL(v1,v2,v3))
+            val v1 = t1.map(f)
+        val v2 = t2.map(f)
+        val v3 = t3.map(f)
+        if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLL(v1,v2,v3))
     }
 
 }
@@ -327,9 +327,9 @@ case class InRangeLELE(t1:Expression,t2:Expression,t3:Expression) extends CaseTe
     override def operator:Seq[String] = Seq("","<=","<=","")
 
     override def test:Boolean = {
-            val v1 = t1.eval
-            val v2 = t2.eval
-            val v3 = t3.eval
+            val v1 = t1.eval()
+            val v2 = t2.eval()
+            val v3 = t3.eval()
             (v1,v2,v3) match {
             case (n1:Number,n2:Number,n3:Number) => n1<=n2 && n2<=n3
             case _ => throw new IllegalArgumentException("InRangeLELE("+v1+","+v2+","+v3+")")
@@ -337,10 +337,10 @@ case class InRangeLELE(t1:Expression,t2:Expression,t3:Expression) extends CaseTe
     }
 
     override def map(f:Transformation):Expression = {
-            val v1 = t1.map(f); 
-            val v2 = t2.map(f);
-            val v3 = t3.map(f);
-            if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLELE(v1,v2,v3))
+            val v1 = t1.map(f)
+        val v2 = t2.map(f)
+        val v3 = t3.map(f)
+        if(v1==t1 && v2==t2 && v3==t3) f(this) else f(InRangeLELE(v1,v2,v3))
     }
 
 }
@@ -358,9 +358,9 @@ case class AndCaseTest(t1:CaseTest,t2:CaseTest) extends CaseTest{
     override def test:Boolean = t1.test && t2.test
 
     override def map(f:Transformation):Expression = {
-            val vl = t1.map(f); 
-            val vr = t2.map(f);
-            if(vl==t1 && vr==t2) f(this) else f(AndCaseTest(vl.asInstanceOf[CaseTest],vr.asInstanceOf[CaseTest]))
+            val vl = t1.map(f)
+        val vr = t2.map(f)
+        if(vl==t1 && vr==t2) f(this) else f(AndCaseTest(vl.asInstanceOf[CaseTest],vr.asInstanceOf[CaseTest]))
     }
 
 }
@@ -378,9 +378,9 @@ case class OrCaseTest(t1:CaseTest,t2:CaseTest) extends CaseTest{
     override def test:Boolean = t1.test || t2.test
 
     override def map(f:Transformation):Expression = {
-            val vl = t1.map(f); 
-            val vr = t2.map(f);
-            if(vl==t1 && vr==t2) f(this) else f(OrCaseTest(vl.asInstanceOf[CaseTest],vr.asInstanceOf[CaseTest]))
+            val vl = t1.map(f)
+        val vr = t2.map(f)
+        if(vl==t1 && vr==t2) f(this) else f(OrCaseTest(vl.asInstanceOf[CaseTest],vr.asInstanceOf[CaseTest]))
     }
 
 }
@@ -398,8 +398,8 @@ case class NegCaseTest(t:CaseTest) extends CaseTest{
     override def test:Boolean = !t.test
 
     override def map(f:Transformation):Expression = {
-            val vt = t.map(f); 
-            if(vt==t) f(this) else f(NegCaseTest(vt.asInstanceOf[CaseTest]))
+            val vt = t.map(f)
+        if(vt==t) f(this) else f(NegCaseTest(vt.asInstanceOf[CaseTest]))
     }
 
 }

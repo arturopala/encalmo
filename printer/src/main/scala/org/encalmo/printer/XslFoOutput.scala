@@ -28,7 +28,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		declareNamespace("http://www.w3.org/1999/XSL/Format")
 		attr("font-family",DefaultFontStyle.family)
 		attr("font-size",DefaultFontStyle.size,"pt")
-		body
+		body()
 		startb(LAYOUT_MASTER_SET)
 		start(SIMPLE_PAGE_MASTER)
 		attr("master-name",layout.id)
@@ -38,24 +38,24 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		attr("margin-top",layout.topMargin,"mm")
 		attr("margin-right",layout.rightMargin,"mm")
 		attr("margin-bottom",layout.bottomMargin,"mm")
-		body
+		body()
 		start(REGION_BODY)
 		attr("margin-top",layout.bodyTopMargin,"mm")
 		attr("margin-bottom",layout.bodyBottomMargin,"mm")
-		end
+		end()
 		start(REGION_BEFORE)
 		attr("extent",layout.headerExtent,"mm")
-		end
+		end()
 		start(REGION_AFTER)
 		attr("extent",layout.footerExtent,"mm")
-		end
+		end()
 		end(SIMPLE_PAGE_MASTER)
 		end(LAYOUT_MASTER_SET)
 	}
 	
-	override def close = {
+	override def close() = {
 		end(ROOT)
-		super.close
+		super.close()
 	}
 	
 	def toMathMLOutput:MathMLOutput = {
@@ -129,7 +129,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 	def tableColumn(width:String,unit:String) = {
 		start(TABLE_COLUMN)
 		attr("column-width",width,unit)
-		end
+		end()
 	}
 	
 	def append(ch:Character) = {
@@ -158,7 +158,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
         if (style != null) {
             appendInlineStyleAttributes(style, currentStyle, false)
         }
-        body
+        body()
         append(text)
         end(INLINE)
     }

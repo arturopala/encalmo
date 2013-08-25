@@ -1,5 +1,7 @@
 package org.encalmo.expression
 
+import scala.language.postfixOps
+
 /**
  * Case is a part of the Selection expression.
  * If case test evaluates to true then expression is used by parent Selection.
@@ -12,18 +14,19 @@ case class Case(ce:CaseExpression,t:CaseTest) extends Expression with Auxiliary 
     def test:Boolean = t.test
 
     final override def eval():Expression = {
-            val ev = ce eval; 
+            val ev = ce eval()
             if(ev.ne(ce.expr)) Case(CaseExpression(ev),t) else this
     }
     
     /** Maps only test expressions */
     final override def map(f:Transformation):Expression = {
-            val vt = t.map(f);
+            val vt = t.map(f)
             if(vt==t) f(this) else {
-                if(vt.isInstanceOf[CaseTest]){
-                    f(Case(ce,vt.asInstanceOf[CaseTest]))
-                }else{
-                    f(Case(ce,Never))
+                vt match {
+                    case t1: CaseTest =>
+                        f(Case(ce, t1))
+                    case _ =>
+                        f(Case(ce, Never))
                 }
             }
     }

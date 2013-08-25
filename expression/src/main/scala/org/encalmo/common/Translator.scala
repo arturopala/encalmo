@@ -8,6 +8,7 @@ import java.io.InputStreamReader
 import java.util.MissingResourceException
 import scala.collection.immutable.StringOps
 import scala.collection.mutable.Map
+import scala.collection.mutable
 
 /**
  * Translator class
@@ -15,7 +16,7 @@ import scala.collection.mutable.Map
  */
 object Translator {
     
-    val cache:Map[(Locale,String),Option[Properties]] = Map()
+    val cache:mutable.Map[(Locale,String),Option[Properties]] = mutable.Map()
     
     def init(locale:Locale, dictionary:String):Option[Properties] = {
             val file = find(locale,dictionary)

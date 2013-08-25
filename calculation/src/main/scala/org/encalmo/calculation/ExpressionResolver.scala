@@ -37,7 +37,7 @@ trait ExpressionResolver {
     def listSymbols:Seq[Symbol]
 	
 	/**
-	 * Replaces symbols with raw expressions
+	 * Expands symbols to their mapped expressions.
 	 */
 	def resolve(expression: Expression)(implicit cache: ResultsCache):Expression = {
         try {
@@ -45,14 +45,14 @@ trait ExpressionResolver {
         }
         catch {
             case exception:Exception => {
-                Console.println("Could not resolve expression: "+expression+".\r\nCause: "+exception.getMessage)
+                Console.err.println("Could not resolve expression: "+expression+".\r\nCause: "+exception.getMessage)
                 throw exception
             }
         }
 	}
 	
 	/**
-	 * Replaces symbols with their evaluated values.
+	 * Substitutes symbols with their evaluated values.
 	 */
 	def substitute(expression: Expression)(implicit cache: ResultsCache):Expression = {
         try {
@@ -66,18 +66,18 @@ trait ExpressionResolver {
         }
         catch {
             case exception: Exception => {
-                Console.println("Could not substitute expression: "+expression+".\r\nCause: "+exception.getMessage)
+                Console.err.println("Could not substitute expression: "+expression+".\r\nCause: "+exception.getMessage)
                 throw exception
             }
         }
 	}
 	
 	/**
-	 * Evaluates given expression with substituted symbols.
+	 * Evaluates given expression.
 	 */
 	def evaluate(expression: Expression)(implicit cache: ResultsCache = new ResultsCache()):Expression = {
         def evaluateRaw: Expression = {
-            val e1 = map(expression, preevaluator(cache))
+            val e1 = map(expression, preEvaluator(cache))
             map(e1,evaluator(cache))
         }
         try {
@@ -94,11 +94,26 @@ trait ExpressionResolver {
         }
         catch {
             case exc:Exception => {
-                Console.println("Could not evaluate expression: "+expression+".\r\nCause: "+exc.getMessage)
+                Console.err.println("Could not evaluate expression: "+expression+".\r\nCause: "+exc.getMessage)
                 throw exc
             }
         }
 	}
+
+    /**
+     * Partially evaluates given expression.
+     */
+    def partiallyEvaluate(expression: Expression)(implicit cache: ResultsCache = new ResultsCache()):Expression = {
+        try {
+            map(expression, partialEvaluator(cache))
+        }
+        catch {
+            case exc:Exception => {
+                Console.err.println("Could not evaluate expression: "+expression+".\r\nCause: "+exc.getMessage)
+                throw exc
+            }
+        }
+    }
 	
 	/**
 	 * Maps expressions with given transformation.
@@ -118,7 +133,7 @@ trait ExpressionResolver {
 	
 	/**
 	 * Single-pass resolving transformation. 
-	 * Replaces symbols with raw expressions
+	 * Expends symbols to their mapped expressions
 	 */
 	private def resolver(cache: ResultsCache):Transformation = {
 		case s:Symbol => this.getRawExpression(s).getOrElse(s)
@@ -131,14 +146,14 @@ trait ExpressionResolver {
 	 * Single-pass pre-evaluating transformation.
 	 * Replaces symbols with expressions 
 	 */
-    private def preevaluator(cache: ResultsCache):Transformation = {
+    private def preEvaluator(cache: ResultsCache):Transformation = {
         case s:Symbol => this.getExpression(s, cache).getOrElse(s)
         case e => e
     }
 	
 	/**
 	 * Single-pass evaluating transformation. 
-	 * Evaluates expressions with substituted symbols.
+	 * Evaluates expressions.
 	 */
 	private def evaluator(cache: ResultsCache):Transformation = {
         case s:Symbol => this.getExpression(s, cache) match {
@@ -156,7 +171,7 @@ trait ExpressionResolver {
 	
 	/**
 	 * Single-pass substituting transformation. 
-	 * Replaces symbols with their evaluated values
+	 * Substitutes symbols with their evaluated values.
 	 */
 	private def substitutor(cache: ResultsCache):Transformation = {
 		case symbol: Symbol => evaluate(symbol)(cache)
@@ -166,6 +181,23 @@ trait ExpressionResolver {
 		case evalAt: EvalAt => evalAt.substitute
 		case other => other
 	}
+
+    /**
+     * Single-pass partially evaluating transformation.
+     * Partially evaluates expressions.
+     */
+    private def partialEvaluator(cache: ResultsCache):Transformation = {
+        case o: Operation2 => {
+            o.copy(evaluate(o.l)(cache), evaluate(o.r)(cache))
+        }
+        case o: OperationN => {
+            o.copy(o.args.map(evaluate(_)(cache)): _*)
+        }
+        case sel: Selection => {
+            substitute(sel.select)(cache)
+        }
+        case other => other
+    }
 	
 	def evaluateWithAndReturnCopy(er:ExpressionResolver, cache: ResultsCache):ExpressionResolver = {
 	    Context(listMappings.map(x => (x._1,er.evaluate(x._2)(cache))):_*)

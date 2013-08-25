@@ -28,7 +28,7 @@ class SectionCounter(val enumerator:Enumerator) {
 	/**
 	 * Increase curent level
 	 */
-	def in:Unit = {
+	def in():Unit = {
 		currentLevel = currentLevel+1
 		if(counters.size==currentLevel){
 			counters = counters :+ Counter()
@@ -39,9 +39,9 @@ class SectionCounter(val enumerator:Enumerator) {
 	/**
 	 * Decrease curent level
 	 */
-	def out:Unit = {
+	def out():Unit = {
 		for(x <- currentLevel to counters.size - 1){
-			counters(x).reset
+			counters(x).reset()
 		}
 		currentLevel = currentLevel-1
 		if(currentLevel<0){
@@ -53,8 +53,8 @@ class SectionCounter(val enumerator:Enumerator) {
 	/**
 	 * Increase current counter state
 	 */
-	def next:Unit = {
-		currentCounter.increment
+	def next():Unit = {
+		currentCounter.increment()
 	}
 	
 }
@@ -77,11 +77,11 @@ object SectionCounter {
  */
 case class Counter(var item:Int = 1){
 	
-	def increment:Unit = {
+	def increment():Unit = {
 		item = item + 1
 	}
 	
-	def reset = {
+	def reset() = {
 		item = 1
 	}
 	

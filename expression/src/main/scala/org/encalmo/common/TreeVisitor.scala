@@ -21,13 +21,13 @@ trait TreeVisitor[A<:AnyRef] {
 }
 
 case class AdHocVisitor[A<:AnyRef] (
-    
-    val onEnterFx:Option[Node[A]=>Unit] = None,
-    val onExitFx:Option[Node[A]=>Unit] = None,
-    val onBeforeChildEnterFx:Option[(Node[A],Int,A)=>Unit] = None,
-    val onAfterChildExitFx:Option[(Node[A],Int,A)=>Unit] = None,
-    val onBetweenChildrenFx:Option[(Node[A],A,A)=>Unit] = None,
-    val mapElementFx:Option[A=>A] = None
+
+                                       onEnterFx:Option[Node[A]=>Unit] = None,
+    onExitFx:Option[Node[A]=>Unit] = None,
+    onBeforeChildEnterFx:Option[(Node[A],Int,A)=>Unit] = None,
+    onAfterChildExitFx:Option[(Node[A],Int,A)=>Unit] = None,
+    onBetweenChildrenFx:Option[(Node[A],A,A)=>Unit] = None,
+    mapElementFx:Option[A=>A] = None
     
 ) extends TreeVisitor[A] {
     

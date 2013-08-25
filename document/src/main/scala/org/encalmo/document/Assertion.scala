@@ -7,6 +7,7 @@ import org.encalmo.calculation.{ResultsCache, Calculation}
 import org.encalmo.style.StylesConfig
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
+import scala.collection.mutable
 
 /**
  * Assertion class
@@ -15,7 +16,7 @@ import org.encalmo.style.DefaultStyle
 abstract class Assertion(
 		val text:String,
 		val calc:Calculation, 
-		val expressions:Seq[Expression]
+		val expressions:mutable.Seq[Expression]
 ) 
 extends DocumentComponent(null){
 	
@@ -25,8 +26,8 @@ extends DocumentComponent(null){
 	lazy val falseStyle:Style= parentStylesConfig match {case Some(sc) => sc.assert_false.get; case None => DefaultStyle}
 	lazy val unknownStyle:Style = parentStylesConfig match {case Some(sc) => sc.assert_unknown.get; case None => DefaultStyle}
 	
-	def operator:Seq[Character]
-	def assert(results:Seq[Expression]):Option[Boolean]
+	def operator:mutable.Seq[Character]
+	def assert(results:mutable.Seq[Expression]):Option[Boolean]
 	
 	/*override def myStyle:Style = {
 		val results = expressions.map(calc.evaluate)
@@ -40,7 +41,7 @@ extends DocumentComponent(null){
 		}
 	}*/
 	
-	def evaluate(cache: ResultsCache):(Option[Boolean],Seq[DocumentComponent]) = {
+	def evaluate(cache: ResultsCache):(Option[Boolean],mutable.Seq[DocumentComponent]) = {
 		val seq:ListBuffer[DocumentComponent] = ListBuffer()
 		val results = expressions.map(calc.evaluate(_)(cache))
 		val ob = assert(results)
@@ -82,10 +83,10 @@ extends DocumentComponent(null){
 }
 
 object AssertionLE {
-	def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
-		def operator:Seq[Character] = Seq(Character.LE)
-		def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number) => {
+	def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,re)){
+		def operator:mutable.Seq[Character] = mutable.Seq(Character.LE)
+		def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number) => {
 				Some(n1 <= n2)
 			}
 			case _ => None
@@ -94,10 +95,10 @@ object AssertionLE {
 }
 
 object AssertionGE {
-    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
-        def operator:Seq[Character] = Seq(Character.GE)
-        def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,re)){
+        def operator:mutable.Seq[Character] = mutable.Seq(Character.GE)
+        def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number) => {
                 Some(n1 >= n2)
             }
             case _ => None
@@ -106,10 +107,10 @@ object AssertionGE {
 }
 
 object AssertionG {
-    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
-        def operator:Seq[Character] = Seq(Character.GREATER)
-        def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,re)){
+        def operator:mutable.Seq[Character] = mutable.Seq(Character.GREATER)
+        def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number) => {
                 Some(n1 > n2)
             }
             case _ => None
@@ -118,10 +119,10 @@ object AssertionG {
 }
 
 object AssertionL {
-    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
-        def operator:Seq[Character] = Seq(Character.LOWER)
-        def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,re)){
+        def operator:mutable.Seq[Character] = mutable.Seq(Character.LOWER)
+        def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number) => {
                 Some(n1 < n2)
             }
             case _ => None
@@ -130,10 +131,10 @@ object AssertionL {
 }
 
 object AssertionE {
-    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,Seq(le,re)){
-        def operator:Seq[Character] = Seq(Character.EQUAL)
-        def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,re)){
+        def operator:mutable.Seq[Character] = mutable.Seq(Character.EQUAL)
+        def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number) => {
                 Some(n1 == n2)
             }
             case _ => None
@@ -142,10 +143,10 @@ object AssertionE {
 }
 
 object AssertionRangeLLE {
-    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,Seq(le,e,re)){
-        def operator:Seq[Character] = Seq(Character.LOWER,Character.LE)
-        def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number,n3:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,e,re)){
+        def operator:mutable.Seq[Character] = mutable.Seq(Character.LOWER,Character.LE)
+        def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number,n3:Number) => {
                 Some(n1 < n2 && n2 <= n3)
             }
             case _ => None
@@ -154,10 +155,10 @@ object AssertionRangeLLE {
 }
 
 object AssertionRangeLEL {
-    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,Seq(le,e,re)){
-        def operator:Seq[Character] = Seq(Character.LE,Character.LOWER)
-        def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number,n3:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,e,re)){
+        def operator:mutable.Seq[Character] = mutable.Seq(Character.LE,Character.LOWER)
+        def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number,n3:Number) => {
                 Some(n1 <= n2 && n2 < n3)
             }
             case _ => None
@@ -166,10 +167,10 @@ object AssertionRangeLEL {
 }
 
 object AssertionRangeLL {
-    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,Seq(le,e,re)){
-        def operator:Seq[Character] = Seq(Character.LOWER,Character.LOWER)
-        def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number,n3:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,e,re)){
+        def operator:mutable.Seq[Character] = mutable.Seq(Character.LOWER,Character.LOWER)
+        def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number,n3:Number) => {
                 Some(n1 < n2 && n2 < n3)
             }
             case _ => None
@@ -178,10 +179,10 @@ object AssertionRangeLL {
 }
 
 object AssertionRangeLELE {
-    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,Seq(le,e,re)){
-        def operator:Seq[Character] = Seq(Character.LE,Character.LE)
-        def assert(results:Seq[Expression]):Option[Boolean] = results match {
-            case Seq(n1:Number,n2:Number,n3:Number) => {
+    def apply(text:String, calc:Calculation,le:Expression,e:Expression,re:Expression) = new Assertion(text,calc,mutable.Seq(le,e,re)){
+        def operator:mutable.Seq[Character] = mutable.Seq(Character.LE,Character.LE)
+        def assert(results:mutable.Seq[Expression]):Option[Boolean] = results match {
+            case mutable.Seq(n1:Number,n2:Number,n3:Number) => {
                 Some(n1 <= n2 && n2 <= n3)
             }
             case _ => None

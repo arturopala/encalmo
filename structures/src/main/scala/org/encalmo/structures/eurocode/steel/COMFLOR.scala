@@ -25,7 +25,7 @@ object COMFLOR {
         this(eplus) = 4.03E-2
         this(ep) = 3.64E-2
         this(Phi) = 75
-        lock
+        lock()
 	}
 
 }

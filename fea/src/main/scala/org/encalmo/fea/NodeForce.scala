@@ -22,7 +22,7 @@ case class NodeForce(
     /** Force component's sequence paired with labels*/
     def explainseq = Seq(("fx",fx),("fy",fy),("fz",fz),("mx",mx),("my",my),("mz",mz))
     /** Verbose explanation of force */
-    def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) (s + p._1+"="+DoubleFormat.short(p._2.get)+" ") else s})
+    def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) s + p._1 + "=" + DoubleFormat.short(p._2.get) + " " else s})
 }
 
 /** Node force factory */

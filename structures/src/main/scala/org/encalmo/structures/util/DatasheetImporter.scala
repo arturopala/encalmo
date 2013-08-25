@@ -14,18 +14,18 @@ import java.io.FileReader
 class DatasheetImporter {
 
 	@Test
-	def importIPE = doImport("IPESection","ipe")
+	def importIPE() = doImport("IPESection","ipe")
 	
 	@Test
-	def importHE = doImport("HESection","he")
+	def importHE() = doImport("HESection","he")
 	
 	@Test
-	def importIPN = doImport("IPNSection","ipn")
+	def importIPN() = doImport("IPNSection","ipn")
 	
 	def readCSV(file:String, fx:(String,String) => Unit) {
-		 val reader:CSVReader = new CSVReader(new FileReader(file));
-		 val rows:Seq[Array[String]] = reader.readAll();
-		 for(row <- rows.tail){
+		 val reader:CSVReader = new CSVReader(new FileReader(file))
+        val rows:Seq[Array[String]] = reader.readAll()
+        for(row <- rows.tail){
 			 val b = new StringBuilder
 			 b.append("\"")
 			 b.append(row.head)
@@ -38,7 +38,7 @@ class DatasheetImporter {
 					b.append(cell)
 				 }
 			 }
-			 fx(row.head,b.toString)
+			 fx(row.head,b.toString())
 		 }
 
 	}

@@ -24,7 +24,7 @@ object FLORSTROP {
         eplus := 40.3
         ep := 36.4
         Phi := 75
-        lock
+        lock()
 	}
 	
 	def T59_Z_088 = new ProfiledSteelSheet("FLORSTROP T59 Z 0.88", Steel.S280GD, data_T59_Z_088)
@@ -43,7 +43,7 @@ object FLORSTROP {
         eplus := 40.6
         ep := 36.4
         Phi := 75
-        lock
+        lock()
     }
 	
 	def T59_Z_100 = new ProfiledSteelSheet("FLORSTROP T59 Z 1.0", Steel.S280GD, data_T59_Z_100)
@@ -62,7 +62,7 @@ object FLORSTROP {
         eplus := 40.6
         ep := 36.4
         Phi := 75
-        lock
+        lock()
     }
 	
     def T59_Z_125 = new ProfiledSteelSheet("FLORSTROP T59 Z 1.25", Steel.S280GD, data_T59_Z_125)
@@ -81,7 +81,7 @@ object FLORSTROP {
         eplus := 40.6
         ep := 36.4
         Phi := 75
-        lock
+        lock()
     }
     
     def COFRAPLUS_60_100 = new ProfiledSteelSheet("COFRAPLUS 60 1.0", Steel.S350GD, data_COFRAPLUS_60_100)
@@ -100,7 +100,7 @@ object FLORSTROP {
         eplus := 35.2
         ep := 33.3
         Phi := 72
-        lock
+        lock()
     }
 
 }

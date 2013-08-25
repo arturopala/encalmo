@@ -39,7 +39,7 @@ object SteelExpressions extends MapContext {
 	fyd    := fy/gammaM0
 	epsiy  := fy/E
 	epsi   := sqrt(Number(235,SI.MPa)/fy)
-	lock
+	lock()
 }
 
 /** Steel context class */
@@ -87,36 +87,36 @@ object Steel {
 	private lazy val data_S235 = new MapContext {
 		fy := 235
 		fu := 360
-		lock
+		lock()
 	}
 	
 	private lazy val data_S275 = new MapContext {
 		fy := 275
 		fu := 430
-		lock
+		lock()
 	}
 	
 	private lazy val data_S355 = new MapContext {
 		fy := 355
 		fu := 510
-		lock
+		lock()
 	}
 	
 	private lazy val data_S450 = new MapContext {
 		fy := 440
 		fu := 550
-		lock
+		lock()
 	}
 	
 	private lazy val data_S280GD = new MapContext {
 		E  := 210
 		fy := 280
-		lock
+		lock()
 	}
 	
 	private lazy val data_S350GD = new MapContext {
         E  := 210
         fy := 350
-        lock
+        lock()
     }
 }

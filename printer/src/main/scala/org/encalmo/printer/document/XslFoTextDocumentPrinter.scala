@@ -48,9 +48,9 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 	}
 	
 	/** Section counters map */
-	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
+	private val counterMap:mutable.LinkedHashMap[Enumerator,SectionCounter] = mutable.LinkedHashMap[Enumerator,SectionCounter]()
 	
-	private val styleStack:Stack[Style] = Stack()
+	private val styleStack:mutable.Stack[Style] = mutable.Stack()
 	styleStack.push(DefaultStyle)
 	
 	/** Returns counter linked to the enumerator */
@@ -68,24 +68,24 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 	def tryStartPageSequence(chapter:Chapter, style:Style):Unit = {
 		if(!isInFlow || chapter!=null){
 			if(isInFlow || chapter!=null){
-				endPageSequence
+				endPageSequence()
 			}
 			output.start(PAGE_SEQUENCE)
 			output.attr("master-reference", output.layout.id)
 			output.appendBlockStyleAttributes(style, styleStack.top)
-			output.body
+			output.body()
 			if(chapter!=null){
 				if(chapter.header!=null){
 					output.start(STATIC_CONTENT)
 					output.attr("flow-name","xsl-region-before")
-					output.body
+					output.body()
 					output.start(BLOCK)
                     output.attr("text-align","center")
                     output.attr("font-size","80%")
                     output.attr("line-height","125%")
                     output.attr("padding-bottom","0.5em")
                     output.attr("border-bottom","0.3pt solid black")
-                    output.body
+                    output.body()
 					isInFlow = true
 					chapter.header.visit(visitor=this)
 					isInFlow = false
@@ -95,11 +95,11 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 				if(chapter.footer!=null){
 					output.start(STATIC_CONTENT)
 					output.attr("flow-name","xsl-region-after")
-					output.body
+					output.body()
                     output.start(BLOCK)
                     output.attr("text-align","right")
                     output.attr("border-top","1pt solid black")
-                    output.body
+                    output.body()
 					isInFlow = true
 					chapter.footer.visit(visitor=this)
 					isInFlow = false
@@ -112,13 +112,13 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			}
 			output.start(FLOW)
 			output.attr("flow-name","xsl-region-body")
-			output.body
+			output.body()
 			output.startb(BLOCK)
 			isInFlow = true
 		}
 	}
 	
-	def endPageSequence = {
+	def endPageSequence() = {
 		if(isInFlow){
 			output.end(BLOCK)
 			output.end(FLOW)
@@ -144,12 +144,12 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
                 output.start(BLOCK)
                 output.attr("margin-top","1em")
                 output.attr("margin-bottom","1em")
-                output.body
+                output.body()
                 if(toc.parentDocument.isDefined){
                     output.start(BLOCK)
                     output.attr("margin-bottom","0.3em")
                     output.attr("font-size", "12pt")
-                    output.body
+                    output.body()
                     output.append(toc.title)
                     output.end(BLOCK)
                     toc.parentDocument.get.visit(visitor = new XslFoTableOfContentsPrinterTraveler(output))
@@ -159,7 +159,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
             case PageBreak => {
                 output.start(BLOCK)
                 output.attr("break-after","page")
-                output.end
+                output.end()
             }
 			case _ => {
 				tryStartPageSequence(null,node.element.style)
@@ -172,31 +172,31 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 						if(ns.isFirstBlockComponent){
 						    output.attr("keep-with-previous","always")
 						}
-						output.body
+						output.body()
 						val ens = en.style
 						if(ens!=null){
 							output.start(INLINE)
 							output.appendInlineStyleAttributes(en.style, styleStack.top)
-							output.body
+							output.body()
 						}
 						
 						output.append(sc.current.mkString("",".","."+output.SPACE))
-						sc.in // counter level increment
+						sc.in() // counter level increment
 						if(ens!=null){
 							output.end(INLINE)
 						}
 						if(ns.title.isDefined){
 							output.start(INLINE)
 							output.appendInlineStyleAttributes(ns.style, styleStack.top)
-							output.body
-							output.append(ns.title.get);
-							output.end(INLINE)
+							output.body()
+							output.append(ns.title.get)
+                            output.end(INLINE)
 						}
 					}
 					case s:Section => {
 						output.start(BLOCK)
 						output.appendBlockStyleAttributes(s.style, styleStack.top)
-						output.body
+						output.body()
 					}
 					case ch:Character => {
 						output.append(ch)
@@ -208,10 +208,10 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 						if(t.myStyle!=null){
 							output.start(INLINE)
 							output.appendInlineStyleAttributes(t.myStyle, styleStack.top)
-							output.body
+							output.body()
 						}
-						output.append(t.textContent);
-						if(t.myStyle!=null){
+						output.append(t.textContent)
+                        if(t.myStyle!=null){
 							output.end(INLINE)
 						}
 					}
@@ -222,7 +222,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 								output.start(INLINE)
 								output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
 								output.attr("padding-end","1em")
-								output.body
+								output.body()
 							}
 							es.foreach(etp => {
 			                    writeExpression(etp, expr.style)
@@ -241,8 +241,8 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 					case a:Assertion => {
 						val result = a.evaluate(resultCacheFor(a.calc))
 						val s = Section(a.style,result._2:_*)
-						s.visit(visitor = this);
-					}
+						s.visit(visitor = this)
+                    }
 					case _ => {}
 				}
 			}
@@ -270,19 +270,19 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			case _ => 
 		}
 		// removing current style from the stack
-		styleStack.pop
+		styleStack.pop()
 		node.element match {
 			case d:Document => {
-				endPageSequence
+				endPageSequence()
 			}
 			case c:Chapter => {
-				endPageSequence
+				endPageSequence()
 			}
 			case ns:NumSection => {
 				output.end(BLOCK)
 				val sc = counterFor(ns.enumerator)
-				sc.out //counter level decrement
-				sc.next // counter increment
+				sc.out() //counter level decrement
+				sc.next() // counter increment
 			}
 			case s:Section => {
 				output.end(BLOCK)
@@ -304,7 +304,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
     	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
     		val styleConfigOpt = expr.parentStylesConfig 
-    		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor(_))
+    		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
 			val tableRowStyle:Option[Style] = styleConfigOpt match {
 				case Some(styleConfig) => styleConfig.block 
 				case None => None
@@ -318,17 +318,17 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
     			output.attr("keep-with-previous","always")
 			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
 			}
-    		output.body
+    		output.body()
     		output.tableColumn("2.5","em")
     		output.tableColumn("proportional-column-width(40)","")
     		output.tableColumn("proportional-column-width(60)","")
     		output.start(TABLE_BODY)
-			output.body
+			output.body()
 			for(es <- ess){
 				output.startb(TABLE_ROW)
 				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
 				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle, false)
-				sc.foreach(_.next)
+				sc.foreach(_.next())
 				output.end(TABLE_ROW)
 			}
             output.end(TABLE_BODY)
@@ -370,14 +370,14 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
                     output.attr("border-bottom","0.13mm solid black")
                     output.attr("border-top","0.13mm solid black")
                     output.attr("border-left","0.13mm solid black")
-					output.body
+					output.body()
 			        output.start(BLOCK)
 			        output.attr("padding-top",paddingTop,"pt")
 			        output.attr("padding-bottom",paddingBottom,"pt")
 			        output.attr("margin-right","0.7em")
 			        output.attr("text-align","right")
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
-			        output.body
+			        output.body()
 			        output.append(bullet)
 			        output.end(BLOCK)
 			        output.end(TABLE_CELL)
@@ -388,7 +388,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			            output.attr("border-bottom","0.13mm solid black")
 			            output.attr("border-top","0.13mm solid black")
 			        }
-			        output.body
+			        output.body()
 			        output.start(BLOCK)
 			        output.attr("margin-right","3pt")
 			        output.attr("padding-top",paddingTop,"pt")
@@ -396,7 +396,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
 			        output.appendHyphenationStyleAttributes(descStyle,styleStack.top)
 		        	output.attr("keep-together.within-page","always")
-			        output.body
+			        output.body()
 			        if(!secondTableRow) {
 			        	output.append(description)
 			        }
@@ -406,21 +406,21 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 		        output.start(TABLE_CELL)
 		        if(!secondTableRow && (!isCell2 || twoRows)){
 		        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
-		        	output.attr("number-columns-spanned",ncs);
-		        }
+		        	output.attr("number-columns-spanned",ncs)
+                }
 				if(!twoTableRows){
 				    output.attr("border-bottom","0.13mm solid black")
                     output.attr("border-top","0.13mm solid black")
                     output.attr("border-right","0.13mm solid black")
 				}
 			    output.attr("vertical-align","middle")
-		        output.body
+		        output.body()
 		        if(isCell2 && twoRows){
 		        	output.start(BLOCK)
 		        	output.attr("keep-together.within-page","always")
 			        output.attr("margin-top",paddingTop,"pt")
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
-			        output.body
+			        output.body()
 			        output.append(description)
 			        output.end(BLOCK)
 		        }
@@ -429,7 +429,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 					output.end(TABLE_ROW)
 					output.start(TABLE_ROW)
 					output.attr("keep-with-previous","always")
-					output.body
+					output.body()
 					writeExpressionSeq(se, style, printDescription, "", tableRowStyle, true)
 				}else{
 			        output.start(BLOCK)
@@ -441,7 +441,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			        output.attr("margin-bottom",paddingBottom,"pt")
 			        output.attr("margin-left",indent+5,"pt")
 			        output.attr("keep-together.within-page","always")
-			        output.body
+			        output.body()
 			        se.foreach(etp => {
 	    				writeExpression(etp, style)
 	    			})
@@ -492,7 +492,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
                         }
                     }
                     output.attr("padding","1.5pt 0")
-                    output.body
+                    output.body()
                     mathOutput.open
                     if(etp.prefix!=null && etp.prefix!="") mathOutput.mo(etp.prefix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
                     etp.expression.visit(visitor = ept, parentNode = parentNode, position = position)
@@ -518,7 +518,7 @@ extends XslFoTextDocumentPrinterTraveler(output) {
                 output.start(BLOCK)
                 output.attr("font-size", Math.max(11-sc.currentLevel,7)+"pt")
                 output.attr("margin-left",(2*sc.currentLevel)+"em")
-                output.body
+                output.body()
                 output.append(sc.current.mkString("",".","."+output.SPACE))
                 if(ns.title.isDefined){
                     output.append(ns.title.get)
@@ -535,7 +535,7 @@ extends XslFoTextDocumentPrinterTraveler(output) {
                     case _ =>
                 })
                 output.end(BLOCK)
-                sc.in // counter level increment
+                sc.in() // counter level increment
             }
             case _ => Unit
         }
@@ -545,8 +545,8 @@ extends XslFoTextDocumentPrinterTraveler(output) {
         node.element match {
             case ns:NumSection => {
                 val sc = counterFor(ns.enumerator)
-                sc.out //counter level decrement
-                sc.next // counter increment
+                sc.out() //counter level decrement
+                sc.next() // counter increment
             }
             case _ =>
         }

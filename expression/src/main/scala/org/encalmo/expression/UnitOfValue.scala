@@ -1,11 +1,7 @@
 package org.encalmo.expression
-import org.encalmo.common.{AdHocVisitor,Node}
+import org.encalmo.common.Node
 import org.encalmo.common.TreeVisitor
-import scala.collection.mutable.Stack
-import scala.collection.mutable.Buffer
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Locale
+import scala.collection.mutable
 
 /**
  * UnitOfValue trait
@@ -20,10 +16,10 @@ trait UnitOfValue extends Expression {
 	
 	def isDefined:Boolean = false
 	def isBaseUnit = scale==0
-    def isSameBase(u:UnitOfValue):Boolean = this.name.baseName==u.name.baseName
+    def isSameBase(u:UnitOfValue):Boolean = this.name.baseName eq u.name.baseName
     def isSameScale(u:UnitOfValue):Boolean = this.scale==u.scale
     def isSameDimension(u:UnitOfValue):Boolean = this.dimension == u.dimension
-    def isSameBaseAndScale(u:UnitOfValue):Boolean = this.name.baseName==u.name.baseName && this.scale==u.scale
+    def isSameBaseAndScale(u:UnitOfValue):Boolean = (this.name.baseName eq u.name.baseName) && this.scale==u.scale
     def isSameBaseAndDimension(u:UnitOfValue):Boolean = isSameBase(u) && isSameDimension(u)
 	def isSame(u:UnitOfValue):Boolean = isSameBase(u) && isSameDimension(u) && isSameScale(u)
 	def isLargerThan(u:UnitOfValue):Boolean = if(this.expandedUnitMultiplier != u.expandedUnitMultiplier) this.expandedUnitMultiplier > u.expandedUnitMultiplier 
@@ -52,8 +48,8 @@ trait UnitOfValue extends Expression {
 	def exp(exp:Int):UnitOfValue
 	
 	def *(u:UnitOfValue):UnitOfValue = {
-	    if(this==EmptyUnitOfValue) u 
-	    else if(u == EmptyUnitOfValue) this 
+	    if(this eq EmptyUnitOfValue) u 
+	    else if(u eq EmptyUnitOfValue) this 
 	    else if(this.isSameBaseAndScale(u)) this.dim(this.dimension+u.dimension)
 	    else ComplexUnitOfValue(Prod(this,u))
 	}
@@ -64,8 +60,8 @@ trait UnitOfValue extends Expression {
 	}
 	
 	def /(u:UnitOfValue):UnitOfValue = {
-	    if(u == EmptyUnitOfValue) this 
-	    else if(this==EmptyUnitOfValue) ComplexUnitOfValue(Quot(this,u))
+	    if(u eq EmptyUnitOfValue) this 
+	    else if(this eq EmptyUnitOfValue) ComplexUnitOfValue(Quot(this,u))
 	    else if(this==u) EmptyUnitOfValue
 	    else ComplexUnitOfValue(Quot(this,u))
 	}
@@ -76,26 +72,29 @@ trait UnitOfValue extends Expression {
     }
 	
 	def +(u:UnitOfValue):UnitOfValue = {
-	    if(this==EmptyUnitOfValue) u 
-	    else if(u == EmptyUnitOfValue) this 
+	    if(this eq EmptyUnitOfValue) u 
+	    else if(u eq EmptyUnitOfValue) this 
 	    else if(this.isSame(u)) this 
-	    else /*new IllegalUnitOfValue(this,"+",u)*/ throw new IllegalUnitOperationException(this,"+",u)
+	    else throw new IllegalUnitOperationException(this,"+",u)
 	}
 	
 	def -(u:UnitOfValue):UnitOfValue = {
-	    if(this==EmptyUnitOfValue) u 
-	    else if(u == EmptyUnitOfValue) this 
+	    if(this eq EmptyUnitOfValue) u 
+	    else if(u eq EmptyUnitOfValue) this 
 	    else if(this.isSame(u)) this 
-	    else /*new IllegalUnitOfValue(this,"-",u)*/ throw new IllegalUnitOperationException(this,"-",u)
+	    else throw new IllegalUnitOperationException(this,"-",u)
 	}
     
     def %(u:UnitOfValue):UnitOfValue = {
-        if(u == EmptyUnitOfValue) this 
-        else if(this==EmptyUnitOfValue) this
+        if(u eq EmptyUnitOfValue) this 
+        else if(this eq EmptyUnitOfValue) this
         else if(this.isSame(u)) this
-        else /*new IllegalUnitOfValue(this,"%",u)*/ throw new IllegalUnitOperationException(this,"%",u)
+        else throw new IllegalUnitOperationException(this,"%",u)
     }
-	
+
+    def divideDimension(n: Double): UnitOfValue
+    def multiplyDimension(n: Double): UnitOfValue
+
 	def toNameString:String = name.toString + (if(dimension == 1) "" else UnitOfValue.dimensionFormat.format(dimension))
     
 }
@@ -131,10 +130,13 @@ case class SimpleUnitOfValue (
 	def set(characteristic:Characteristic) = copy(characteristic = characteristic)
 	
 	override lazy val baseUnit:UnitOfValue = system.find(baseUnitName.baseName,0,dimension).getOrElse(SimpleUnitOfValue(baseUnitName,0,dimension,system,characteristic))
-	override lazy val simplifiedUnit:(UnitOfValue,Double) = if(baseUnitName==EmptyUnitOfValueName) (baseUnit,multiplier) else (this,1)
+	override lazy val simplifiedUnit:(UnitOfValue,Double) = if(baseUnitName eq EmptyUnitOfValueName) (baseUnit,multiplier) else (this,1)
 	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
 
     override lazy val toString:String = toNameString
+
+    override def divideDimension(n: Double): UnitOfValue = if(n>0) system.find(baseUnitName.baseName,scale,dimension/n).getOrElse(copy(dimension = dimension/n)) else throw new IllegalStateException("Illegal value of unit dimension divider: "+n)
+    override def multiplyDimension(n: Double): UnitOfValue = if(n>0) system.find(baseUnitName.baseName,scale,dimension*n).getOrElse(copy(dimension = dimension*n)) else throw new IllegalStateException("Illegal value of unit dimension multiplier: "+n)
 	
 }
 
@@ -146,14 +148,16 @@ object EmptyUnitOfValue extends SimpleUnitOfValue() {
     override lazy val toString:String = "_"
     override lazy val simplifiedUnit:(UnitOfValue,Double) = (this,1)
     override lazy val expandedUnit:(UnitOfValue,Double) = (this,1)
-    
+    override def divideDimension(n: Double): UnitOfValue = this
+    override def multiplyDimension(n: Double): UnitOfValue = this
+
 }
 
 case class UnitOfValueNameBuilder() extends TreeVisitor[Expression] {
     
-    private val stack = Stack[Buffer[String]]()
+    private val stack = mutable.Stack[mutable.Buffer[String]]()
     
-    stack.push(Buffer[String]())
+    stack.push(mutable.Buffer[String]())
     
     lazy val toResult:String = stack.top.mkString
     
@@ -161,16 +165,16 @@ case class UnitOfValueNameBuilder() extends TreeVisitor[Expression] {
         case u:ComplexUnitOfValue => {
             if(u.dimension!=1) stack.top.append("[")
         }
-        case EmptyUnitOfValue => stack.top.append{
+        case u if u eq EmptyUnitOfValue => stack.top.append{
             if(node.parent!=null && node.parent.element.isInstanceOf[Quot] && node.position==0) "1"
             else "1"
         }
         case u:UnitOfValue => stack.top.append(u.toNameString)
         case o:MultipleInfixOperation => {
-            stack.push(Buffer[String]())
+            stack.push(mutable.Buffer[String]())
         }
         case o:Prod2 => {
-            stack.push(Buffer[String]())
+            stack.push(mutable.Buffer[String]())
         }
         case Number(r,u) => stack.top.append(r.toString())
         case _ => Unit
@@ -182,20 +186,20 @@ case class UnitOfValueNameBuilder() extends TreeVisitor[Expression] {
         }
         case o:MultipleInfixOperation => {
             val buff = stack.pop()
-            stack.top.append(buff.sortBy(s => s.toLowerCase()).mkString(o.operator))
+            stack.top.append(buff.sortBy(s => s.toLowerCase).mkString(o.operator))
         }
         case o:Prod2 => {
             val buff = stack.pop()
-            stack.top.append(buff.sortBy(s => s.toLowerCase()).mkString(o.operator))
+            stack.top.append(buff.sortBy(s => s.toLowerCase).mkString(o.operator))
         }
         case _ => Unit
     }
     
     override def onBeforeChildEnter(node:Node[Expression], position:Int, child:Expression):Unit = {
-        stack.push(Buffer[String]())
+        stack.push(mutable.Buffer[String]())
         node.element match {
             case o:Quot if position==1 && ((child.isInstanceOf[ComplexUnitOfValue] && child.asInstanceOf[ComplexUnitOfValue].dimension==1) || child.isInstanceOf[Operation]) => {
-                stack.top.append("(");
+                stack.top.append("(")
             }
             case _ => Unit
         }
@@ -204,7 +208,7 @@ case class UnitOfValueNameBuilder() extends TreeVisitor[Expression] {
     override def onAfterChildExit(node:Node[Expression], position:Int, child:Expression):Unit = {
         node.element match {
             case o:Quot if position==1 && ((child.isInstanceOf[ComplexUnitOfValue] && child.asInstanceOf[ComplexUnitOfValue].dimension==1) || child.isInstanceOf[Operation]) => {
-                stack.top.append(")");
+                stack.top.append(")")
             }
             case _ => Unit
         }
@@ -235,33 +239,37 @@ case class ComplexUnitOfValue(
     
     override val children:Seq[Expression] = Seq(expression)
     
-    override def eval():Expression = copy(expression=expression.eval)
+    override def eval():Expression = copy(expression=expression.eval())
 	override def isDefined:Boolean = true
 	override def dim(newdim:Double):UnitOfValue = if(newdim==0) EmptyUnitOfValue else copy(dimension=newdim)
 	override def exp(exp:Int):UnitOfValue = copy(scale=scale+exp)
 	override def toNameString:String = name.toString
+
 	override lazy val simplifiedUnit:(UnitOfValue,Double) = UnitOfValue.simplifyUnit(this)
 	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
 
     final override def map(f: Transformation): Expression = {
-        val ve = expression.map(f);
+        val ve = expression.map(f)
         f(if(ve == expression) this else copy(expression = ve))
     }
     
     override lazy val toString:String = toNameString
-}
 
-/*case class IllegalUnitOfValue(desc:String) extends UnitOfValue {
-    
-    def this(u1:UnitOfValue,operator:String,u2:UnitOfValue) = this(u1.toNameString+operator+u2.toNameString)
-    
-    override def dim(newdim:Double):IllegalUnitOfValue = IllegalUnitOfValue("("+desc+")^"+newdim)
-    override def exp(exp:Int):UnitOfValue = IllegalUnitOfValue("("+desc+")exp"+exp)
-    override def toNameString:String = "!"+desc+"!"
-    override lazy val simplifiedUnit:(UnitOfValue,Double) = (this,1)
-    override lazy val expandedUnit:(UnitOfValue,Double) = (this,1)
-    
-}*/
+    override def divideDimension(n: Double): UnitOfValue = if(n>0) expression match {
+        case Quot(l: UnitOfValue,r: UnitOfValue) => copy(expression=Quot(l.divideDimension(n),r.divideDimension(n)))
+        case Quot(l,r: UnitOfValue) => copy(expression=Quot(l,r.divideDimension(n)))
+        case Quot(l: UnitOfValue,r) => copy(expression=Quot(l.divideDimension(n),r))
+        case _ => copy(dimension/n)
+    } else throw new IllegalStateException("Illegal value of unit dimension divider: "+n)
+
+    override def multiplyDimension(n: Double): UnitOfValue = if(n>0) expression match {
+        case Quot(l: UnitOfValue,r: UnitOfValue) => copy(expression=Quot(l.multiplyDimension(n),r.multiplyDimension(n)))
+        case Quot(l,r: UnitOfValue) => copy(expression=Quot(l,r.multiplyDimension(n)))
+        case Quot(l: UnitOfValue,r) => copy(expression=Quot(l.multiplyDimension(n),r))
+        case _ => copy(dimension*n)
+    } else throw new IllegalStateException("Illegal value of unit dimension multiplier: "+n)
+
+}
 
 /**
  * UnitOfValueScale class
@@ -349,21 +357,21 @@ object UnitOfValue {
         val e1:Expression = u.mapAll(simplifyFx)
         val e2 = e1.mapAll(expandFx)
         val e3 = e2.mapAll(simplifyFx)
-        val n:Number = e3.mapAll(multiplierFx).eval match {
+        val n:Number = e3.mapAll(multiplierFx).eval() match {
             case n:Number => n
             case _ => ZERO
         }
-        val u2:UnitOfValue = encapsulateUnitFx(e3.mapAll(cleanNumbersFx).mapAll(simplifyFx).eval)
+        val u2:UnitOfValue = encapsulateUnitFx(e3.mapAll(cleanNumbersFx).mapAll(simplifyFx).eval())
         (u2,n.r.d)
     }
     
     def evaluateExpandedUnitMultiplier(u:UnitOfValue):Expression = {
-        u.mapAll(multiplierFx).eval
+        u.mapAll(multiplierFx).eval()
     }
     
     def simplifyUnit(u:UnitOfValue):(UnitOfValue,Double) = {
         val e1 = u.mapAll(simplifyFx)
-        val n:Number = e1.mapAll(numberFx).eval match {
+        val n:Number = e1.mapAll(numberFx).eval() match {
             case n:Number => n
             case _ => ZERO
         }
@@ -391,7 +399,7 @@ object UnitOfValue {
     }
     
     private def numberFx:(Expression)=>Expression = {
-        case EmptyUnitOfValue => ONE
+        case u if u eq EmptyUnitOfValue => ONE
         case su:SimpleUnitOfValue => ONE
         case ComplexUnitOfValue(expression,1,0) => expression
         case ComplexUnitOfValue(unit:UnitOfValue,dimension,scale) => dimension match {
@@ -404,7 +412,7 @@ object UnitOfValue {
     }
     
     private def multiplierFx:(Expression)=>Expression = {
-        case EmptyUnitOfValue => ONE
+        case u if u eq EmptyUnitOfValue => ONE
         case su:SimpleUnitOfValue => Number(su.multiplier)
         case ComplexUnitOfValue(expression,1,0) => expression
         case ComplexUnitOfValue(unit:UnitOfValue,dimension,scale) => dimension match {
@@ -426,12 +434,12 @@ object UnitOfValue {
         
         // rules for translation
         
-        case p:Prod => p.eval match { case p2:Prod => p2.toProd2; case x => x }
+        case p:Prod => p.eval() match { case p2:Prod => p2.toProd2; case x => x }
         
         // rules for values simplification
         
-        case Quot(n1:Value,n2:Value) => Quot(n1,n2).eval    // evaluation
-        case Prod2(n1:Value,n2:Value) => Prod2(n1,n2).eval  // evaluation
+        case Quot(n1:Value,n2:Value) => Quot(n1, n2).eval()    // evaluation
+        case Prod2(n1:Value,n2:Value) => Prod2(n1, n2).eval()  // evaluation
         case Prod2(a,n1:Value) => Prod2(n1:Value,a)     // reordering
         case Prod2(ONE,a) => a                          //  1 * a = a
         //case Prod2(a,ONE) => a                        //  a * 1 = a
@@ -444,13 +452,13 @@ object UnitOfValue {
         
         //case Prod2(Quot(n1:Value,a),n2:Value) => Quot((n1*n2).eval,a)  //   n1/a * n2 = [n1*n2]/a
         //case Prod2(Quot(a,n1:Value),n2:Value) => Prod2(a,(n2/n1).eval) //   a/n1 * n2 = a*[n2/n1]
-        case Prod2(n1:Value,Quot(n2:Value,a)) => Quot((n1*n2).eval,a)  //   n1 * n2/a = [n1*n2]/a
-        case Prod2(n1:Value,Quot(a,n2:Value)) => Prod2(a,(n1/n2).eval) //   n1 * a/n2 = a*[n1/n2]
+        case Prod2(n1:Value,Quot(n2:Value,a)) => Quot((n1 * n2).eval(),a)  //   n1 * n2/a = [n1*n2]/a
+        case Prod2(n1:Value,Quot(a,n2:Value)) => Prod2(a,(n1 / n2).eval()) //   n1 * a/n2 = a*[n1/n2]
         
         //case Prod2(Prod2(n1:Value,a),n2:Value) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
         //case Prod2(Prod2(a,n1:Value),n2:Value) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
-        case Prod2(n1:Value,Prod2(n2:Value,a)) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
-        case Prod2(n1:Value,Prod2(a,n2:Value)) => Prod2((n1*n2).eval,a)//   n1*a * n2 = [n1*n2]*a
+        case Prod2(n1:Value,Prod2(n2:Value,a)) => Prod2((n1 * n2).eval(),a)//   n1*a * n2 = [n1*n2]*a
+        case Prod2(n1:Value,Prod2(a,n2:Value)) => Prod2((n1 * n2).eval(),a)//   n1*a * n2 = [n1*n2]*a
         
         //case Quot(Quot(n1:Value,a),n2:Value) => Quot((n1/n2).eval,a) //   n1/a / n2 = [n1/n2]/a
         //case Quot(Quot(a,n1:Value),n2:Value) => Quot(a,(n1*n2).eval) //   a/n1 / n2 = a/[n1*n2]
@@ -462,12 +470,12 @@ object UnitOfValue {
         //case Prod2(Quot(a,n1:Value),Quot(n2:Value,b)) => Prod2((n2/n1).eval,Quot(a,b)) //   a/n1 * n2/b = [n2/n1]*[a/b]
         //case Prod2(Quot(a,n1:Value),Quot(b,n2:Value)) => Quot(Prod2(a,b),(n1/n2).eval) //   a/n1 * b/n2 = [a*b]/[n1*n2]
         
-        case Quot(Prod2(n1:Value,a),Prod2(n2:Value,b)) => Prod2((n1/n2).eval,Quot(a,b)) //   n1*a / n2*b = [n1/n2]*[a/b]
-        case Quot(Prod2(n1:Value,a),Prod2(b,n2:Value)) => Prod2((n1/n2).eval,Quot(a,b)) //   n1*a / b*n2 = [n1/n2]*[a/b]
-        case Quot(Prod2(a,n1:Value),Prod2(n2:Value,b)) => Prod2((n1/n2).eval,Quot(a,b)) //   a*n1 / n2*b = [n1/n2]*[a/b]
-        case Quot(Prod2(a,n1:Value),Prod2(b,n2:Value)) => Prod2((n1/n2).eval,Quot(a,b)) //   a*n1 / b*n2 = [n1/n2]*[a/b]
+        case Quot(Prod2(n1:Value,a),Prod2(n2:Value,b)) => Prod2((n1 / n2).eval(),Quot(a,b)) //   n1*a / n2*b = [n1/n2]*[a/b]
+        case Quot(Prod2(n1:Value,a),Prod2(b,n2:Value)) => Prod2((n1 / n2).eval(),Quot(a,b)) //   n1*a / b*n2 = [n1/n2]*[a/b]
+        case Quot(Prod2(a,n1:Value),Prod2(n2:Value,b)) => Prod2((n1 / n2).eval(),Quot(a,b)) //   a*n1 / n2*b = [n1/n2]*[a/b]
+        case Quot(Prod2(a,n1:Value),Prod2(b,n2:Value)) => Prod2((n1 / n2).eval(),Quot(a,b)) //   a*n1 / b*n2 = [n1/n2]*[a/b]
         
-        case Prod2(Prod2(n1:Value,a),Prod2(n2:Value,b)) => Prod2((n1*n2).eval,Prod2(a,b)) // a*n1 * b*n2 = [n1*n2]*(a*b)
+        case Prod2(Prod2(n1:Value,a),Prod2(n2:Value,b)) => Prod2((n1 * n2).eval(),Prod2(a,b)) // a*n1 * b*n2 = [n1*n2]*(a*b)
         
         //case Quot(Prod2(n1:Value,a),Quot(n2:Value,b)) => Prod2((n1/n2).eval,Prod2(a,b)) //   n1*a / n2/b = n1*a * b/n2 = [n1/n2]*[a*b]
         //case Quot(Prod2(n1:Value,a),Quot(b,n2:Value)) => Prod2((n1*n2).eval,Quot(a,b)) //   n1*a / b/n2 = n1*a * n2/b = [n1*n2]*[a/b]
@@ -480,8 +488,8 @@ object UnitOfValue {
         //case Quot(Quot(a,n1:Value),Prod2(b,n2:Value)) => Quot(Quot(a,b),(n1*n2).eval) //   a/n1 / b*n2 = a / n2*n1*b = [a/b]/[n1*n2]
         
         // rules for units simplification
-        
-        case EmptyUnitOfValue => ONE
+
+        case u if u eq EmptyUnitOfValue => ONE
         case ComplexUnitOfValue(expression,1,0) => expression
         case ComplexUnitOfValue(unit:UnitOfValue,dimension,scale) => dimension match {
             case 0 => EmptyUnitOfValue
@@ -489,7 +497,7 @@ object UnitOfValue {
             case _ => unit.dim(dimension*unit.dimension).exp(scale+unit.scale)
         }
         case ComplexUnitOfValue(expression,dimension,scale) if dimension>1 => Prod((for (a <- 1 to dimension.toInt) yield expression):_*)
-        case su:SimpleUnitOfValue if(su.baseUnitName==EmptyUnitOfValueName) => su.multiplier
+        case su:SimpleUnitOfValue if su.baseUnitName eq EmptyUnitOfValueName => su.multiplier
         
         case Power(u1:UnitOfValue,Number(Real(d),u2)) => u1.dim(u1.dimension*d)
         case root(u1:UnitOfValue,Number(Real(d),u2)) => u1.dim(u1.dimension/d)
@@ -613,8 +621,8 @@ object UnitOfValue {
                 } else u1
             }
             case e => e
-        }.filter{case EmptyUnitOfValue => false; case _ => true}
-        seq2 = seq2.filter{case EmptyUnitOfValue => false; case _ => true}
+        }.filter{case u if u eq EmptyUnitOfValue => false; case _ => true}
+        seq2 = seq2.filter{case u if u eq EmptyUnitOfValue => false; case _ => true}
         if(l==seq1 && r==seq2) q
         else{
             if(seq2.isEmpty) {if(seq1.tail.isEmpty) seq1.head else Prod(seq1:_*)}
@@ -628,20 +636,20 @@ case class NoUnit(e: Expression) extends Expression with Transparent {
     override val children: Seq[Expression] = Seq(e)
 
     final override def eval(): Expression = {
-        val ev = e eval;
+        val ev = e eval()
         ev match {
-            case Number(r, u) if u != EmptyUnitOfValue => Number(r, EmptyUnitOfValue)
-            case _ if (ev != e) => copy(ev)
-            case _ if (ev == e) => this
+            case value: Value => value.setUnit(EmptyUnitOfValue)
+            case _ if ev ne e => copy(ev)
+            case _  => this
         }
     }
 
     final override def map(f: Transformation): Expression = {
-        val ev = e.map(f);
+        val ev = e.map(f)
         f(ev match {
-            case Number(r, u) if u != EmptyUnitOfValue => Number(r, EmptyUnitOfValue)
-            case _ if (ev != e) => copy(ev)
-            case _ if (ev == e) => this
+            case value: Value => value.setUnit(EmptyUnitOfValue)
+            case _ if ev ne e => copy(ev)
+            case _  => this
         })
     }
 
@@ -652,20 +660,20 @@ case class SetUnit(e: Expression, override val unit:UnitOfValue) extends Express
     override val children: Seq[Expression] = Seq(e)
 
     final override def eval(): Expression = {
-        val ev = e eval;
+        val ev = e eval()
         ev match {
-            case Number(r, u) if u != unit => Number(r, unit)
-            case _ if (ev != e) => copy(ev)
-            case _ if (ev == e) => this
+            case value: Value => value.setUnit(unit)
+            case _ if ev ne e => copy(ev)
+            case _ if ev == e => this
         }
     }
 
     final override def map(f: Transformation): Expression = {
-        val ev = e.map(f);
+        val ev = e.map(f)
         f(ev match {
-            case Number(r, u) if u != unit => Number(r, unit)
-            case _ if (ev != e) => copy(ev)
-            case _ if (ev == e) => this
+            case value: Value => value.setUnit(unit)
+            case _ if ev ne e => copy(ev)
+            case _ => this
         })
     }
 

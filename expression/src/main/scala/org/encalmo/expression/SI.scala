@@ -10,7 +10,7 @@ object SI extends UnitOfValueSystem {
     override def toString:String = "SI"
     
     private var initialized = false
-    
+
     val meter:UnitOfValueName = UnitOfValueName("m")
     val gram:UnitOfValueName = UnitOfValueName("g")
     val second:UnitOfValueName = UnitOfValueName("s")
@@ -25,7 +25,7 @@ object SI extends UnitOfValueSystem {
 	override def apply(scale:Int):Option[UnitOfValueScale] = prefixMap.get(scale)
 	
 	override def find(baseName:String,scale:Int,dimension:Double):Option[UnitOfValue] = if(initialized) units.find(
-	        u => (u.name.baseName==baseName && u.scale==scale && u.dimension==dimension)) else None
+	        u => u.name.baseName == baseName && u.scale == scale && u.dimension == dimension) else None
 	        
 	override def expand(u:UnitOfValue):UnitOfValue = expansionMap.get(u).getOrElse(u)
 
@@ -48,8 +48,6 @@ object SI extends UnitOfValueSystem {
 	}
 	
 	import Prefix._
-	
-	//private val seq:Seq[Int] = Seq(-15,-12,-9,-6,-3,-2,-1,0,1,2,3,6,9,12,15)
 
 	private val prefixMap:Map[Int,UnitOfValueScale] = Map(
 		0 -> empty,
@@ -59,7 +57,7 @@ object SI extends UnitOfValueSystem {
 	
 	val percent = SimpleUnitOfValue(EmptyUnitOfValueName,-2,1,this,Characteristics.None,Some(UnitOfValueName("%")))
 	val permille = SimpleUnitOfValue(EmptyUnitOfValueName,-3,1,this,Characteristics.None,Some(UnitOfValueName("‰")))
-	
+
 	// length
 	val m = SimpleUnitOfValue(meter,0,1,this,Characteristics.Length)
 	val dm = m exp -1
@@ -117,8 +115,10 @@ object SI extends UnitOfValueSystem {
     val s2 = s dim 2
     val min = SimpleUnitOfValue(minute,0,1,this,Characteristics.Time)
     val h = SimpleUnitOfValue(hour,0,1,this,Characteristics.Time)
-    // speed
+    // velocity
     val mps = m/s
+    val mmpersec = mm/s
+    val mmpermin = mm/min
     // acceleration
     val mps2 = m/s2
 	
@@ -138,9 +138,9 @@ object SI extends UnitOfValueSystem {
 	        deg,rad,
 	        Nm,kNm,MNm,
 	        // complex derived units
-	        mps,mps2,
+	        mps,mmpersec,mmpermin,mps2,
 	        (kg*m)/s2,kg/m,kg/m2,kg/m3,
-	        N/m,N/m2,N/m3,N*m,Nm/m,
+	        N/m,N/mm,N/m2,N/mm2,N/m3,N*m,N*mm,N*m2,Nm/m,
 	        kN/m,kN/m2,kN/m3,kNm/m,
 	        MN/m,MN/m2,MN/m3,MNm/m,
 	        m2/m,m3/m,m4/m,m6/m,m8/m,

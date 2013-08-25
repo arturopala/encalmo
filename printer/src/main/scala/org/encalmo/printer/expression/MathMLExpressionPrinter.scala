@@ -30,13 +30,13 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 
 	def writeOpeningBracketIfNeeded(node: Node[Expression], o: Operation): Unit = {
 		if (isBracketNeeded(node, o)) {
-			output.leftBracket
+			output.leftBracket()
 		}
 	}
 
 	def writeClosingBracketIfNeeded(node: Node[Expression], o: Operation): Unit = {
 		if (isBracketNeeded(node, o)) {
-			output.rightBracket
+			output.rightBracket()
 		}
 	}
 
@@ -87,7 +87,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    		}
 	    		case n: Number => {
 	    		    n.unit match {
-	    		        case EmptyUnitOfValue => output.mn(n)
+                        case u if u eq EmptyUnitOfValue => output.mn(n)
 	    		        case _ => {
 	    		            output.startb(MROW)
 	    		            output.mn(n)
@@ -97,7 +97,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    		                    output.start(MROW)
 	    		                    output.attr("mathsize","85%")
                                     output.attr("class","unit")
-                                    output.body
+                                    output.body()
                                     output.mtext(ENTITY_THIN_SPACE)
                                     n.unit.visit(visitor = this)
                                     output.end(MROW)
@@ -119,7 +119,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    				        case _ => {
                                     output.start(MFRAC)
                                     output.attr("linethickness","0.6")
-                                    output.body
+                                    output.body()
 	    				        }
 	    				    }
 	    				}
@@ -149,7 +149,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    						case _ => {
 	    							output.mo(o.operator,PREFIX)
 	    							if (!o.isInstanceOf[Operation1]) {
-	    								output.leftBracket
+	    								output.leftBracket()
 	    							}else{
 	    							    output.append(MathMLTags.ENTITY_THIN_SPACE)
 	    							}
@@ -165,11 +165,11 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 		                output.attr("open","{")
 		                output.attr("close","")
 		                output.attr("separators","")
-		                output.body
+		                output.body()
 	                }
 	                output.start(MTABLE)
 	                output.attr("columnalign","left")
-	                output.body
+	                output.body()
 	            }
 	            case ct:Case => {
 	                output.startb(MTR)
@@ -177,12 +177,12 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	            case ct:CaseTest => {
 	               output.start(MTD)
 	               //output.attr("rowalign","left")
-	               output.body
+	               output.body()
 	            }
 	            case ct:CaseExpression => {
 	               output.start(MTD)
 	               //output.attr("rowalign","left")
-	               output.body
+	               output.body()
 	            }
 	            case su:SimpleUnitOfValue => {
 	               output.unit(su)
@@ -210,7 +210,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 						if(!child.isInstanceOf[sqrt]
 	                        && !child.isInstanceOf[cbrt]
 						    && !child.isInstanceOf[root]){
-							output.leftBracket
+							output.leftBracket()
 						}
 					}
 					case o:Power => {
@@ -218,7 +218,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 							&& !child.isInstanceOf[sqrt]
 	                        && !child.isInstanceOf[cbrt]
 						    && !child.isInstanceOf[root]){
-							output.leftBracket
+							output.leftBracket()
 						}
 						output.startb(MROW)
 					}
@@ -233,16 +233,16 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 					case o:hypot => {
 						output.startb(MSUP)
 						output.startb(MROW)
-						output.leftBracket
+						output.leftBracket()
 					}
                     case Power(Number(r,u),any) if u!=EmptyUnitOfValue && position==0 => {
-                        output.leftBracket
+                        output.leftBracket()
                     }
                     case p:Power if position==1 => {
                         output.start(MROW)
                         output.attr("mathsize","80%")
                         output.attr("class","pwri")
-                        output.body
+                        output.body()
                     }
 					case _ => Unit
 				}
@@ -275,7 +275,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 				output.mo(o.operator,INFIX,THINMATHSPACE,THINMATHSPACE)
 			}
 			case o: Operation2 => {
-				output.separator
+				output.separator()
 			}
 			case o: OperationN => {
 				output.mo(";",INFIX,THICKMATHSPACE,THICKMATHSPACE)
@@ -297,7 +297,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 						if(!child.isInstanceOf[sqrt]
 	                        && !child.isInstanceOf[cbrt]
 						    && !child.isInstanceOf[root]){
-							output.rightBracket
+							output.rightBracket()
 						}
 						output.startb(MN)
 						output.append("2")
@@ -310,7 +310,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 							&& !child.isInstanceOf[sqrt]
 	                        && !child.isInstanceOf[cbrt]
 						    && !child.isInstanceOf[root]){
-							output.rightBracket
+							output.rightBracket()
 						}
 					}  
 					case o:cbrt => {
@@ -325,12 +325,12 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 			case _ => {
 				node.element match {
 					case o:hypot => {
-					    output.rightBracket
+					    output.rightBracket()
 						output.end(MROW)
 						output.start(MROW)
                         output.attr("mathsize","80%")
                         output.attr("class","pwri")
-                        output.body
+                        output.body()
 						output.startb(MN)
 						output.append("2")
 						output.end(MN)
@@ -338,7 +338,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 						output.end(MSUP)
 					}
                     case Power(Number(r,u),any) if u!=EmptyUnitOfValue && position==0 => {
-                        output.rightBracket
+                        output.rightBracket()
                     }
                     case p:Power if position==1 => {
                         output.end(MROW)
@@ -393,7 +393,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
     						o match {
     							case _ => {
     								if (!o.isInstanceOf[Operation1]) {
-    									output.rightBracket
+    									output.rightBracket()
     								}
     							}
     						}
@@ -419,7 +419,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
                     output.start(MROW)
                     output.attr("mathsize","85%")
                     output.attr("mathvariant","italic")
-                    output.body
+                    output.body()
                     output.startb(MTEXT)
                     output.append("(")
                     output.end(MTEXT)

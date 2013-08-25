@@ -26,7 +26,7 @@ object HeadedStudExpressions extends MapContext {
 
 	import HeadedStudSymbols._
 	
-	lock
+	lock()
 }
 
 /** HeadedStud context class */
@@ -63,7 +63,7 @@ object HeadedStud {
 		this(hsc) = 100
 		this(a) = 9
 		this(dh) = 31
-		lock
+		lock()
 	}
 
 

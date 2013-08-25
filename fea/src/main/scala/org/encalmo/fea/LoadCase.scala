@@ -41,7 +41,7 @@ case class LoadCase[A <: FiniteElement](
         var c = 0
         val s1 = elementsConditions.groupBy(_.matinfo).map(e => (e._1,e._2.map(_.element).toSeq.sorted[FiniteElement]))
         val s2 = s1.flatMap(e => {val s = groupStrictAscending(c,e._1,e._2); c=c+s.size; s})
-        val s3 = s2.toSeq.sortWith((l,r) => (l._3.head.no<r._3.head.no))
+        val s3 = s2.toSeq.sortWith((l,r) => l._3.head.no < r._3.head.no)
         s3
     }
     /** Helper function */

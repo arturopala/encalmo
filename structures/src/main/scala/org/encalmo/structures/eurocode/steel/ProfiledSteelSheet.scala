@@ -93,16 +93,16 @@ object ProfiledSteelSheetExpressions extends MapContext {
 	MRdp := Wplus*fyd
 	hw := hp-t
 	sw := hp/sin(Phi)
-	tcor := t - 0.08
+	tcor := t - (0.08 unit SI.mm)
 	lambdaw := 0.346*(sw/tcor)*sqrt(fyb/E)
 	Gcck := Ap*gammas
 	Gccd := Gcck*gammaG
-	fbv := (0.58*fyb) or (InRangeLLE(0.83,lambdaw,1.40) then (0.48*fyb)/lambdaw) or (GreaterThan(lambdaw,1.40) then ((0.67*fyb)/(lambdaw^2)))
+	fbv := (0.58*fyb) or (InRangeLLE(0.83,lambdaw,1.40) thenUse (0.48*fyb)/lambdaw) or (GreaterThan(lambdaw,1.40) thenUse ((0.67*fyb)/(lambdaw^2)))
 	VbRd := ((hw/sin(Phi))*tcor*fbv)/gammaM0
 	VplRd := ((hw/sin(Phi))*tcor*(fyb/sqrt(3)))/gammaM0
 	VwRd := (2*min(VbRd,VplRd))/bs
 	Rw1Rd := alpha*(tcor^2)*sqrt(fyb*E)*(1-0.1*sqrt(r/tcor))*(0.5+sqrt((0.02*la)/tcor))*(2.4+((Phi/(Number(90,SI.deg)))^2))*(1/gammaM1)
 	RwRd := (2*Rw1Rd)/bs
 	
-	lock
+	lock()
 }

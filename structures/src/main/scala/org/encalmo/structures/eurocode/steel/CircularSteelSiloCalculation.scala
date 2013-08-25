@@ -1,38 +1,30 @@
 package org.encalmo.structures.eurocode.steel
 
-import org.junit.Test
 import org.encalmo.expression._
-import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.printer._
-import org.encalmo.printer.document._
-import org.encalmo.fop.FOPHelper
-import org.encalmo.style.StylesConfigSymbols._
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.actions.silos.ParticulateSolid
-import org.encalmo.structures.eurocode.actions.silos.ThinWalledCircularSlenderSilosWithSteepHopper
-import scalax.file.Path
+import org.encalmo.structures.eurocode.actions.silos.ThinWalledCircularSlenderSiloWithSteepHopper
 import org.encalmo.structures.CalculationDocument
 
 /**
  * Calculation of the circular steel silos with steep hopper
  */
-class CircularSteelSilosCalculation extends CalculationDocument {
-    
-    import BasicSymbols._
+class CircularSteelSiloCalculation extends CalculationDocument {
+
 
     val name = "km-silos"
    
     val particulateSolid = ParticulateSolid.Cement
     val steel = Steel.S275
-    val silos = new ThinWalledCircularSlenderSilosWithSteepHopper(
+    val silos = new ThinWalledCircularSlenderSiloWithSteepHopper(
             diameter = 4.0 unit SI.m,
             heightOfChamber = 11.0 unit SI.m,
             heightOfHopper = 3.0 unit SI.m,
             thicknessOfChamberWall = 10 unit SI.mm,
             thicknessOfHopperWall = 15 unit SI.mm,
-            thicknessOfRing = 15 unit SI.mm,
+            thicknessOfRing = 20 unit SI.mm,
             heightOfRing = 390 unit SI.mm,
             widthOfColumn = 300 unit SI.mm,
             numberOfColumns = 4,

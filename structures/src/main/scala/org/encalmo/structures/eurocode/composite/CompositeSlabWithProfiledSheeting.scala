@@ -188,7 +188,7 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 	deltamax := deltasm+deltae
 	
 	// end of context initialization
-	lock
+	lock()
 
 }
 

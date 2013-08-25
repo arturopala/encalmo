@@ -60,9 +60,9 @@ div {padding:5pt 0 2pt 0}
 	}
 	
 	/** Section counters map */
-	private val counterMap:LinkedHashMap[Enumerator,SectionCounter] = LinkedHashMap[Enumerator,SectionCounter]()
+	private val counterMap:mutable.LinkedHashMap[Enumerator,SectionCounter] = mutable.LinkedHashMap[Enumerator,SectionCounter]()
 	
-	private val styleStack:Stack[Style] = Stack()
+	private val styleStack:mutable.Stack[Style] = mutable.Stack()
 	styleStack.push(DefaultStyle)
 	
 	/** Returns counter linked to the enumerator */
@@ -85,7 +85,7 @@ div {padding:5pt 0 2pt 0}
 				    output.append(customStyles)
 				}
 				if(!output.preferences.skipDocumentStyles){
-				    d.stylesConfig.all.foreach(_.map(allStyles.add(_)))
+				    d.stylesConfig.all.foreach(_.map(allStyles.add))
                     allStyles.foreach(output.styledef(_, d.stylesConfig))
                 }else if(output.preferences.isCustomStyleSheet){
 				    output.append(output.preferences.customStyleSheet)
@@ -112,7 +112,7 @@ div {padding:5pt 0 2pt 0}
                 output.startb(DIV,ns.styleClassId)
                 output.start(ANCHOR)
                 output.attr("name",label)
-                output.body
+                output.body()
                 output.append(" ")
                 output.end(ANCHOR)
                 output.startb(SPAN,"caption")
@@ -121,7 +121,7 @@ div {padding:5pt 0 2pt 0}
                     output.startb(SPAN,en.styleClassId)
                 }
                 output.append(label,output.SPACE)
-                sc.in // counter level increment
+                sc.in() // counter level increment
                 if(ens!=null){
                     output.end(SPAN)
                 }
@@ -148,7 +148,7 @@ div {padding:5pt 0 2pt 0}
                 if(t.myStyle!=null){
                     output.startb(SPAN,t.myStyleClassId)
                 }
-                output.append(t.textContent);
+                output.append(t.textContent)
                 if(t.myStyle!=null){
                     output.end(SPAN)
                 }
@@ -159,7 +159,7 @@ div {padding:5pt 0 2pt 0}
                     if(expr.myStyle!=null){
                         output.start(SPAN,expr.myStyleClassId)
                         output.attr("style","padding-end:1em")
-                        output.body
+                        output.body()
                     }
                     es.foreach(etp => {
                         writeExpression(etp, expr.style)
@@ -179,7 +179,7 @@ div {padding:5pt 0 2pt 0}
                 val result = a.evaluate(resultCacheFor(a.calc))
                 val s = Section(a.style,result._2:_*)
                 s.parent = a.parent
-                s.visit(visitor = this);
+                s.visit(visitor = this)
             }
             case _ => {}
 		}
@@ -206,7 +206,7 @@ div {padding:5pt 0 2pt 0}
 			case _ => 
 		}
 		// removing current style from the stack
-		styleStack.pop
+		styleStack.pop()
 		node.element match {
 			case d:Document => {
 				
@@ -217,8 +217,8 @@ div {padding:5pt 0 2pt 0}
 			case ns:NumSection => {
 				output.end(DIV)
 				val sc = counterFor(ns.enumerator)
-				sc.out //counter level decrement
-				sc.next // counter increment
+				sc.out() //counter level decrement
+				sc.next() // counter increment
 			}
 			case s:Section => {
 				output.end(DIV)
@@ -240,7 +240,7 @@ div {padding:5pt 0 2pt 0}
     	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
     		val stylesConfig = expr.parentStylesConfig.get
-    		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor(_))
+    		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
 			val tableRowStyle:Option[Style] = stylesConfig.block
     		output.start(TABLE,"et")
     		if(expr.isFirstBlockComponent){
@@ -248,12 +248,12 @@ div {padding:5pt 0 2pt 0}
 			}
     		output.attr("cellpadding","2")
     		output.attr("cellspacing","0")
-    		output.body
+    		output.body()
 			for(es <- ess){
 				output.startb(TR)
 				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
 				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle, stylesConfig)
-				sc.foreach(_.next)
+				sc.foreach(_.next())
 				output.end(TR)
 			}
             output.end(TABLE)
@@ -300,9 +300,9 @@ div {padding:5pt 0 2pt 0}
 	        		    output.start(TD,"ec3")
 				        if(!isCell2){
 				        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
-				        	output.attr("colspan",ncs);
-				        }
-				        output.body
+				        	output.attr("colspan",ncs)
+                        }
+				        output.body()
 				        se.tail.foreach(etp => {
 		    				writeExpression(etp, style)
 		    			})
@@ -312,9 +312,9 @@ div {padding:5pt 0 2pt 0}
 	        		    output.start(TD,"ec3")
 				        if(!isCell2){
 				        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
-				        	output.attr("colspan",ncs);
-				        }
-				        output.body
+				        	output.attr("colspan",ncs)
+                        }
+				        output.body()
 				        se.foreach(etp => {
 		    				writeExpression(etp, style)
 		    			})
@@ -384,7 +384,7 @@ extends HtmlTextDocumentPrinterTraveler(output) {
                 output.startb(SPAN,"toc"+sc.currentLevel)
                 output.start(ANCHOR)
                 output.attr("href","#",label)
-                output.body
+                output.body()
                 output.append(label,output.SPACE)
                 if(ns.title.isDefined){
                     output.append(ns.title.get)
@@ -402,7 +402,7 @@ extends HtmlTextDocumentPrinterTraveler(output) {
                 })
                 output.end(ANCHOR)
                 output.end(SPAN)
-                sc.in // counter level increment
+                sc.in() // counter level increment
             }
             case _ => Unit
         }
@@ -412,8 +412,8 @@ extends HtmlTextDocumentPrinterTraveler(output) {
         node.element match {
             case ns:NumSection => {
                 val sc = counterFor(ns.enumerator)
-                sc.out //counter level decrement
-                sc.next // counter increment
+                sc.out() //counter level decrement
+                sc.next() // counter increment
             }
             case _ =>
         }

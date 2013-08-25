@@ -81,7 +81,7 @@ object ParticulateSolidExpressions extends MapContext {
 	this(fi_l) = fiim/afi
 	
 	// end of context initialization
-	lock
+	lock()
 }
 
 /** 

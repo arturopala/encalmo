@@ -1,12 +1,8 @@
 package org.encalmo.structures.eurocode.composite
 
-import org.junit.Test
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.printer._
-import org.encalmo.printer.document._
-import org.encalmo.fop.FOPHelper
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.concrete.ReinforcingSteel
@@ -18,14 +14,13 @@ import org.encalmo.structures.eurocode.steel.IPESection
 import org.encalmo.structures.eurocode.steel.HeadedStud
 import org.encalmo.structures.eurocode.steel.Steel
 import org.encalmo.structures.eurocode.steel.FLORSTROP
-import scalax.file.Path
 import org.encalmo.structures.CalculationDocument
 
 class CompositeSlabCalculationDocument extends CalculationDocument {
     
     import BasicSymbols._
     import SteelSymbols.{gammaM0,gammaM1}
-    import ConcreteSymbols.{gammaC}
+    import ConcreteSymbols.gammaC
     import ActionsSymbols.{gammaG,gammaQ}
     
     import CompositeSlabWithProfiledSheetingSymbols.{Gsk,qk,Fk,dmesh,sd}
@@ -91,19 +86,20 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
         		Section("Prowadzący: dr hab. inż. Wojciech Lorenc, Instytut Budownictwa Politechniki Wrocławskiej. Semestr letni 2012/2013.")
         	),
             Section(""),
-            NumSection("Zadanie",
-                Section(styleComment,"Strop zespolony w parkingu wielopoziomowym."),
-                Section(styleDescription),
-                Section(styleDescription,"Normy i literatura przedmiotowa",
+            Section(styleTitle,"Strop zespolony w parkingu wielopoziomowym - wariant 1."),
+            TableOfContents("Spis treści"),
+            NumSection("Normy i literatura przedmiotowa",
+                Section(styleDescription,"",
                 	Section(styleDescription," [1] Norma PN-EN 1994-1-1:2010 \"Eurokod 4. Projektowanie konstrukcji zespolonych stalowo-betonowych. Część 1-1: Postanowienia ogólne. Reguły ogólne i reguły dotyczące budynków\""),
                 	Section(styleDescription," [2] Norma PN-EN 1994-1-2:2010 \"Eurokod 4. Projektowanie zespolonych konstrukcji stalowo-betonowych. Część 1-2: Projektowanie z uwagi na warunki pożarowe.\""),
                 	Section(styleDescription," [3] Norma PN-EN 1993-1-1:2006 \"Eurokod 3. Projektowanie konstrukcji stalowych. Część 1-1: Reguły ogólne i reguły dla budynków\""),
                 	Section(styleDescription," [4] Norma PN-EN 1993-1-3:2006 \"Eurokod 3. Projektowanie konstrukcji stalowych. Część 1-3: Reguły ogólne. Reguły uzupełniające dla konstrukcji z kształtowników i blach profilowanych na zimno.\""),
                 	Section(styleDescription," [5] Norma PN-EN 1992-1-1:2008 \"Eurokod 2. Projektowanie konstrukcji z betonu. Część 1-1: Reguły ogólne i reguły dla budynków\"")
-                ),
-                TableOfContents("Spis treści"),
-                NumSection("Dane wejściowe",Evaluate(daneWejsciowe:_*)(zadanie),Evaluate(stal.label)(zadanie)),
-                NumSection("Przyjęto do obliczeń",Evaluate(plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label)(zadanie))
+                )
+           ),
+           NumSection("Parametry zadania",
+               NumSection("Dane wejściowe",Evaluate(daneWejsciowe:_*)(zadanie),Evaluate(stal.label)(zadanie)),
+               NumSection("Przyjęto do obliczeń",Evaluate(plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label)(zadanie))
            ),
            NumSection("Wymiarowanie płyty stropowej",
                NumSection("Przyjęte wymiary i właściwości materiałowe",
@@ -147,8 +143,5 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
 			Section(style1.useAlign("right"),"Opracował: Artur Opala")
         )
     )
-    
-    @Test override def printHtml:Unit = super.printHtml
-    @Test override def printPdf:Unit = super.printPdf
 
 }

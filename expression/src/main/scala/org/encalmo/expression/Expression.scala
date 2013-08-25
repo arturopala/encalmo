@@ -21,8 +21,8 @@ trait Expression extends TreeNode[Expression] {
   def + (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Sum(l,r) => Sum(this,l,r); 
-	  case _ => Sum(this,e)
+	  case Sum(l,r) => Sum(this,l,r)
+      case _ => Sum(this,e)
   }
   
   def - (e:Expression):Expression = e match {
@@ -34,8 +34,8 @@ trait Expression extends TreeNode[Expression] {
   def * (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Prod(l,r) => Prod(this,l,r);
-	  case _ => Prod(this,e)
+	  case Prod(l,r) => Prod(this,l,r)
+      case _ => Prod(this,e)
   }
   
   def / (e:Expression):Expression = e match {
@@ -66,36 +66,36 @@ trait Expression extends TreeNode[Expression] {
   def +- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r,u) => this+(Number(-r,u)); 
-	  case _ => this+(Neg(e))
+	  case Number(r,u) => this+ Number(-r, u)
+      case _ => this+ Neg(e)
   }
   
   def *- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r,u) => *(Number(-r,u));
-	  case _ => *(Neg(e))
+	  case Number(r,u) => *(Number(-r,u))
+      case _ => *(Neg(e))
   }
   
   def /- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r,u) => /(Number(-r,u));
-	  case _ => /(Neg(e))
+	  case Number(r,u) => /(Number(-r,u))
+      case _ => /(Neg(e))
   }
   
   def %- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r,u) => %(Number(-r,u)); 
-	  case _ => %(Neg(e))
+	  case Number(r,u) => %(Number(-r,u))
+      case _ => %(Neg(e))
   }
   
   def ^- (e:Expression):Expression = e match {
 	  case Void => this
 	  case Unknown => Unknown
-	  case Number(r,u) => ^(Number(-r,u)); 
-	  case _ => ^(Neg(e))
+	  case Number(r,u) => ^(Number(-r,u))
+      case _ => ^(Neg(e))
   }
   
   def < (e:Expression):Boolean = false

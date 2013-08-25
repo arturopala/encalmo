@@ -1,7 +1,7 @@
 package org.encalmo.common
 
 /**
- * Trait of objects traversable with {@link TreeVisitor}
+ * Trait of objects traversable with
  * @author artur.opala
  */
 trait Visitable[A<:AnyRef] {
@@ -9,7 +9,6 @@ trait Visitable[A<:AnyRef] {
 	/**
 	 * Main function to implement.
 	 * Visits internal structure of the object with visitor.
-	 * @param traveler traveler
 	 */
 	def visit(visitor:TreeVisitor[A], parent:Node[A] = null, position:Int = 0):Unit
 	
@@ -21,8 +20,8 @@ trait Visitable[A<:AnyRef] {
 	final def select(coordinate:Int*):Option[A] = {
 		val t = new Selector[A](coordinate:_*)
 		try {
-			this.visit(visitor = t);
-		}
+			this.visit(visitor = t)
+        }
 		catch {
 			case e:EndOfVisitException => 
 			case e:RuntimeException => throw e
@@ -33,9 +32,9 @@ trait Visitable[A<:AnyRef] {
 	/**
 	 * Dumps tree structure to the console
 	 */
-	final def dumpTreeToConsole = {
-		this.visit(visitor = DumpTreeVisitor);
-	}
+	final def dumpTreeToConsole() = {
+		this.visit(visitor = DumpTreeVisitor)
+    }
 	
 	object DumpTreeVisitor extends TreeVisitor[A] {
 		override def onEnter(node:Node[A]):Unit = {

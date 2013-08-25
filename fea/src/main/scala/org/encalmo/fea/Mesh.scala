@@ -40,9 +40,9 @@ trait Mesh[A <: FiniteElement] {
 object Mesh {
     
     /** New mesh from sequence of finite elements */
-    def apply[A <: FiniteElement](elements:Seq[A]):Mesh[A] = new MeshImpl[A](elements);
-    
-     /** Utility function: assigns numbers */
+    def apply[A <: FiniteElement](elements:Seq[A]):Mesh[A] = new MeshImpl[A](elements)
+
+    /** Utility function: assigns numbers */
     def renumber(s:Seq[Numbered]) = s.foldLeft[Int](0)((p,a) => {a.no = p + 1; a.no})
     
 }

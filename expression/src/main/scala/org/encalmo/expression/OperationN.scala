@@ -1,6 +1,5 @@
 package org.encalmo.expression
 
-import org.encalmo.common._
 
 /**
  * Operation with N-arguments
@@ -18,9 +17,9 @@ trait OperationN extends Operation {
   def copy(e:Expression*):OperationN
 	
   final override def eval():Expression = {
-	  val ps = args.map(_.eval).partition(_.isInstanceOf[Value])
+	  val ps = args.map(_.eval()).partition(_.isInstanceOf[Value])
 	  if(ps._1.isEmpty){ // if there is not a single Value
-	 	  if(args.sameElements(ps._2)){
+	 	  if(args sameElements ps._2){
 	 	 	  this // returns this if none argument has been transformed by eval
 	 	  }else{
 	 		  copy(ps._2:_*) // returns copy with transformed arguments
@@ -31,7 +30,7 @@ trait OperationN extends Operation {
 		 	  result // returns calculated result
 		  } else {
 		 	  val newargs = ps._2.+:(result)
-		 	  if(args.sameElements(newargs)){
+		 	  if(args sameElements newargs){
 		 	 	  this // returns this if none argument has been transformed by eval and calculate
 		 	  }else{
 		 		  copy(newargs:_*) // returns mix of both

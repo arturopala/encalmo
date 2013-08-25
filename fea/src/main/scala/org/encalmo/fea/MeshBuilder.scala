@@ -9,7 +9,7 @@ object MeshBuilder {
     }
     
     def buildRectanglePlate20(w:Double,h:Double,mx:Int,my:Int):Mesh[Plate20] = {
-        buildRectanglePlate[Plate20](2,plate20 _)(w,h,mx,my)
+        buildRectanglePlate[Plate20](2,plate20)(w,h,mx,my)
     }
     
     def plate19(grid:Seq[Seq[Node]],x:Int,y:Int):Plate19 = {
@@ -23,14 +23,14 @@ object MeshBuilder {
     }
     
     def buildRectanglePlate19(w:Double,h:Double,mx:Int,my:Int):Mesh[Plate19] = {
-        buildRectanglePlate[Plate19](3,plate19 _)(w,h,mx,my)
+        buildRectanglePlate[Plate19](3,plate19)(w,h,mx,my)
     }
     
     def buildRectanglePlate[A <: FiniteElement](s:Int, plate:(Seq[Seq[Node]],Int,Int) => A)(w:Double,h:Double,mx:Int,my:Int):Mesh[A] = {
     	val cw:Int = mx*s; val ch:Int = my*s
     	val grid  = Grid.fromDiagonal(Vector(w/cw,h/ch,0d))
         val nodeGrid:Seq[Seq[Node]] = buildNodeGrid2D(grid,cw,ch,Node(grid,0,0,0,3),1)
-        val r = ((0 to (cw-s) by s) flatMap (x => (0 to (ch-s) by s) map (y => (x,y))))
+        val r = (0 to (cw - s) by s) flatMap (x => (0 to (ch - s) by s) map (y => (x, y)))
         val elements = r.map(p => plate(nodeGrid,p._1,p._2))
         Mesh[A](elements)
     }

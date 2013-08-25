@@ -23,7 +23,7 @@ trait TreeNodeWithParentRef[A<:TreeNodeWithParentRef[A]] extends TreeNode[A] {
     	if(!parent.isDefined) None else {
     		val p = parent.get
     		p match {
-    			case o if (t.isAssignableFrom(o.getClass)) => {
+    			case o if t.isAssignableFrom(o.getClass) => {
     				Some(o.asInstanceOf[B])
     			}
     			case o => o.parentOfType[B](t)
@@ -37,7 +37,7 @@ trait TreeNodeWithParentRef[A<:TreeNodeWithParentRef[A]] extends TreeNode[A] {
     	if(!parent.isDefined) None else {
     		val p = parent.get
     		p match {
-    			case o if (t.isAssignableFrom(o.getClass)) => {
+    			case o if t.isAssignableFrom(o.getClass) => {
     				Some(o.asInstanceOf[B])
     			}
     			case o => {
@@ -62,7 +62,7 @@ trait TreeNodeWithParentRef[A<:TreeNodeWithParentRef[A]] extends TreeNode[A] {
     	if(!parent.isDefined) c else {
     		val p = parent.get
     		p match {
-    			case o if (t.isAssignableFrom(o.getClass)) => {
+    			case o if t.isAssignableFrom(o.getClass) => {
     				if(until(o.asInstanceOf[B])){
     					o.countParentsOfTypeUntil[B](t,until,c+1)
     				}else{
@@ -86,7 +86,7 @@ trait TreeNodeWithParentRef[A<:TreeNodeWithParentRef[A]] extends TreeNode[A] {
   	    		p.children.takeWhile(
     				x => x.ne(this)
 				).forall(
-					z => !(t.isAssignableFrom(t.getClass))
+					z => !t.isAssignableFrom(t.getClass)
 				)
   	    	}
   	    }

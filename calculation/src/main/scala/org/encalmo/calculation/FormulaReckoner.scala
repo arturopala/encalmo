@@ -12,7 +12,7 @@ object FormulaReckoner {
 
     def reckonAll(implicit context: ExpressionResolver, cache: ResultsCache = new ResultsCache()): FormulaSet = {
         val id = context match {
-            case c: Context => c.id;
+            case c: Context => c.id
             case _ => None
         }
         val graph = SymbolGraph.build(context)
@@ -32,15 +32,15 @@ object FormulaReckoner {
                 import org.encalmo.calculation.FormulaPartRelation._
                 val unit: UnitOfValue = expression.unit
                 val accuracy: Option[Double] = expression match {
-                    case symbol: Symbol => symbol.accuracy;
+                    case symbol: Symbol => symbol.accuracy
                     case _ => None
                 }
                 var list: List[Expression] = Nil
                 try {
                     list = prepareUnresolved(list, expression, context, cache)
-                    list = adjustUnits(context.substitute(list.head)(cache), unit, accuracy) :: list
-                    list = processSubstituted(list.head, unit, accuracy, context, cache) :: list
-                    list = adjustUnits(context.evaluate(list.head)(cache), unit, accuracy) :: list
+                    list = prepareSubstituted(list, list.head, unit, accuracy, context, cache)
+                    list = preparePartiallyEvaluated(list, list.head, unit, accuracy, context, cache)
+                    list = prepareEvaluated(list, list.head, unit, accuracy, context, cache)
                     expression match {
                         case symbol: Symbol => {
                             cache.put(symbol, list.head)
@@ -64,7 +64,7 @@ object FormulaReckoner {
                 }
                 catch {
                     case exc: Exception => {
-                        Console.println(s"Could not reckon expression: $expression\r\n$list\r\nCause: " + exc.getMessage)
+                        Console.err.println(s"\r\nCould not reckon expression: $expression\r\n$list\r\nCause: " + exc.getMessage)
                         throw exc
                     }
                 }
@@ -73,7 +73,7 @@ object FormulaReckoner {
     }
 
     @tailrec
-    def prepareUnresolved(list: List[Expression], expression: Expression, context: ExpressionResolver, cache: ResultsCache): List[Expression] = {
+    private def prepareUnresolved(list: List[Expression], expression: Expression, context: ExpressionResolver, cache: ResultsCache): List[Expression] = {
         (expression match {
             case symbol: Symbol => {
                 context.getRawExpression(symbol).map(processUnresolved(_, context, cache)).getOrElse(symbol)
@@ -87,7 +87,7 @@ object FormulaReckoner {
         }
     }
 
-    def processUnresolved(e: Expression, context: ExpressionResolver, cache: ResultsCache): Expression = {
+    private def processUnresolved(e: Expression, context: ExpressionResolver, cache: ResultsCache): Expression = {
         e match {
             case ev: EvalAt => {
                 EvalAt(ev.expr, ev.er.evaluateWithAndReturnCopy(context, cache))
@@ -97,52 +97,30 @@ object FormulaReckoner {
         }
     }
 
-    def processSubstituted(expression: Expression, unit: UnitOfValue, accuracy: Option[Double], context: ExpressionResolver, cache: ResultsCache): Expression = {
-        val depth = expression.countTreeLeafs
-        if (depth > 3 || expression.isInstanceOf[Selection]) {
-            adjustUnits((
-                expression match {
-                    case tr: Transparent => tr.children.head
-                    case x => x
-                }) match {
-                // partially evaluated expression
-                case null => expression
-                case o: Operation2 => {
-                    o.copy(context.evaluate(o.l)(cache), context.evaluate(o.r)(cache))
-                }
-                case o: OperationN => {
-                    o.copy(o.args.map(context.evaluate(_)(cache)): _*)
-                }
-                case sel: Selection => {
-                    context.substitute(sel.select)(cache)
-                }
-                case _ => context.evaluate(expression)(cache)
-            }, unit, accuracy
-            )
-        } else expression
+    private def prepareSubstituted(list: List[Expression], expression: Expression, unit: UnitOfValue, accuracy: Option[Double], context: ExpressionResolver, cache: ResultsCache): List[Expression] = {
+        context.substitute(expression)(cache) :: list
     }
 
-    def adjustUnits(expression: Expression, unit: UnitOfValue, accuracy: Option[Double]): Expression = unit match {
-        case EmptyUnitOfValue => expression
-        case _ => expression match {
-            case v: Value => v.convertTo(unit, accuracy)
-            case s: Sum => if (s.args.exists(_.isInstanceOf[Value])) Sum(s.args.map(b => b match {
-                case v: Value => v.convertTo(unit, accuracy)
-                case _ => b
-            }): _*)
-            else s
-            case s: min => if (s.args.exists(_.isInstanceOf[Value])) min(s.args.map(b => b match {
-                case v: Value => v.convertTo(unit, accuracy)
-                case _ => b
-            }): _*)
-            else s
-            case s: max => if (s.args.exists(_.isInstanceOf[Value])) max(s.args.map(b => b match {
-                case v: Value => v.convertTo(unit, accuracy)
-                case _ => b
-            }): _*)
-            else s
-            case _ => expression
+    private def preparePartiallyEvaluated(list: List[Expression], expression: Expression, unit: UnitOfValue, accuracy: Option[Double], context: ExpressionResolver, cache: ResultsCache): List[Expression] = {
+        if (expression.countTreeLeafs > 3 || expression.isInstanceOf[Selection]) {
+            adjustUnits(context.partiallyEvaluate(expression)(cache), unit, None) :: list
+        } else {
+            expression :: list
         }
+    }
+
+    private def prepareEvaluated(list: List[Expression], expression: Expression, unit: UnitOfValue, accuracy: Option[Double], context: ExpressionResolver, cache: ResultsCache): List[Expression] = {
+        adjustUnits(context.evaluate(expression)(cache), unit, accuracy) :: list
+    }
+
+    private def unitAdjustor(unit: UnitOfValue, accuracy: Option[Double]): Transformation = {
+        case v: Value => v.convertIfPossibleTo(unit, None)
+        case other => other
+    }
+
+    private def adjustUnits(expression: Expression, unit: UnitOfValue, accuracy: Option[Double]): Expression = expression match {
+        case v: Value => v.convertTo(unit, accuracy)
+        case other => other.map(unitAdjustor(unit, accuracy))
     }
 
 }

@@ -13,12 +13,15 @@ case class Plate19(
     /** Center of gravity */
     override lazy val center:Vector = nodes(0).coordinates middle nodes(15).coordinates
     
-    def printout = {
-        nodes.foreach(n => {n.printout; Console.println})
+    def printout() = {
+        nodes.foreach(n => {n.printout(); Console.println()})
     }
     /** Creates matinfo data sequence */
     def createMatinfo(material:Material,thickness:Double,load:OptDoubleSeq):Seq[Any] = {
-        Seq[Any](material.E,material.P,attr.intorder,thickness) :+ (load.map(_ match {case Seq(x) => x.getOrElse(0d); case _ => 0d}).getOrElse(0d))
+        Seq[Any](material.E,material.P,attr.intorder,thickness) :+ load.map(_ match {
+            case Seq(x) => x.getOrElse(0d)
+            case _ => 0d
+        }).getOrElse(0d)
     }
 
 }

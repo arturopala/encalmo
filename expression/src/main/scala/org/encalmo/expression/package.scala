@@ -1,5 +1,7 @@
 package org.encalmo
 
+import scala.language.implicitConversions
+
 package object expression {
 	
 	/** Alias for transforming (mapping) function */
@@ -37,7 +39,7 @@ package object expression {
 	
 	def dumpRaw(e:Expression*) = e.foreach(e => {
 			console.println(e)
-			console.flush
+			console.flush()
 		}
 	)
 	
@@ -89,6 +91,6 @@ package object expression {
 		Selection(CaseExpression(),map.toSeq.map(x => Case(CaseExpression(x._2),Equals(e,x._1))))
 	}
 	
-	NumberValueCalculator.doRegister
+	NumberValueCalculator.doRegister()
 	
 }

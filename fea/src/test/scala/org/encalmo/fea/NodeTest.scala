@@ -14,8 +14,8 @@ class NodeTest {
         f(n.dropRight(1).zip(n.tail).forall(x => {(x._1 compare x._2) < 0 && (x._2 compare x._1) > 0}))
     }
     
-    def assertAscendingTrue(n:Node*) = assertAscending(assertTrue _)_
-    def assertAscendingFalse(n:Node*) = assertAscending(assertFalse _)_
+    def assertAscendingTrue(n:Node*) = assertAscending(assertTrue)_
+    def assertAscendingFalse(n:Node*) = assertAscending(assertFalse)_
     
     @Test def test1:Unit = {
         val grid  = Grid.fromDiagonal(Vector(1d,1d,1d))

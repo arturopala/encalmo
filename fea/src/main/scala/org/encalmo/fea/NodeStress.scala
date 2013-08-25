@@ -34,7 +34,7 @@ case class NodeStress(
     /** Force component's sequence paired with labels*/
     def explainseq = Seq("sigxx","sigyy","sigzz","tauxy","tauxz","tauyz","sigv","mxx","myy","mxy","qyz","qxz") zip seq
     /** Verbose explanation of force */
-    def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) (s + p._1+"="+DoubleFormat.short(p._2.get)+" ") else s})
+    def explain:String = explainseq.foldLeft[String]("")((s,p) => {if(p._2.isDefined) s + p._1 + "=" + DoubleFormat.short(p._2.get) + " " else s})
     /** Aggregates two NodeStress into one */
     def aggregate(o:NodeStress):NodeStress = NodeStress(seq.zip(o.seq).map(p => worse(p)))
     /** Takes worse of two values */

@@ -100,7 +100,7 @@ class Z88PlateUnitTest {
 		    assertEquals(p.nodes(5).y, p.nodes(7).y, 0)
 		    assertEquals(p.nodes(2).y, p.nodes(3).y, 0)
 	    })
-        val loadCase:LoadCase[Plate20] = LoadCase[Plate20](mesh,materialFx _,thicknessFx _,surfaceLoadFx _,forceFx _,displacementFx _)
+        val loadCase:LoadCase[Plate20] = LoadCase[Plate20](mesh,materialFx,thicknessFx,surfaceLoadFx,forceFx,displacementFx)
 	    val p:Z88Project[Plate20] = Z88Project(Plate20Type, loadCase, Path.fromString("target/z88_20"))
 	    p.createInput
 	    p.runCalculations()
@@ -165,7 +165,7 @@ class Z88PlateUnitTest {
             }
             case _ => None
         }
-        testPlate19(w,h,r,materialFx _,thicknessFx _,surfaceLoadFx _,nodeForceFx _,nodeDisplacementFx _, 0.00283255, 0.0425, -0.08649, -0.05587)
+        testPlate19(w,h,r,materialFx,thicknessFx,surfaceLoadFx,nodeForceFx,nodeDisplacementFx, 0.00283255, 0.0425, -0.08649, -0.05587)
     }
     
     @Test def testPlate19b:Unit = {
@@ -183,7 +183,7 @@ class Z88PlateUnitTest {
             }
             case _ => None
         }
-        testPlate19(w,h,r,materialFx _,thicknessFx _,surfaceLoadFx _,nodeForceFx _,nodeDisplacementFx _, 0.012019, 0.1089, -0.01067, -0.01065)
+        testPlate19(w,h,r,materialFx,thicknessFx,surfaceLoadFx,nodeForceFx,nodeDisplacementFx, 0.012019, 0.1089, -0.01067, -0.01065)
     }
 
     @Ignore
@@ -202,7 +202,7 @@ class Z88PlateUnitTest {
             }
             case _ => None
         }
-        testPlate19(w,h,r,materialFx _,thicknessFx _,surfaceLoadFx _,nodeForceFx _,nodeDisplacementFx _, 0.012019, 0.1089, -0.01067, -0.01065)
+        testPlate19(w,h,r,materialFx,thicknessFx,surfaceLoadFx,nodeForceFx,nodeDisplacementFx, 0.012019, 0.1089, -0.01067, -0.01065)
     }
     
     /** Common Plate19 test's code */

@@ -1,6 +1,5 @@
 package org.encalmo.expression
 
-import org.encalmo.common._
 
 /**
  * Two argument operation trait
@@ -18,12 +17,12 @@ trait Operation2 extends Operation {
   def copy(l:Expression,r:Expression):Operation2
   
   final override def eval():Expression = {
-	  val le = l eval;
-	  val re = r eval;
-	  (le,re) match {
+	  val le = l eval()
+      val re = r eval()
+      (le,re) match {
 	 	  case (v1:Value,v2:Value) => calculate(v1,v2) 
-	 	  case _ if (le!=l || re!=r) => copy(le,re)
-	 	  case _ => this;
+	 	  case _ if (le ne l) || (re ne r) => copy(le,re)
+	 	  case _ => this
 	  }
   }
   
@@ -33,9 +32,9 @@ trait Operation2 extends Operation {
   }
   
   final override def map(f:Transformation):Expression = {
-	  val vl = l.map(f); 
-	  val vr = r.map(f);
-	  if(vl==l && vr==r) f(this) else f(copy(vl,vr))
+	  val vl = l.map(f)
+	  val vr = r.map(f)
+	  if((vl eq l) && (vr eq r)) f(this) else f(copy(vl,vr))
   }
 
 }
