@@ -1,9 +1,8 @@
 package org.encalmo.document
 
 import org.encalmo.expression.Expression
-import org.encalmo.calculation.Calculation
+import org.encalmo.calculation.{Context, Calculation, ContextFactory}
 import org.encalmo.style.Style
-import org.encalmo.calculation.Context
 
 /**
  * Resolve: symbol = resolved
@@ -13,7 +12,7 @@ class Resolve(
         val styleOfResolved:Style, 
         val isPrintDescription:Boolean, 
         val variant:Int, 
-        context:Context, 
+        context: Context,
         expressions:Expression*) 
 extends BlockExpr(myStyle,context,expressions:_*){
 	

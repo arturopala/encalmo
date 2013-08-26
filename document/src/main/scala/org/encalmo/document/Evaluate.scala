@@ -13,7 +13,7 @@ class Evaluate(
         val styleOfResolved:Style, 
         val styleOfEvaluated:Style, 
         val isPrintDescription:Boolean, 
-        context:Context, 
+        context: Context,
         expressions:Expression*) 
 extends BlockExpr(customStyle,context,expressions:_*){
 	
@@ -39,7 +39,7 @@ object Evaluate {
 		new Evaluate(customStyle,customStyle,customStyle,true,calc,expressions:_*)
 	}
 	
-	def apply(expressions:Expression*)(implicit context:Context) = {
+	def apply(expressions:Expression*)(implicit context: Context) = {
         new Evaluate(null,null,null,true,context,expressions:_*)
     }
 	

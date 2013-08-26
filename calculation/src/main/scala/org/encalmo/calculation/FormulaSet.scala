@@ -1,66 +1,32 @@
 package org.encalmo.calculation
 
-import scala.collection.mutable.Map
 import org.encalmo.expression._
 import scala.collection.mutable
 
-case class FormulaSet(contextId: Option[String] = None) {
+case class FormulaSet(contextId: String) {
 
-    private var formulaSet = Vector[Formula]()
     private val formulaMap = mutable.Map[Expression, Formula]()
 
-    def +=(formula: Formula): FormulaSet = {
-        formulaSet = formulaSet :+ formula
+    val cache = new ResultsCache()
+
+    private[calculation] def put(formula: Formula): FormulaSet = {
         formulaMap(formula.left.expression) = formula
         this
     }
 
-    def items: Seq[Formula] = formulaSet
+    def items: Iterable[Formula] = formulaMap.values
 
     def size = items.size
 
-    def get(expression: Expression): Option[Formula] = {
-        val formulaOpt: Option[Formula] = formulaMap.get(expression)
-        formulaOpt orElse {
-            expression match {
-                case symbol: Symbol => {
-                    if (contextId.isDefined) {
-                        symbol.contextId match {
-                            case Some(symbolContextId) => {
-                                if (!symbolContextId.contains(contextId.get)) {
-                                    formulaMap.get(symbol.id(contextId.get))
-                                } else {
-                                    None
-                                }
-                            }
-                            case None => formulaMap.get(symbol.id(contextId.get))
-                        }
-                    } else {
-                        None
-                    }
-                }
-                case _ => None
-            }
-        }
-    }
+    def get(expression: Expression): Option[Formula] = formulaMap.get(expression)
 
-    def getOrReckon(expression: Expression, context: ExpressionResolver, cache: ResultsCache): Formula = {
+    def getOrReckon(expression: Expression, context: Context, results: Results): Formula = {
         get(expression) getOrElse {
-            val formula = FormulaReckoner.reckon(expression, cache)(context)
-            this += formula
+            val formula = Reckoner.reckonExpression(expression, results, cache)(context)
+            this put formula
             formula
         }
     }
 
     def contains(expression: Expression) = formulaMap.get(expression).isDefined
-}
-
-object FormulaSet {
-
-    val echo = new FormulaSet(None) {
-        override def +=(formula: Formula): FormulaSet = this
-
-        override def get(expression: Expression): Option[Formula] = Some(Formula(Seq(FormulaPart(expression, FormulaPosition.LEFT, FormulaPartRelation.NONE))))
-    }
-
 }

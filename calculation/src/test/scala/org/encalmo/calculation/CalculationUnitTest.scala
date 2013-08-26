@@ -20,12 +20,14 @@ class CalculationUnitTest extends AssertionsForJUnit {
 		c1(a) = 10
 		c2(a) = 5
 		c3(a) = 1
+        assertEquals(Number(10),c.evaluate(a))
+        assertEquals(Number(5),c.evaluate(c2(a)))
+        assertEquals(Number(1),c.evaluate(c3(a)))
+        assertEquals(Number(1),c2.evaluate(c3(a)))
+        assertEquals(Number(5),c3.evaluate(c2(a)))
 		assertEquals(Number(10),c1.evaluate(a))
 		assertEquals(Number(5),c2.evaluate(a))
 		assertEquals(Number(1),c3.evaluate(a))
-		assertEquals(Number(10),c.evaluate(a id c1.id.get))
-		assertEquals(Number(5),c.evaluate(a id c2.id.get))
-		assertEquals(Number(1),c.evaluate(a id c3.id.get))
 	}
 	
 	@Test def test1 = {

@@ -1,111 +1,222 @@
 package org.encalmo.calculation
 
-import scala.collection.Map
 import org.encalmo.expression._
+import java.util.UUID
+import scala.annotation.tailrec
 
 /** 
- * Context is a Map-based ExpressionResolver with identity
+ * Expression's context trait
  */
-trait Context extends ExpressionResolver {
+trait Context {
+    
+    val MAX_MAP_ALL_LOOP_COUNT:Int = 256
+
+    final val id:String = UUID.randomUUID().toString
+  
+	/**
+	 * Should return expression mapped to that symbol or None
+	 */
+	final def getExpression(s:Symbol, cache: ResultsCache):Option[Expression] = {
+        cache.get(s) orElse getExpression(s)
+    }
 	
-	def id:Option[String]
-	def map:Map[Symbol,Expression]
+	/**
+	 * Should return unresolved expression mapped to that symbol or None
+	 */
+	def getExpression(s:Symbol):Option[Expression]
 	
-	/** Returns future expression */
-	def apply(s:Symbol):PinnedExpression = PinnedExpression(this,s)
+	/**
+	 * Should return true if exists expression mapped to that symbol
+	 */
+	def hasExpression(s:Symbol):Boolean
 	
-	/** Returns function evaluation for some arguments */
-	def apply(expr:Expression, args:(Symbol,Expression)*):EvalAt = {
-	    if(args.size>0){
-		    val c = Calculation()
-		    c add this
-		    c put (args:_*)
-		    EvalAt(expr, c)
-	    }else{
-	        EvalAt(expr, this)
-	    }
+	/**
+	 * Should return sequence of used mappings
+	 */
+	def listMappings:Seq[(Symbol,Expression)]
+	
+	/**
+     * Should return sequence of mapped symbols
+     */
+    def listSymbols:Seq[Symbol]
+
+    /**
+     * Should return sequence of nested expression contexts
+     */
+    def listNestedResolvers:Seq[Context]
+
+    /** Returns expression pinned to the context */
+    def apply(s:Symbol):PinnedExpression = PinnedExpression(this,s)
+	
+	/**
+	 * Expands symbols to their mapped expressions.
+	 */
+	def resolve(expression: Expression)(implicit cache: ResultsCache):Expression = {
+        try {
+            map(expression,resolver(cache))
+        }
+        catch {
+            case exception:Exception => {
+                Console.err.println("Could not resolve expression: "+expression+".\r\nCause: "+exception.getMessage)
+                throw exception
+            }
+        }
 	}
 	
 	/**
-	 * Returns symbol with context's index added
+	 * Substitutes symbols with their evaluated values.
 	 */
-	def symbol(s:Symbol):Symbol = {
-		id match {
-			case Some(i) => {
-				s.contextId match {
-					case Some(currId) => {
-						if(!currId.contains(i)){
-							s.id(i)
-						}else{
-							s
-						}
-					}
-					case None => s.id(i)
-				}
-			}
-			case None => s
-		}
+	def substitute(expression: Expression)(implicit cache: ResultsCache):Expression = {
+        try {
+            map(expression match {
+                case symbol: Symbol => getExpression(symbol) getOrElse symbol
+                case other => other
+            },substitutor(cache)) match {
+                case evalAt: EvalAt => substitute(evalAt.substitute)(cache)
+                case other => other
+            }
+        }
+        catch {
+            case exception: Exception => {
+                Console.err.println("Could not substitute expression: "+expression+".\r\nCause: "+exception.getMessage)
+                throw exception
+            }
+        }
 	}
 	
 	/**
-	 * Returns expression mapped to that symbol or None
+	 * Evaluates given expression.
 	 */
-	override def getRawExpression(s:Symbol):Option[Expression] = {
-		map.get(s) orElse {
-            if(id.isDefined){
-                s.contextId match {
-                    case Some(currId) => {
-                        if(!currId.contains(id.get)){
-                            getRawExpression(s.id(id.get))
-                        }else{
-                            None
-                        }
+	def evaluate(expression: Expression)(implicit cache: ResultsCache = new ResultsCache()):Expression = {
+        def evaluateRaw: Expression = {
+            val e1 = map(expression, preEvaluator(cache))
+            map(e1,evaluator(cache))
+        }
+        try {
+            expression match {
+                case symbol: Symbol => {
+                    cache.get(symbol) getOrElse {
+                        val result = evaluateRaw
+                        cache.put(symbol, result)
+                        result
                     }
-                    case None => getRawExpression(s.id(id.get))
                 }
-            }else{
-                None
+                case _ =>  evaluateRaw
+            }
+        }
+        catch {
+            case exc:Exception => {
+                Console.err.println("Could not evaluate expression: "+expression+".\r\nCause: "+exc.getMessage)
+                throw exc
             }
         }
 	}
 
+    /**
+     * Partially evaluates given expression.
+     */
+    def partiallyEvaluate(expression: Expression)(implicit cache: ResultsCache = new ResultsCache()):Expression = {
+        try {
+            map(expression, partialEvaluator(cache))
+        }
+        catch {
+            case exc:Exception => {
+                Console.err.println("Could not evaluate expression: "+expression+".\r\nCause: "+exc.getMessage)
+                throw exc
+            }
+        }
+    }
+	
 	/**
-	 * Returns true if exists expression mapped to that symbol
+	 * Maps expressions with given transformation.
 	 */
-	override def hasExpression(s:Symbol):Boolean = {
-		map.contains(s) || (id.isDefined && (s.contextId match {
-			case Some(currId) => {
-				if(!currId.contains(id.get)){
-					map.contains(s.id(id.get))
-				}else{
-					false
-				}
+    @tailrec
+	final def map(e1:Expression, t:Transformation, c:Int = 0):Expression = {
+		val e2 = e1.map(t)
+		if(c>=MAX_MAP_ALL_LOOP_COUNT){
+		    if(e1==e2) return e1
+		    else throw new IllegalStateException("Probably circular reference: "+e1)
+		}else{
+			if(e1.eq(e2)) {
+				return e1
 			}
-			case None => {
-				map.contains(s.id(id.get))
-			}
-		}))
+		}
+		map(e2,t,c+1)
 	}
 	
-	override def listMappings: Seq[(Symbol,Expression)] = map.toSeq
-	override def listSymbols: Seq[Symbol] = map.keySet.toSeq
-  
-}
+	/**
+	 * Single-pass resolving transformation. 
+	 * Expends symbols to their mapped expressions
+	 */
+	private def resolver(cache: ResultsCache):Transformation = {
+		case s:Symbol => this.getExpression(s).getOrElse(s)
+		case de:DynamicExpression => de.f(cache)
+		case e => e
+	}
+    
+	
+	/**
+	 * Single-pass pre-evaluating transformation.
+	 * Replaces symbols with expressions 
+	 */
+    private def preEvaluator(cache: ResultsCache):Transformation = {
+        case s:Symbol => this.getExpression(s, cache).getOrElse(s)
+        case e => e
+    }
+	
+	/**
+	 * Single-pass evaluating transformation. 
+	 * Evaluates expressions.
+	 */
+	private def evaluator(cache: ResultsCache):Transformation = {
+        case s:Symbol => this.getExpression(s, cache) match {
+            case Some(x) => x match {
+                case v: Value => v
+                case sel:Selection => map(sel,evaluator(cache))
+                case _ => x.eval()
+            }
+            case None => s
+        }
+		case de:DynamicExpression => de.f(cache)
+		case sl:SymbolLike => sl.eval()
+		case e => e.eval()
+	}
+	
+	/**
+	 * Single-pass substituting transformation. 
+	 * Substitutes symbols with their evaluated values.
+	 */
+	private def substitutor(cache: ResultsCache):Transformation = {
+		case symbol: Symbol => evaluate(symbol)(cache)
+		case dynamic: DynamicExpression => dynamic.f(cache)
+		case symbolLike: SymbolLike => symbolLike.eval()
+		case selection: Selection => selection.trim
+		case evalAt: EvalAt => evalAt.substitute
+		case other => other
+	}
 
-object Context {
+    /**
+     * Single-pass partially evaluating transformation.
+     * Partially evaluates expressions.
+     */
+    private def partialEvaluator(cache: ResultsCache):Transformation = {
+        case o: Operation2 => {
+            o.copy(evaluate(o.l)(cache), evaluate(o.r)(cache))
+        }
+        case o: OperationN => {
+            o.copy(o.args.map(evaluate(_)(cache)): _*)
+        }
+        case sel: Selection => {
+            substitute(sel.select)(cache)
+        }
+        case other => other
+    }
 	
-	def apply() = new MapContext()
-	
-	def apply(id:String) = new MapContext(Option(id))
-	
-	def apply(vmap:Map[Symbol,Expression]) = new Context(){
-		val id = None
-		val map = vmap
+	def evaluateWithAndReturnCopy(er:Context, cache: ResultsCache):Context = {
+	    MapContext(listMappings.map(x => (x._1,er.evaluate(x._2)(cache))):_*)
 	}
 	
-	def apply(entry:(Symbol,Expression)*) = new Context(){
-		val id = None
-		val map = Map(entry:_*)
+	def evaluateAndMap(symbols:Symbol*)(cache: ResultsCache):Map[Symbol,Expression] = {
+	    symbols.zip(symbols.map(s => evaluate(s)(cache))).toMap
 	}
-	
 }

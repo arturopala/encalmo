@@ -1,7 +1,6 @@
 package org.encalmo.structures.eurocode.actions.silos
 
 import org.encalmo.expression._
-import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
@@ -13,7 +12,6 @@ import org.encalmo.document._
 /** ParticulateSolid symbols */
 object ParticulateSolidSymbols extends SymbolConfigurator {
 
-	import BasicSymbols._
 	val dictionary, contextId = "particulateSolid"
 	  
 	// particulate solid properties
@@ -89,7 +87,7 @@ object ParticulateSolidExpressions extends MapContext {
  * MUST be provided: D
  */
 class ParticulateSolid(
-    id:String,
+    name:String,
 	v_gammal:Expression,
 	v_gammau:Expression,
 	v_fir:Expression, 
@@ -103,7 +101,7 @@ class ParticulateSolid(
 	v_amu:Expression, 
 	v_Cop:Expression
 )
-extends Calculation(Option(id)) {
+extends Calculation(name) {
 
 	import ParticulateSolidSymbols._
 	
@@ -122,7 +120,7 @@ extends Calculation(Option(id)) {
 	this(amu) = v_amu
 	this(Cop) = v_Cop
 	
-	def properties = NumSection(TextToTranslate("_properties",ParticulateSolidSymbols.dictionary),"(",TextToTranslate(id,ParticulateSolidSymbols.dictionary),")",
+	def properties = NumSection(TextToTranslate("_properties",ParticulateSolidSymbols.dictionary),"(",TextToTranslate(name,ParticulateSolidSymbols.dictionary),")",
 		Evaluate(gammal,gammau,fir,fiim,afi,Km,aK,mum1,mum2,mum3,amu,Cop)
 	)
 	
@@ -134,9 +132,8 @@ extends Calculation(Option(id)) {
 /** Particulate solid library provided by EN 1991-4:2006 (E) */
 object ParticulateSolid {
 
-	import ParticulateSolidSymbols._
-	
-	def apply(s:String):ParticulateSolid = map.get(s).map(x => x()).getOrElse(throw new IllegalStateException)
+
+    def apply(s:String):ParticulateSolid = map.get(s).map(x => x()).getOrElse(throw new IllegalStateException)
 	
 	lazy val map = Map[String,()=>ParticulateSolid](
 		"Default" -> Default _,

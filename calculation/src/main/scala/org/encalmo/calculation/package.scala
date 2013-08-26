@@ -21,9 +21,9 @@ package object calculation {
     /** Expression trait functionality extension */
     implicit class ExpressionExt(expression:Expression) {
     
-        def at(map:Map[Symbol,Expression]):EvalAt = new EvalAt(expression, Context(map))
-        def at(er:ExpressionResolver):EvalAt = new EvalAt(expression, er)
-        def at(args:(Symbol,Expression)*):EvalAt = new EvalAt(expression, Context(args:_*))
+        def at(map:Map[Symbol,Expression]):EvalAt = new EvalAt(expression, MapContext(map))
+        def at(er:Context):EvalAt = new EvalAt(expression, er)
+        def at(args:(Symbol,Expression)*):EvalAt = new EvalAt(expression, MapContext(args:_*))
         
     }
 }

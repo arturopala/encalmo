@@ -16,7 +16,7 @@ import org.encalmo.expression.MultipleInfixOperation
 import org.encalmo.expression.Diff
 import org.encalmo.expression.Transparent
 import org.encalmo.expression.Expression
-import org.encalmo.calculation.FormulaSetCache
+import org.encalmo.calculation.Results
 
 /**
  * Prints document as html5 text 
@@ -24,8 +24,8 @@ import org.encalmo.calculation.FormulaSetCache
  */
 object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
 	
-	override def print(input:Document,output:HtmlOutput = new HtmlOutput):HtmlOutput = {
-		val t = new HtmlTextDocumentPrinterTraveler(output)
+	override def print(input:Document)(output:HtmlOutput = new HtmlOutput)(results:Results):HtmlOutput = {
+		val t = new HtmlTextDocumentPrinterTraveler(output, results)
 		input.visit(visitor = t)
 		output
 	}
@@ -36,8 +36,8 @@ object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
  * Travels and prints document as html5 text 
  * @author artur.opala
  */
-class HtmlTextDocumentPrinterTraveler(output:HtmlOutput) 
-extends TreeVisitor[DocumentComponent] with FormulaSetCache {
+class HtmlTextDocumentPrinterTraveler(output:HtmlOutput, results: Results)
+extends TreeVisitor[DocumentComponent] {
 
 	val locale = output.locale
 	val mathOutput = output.toMathMLOutput
@@ -101,7 +101,7 @@ div {padding:5pt 0 2pt 0}
 			case toc:TableOfContents => {
                 if(toc.parentDocument.isDefined){
                     output.startb(DIV,"toc")
-                    toc.parentDocument.get.visit(visitor = new HtmlTableOfContentsPrinterTraveler(output))
+                    toc.parentDocument.get.visit(visitor = new HtmlTableOfContentsPrinterTraveler(output, results))
                     output.end(DIV)
                 }
             }
@@ -154,7 +154,7 @@ div {padding:5pt 0 2pt 0}
                 }
             }
             case expr:InlineExpr => {
-                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
+                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
                 ess.foreach(es => {
                     if(expr.myStyle!=null){
                         output.start(SPAN,expr.myStyleClassId)
@@ -170,13 +170,13 @@ div {padding:5pt 0 2pt 0}
                 })
             }
             case expr:BlockExpr => {
-                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
+                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
                 if(!ess.isEmpty){
                     blockExprPrintStrategy.print(node,expr,ess)
                 }
             }
             case a:Assertion => {
-                val result = a.evaluate(resultCacheFor(a.calc))
+                val result = a.evaluate(results.formulaSetFor(a.calc).cache)
                 val s = Section(a.style,result._2:_*)
                 s.parent = a.parent
                 s.visit(visitor = this)
@@ -372,8 +372,8 @@ div {padding:5pt 0 2pt 0}
 	
 }
 
-class HtmlTableOfContentsPrinterTraveler(output:HtmlOutput) 
-extends HtmlTextDocumentPrinterTraveler(output) {
+class HtmlTableOfContentsPrinterTraveler(output:HtmlOutput, results: Results)
+extends HtmlTextDocumentPrinterTraveler(output, results) {
     
     override def onEnter(node:Node[DocumentComponent]):Unit = {
         node.element match {

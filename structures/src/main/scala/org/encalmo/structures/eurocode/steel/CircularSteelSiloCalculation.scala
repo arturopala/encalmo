@@ -35,8 +35,8 @@ class CircularSteelSiloCalculation extends CalculationDocument {
     )
     
     calc add silos
-    
-    override val doc = Document("",
+
+    override val document = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(

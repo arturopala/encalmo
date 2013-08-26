@@ -7,28 +7,29 @@ import scala.language.postfixOps
  * If case test evaluates to true then expression is used by parent Selection.
  * @author artur.opala
  */
-case class Case(ce:CaseExpression,t:CaseTest) extends Expression with Auxiliary {
+case class Case(caseExpression: CaseExpression, caseTest: CaseTest) extends Expression with Auxiliary {
 
-    override def children = Seq(ce,t)
+    override def children = Seq(caseExpression,caseTest)
 
-    def test:Boolean = t.test
+    def test:Option[Boolean] = caseTest.test
 
     final override def eval():Expression = {
-            val ev = ce eval()
-            if(ev.ne(ce.expr)) Case(CaseExpression(ev),t) else this
+            val ev = caseExpression.eval()
+            if(ev ne caseExpression.expression) Case(CaseExpression(ev),caseTest) else this
     }
-    
-    /** Maps only test expressions */
-    final override def map(f:Transformation):Expression = {
-            val vt = t.map(f)
-            if(vt==t) f(this) else {
-                vt match {
-                    case t1: CaseTest =>
-                        f(Case(ce, t1))
-                    case _ =>
-                        f(Case(ce, Never))
-                }
-            }
+
+    final override def map(f:Transformation): Case = {
+        val vt = caseTest.map(f) match {
+            case ct: CaseTest => ct
+            case _ => Never
+        }
+        val vc = caseExpression.map(f)
+        f(
+            if((vt eq caseTest) && (vc eq caseExpression)) this else Case(vc,vt)
+        ) match {
+            case c: Case => c
+            case _ => EmptyCase
+        }
     }
 
 }

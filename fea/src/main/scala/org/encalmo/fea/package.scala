@@ -1,5 +1,7 @@
 package org.encalmo
 
+import scala.language.implicitConversions
+
 package object fea {
     
     /** Sequence of doubles*/

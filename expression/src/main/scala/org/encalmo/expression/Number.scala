@@ -5,6 +5,9 @@ object Number {
     
     val typeId = "N"
 
+    //Numbers calculator registration
+    NumberValueCalculator.doRegister()
+
 }
 
 /**

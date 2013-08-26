@@ -51,8 +51,8 @@ object SiloSymbols extends SymbolConfigurator {
     lazy val Vc = symbol(BasicSymbols.V|BasicSymbols.c) unit "m3" acc 0.01
     //lazy val Vf = symbol(BasicSymbols.V|BasicSymbols.f) unit "m3"
     lazy val S = symbol(BasicSymbols.S) unit "m2" acc 0.01 is "Powierzchnia płaszcza silosu"
-    lazy val Sh = symbol(BasicSymbols.S|BasicSymbols.h) unit "m2" acc 0.01 is "Powierzchnia płaszcza komory"
-    lazy val Sc = symbol(BasicSymbols.S|BasicSymbols.c) unit "m2" acc 0.01 is "Powierzchnia płaszcza leja"
+    lazy val Sh = symbol(BasicSymbols.S|BasicSymbols.h) unit "m2" acc 0.01 is "Powierzchnia płaszcza leja"
+    lazy val Sc = symbol(BasicSymbols.S|BasicSymbols.c) unit "m2" acc 0.01 is "Powierzchnia płaszcza komory"
     
     //weights
     /** Maksymalna masa składowanego materiału */

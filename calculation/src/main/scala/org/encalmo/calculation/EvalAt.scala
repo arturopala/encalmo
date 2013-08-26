@@ -3,10 +3,10 @@ package org.encalmo.calculation
 import org.encalmo.expression._
 
 /**
- * Expression evaluating other expression with provided expression resolver
+ * Expression evaluating other expression with provided expression context
  * @author artur.opala
  */
-class EvalAt(val expr:Expression, val er:ExpressionResolver) extends Expression {
+class EvalAt(val expr:Expression, val er:Context) extends Expression {
     
     override def children = Seq(expr)
 	
@@ -36,11 +36,11 @@ class EvalAt(val expr:Expression, val er:ExpressionResolver) extends Expression 
  */
 object EvalAt{
   
-	def apply(expr:Expression, er:ExpressionResolver) = new EvalAt(expr, er)
+	def apply(expr:Expression, er:Context) = new EvalAt(expr, er)
 	
-	def apply(expr:Expression, map:Map[Symbol,Expression]) = new EvalAt(expr, Context(map))
+	def apply(expr:Expression, map:Map[Symbol,Expression]) = new EvalAt(expr, MapContext(map))
 	
-	def apply(expr:Expression, args:(Symbol,Expression)*) = new EvalAt(expr, Context(args:_*))
+	def apply(expr:Expression, args:(Symbol,Expression)*) = new EvalAt(expr, MapContext(args:_*))
 	
 	def unapply(ev:EvalAt) = Some(ev.expr, ev.er)
   

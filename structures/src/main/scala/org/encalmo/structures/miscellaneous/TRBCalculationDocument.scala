@@ -109,7 +109,7 @@ class TRBCalculationDocument extends CalculationDocument {
     val Tprzer = T|"przer" is "Czas przerwy roboczej do osiągnięcia wymaganej wytrzymałości betonu (w dniach)"; calc(Tprzer) = 4
     val Tb = T|"b" is "Rzeczywisty czas róbót betonowych (w dniach)"; calc(Tb) = Tdm+Tbet+Tprzer+Tdd
 
-    val doc = Document("",
+    override val document = Document("",
         Predefined.stylesConfig,
         Chapter("",
             Section(

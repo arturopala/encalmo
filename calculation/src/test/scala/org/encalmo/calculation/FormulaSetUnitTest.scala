@@ -10,12 +10,12 @@ class FormulaSetUnitTest extends AssertionsForJUnit {
   @Test def shouldAppendFormulasToFormulaSet = {
     import BasicSymbols._
     //given
-    val formulaSet = new FormulaSet()
+    val formulaSet = new FormulaSet("0")
     //when
     val f1: Formula = Formula(Seq(FormulaPart(a, FormulaPosition.LEFT), FormulaPart(b, FormulaPosition.RIGHT)))
-    formulaSet += f1
+    formulaSet put f1
     val f2: Formula = Formula(Seq(FormulaPart(c, FormulaPosition.LEFT), FormulaPart(d, FormulaPosition.RIGHT)))
-    formulaSet += f2
+    formulaSet put f2
     //then
     assertTrue(formulaSet.contains(a))
     assertFalse(formulaSet.contains(b))

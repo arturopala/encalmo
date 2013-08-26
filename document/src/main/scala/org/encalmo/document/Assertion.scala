@@ -60,22 +60,22 @@ extends DocumentComponent(null){
 		},"document")
 		seq += Text(":")
 		seq += Character.LONGSPACE
-		seq += Symb(expressions.head)
+		seq += Symb(expressions.head)(calc)
 		for(i <-1 to expressions.tail.size){
 		    seq += Character.SPACE
 		    seq += operator(i-1)
 		    seq += Character.SPACE
-		    seq += Symb(expressions(i))
+		    seq += Symb(expressions(i))(calc)
 		}
 		seq += Character.LONGSPACE
 		seq += Character.RARROW
 		seq += Character.LONGSPACE
-		seq += Symb(results.head)
+		seq += Symb(results.head)(calc)
         for(i <-1 to results.tail.size){
             seq += Character.SPACE
             seq += operator(i-1)
             seq += Character.SPACE
-            seq += Symb(results(i))
+            seq += Symb(results(i))(calc)
         }
 		(ob,seq)
 	}

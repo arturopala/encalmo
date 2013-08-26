@@ -13,14 +13,14 @@ class PlainTextExpressionPrinterTest extends AssertionsForJUnit {
 	@Test def testContext1() {
 		val o:TextOutput = new TextOutput(java.util.Locale.US)
 		val e = a*b+((c^2)/sin(4.126))
-		PlainTextExpressionPrinter.print(e,o)
+		PlainTextExpressionPrinter.print(e)(o)()
 		assertEquals("a * b + c ^ 2 / sin4.126",o.getResult)
 	}
 	
 	@Test def testContext2() {
 		val o:TextOutput = new TextOutput(new java.util.Locale("PL"))
 		val e = a*b+((c^2)/sin(4.126))
-		PlainTextExpressionPrinter.print(e,o)
+		PlainTextExpressionPrinter.print(e)(o)()
 		assertEquals("a * b + c ^ 2 / sin4,126",o.getResult)
 	}
 	

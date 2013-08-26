@@ -2,7 +2,7 @@ package org.encalmo.structures.eurocode.composite
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.calculation.Context
+import org.encalmo.calculation.ContextFactory
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
@@ -193,6 +193,7 @@ object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
 }
 
 class CompositeSlabWithProfiledSheeting(
+    name: String,
 	height:Expression,
 	length:Expression,
 	spans:Expression, 
@@ -200,7 +201,7 @@ class CompositeSlabWithProfiledSheeting(
 	concrete:Concrete,
 	reinforcingSteel:ReinforcingSteel
 )
-extends Calculation {
+extends Calculation(name) {
 
 	import CompositeSlabWithProfiledSheetingSymbols._
 	import ProfiledSteelSheetSymbols._

@@ -28,17 +28,17 @@ case class ExpressionToPrint(
 
 object ExpressionToPrint {
 
-    def prepare(element: Expr, formulaSetCache: FormulaSetCache):Seq[Seq[ExpressionToPrint]] = {
-        for(expression <- element.expressions) yield prepare(expression, element, formulaSetCache)
+    def prepare(element: Expr, results: Results):Seq[Seq[ExpressionToPrint]] = {
+        for(expression <- element.expressions) yield prepare(expression, element, results)
     }
 
-    def prepare(expression:Expression, element: Expr, formulaSetCache: FormulaSetCache):Seq[ExpressionToPrint] = {
+    def prepare(expression:Expression, element: Expr, results: Results):Seq[ExpressionToPrint] = {
         val formula = expression match {
             case pinnedExpression:PinnedExpression => {
-                formulaSetCache.formulaSetFor(pinnedExpression.context).getOrReckon(pinnedExpression.symbol,pinnedExpression.context, formulaSetCache.resultCacheFor(pinnedExpression.context))
+                results.formulaSetFor(pinnedExpression.context).getOrReckon(pinnedExpression.symbol,pinnedExpression.context, results)
             }
             case _ => {
-                formulaSetCache.formulaSetFor(element.context).getOrReckon(expression,element.context, formulaSetCache.resultCacheFor(element.context))
+                results.formulaSetFor(element.context).getOrReckon(expression,element.context, results)
             }
         }
         prepare(formula, partFilterForElement(element),  element.customStyle, element)

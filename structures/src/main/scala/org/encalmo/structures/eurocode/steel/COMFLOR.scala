@@ -1,7 +1,5 @@
 package org.encalmo.structures.eurocode.steel
 
-import org.encalmo.expression._
-import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 
 object COMFLOR {

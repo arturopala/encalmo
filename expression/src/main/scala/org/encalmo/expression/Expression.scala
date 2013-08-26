@@ -16,7 +16,7 @@ trait Expression extends TreeNode[Expression] {
   
   def unit:UnitOfValue = EmptyUnitOfValue
   
-  def or(c:Case):Selection = Selection(CaseExpression(this),Seq(c))
+  def unless(testCase: Case):Selection = Selection(Seq(testCase), Some(CaseExpression(this)))
   
   def + (e:Expression):Expression = e match {
 	  case Void => this

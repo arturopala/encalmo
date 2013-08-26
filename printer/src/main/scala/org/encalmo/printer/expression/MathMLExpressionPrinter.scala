@@ -12,7 +12,7 @@ import org.encalmo.calculation.{ResultsCache, EvalAt}
  */
 object MathMLExpressionPrinter extends ExpressionPrinter[MathMLOutput, String] {
 
-	override def print(e: Expression, output: MathMLOutput = new MathMLOutput): MathMLOutput = {
+	override def print(e: Expression)(output: MathMLOutput = new MathMLOutput)(any: AnyRef = new Object()): MathMLOutput = {
 		val t = new MathMLExpressionPrinterTraveler(output)
 		e.visit(visitor = t)
 		output

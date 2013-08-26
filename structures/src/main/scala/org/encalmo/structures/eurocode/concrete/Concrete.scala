@@ -1,11 +1,11 @@
 package org.encalmo.structures.eurocode.concrete
 
 import org.encalmo.expression._
-import org.encalmo.calculation.Context
-import org.encalmo.calculation.MapContext
-import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.SymbolConfigurator
+import org.encalmo.calculation._
 import org.encalmo.document._
+import org.encalmo.expression.min
+import org.encalmo.expression.cbrt
+import org.encalmo.expression.sqrt
 
 /** Concrete related symbols */
 object ConcreteSymbols extends SymbolConfigurator {
@@ -89,11 +89,11 @@ object ConcreteExpressions extends MapContext {
 }
 
 /** Concrete class */
-class Concrete(id:String,data:Context) extends Calculation(Option(id)) {
+class Concrete(name:String,data:Context) extends Calculation(name) {
 
 	import ConcreteSymbols._
 
-	def info = NumSection(TextToTranslate("Concrete",ConcreteSymbols.dictionary),id,
+	def info = NumSection(TextToTranslate("Concrete",ConcreteSymbols.dictionary),name,
 		Evaluate(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1)
 	)
 	
@@ -102,11 +102,11 @@ class Concrete(id:String,data:Context) extends Calculation(Option(id)) {
 	this add ConcreteExpressions
 	this add data
 	
-	this(CLASS) = text(id)
+	this(CLASS) = text(name)
 	this(gammaC) = 1.5
-	
+
 	override def label = this(CLASS)
-	
+
 }
 
 class NormalConcrete extends MapContext {

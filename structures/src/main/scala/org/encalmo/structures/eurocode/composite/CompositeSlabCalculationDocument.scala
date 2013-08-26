@@ -27,20 +27,10 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     
     override val name = "kz-strop"
     
-    val zadanie1Statyka,zadanie1Eksploatacja,zadanie1Wymiarowanie:Seq[Expression] = Seq()
-    val zadanie2Materialy,zadanie2Obciazenia,zadanie2Montaz,zadanie2Eksploatacja,zadanie2Wymiarowanie:Seq[Expression] = Seq()
-    
-    val zadanie = Calculation()
-    val zadanie1 = Calculation()
-    
     //dane wejsciowe zadania
-    val L1 = L|1 is "Rozpiętośc belki" unit SI.m
-    zadanie(L1) = 15
-    val L2 = L|2 is "Rozstaw belek" unit SI.m
-    zadanie(L2) = 2.5
-    val pc = p!c is "Obciążenie charakterystyczne" unit "kN/m2"
-    zadanie(pc) = 2.5 unit "kN/m2"
-    val daneWejsciowe = Seq(L1,L2,pc)
+    val L1 = L|1 is "Rozpiętośc belki" unit SI.m := 15
+    val L2 = L|2 is "Rozstaw belek" unit SI.m := 2.5
+    val pc = p!c is "Obciążenie charakterystyczne" unit "kN/m2" := 2.5 unit "kN/m2"
     
     //przyjete materialy i wymiary
     val height:Expression = 11 unit SI.cm
@@ -51,12 +41,10 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     val profil = IPESection.IPE_450
     val sworzen = HeadedStud.NELSON_S3L_19_100
     
-    val plyta = new CompositeSlabWithProfiledSheeting(height,zadanie(L2),5,blacha,beton,stalZbrojeniowa)
-    
-    zadanie1 add plyta
+    val plyta = new CompositeSlabWithProfiledSheeting("Płyta stropowa zespolona beton + blacha trapezowa",height,this(L2),5,blacha,beton,stalZbrojeniowa)
     
     plyta(Gsk) = 1 unit "kN/m2"
-    plyta(qk) = zadanie(pc)
+    plyta(qk) = this(pc)
     plyta(Fk) = 10 unit SI.kN
     
     //wlasciwosci materialowe plyty
@@ -68,17 +56,14 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     
     plyta(dmesh) = 8
     plyta(sd) = 0.15
-    
-    val zadanie2 = Calculation()
-    val belka = new BeamOfCompositeSlab(zadanie(L1),profil,stal,plyta,sworzen)
+
+    val belka = new BeamOfCompositeSlab("Belka zespolona stropu zespolonego",this(L1),profil,stal,plyta,sworzen)
     belka(gammaG) = 1.35
     belka(gammaQ) = 1.5
     belka.steel(gammaM0) = 1.0
     belka.steel(gammaM1) = 1.0
-    zadanie2 add belka
     
-    
-    val doc = Document("",
+    override val document = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(
@@ -98,8 +83,8 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
                 )
            ),
            NumSection("Parametry zadania",
-               NumSection("Dane wejściowe",Evaluate(daneWejsciowe:_*)(zadanie),Evaluate(stal.label)(zadanie)),
-               NumSection("Przyjęto do obliczeń",Evaluate(plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label)(zadanie))
+               NumSection("Dane wejściowe",Evaluate(L1,L2,pc),Evaluate(stal.label)(stal)),
+               NumSection("Przyjęto do obliczeń",Evaluate(plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label)(plyta))
            ),
            NumSection("Wymiarowanie płyty stropowej",
                NumSection("Przyjęte wymiary i właściwości materiałowe",

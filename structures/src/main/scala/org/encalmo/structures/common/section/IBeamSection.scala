@@ -2,13 +2,12 @@ package org.encalmo.structures.common.section
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.document._
+import org.encalmo.document.{Evaluate, TextToTranslate, NumSection}
 
 object IBeamSectionSymbols extends SymbolConfigurator {
 
-    import BasicSymbols._
     val dictionary, contextId = "section_ibeam"
-    
+
     val ID = symbol("ID").makeNonPrintable
     //Dimensions for detailing
     val tw = symbol(BasicSymbols.t|BasicSymbols.w) unit "mm"
@@ -46,18 +45,18 @@ object IBeamSectionExpressions extends MapContext {
 }
 
 /** Section's shape trait */
-class IBeamSection(id:String, val name:String = "IBeamSection") extends Section(id) {
+class IBeamSection(name:String, val beamType: String) extends Section(name) {
 
 	import SectionSymbols._
 	import IBeamSectionSymbols._
 	
 	this add IBeamSectionExpressions
 	
-	this(ID) = text(id)
-	
-	override def label = this(ID)
-	
-	def info = NumSection(TextToTranslate(name,IBeamSectionSymbols.dictionary),id,
+	this(ID) = text(name)
+
+    override def label = this(ID)
+
+	def info = NumSection(TextToTranslate(beamType,IBeamSectionSymbols.dictionary),name,
 		Evaluate(h,b,tw,tf,hw,bf,A,Iy,Iz,Wy,Wz,Wypl,Wzpl,m)
 	)
 	

@@ -12,27 +12,27 @@ class AllStructuresCalculationsUnitTest extends AssertionsForJUnit {
 
     @Test
     def testDzwigarDrewnianyKlejonyTrapezowy() = {
-          new DzwigarDrewnianyKlejonyTrapezowy().printHtml
+          new DzwigarDrewnianyKlejonyTrapezowy().printHtml()
     }
 
     @Test
     def testSlupDrewnianyZlozonyWkrety() = {
-        new SlupDrewnianyZlozonyWkrety().printHtml
+        new SlupDrewnianyZlozonyWkrety().printHtml()
     }
 
     @Test
     def testBetonSprezonyDzwigarTypuI() = {
-        new BetonSprezonyDzwigarTypuI().printHtml
+        new BetonSprezonyDzwigarTypuI().printHtml()
     }
 
     @Test
     def testCircularSteelSiloCalculation() = {
-        new CircularSteelSiloCalculation().printHtml
+        new CircularSteelSiloCalculation().printHtml()
     }
 
     @Test
     def testRectangularConreteSiloCalculation() = {
-        new RectangularConreteSiloCalculation().printHtml
+        new RectangularConreteSiloCalculation().printHtml()
     }
 
     @Test
@@ -42,12 +42,12 @@ class AllStructuresCalculationsUnitTest extends AssertionsForJUnit {
 
     @Test
     def testCompositeSlabCalculationDocument() = {
-        new CompositeSlabCalculationDocument().printHtml
+        new CompositeSlabCalculationDocument().printHtml()
     }
 
     @Test
     def testTRBCalculationDocument() = {
-        new TRBCalculationDocument().printHtml
+        new TRBCalculationDocument().printHtml()
     }
 
 }

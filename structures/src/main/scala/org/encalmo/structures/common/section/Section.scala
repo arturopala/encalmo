@@ -7,7 +7,6 @@ import org.encalmo.document._
 
 object SectionSymbols extends SymbolConfigurator {
 
-    import BasicSymbols._
     val dictionary, contextId = "section"
     
     //Dimensions
@@ -56,11 +55,9 @@ object SectionExpressions extends MapContext {
 }
 
 /** Section trait */
-abstract class Section(id:String) extends Calculation(Option(id)){
+abstract class Section(name:String) extends Calculation(name){
 
-	import SectionSymbols._
-	
-	this add SectionExpressions
+    this add SectionExpressions
 	
 	def descriptionRef:String = ""
 	def info:DocumentComponent

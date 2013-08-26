@@ -3,7 +3,7 @@ package org.encalmo.structures.common.section
 import org.encalmo.expression._
 import org.encalmo.document.{NumSection, TextToTranslate}
 
-class Square(id:String,a:Expression) extends Section(id) {
+class Square(name:String,a:Expression) extends Section(name) {
 
 	import SectionSymbols._
 	

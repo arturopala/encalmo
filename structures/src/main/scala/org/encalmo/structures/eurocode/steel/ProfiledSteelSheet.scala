@@ -2,7 +2,7 @@ package org.encalmo.structures.eurocode.steel
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.calculation.Context
+import org.encalmo.calculation.ContextFactory
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
@@ -53,8 +53,8 @@ object ProfiledSteelSheetSymbols extends SymbolConfigurator {
 
 }
 
-class ProfiledSteelSheet(id:String, val steel:Steel, data:Context) 
-extends Calculation(Option(id)) {
+class ProfiledSteelSheet(name:String, val steel:Steel, data:Context)
+extends Calculation(name) {
 
 	import ProfiledSteelSheetSymbols._
 	import ActionsSymbols._
@@ -64,13 +64,13 @@ extends Calculation(Option(id)) {
 	this add data
 	this add steel
 	
-	ID := text(id)
+	ID := text(name)
 	fyb := steel(fy)
 	fypd := steel(fyd)
 	
 	override def label = this(ID)
-	
-    def info = NumSection(TextToTranslate("ProfiledSteelSheet",ProfiledSteelSheetSymbols.dictionary),id,
+
+    def info = NumSection(TextToTranslate("ProfiledSteelSheet",ProfiledSteelSheetSymbols.dictionary),name,
 		Evaluate(t,tcor,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,epd,Wminus,Wplus)
 	)
 	
@@ -97,7 +97,7 @@ object ProfiledSteelSheetExpressions extends MapContext {
 	lambdaw := 0.346*(sw/tcor)*sqrt(fyb/E)
 	Gcck := Ap*gammas
 	Gccd := Gcck*gammaG
-	fbv := (0.58*fyb) or (InRangeLLE(0.83,lambdaw,1.40) thenUse (0.48*fyb)/lambdaw) or (GreaterThan(lambdaw,1.40) thenUse ((0.67*fyb)/(lambdaw^2)))
+	fbv := (0.58*fyb) unless (InRangeLLE(0.83,lambdaw,1.40) thenUse (0.48*fyb)/lambdaw) unless (GreaterThan(lambdaw,1.40) thenUse ((0.67*fyb)/(lambdaw^2)))
 	VbRd := ((hw/sin(Phi))*tcor*fbv)/gammaM0
 	VplRd := ((hw/sin(Phi))*tcor*(fyb/sqrt(3)))/gammaM0
 	VwRd := (2*min(VbRd,VplRd))/bs
