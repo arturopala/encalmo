@@ -19,11 +19,11 @@ object SymbolGraph {
 
     }
 
-    def build(context:ExpressionResolver):Graph[Symbol] = {
+    def build(context:Context):Graph[Symbol] = {
         val graph = Graph[Symbol]()
         for(symbol <- context.listSymbols) {
             graph.add(symbol)
-            context.getRawExpression(symbol).map(
+            context.getExpression(symbol).map(
                 expr => {
                     val visitor = new ExpressionTreeVisitor(symbol, graph)
                     expr.visit(visitor)

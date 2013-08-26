@@ -3,7 +3,7 @@ package org.encalmo.structures.eurocode.actions.silos
 import org.encalmo.expression._
 import org.encalmo.document._
 import org.encalmo.calculation._
-import org.encalmo.structures.eurocode.steel.SteelSymbols
+import org.encalmo.structures.eurocode.steel.{Steel, SteelSymbols}
 
 
 /** Circular silos symbols */
@@ -272,17 +272,15 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
        diameterOfOutlet: Expression,
        particulateSolid: ParticulateSolid,
        wallType: Expression,
-       steel: Context
+       steel: Steel
     )
-    extends Calculation {
+    extends Calculation("ThinWalledCircularSlenderSiloWithSteepHopper") {
 
     import SteelSymbols.{E, fy, gammaM1}
     import SiloSymbols._
     import CircularSiloSymbols._
     import ParticulateSolidSymbols._
     import ThinWalledCircularSlenderSiloWithSteepHopperExpressions._
-
-    acc(0.01)
 
     particulateSolid(ParticulateSolidSymbols.D) = wallType
 

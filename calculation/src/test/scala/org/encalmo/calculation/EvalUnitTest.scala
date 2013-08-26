@@ -14,23 +14,22 @@ class EvalUnitTest extends AssertionsForJUnit {
         implicit val cache = new ResultsCache()
 	    val calc = Calculation()
 	    calc(c) = a*b
-	    calc(d) = (c/a+1)
+	    calc(d) = c / a + 1
 	    calc(e) = d+c
 		calc(f|1) = EvalAt(e,a -> 5, b -> 2)
 		calc(f|2) = EvalAt(e,a -> 10, b -> 1)
 		calc(f|3) = EvalAt(e,a -> 6, b -> 6)
 		calc(x) = 1
-		assertEquals(Number(13),calc(f|1).eval)
-		assertEquals(Number(12),calc(f|2).eval)
-		assertEquals(Number(43),calc(f|3).eval)
-		assertEquals(Number(3),calc(e, a -> x, b -> x).eval)
+		assertEquals(Number(13),calc(f | 1).eval())
+		assertEquals(Number(12),calc(f | 2).eval())
+		assertEquals(Number(43),calc(f | 3).eval())
 	}
 	
 	@Test def testEval2() {
         implicit val cache = new ResultsCache()
 	    val calc = Calculation()
 	    calc(c) = a*b
-	    calc(d) = (c/a+1)
+	    calc(d) = c / a + 1
 	    calc(e) = d+c
         val n = ((a*b)/a+1)+a*b
 		val f1 = EvalAt(e, a -> 5, b -> 2)

@@ -1,7 +1,7 @@
 package org.encalmo.document
 
 import org.encalmo.expression.Expression
-import org.encalmo.calculation.Context
+import org.encalmo.calculation.{Context, ContextFactory}
 import org.encalmo.style.Style
 import org.encalmo.style.StylesConfig
 
@@ -11,9 +11,11 @@ import org.encalmo.style.StylesConfig
  */
 abstract class Expr (
         val customStyle:Style,
-        val context:Context, 
+        val context: Context,
         val expressions:Expression*) 
 extends DocumentComponent(customStyle) with StylesResolver {
+
+    assert(context!=null, "Context reference MUST not be null")
 
 	override def toString = "Expr("+customStyle+","+context+","+expressions.mkString(",")+")"
 	
@@ -33,7 +35,7 @@ extends DocumentComponent(customStyle) with StylesResolver {
  * Block-style expression
  * @author artur.opala
  */
-abstract class BlockExpr(customStyle:Style, context:Context, expressions:Expression*)
+abstract class BlockExpr(customStyle:Style, context: Context, expressions:Expression*)
 extends Expr(customStyle,context,expressions:_*) with BlockComponent {
 	
 	def isPrintDescription:Boolean
@@ -44,7 +46,7 @@ extends Expr(customStyle,context,expressions:_*) with BlockComponent {
  * Inline-style expression
  * @author artur.opala
  */
-abstract class InlineExpr(customStyle:Style, context:Context, expressions:Expression*)
+abstract class InlineExpr(customStyle:Style, context: Context, expressions:Expression*)
 extends Expr(customStyle,context,expressions:_*) with InlineComponent {
 	
 }

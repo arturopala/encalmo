@@ -223,8 +223,8 @@ class DomeCalculationDocument extends CalculationDocument {
     val sigc1 = BasicSymbols.sigma|"c,1" unit SI.MPa is "Maksymalne naprężenia południkowe ściskające w betonie" := (Nφc1*(1 unit SI.m))/Ac
     
     val sigcr = BasicSymbols.sigma|"cr" unit SI.MPa is "Krytyczne naprężenie ściskające" := -(Ecm*h)/(R*sqrt(3*(1-(nu^2))))
-    
-    val doc = Document("",
+
+    override val document = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(

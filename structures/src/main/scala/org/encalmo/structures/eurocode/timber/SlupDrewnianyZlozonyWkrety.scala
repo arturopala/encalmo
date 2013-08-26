@@ -206,7 +206,7 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
     val nosnoscObliczeniowa = Seq(lc,betac,Ief,lambdaeff,lambdarel,kmin,kc,sigmac0d,NRc,Fmax,xiS)
 
     val Vd = V|"d" is "siła ścinająca wg C.5 [1]" unit "kN"
-    calc(Vd) = Fcd/(120*kc) or (InRangeLLE(30,lambdaeff,60) thenUse (Fcd/(3600*kc))) or (GreaterThan(lambdaeff,60) thenUse (Fcd/(60*kc)))
+    calc(Vd) = Fcd/(120*kc) unless (InRangeLLE(30,lambdaeff,60) thenUse (Fcd/(3600*kc))) unless (GreaterThan(lambdaeff,60) thenUse (Fcd/(60*kc)))
     val tau2max = tau|"2,max" is "maksymalne naprężenia ścinające w środniku wg B.9 [1]" unit "MPa"
     calc(tau2max) = E0mean*(gamma1SGN*A1*az+0.5*b2*(h^2))/(b2*EIeffSGN)*Vd
     val nosnoscScinanie = Seq(Vd,tau2max)
@@ -259,7 +259,7 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
     
     val nosnoscSlupaNiepodatnie = Seq(lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,deltaJW)
     
-    /*val arec = a|"rec" is "długość boku słupa kwadratowego" unit "m"
+    val arec = a|"rec" is "długość boku słupa kwadratowego" unit "m"
     val Sec2 = Square("rec",arec)
     val calc4 = Calculation("slup kwadratowy jednorodny")
     calc4(arec) = 0.138
@@ -275,9 +275,9 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
     val delta2 = delta|"2" is "zmiana pola przekroju słupa wielogałęziowego w stosunku do słupa kwadratowego o zbliżonej niegorszej nośności" unit "%"
     calc4(delta2) = ((Aof1-SectionSymbols.A)/Aof1)*100
     
-    val przekrojKwadratowy = Seq(arec,SectionSymbols.A,SectionSymbols.Imin,SectionSymbols.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)*/
-    
-    val doc = Document("",
+    val przekrojKwadratowy = Seq(arec,SectionSymbols.A,SectionSymbols.Imin,SectionSymbols.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)
+
+    override val document = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(
@@ -314,12 +314,12 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
 			),
 			NumSection("Obliczenia porównawcze",
 				NumSection("Porównanie ze słupem wielogałęziowym z elementów połączonych niepodatnie (klejonych)",Evaluate(nosnoscSlupaNiepodatnie:_*)),
-				/*NumSection("Porównanie ze słupem jednorodnym kwadratowym o zbliżonej nośności na ściskanie",Evaluate(przekrojKwadratowy:_*)(calc4)),*/
+				NumSection("Porównanie ze słupem jednorodnym kwadratowym o zbliżonej nośności na ściskanie",Evaluate(przekrojKwadratowy:_*)(calc4)),
 				NumSection("Wnioski",
 					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem klejonym wykazało ",Result(calc,round(deltaJW)),
-					" utratę nośności ze względu na podatność łączników.")/*,
+					" utratę nośności ze względu na podatność łączników."),
 					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem jednorodnym kwadratowym o zbliżonej nośności wykazało ",Result(calc4,round(delta2,RoundingMode.HALF)),
-					"% stratę na przekroju słupa wielogałęziowego. Zastosowanie słupa o przekroju kwadratowym przy zadanym obciążeniu byłoby bardziej uzasadnione.")*/
+					" stratę na przekroju słupa wielogałęziowego. Zastosowanie słupa o przekroju kwadratowym przy zadanym obciążeniu byłoby bardziej uzasadnione.")
 				)
 			),
 			Section(style1.marginTop(20),""),

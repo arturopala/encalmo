@@ -1,7 +1,6 @@
 package org.encalmo.structures.eurocode.steel
 
 import org.encalmo.expression._
-import org.encalmo.calculation.Context
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
@@ -10,7 +9,6 @@ import org.encalmo.document._
 /** HeadedStud symbols */
 object HeadedStudSymbols extends SymbolConfigurator {
 
-	import BasicSymbols._
 	val dictionary, contextId = "headedstud"
 	
 	val ID = symbol("ID").makeNonPrintable
@@ -24,23 +22,22 @@ object HeadedStudSymbols extends SymbolConfigurator {
 /** Common HeadedStud expressions */
 object HeadedStudExpressions extends MapContext {
 
-	import HeadedStudSymbols._
-	
-	lock()
+
+    lock()
 }
 
 /** HeadedStud context class */
-class HeadedStud(id:String) extends Calculation(Option(id)) {
+class HeadedStud(name: String) extends Calculation(name) {
 
 	import HeadedStudSymbols._
 	
 	this add HeadedStudExpressions
 	
-	this(ID) = text(id)
+	this(ID) = text(name)
 	
 	override def label = this(ID)
-	
-	def info = NumSection(TextToTranslate("HeadedStud",dictionary),id,
+
+	def info = NumSection(TextToTranslate("HeadedStud",dictionary),name,
 		Evaluate(d,hsc,dh,a)
 	)
 	

@@ -1,10 +1,7 @@
 package org.encalmo.structures.eurocode.concrete
 
 import org.encalmo.expression._
-import org.encalmo.calculation.Context
-import org.encalmo.calculation.MapContext
-import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.SymbolConfigurator
+import org.encalmo.calculation._
 import org.encalmo.document._
 
 /** ReinforcingSteel symbols */
@@ -42,18 +39,18 @@ object ReinforcingSteelExpressions extends MapContext {
 }
 
 /** ReinforcingSteel context class */
-class ReinforcingSteel(id:String,data:Context) extends Calculation(Option(id)) {
+class ReinforcingSteel(name:String, data:Context) extends Calculation(name) {
 
 	import ReinforcingSteelSymbols._
 	
-	def info = NumSection(TextToTranslate("ReinforcingSteel",dictionary),id,"EN 10080",
+	def info = NumSection(TextToTranslate("ReinforcingSteel",dictionary),name,"EN 10080",
 		Evaluate(fyk,gammaS,fyd,Es)
 	)
 	
 	this add ReinforcingSteelExpressions
 	this add data
 	
-	this(CLASS) = text(id)
+	this(CLASS) = text(name)
 	this(gammaS) = 1.15
 }
 

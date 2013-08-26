@@ -1,35 +1,18 @@
 package org.encalmo.calculation
 
-import scala.collection.mutable.Map
 import org.encalmo.expression._
 
-/** 
- * MutableContext is a mutable and lockable Context
- */
 trait MutableContext extends Context {
-   
-  self=>  
-    
-  //implicit self-reference
-  implicit val ctx:MutableContext = this
-  
-  override def map:Map[Symbol,Expression]
-  
-  protected var opened:Boolean = true
-  /** Locks context content */
-  def lock() = {opened = false}
-  protected def throwContextAlreadyLockedException = throw new IllegalStateException("This context is locked.")
-  
-  /**
-   * Maps expression to the symbol in this context
-   */
-  def update(symb: Symbol, expression: Expression):Unit = {
-		if(opened){
-		    map.put(symbol(symb),expression match {
-                case v:Value => v.convertTo(symb.unit)
-                case other => other
-            })
-		} else throwContextAlreadyLockedException
-  }
+
+    //implicit self-reference required for :=
+    implicit val ctx: this.type = this
+
+    /**
+     * Map expression to the symbol in this context
+     */
+    def update(symb: Symbol, expression: Expression): Unit
+
+    /** Maps expressions to the symbols in this context */
+    def put(ts: (Symbol, Expression)*): this.type
 
 }

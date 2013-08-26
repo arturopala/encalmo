@@ -121,7 +121,7 @@ zgodnie z Tablicą 6.1 [1] dla obciążenia równomiernie rozłożonego i przył
     val lambdarel = lambda|"rel" is "smukłość względna przy zginaniu"
     lambdarel := sqrt(fmk/sigmamcrit)
     val kcritm = k|"crit,m" is "współczynnik uwzględniający redukcję wytrzymałości ze względu na zwichrowanie elementu"
-    kcritm := 1 or (InRangeLLE(0.75,lambdarel,1.4) thenUse (1.56-(0.75*lambdarel))) or (GreaterThan(lambdarel,1.4) thenUse (1/(lambdarel^2)))
+    kcritm := 1 unless (InRangeLLE(0.75,lambdarel,1.4) thenUse (1.56-(0.75*lambdarel))) unless (GreaterThan(lambdarel,1.4) thenUse (1/(lambdarel^2)))
     val fmcritd = f|"m,crit,d" is "zredukowana wytrzymałość na zginanie ze względu na zwichrzenie" unit "MPa"
     fmcritd := kcritm*fmd
     
@@ -213,7 +213,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     val lambdarelfi = lambda|"rel,fi" is "smukłość względna przy zginaniu"
     lambdarelfi := sqrt(fmdfi/sigmamcritfi)
     val kcritfi = k|"crit,fi" is "współczynnik uwzględniający redukcję wytrzymałości ze względu na zwichrowanie elementu"
-    kcritfi := 1 or (InRangeLLE(0.75,lambdarelfi,1.4) thenUse (1.56-(0.75*lambdarelfi))) or (GreaterThan(lambdarelfi,1.4) thenUse (1/(lambdarelfi^2)))
+    kcritfi := 1 unless (InRangeLLE(0.75,lambdarelfi,1.4) thenUse (1.56-(0.75*lambdarelfi))) unless (GreaterThan(lambdarelfi,1.4) thenUse (1/(lambdarelfi^2)))
     val fmcritfi = f|"m,crit,fi" is "zredukowana wytrzymałość na zginanie ze względu na zwichrzenie" unit "MPa"
     fmcritfi := kcritfi*fmdfi
     
@@ -253,7 +253,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     val lambdarelfi2 = lambda|"rel,fi,2" is "smukłość względna przy zginaniu"
     lambdarelfi2 := sqrt(fmdfi2/sigmamcritfi2)
     val kcritfi2 = k|"crit,fi,2" is "współczynnik uwzględniający redukcję wytrzymałości ze względu na zwichrowanie elementu"
-    kcritfi2 := 1 or (InRangeLLE(0.75,lambdarelfi2,1.4) thenUse (1.56-(0.75*lambdarelfi2))) or (GreaterThan(lambdarelfi2,1.4) thenUse (1/(lambdarelfi2^2)))
+    kcritfi2 := 1 unless (InRangeLLE(0.75,lambdarelfi2,1.4) thenUse (1.56-(0.75*lambdarelfi2))) unless (GreaterThan(lambdarelfi2,1.4) thenUse (1/(lambdarelfi2^2)))
     val fmcritfi2 = f|"m,crit,fi,2" is "zredukowana wytrzymałość na zginanie ze względu na zwichrzenie" unit "MPa"
     fmcritfi2 := kcritfi2*fmdfi2
     
@@ -270,8 +270,8 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     val Wyfi2 = W|"y,fi,2" is "wskaźnik zginania w miejscu wystąpienia największych naprężeń normalnych" unit "cm3" acc 1
     Wyfi2 := (b-2*deff)*(hmaxfi2^2)/6
     sigmam0fi2 := Myfi2/Wyfi2
-      
-    override val doc = Document("",
+
+    override val document = Document("",
         Predefined.stylesConfig,
         Chapter("",
             Section("Ćwiczenie projektowe nr 2 z \"Konstrukcji Drewnianych\". Autor: Artur Opala"),
@@ -281,7 +281,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
                 Section(styleComment,"Drewno klejone warstwowo kombinowane klasy GL36c."),
                 Section(styleComment,"Konstrukcja w 2 klasie użytkowania wg normy [1] pkt. 2.3.1.3."),
                 Section(styleComment,"Klasa odporności ogniowej R30 (konstrukcja dachu)."),
-                NumSection("kNormy i literatura",
+                NumSection("Normy i literatura",
                 	Section(styleComment," [1] Norma PN-EN 1995-1-1:2010 \"Eurokod 5. Projektowanie konstrukcji drewnianych. Część 1-1: Postanowienia ogólne. Reguły ogólne i reguły dotyczące budynków\""),
                 	Section(styleComment," [2] Norma PN-EN 1194:2000")
                 )
@@ -301,27 +301,27 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
             NumSection("Sprawdzenie stanu granicznego nośności SGN wg PN-EN 1995-1-1",
                 NumSection("Sprawdzenie naprężeń maksymalnych od zginania",
                         Evaluate(xmax,hmax,RA,My,Wy,sigmam0d),
-                        AssertionLE("6.11", this, sigmam0d, fmd)),
+                        AssertionLE("6.11", calc, sigmam0d, fmd)),
                 NumSection("Uwzględnienie zmiennego przekroju dźwigara",
                         Evaluate(kmalpha),
                         Evaluate(fmalphad),
-                        AssertionLE("6.38", this, sigmam0d, fmalphad)),
+                        AssertionLE("6.38", calc, sigmam0d, fmalphad)),
                 NumSection("Sprawdzenie stateczności przekroju",
                         Evaluate(leff,sigmamcrit,lambdarel),
                         Evaluate(kcritm),
                         Evaluate(fmcritd),
-                        AssertionLE("6.33", this, sigmam0d, fmcritd)),
+                        AssertionLE("6.33", calc, sigmam0d, fmcritd)),
                 NumSection("Sprawdzenie nośności na ścinanie",
                         Evaluate(Vd,kcr,beff,taud),
-                        AssertionLE("6.13", this, taud, fvd)),
+                        AssertionLE("6.13", calc, taud, fvd)),
                 NumSection("Sprawdzenie nośności na docisk w poprzek włókien na podporze",
                         Evaluate(lpod,Aef,Fc90d,sigmac90d,kc90),
-                        AssertionLE("6.3", this, sigmac90d, kc90*fc90d))
+                        AssertionLE("6.3", calc, sigmac90d, kc90*fc90d))
             ),
             NumSection("Sprawdzenie stanu granicznego użytkowania SGU wg PN-EN 1995-1-1",
                 NumSection("Obliczenie ugięć",
                         Evaluate(wmax,kdef,psi21,Iy,umG,uinstG,umQ1,uinstQ1,umQi,uinstQi,ufinG,ufinQ1,ufinQi,wfin),
-                        AssertionLE("SGU", this, wfin, wmax))
+                        AssertionLE("SGU", calc, wfin, wmax))
             ),
             NumSection("Sprawdzenie nośności w warunkach pożarowych wg PN-EN 1995-1-2",
                 Section(style1,"Oczekiwana klasa odporności ogniowej R30."),
@@ -329,11 +329,11 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
                 NumSection("Obliczenie nośności metodą zredukowanych właściwości",
                         Evaluate(t,betan,dcharn,Ar,pr,kfi,kmodmfi,kmodEfi,gammaMfi,fmdfi,Edfi,lefffi,sigmamcritfi,lambdarelfi,kcritfi,fmcritfi),
                         Evaluate(xmaxfi,hmaxfi,RAfi,Myfi,Wyfi,sigmam0fi),
-                        AssertionLE("SGN w trakcie pożaru", this, sigmam0fi, kcritfi*fmdfi)),
+                        AssertionLE("SGN w trakcie pożaru", calc, sigmam0fi, kcritfi*fmdfi)),
                 NumSection("Obliczenie nośności metodą zredukowanego przekroju",
                         Evaluate(k0,d0,deff,kmodmfi2,kmodEfi2,gammaMfi,fmdfi2,Edfi2,lefffi2,sigmamcritfi2,lambdarelfi2,kcritfi2,fmcritfi2),
                         Evaluate(xmaxfi2,hmaxfi2,RAfi2,Myfi2,Wyfi2,sigmam0fi2),
-                        AssertionLE("SGN w trakcie pożaru", this, sigmam0fi2, kcritfi2*fmdfi2))
+                        AssertionLE("SGN w trakcie pożaru", calc, sigmam0fi2, kcritfi2*fmdfi2))
             ),
 			Section(style1.marginTop(30),""),
 			Section("Koniec obliczeń.")

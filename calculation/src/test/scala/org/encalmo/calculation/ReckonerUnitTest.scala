@@ -8,12 +8,12 @@ import org.encalmo.expression.hypot
 import org.encalmo.expression.abs
 import org.encalmo.expression.sin
 
-class FormulaReckonerUnitTest extends AssertionsForJUnit {
+class ReckonerUnitTest extends AssertionsForJUnit {
 
-    @Test def shouldReckonSingleExpression = {
+    @Test def shouldReckonSingleExpression():Unit = {
         //given
         import BasicSymbols._
-        implicit val calc = Calculation()
+        implicit val calc = Calculation("0")
         a := b * (c - d)
         b := c + 10
         c := hypot(-e, abs(f))
@@ -21,7 +21,7 @@ class FormulaReckonerUnitTest extends AssertionsForJUnit {
         e := sin(z) - 0.3
         k := 8
         //when
-        val formula = FormulaReckoner.reckon(a)
+        val formula = Reckoner.reckonExpression(a)
         //then
         val expected = (10 + (hypot(-(sin(z) - 0.3), abs(f)))) * ((hypot(-(sin(z) - 0.3), abs(f))) - (h * ((sin(z) - 0.3) / 10)))
         assertEquals(3, formula.parts.size)
@@ -36,21 +36,32 @@ class FormulaReckonerUnitTest extends AssertionsForJUnit {
         assertTrue(formula.parts(2).position == FormulaPosition.RIGHT)
     }
 
-    @Test def shouldReckonAllExpressions = {
+    @Test def shouldReckonAllExpressions():Unit = {
         //given
         import BasicSymbols._
-        implicit val calc = Calculation()
+        implicit val calc = Calculation("0")
         a := b * (c - d)
         b := c + 10
         c := hypot(-e, abs(f))
-        d := h * (e / 10)
-        e := sin(z) - 0.3
-        k := 8
-        val cache = new ResultsCache()
+        x := 8.17
+        val calc1 = Calculation("1")
+        calc1(d) = h * (e / 10)
+        calc1(e) = sin(z) - 0.3
+        calc1(k) = x
+        calc add calc1
+        val calc2 = Calculation("2")
+        calc add calc2
+        calc2 add calc1
         //when
-        val formulaSet = FormulaReckoner.reckonAll(calc, cache)
+        val results = Reckoner.reckon()
+        val formulaSet = results.formulaSet
+        val formulaSet1 = results.formulaSetFor(calc1)
+        val formulaSet2 = results.formulaSetFor(calc2)
+        val cache = formulaSet.cache
         //then
-        assertTrue(formulaSet.size == 9)
+        assertTrue(formulaSet.size == 10)
+        assertTrue(formulaSet1.size == 6)
+        assertTrue(formulaSet2.size == 6)
         assertEquals(3, formulaSet.get(a).get.parts.size)
         assertTrue(formulaSet.get(b).get.parts.size == 4)
         assertTrue(formulaSet.get(c).get.parts.size == 3)
@@ -59,7 +70,9 @@ class FormulaReckonerUnitTest extends AssertionsForJUnit {
         assertTrue(formulaSet.get(f).get.parts.size == 1)
         assertTrue(formulaSet.get(h).get.parts.size == 1)
         assertTrue(formulaSet.get(z).get.parts.size == 1)
-        assertTrue(formulaSet.get(k).get.parts.size == 2)
+        assertTrue(formulaSet.get(k).get.parts.size == 3)
+        assertTrue(formulaSet1.get(k).get.parts.size == 2)
+        assertTrue(formulaSet.get(x).get.parts.size == 2)
         assertTrue(cache.contains(a))
         assertTrue(cache.contains(b))
         assertTrue(cache.contains(c))
@@ -69,18 +82,20 @@ class FormulaReckonerUnitTest extends AssertionsForJUnit {
         assertTrue(cache.contains(h))
         assertTrue(cache.contains(z))
         assertTrue(cache.contains(k))
+        assertTrue(cache.contains(x))
+        assertEquals(8.17,cache(k).toDouble,0)
     }
 
-    @Test def shouldReckonAllExpressions2 = {
+    @Test def shouldReckonAllExpressions2():Unit = {
         //given
         import BasicSymbols._
         implicit val calc = Calculation()
         l := m
         m := n
         n := f + e
-        val cache = new ResultsCache()
         //when
-        val formulaSet = FormulaReckoner.reckonAll(calc, cache)
+        val results = Reckoner.reckon()
+        val formulaSet = results.formulaSet
         //then
         assertEquals(5, formulaSet.size)
         assertEquals(4, formulaSet.get(l).get.parts.size)

@@ -208,11 +208,12 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	            )
             )
        )
-		
+
+        val results = Reckoner.reckon()
 		val output:XslFoOutput = new XslFoOutput(Layout(),new java.util.Locale("PL"))
-		output.open
-		XslFoTextDocumentPrinter.print(doc1,output)
-		output.close
+		output.open()
+		XslFoTextDocumentPrinter.print(doc1)(output)(results)
+		output.close()
 		output.saveToFile(new java.io.File("target/test-results/xslFoTextDocumentPrinterTest1.fo"))
 		FOPHelper.buildPDF(output.getResult, "target/test-results/xslFoTextDocumentPrinterTest1.pdf")
 	}
@@ -464,11 +465,12 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		      )
 	      )
 		)
-		
+
+        val results = Reckoner.reckon()
 		val output:XslFoOutput = new XslFoOutput(Layout(), new java.util.Locale("PL"))
-		output.open
-		XslFoTextDocumentPrinter.print(doc1,output)
-		output.close
+		output.open()
+		XslFoTextDocumentPrinter.print(doc1)(output)(results)
+		output.close()
 		output.saveToFile(new java.io.File("target/test-results/xslFoTextDocumentPrinterTest2.fo"))
 		FOPHelper.buildPDF(output.getResult, "target/test-results/xslFoTextDocumentPrinterTest2.pdf")
 	}

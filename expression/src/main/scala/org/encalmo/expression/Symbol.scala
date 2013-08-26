@@ -17,7 +17,7 @@ class Symbol(
     val description:Option[String] = None,
     override val unit:UnitOfValue = EmptyUnitOfValue,
     val dictionary:Option[String] = None,
-    val contextId:Option[Seq[String]] = None,
+    val contextId:Option[String] = None,
     override val printable:Boolean = true,
     val args:Option[Seq[Symbol]] = None,
     val indexes:Option[Seq[Int]] = None,
@@ -140,10 +140,7 @@ class Symbol(
     } else ""
     	
     /** Adds id to the contextId sequence */
-    def id(id:String):Symbol = copy(contextId = contextId match {
-        case None => Some(Seq(id))
-        case Some(seq) => Some(seq :+ id)
-    })
+    def id(id:String):Symbol = copy(contextId = Some(id))
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Appends comment to the description */
@@ -167,7 +164,7 @@ class Symbol(
 	    description:Option[String] = this.description,
 	    unit:UnitOfValue = this.unit,
 	    dictionary:Option[String] = this.dictionary,
-	    contextId:Option[Seq[String]] = this.contextId,
+	    contextId:Option[String] = this.contextId,
 	    printable:Boolean = this.printable,
 	    args:Option[Seq[Symbol]] = this.args,
 	    indexes:Option[Seq[Int]] = this.indexes,
@@ -252,7 +249,7 @@ object Symbol {
 	    description:Option[String] = None,
 	    unit:UnitOfValue = EmptyUnitOfValue,
 	    dictionary:Option[String] = None,
-	    contextId:Option[Seq[String]] = None,
+	    contextId:Option[String] = None,
 	    printable:Boolean = true,
 	    args:Option[Seq[Symbol]] = None,
         indexes:Option[Seq[Int]] = None,

@@ -8,84 +8,63 @@ package org.encalmo.expression
  * @author artur.opala
  *
  */
-case class Selection(ce:CaseExpression,cases:Seq[Case]) extends Expression with Auxiliary {
-    
-    override val children = {
-    	if(ce!=null){
-    		cases.:+(ce)
-		}else{
-			cases
-		}
-	}
-	
-	/** Return true if only one choice exists */
-	def isSingle:Boolean = (ce.expr==Unknown && cases.size==1) || (ce.expr!=Unknown && cases.isEmpty)
+case class Selection(cases: Seq[Case], default: Option[CaseExpression] = None) extends Expression with Auxiliary {
 
-	/**
-	 * Examines cases. Returns expression of case which test first returns true, 
-	 * or default expression if neither case succeeds.
-	 * @return
-	 */
-	  def select:Expression = {
-		  for(cas:Case <- cases){
-		 	  if(cas.test)return cas.ce.expr
-		  }
-		  ce.expr match {
-		  	case Unknown => this
-		  	case _ => ce.expr
-		  }
-	  }
-	  
-	  /** Trims this selection to one element */
-	  def trim:Expression = {
-	  	  if(ce.expr==Unknown && cases.size==1) return this
-		  for(cas:Case <- cases){
-		 	  if(cas.test) return {
-		 	  	Selection(CaseExpression(),Seq(cas))
-		 	  }
-		  }
-		  ce.expr match {
-		  	case Unknown => this
-		  	case _ => ce.expr
-		  }
-	  }
-  
+    override val children = default.map(cases :+ _) getOrElse cases
+
+    /** Return true if only one choice exists */
+    def isSingle: Boolean = cases.isEmpty || (default.isEmpty && cases.size==1)
+
     /**
-	 * Examines test cases. Evaluates expression of case which test first returns true, 
-	 * or default expression if neither case succeeds.
-	 * @return
-	 */
-  override def eval():Expression = {
-    for(cas:Case <- cases){
-    	if(cas.test)return cas.ce.eval()
+     * Examines cases. Returns expression of case which test first returns true,
+     * or default expression if neither case succeeds.
+     */
+    def select: Expression = {
+        cases.find(_.test match {case Some(b) => b; case None => return this}) map (_.caseExpression.expression) getOrElse {
+            default.map(_.expression).getOrElse(throw new IllegalStateException("No default expression defined for selection"))
+        }
     }
-    ce.expr match {
-	  	case Unknown => this
-	  	case _ => ce.eval()
-	  }
-  }
-  
-  /**
-   * Maps only test expressions
-   */
-  final override def map(f:Transformation):Expression = {
-	  val m:Seq[Case] = cases.map(c => {
-	 	  val vc =c.mapAll(f)
-	 	  vc match {
-              case value: Case => value
-              case _ => EmptyCase
-          }
-	  })
-	  if(cases.zip(m).forall(t => t._1 eq t._2)){
-	 	  f(this)
-	  }else{
-	 	  f(Selection(ce,m))
-	  }
-  }
-  
-  /**
-   * Returns new selection with appended case
-   */
-  override def or(c:Case):Selection = Selection(ce,cases.:+(c))
+
+    /** Trims this selection to one case element */
+    def trim: Expression = {
+        cases.find(_.test match {case Some(b) => b; case None => return this}) map (cas => Selection(Seq(cas))) getOrElse {
+            default.map(e => Selection(Seq.empty,Some(e))).getOrElse(throw new IllegalStateException("No default expression defined for selection"))
+        }
+    }
+
+    /**
+     * Examines test cases. Evaluates expression of case which test first returns true,
+     * or default expression if neither case succeeds.
+     * @return
+     */
+    override def eval(): Expression = {
+        cases.find(_.test match {case Some(b) => b; case None => return this}) map (_.caseExpression.expression.eval()) getOrElse {
+            default.map(_.expression.eval()).getOrElse(throw new IllegalStateException("No default expression defined for selection"))
+        }
+    }
+
+    /**
+     * Maps test case expressions and default case
+     */
+    final override def map(f: Transformation): Expression = {
+        val nc: Seq[Case] = cases.map(testCase => testCase.map(f))
+        val nd = default.map(_.map(f))
+        f(
+            if((default eq nd) && cases.zip(nc).forall(t => t._1 eq t._2)) this else Selection(nc, nd)
+        )
+    }
+
+    /**
+     * Returns new selection with appended case
+     */
+    override def unless(newCase: Case): Selection = Selection(newCase +: cases, default)
 
 }
+
+object Selection {
+
+    def apply(cases: Seq[Case], default: CaseExpression): Selection = Selection(cases, Some(default))
+
+}
+
+class CaseTestNotReadyToEvaluateException extends Exception

@@ -2,7 +2,7 @@ package org.encalmo.structures.eurocode.composite
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.calculation.Context
+import org.encalmo.calculation.ContextFactory
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
@@ -228,13 +228,14 @@ object BeamOfCompositeSlabExpressions extends MapContext {
 }
 
 class BeamOfCompositeSlab(
+    name: String,
 	val length:Expression,
 	val section:Section, 
 	val steel:Steel,
 	val slab:CompositeSlabWithProfiledSheeting,
 	val stud:HeadedStud
 )
-extends Calculation {
+extends Calculation(name) {
 
 	val SLAB = CompositeSlabWithProfiledSheetingSymbols
 	val STUD = HeadedStudSymbols
@@ -258,7 +259,7 @@ extends Calculation {
 	nr := 1
 	
 	def info = NumSection(TextToTranslate("BeamOfCompositeSlab",BeamOfCompositeSlabSymbols.dictionary),
-		Text(section.id.get),
+		Text(section.name),
 		Evaluate(l,SLAB.l,SLAB.h),
 		section.info,
 		steel.info,

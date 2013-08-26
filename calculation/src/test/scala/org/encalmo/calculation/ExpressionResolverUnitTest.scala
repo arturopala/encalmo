@@ -12,38 +12,38 @@ class ExpressionResolverUnitTest extends AssertionsForJUnit {
 	
 	@Test def testEvaluate1() {
         implicit val cache = new ResultsCache()
-		val context = Context(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
+		val context = ContextFactory(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
 		assertEquals(Number(10),context.evaluate(c))
 		assertEquals(Number(3),context.evaluate(d))
 	}
 	
 	@Test def testEvaluate2() {
         implicit val cache = new ResultsCache()
-		val context = Context(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
+		val context = ContextFactory(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
 		assertEquals(Number(3),context.evaluate(d))
 	}
 	
 	@Test def testResolve1() {
         implicit val cache = new ResultsCache()
-		val context = Context(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
+		val context = ContextFactory(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
 		assertEquals(Number(5)*Number(2),context.resolve(c))
 	}
 	
 	@Test def testResolve2() {
         implicit val cache = new ResultsCache()
-		val context = Context(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
+		val context = ContextFactory(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
 		assertEquals(Sum(Quot(Prod(Number(5.0),Number(2.0)),Number(5.0)),Number(1.0)),context.resolve(d))
 	}
 	
 	@Test def testSubstitute1() {
         implicit val cache = new ResultsCache()
-		val context = Context(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
+		val context = ContextFactory(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
 		assertEquals(Number(5)*Number(2),context.substitute(c))
 	}
 	
 	@Test def testSubstitute2() {
         implicit val cache = new ResultsCache()
-		val context = Context(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
+		val context = ContextFactory(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
 		assertEquals(Sum(Quot(Number(10),Number(5.0)),Number(1.0)),context.substitute(d))
 	}
 	

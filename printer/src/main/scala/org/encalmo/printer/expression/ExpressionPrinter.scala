@@ -9,4 +9,4 @@ import org.encalmo.expression._
  * B - result type
  * @author artur.opala
  */
-trait ExpressionPrinter[A<:Output[B],B] extends Printer[Expression,A,B]
+trait ExpressionPrinter[A<:Output[B],B] extends Printer[Expression,A,B,AnyRef]

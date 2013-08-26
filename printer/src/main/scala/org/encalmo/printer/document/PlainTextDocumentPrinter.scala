@@ -7,7 +7,7 @@ import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
 import scala.collection.mutable.LinkedHashMap
-import org.encalmo.calculation.FormulaSetCache
+import org.encalmo.calculation.Results
 import scala.collection.mutable
 
 /**
@@ -16,8 +16,8 @@ import scala.collection.mutable
  */
 object PlainTextDocumentPrinter extends TextDocumentPrinter {
 	
-	override def print(input:Document,output:TextOutput = new TextOutput):TextOutput = {
-		val t = new PlainTextDocumentPrinterTraveler(output)
+	override def print(input:Document)(output:TextOutput = new TextOutput)(results: Results):TextOutput = {
+		val t = new PlainTextDocumentPrinterTraveler(output, results)
 		try{
 			input.visit(visitor = t)
 		}
@@ -36,8 +36,8 @@ object PlainTextDocumentPrinter extends TextDocumentPrinter {
  * Travels and prints document as plain text 
  * @author artur.opala
  */
-class PlainTextDocumentPrinterTraveler(output:TextOutput) 
-extends TreeVisitor[DocumentComponent] with FormulaSetCache {
+class PlainTextDocumentPrinterTraveler(output:TextOutput, results: Results)
+extends TreeVisitor[DocumentComponent] {
 	
 	val w = output.asWriter
 	val locale = output.locale
@@ -170,11 +170,11 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 				plus()
 			}
 			case expr:InlineExpr => {
-				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
+				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
 				ess.foreach(e => {write(" ");writeExpression(e);write(" ")})
 			}
 			case expr:BlockExpr => {
-				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
+				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
 				//plus
 			    ess.foreach(es => {
 			        canNewLine = true
@@ -200,7 +200,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 			    //writeLineEnd
 			}
 			case a:Assertion => {
-				val result = a.evaluate(resultCacheFor(a.calc))
+				val result = a.evaluate(results.formulaSetFor(a.calc).cache)
 				val s = Section(a.style,result._2:_*)
 				s.visit(visitor = this)
                 result._1 match {

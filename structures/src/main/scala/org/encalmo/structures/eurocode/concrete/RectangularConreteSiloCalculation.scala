@@ -14,11 +14,11 @@ class RectangularConreteSiloCalculation extends CalculationDocument {
     val solid = ParticulateSolid.Flyash
     val concrete = Concrete.C_20_25
     val reinforcement = ReinforcingSteel.B500SP
-    val silos = new RectangularSlenderSiloWithFlatBottom(5.7, 6.0, 12, 4.2, 0.2, 0.4, 0.25, solid, 3)
+    val silos = new RectangularSlenderSiloWithFlatBottom("Silos prostokątny żelbetowy",5.7, 6.0, 12, 4.2, 0.2, 0.4, 0.25, solid, 3)
 
     calc add silos
 
-    val doc = Document("",
+    override val document = Document("",
         Predefined.stylesConfig,
         Chapter("",
             Section(

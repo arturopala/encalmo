@@ -15,7 +15,7 @@ import org.encalmo.expression.MultipleInfixOperation
 import org.encalmo.expression.Diff
 import org.encalmo.expression.Transparent
 import org.encalmo.expression.Expression
-import org.encalmo.calculation.FormulaSetCache
+import org.encalmo.calculation.Results
 
 /**
  * Prints document as xsl-fo text 
@@ -23,8 +23,8 @@ import org.encalmo.calculation.FormulaSetCache
  */
 object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
 	
-	override def print(input:Document,output:XslFoOutput = new XslFoOutput):XslFoOutput = {
-		val t = new XslFoTextDocumentPrinterTraveler(output)
+	override def print(input:Document)(output:XslFoOutput = new XslFoOutput)(results: Results):XslFoOutput = {
+		val t = new XslFoTextDocumentPrinterTraveler(output, results)
 		input.visit(visitor = t)
 		output
 	}
@@ -35,8 +35,8 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
  * Travels and prints document as xsl-fo text 
  * @author artur.opala
  */
-class XslFoTextDocumentPrinterTraveler(output:XslFoOutput) 
-extends TreeVisitor[DocumentComponent] with FormulaSetCache {
+class XslFoTextDocumentPrinterTraveler(output:XslFoOutput, results: Results)
+extends TreeVisitor[DocumentComponent] {
 	
 	val locale = output.locale
 	val mathOutput = output.toMathMLOutput
@@ -152,7 +152,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
                     output.body()
                     output.append(toc.title)
                     output.end(BLOCK)
-                    toc.parentDocument.get.visit(visitor = new XslFoTableOfContentsPrinterTraveler(output))
+                    toc.parentDocument.get.visit(visitor = new XslFoTableOfContentsPrinterTraveler(output, results))
                 }
                 output.end(BLOCK)
             }
@@ -216,7 +216,7 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 						}
 					}
 					case expr:InlineExpr => {
-						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
+						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
 						ess.foreach(es => {
 							if(expr.myStyle!=null){
 								output.start(INLINE)
@@ -233,13 +233,13 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 						})
 					}
 					case expr:BlockExpr => {
-						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,this)
+						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
 						if(!ess.isEmpty){
 							blockExprPrintStrategy.print(node,expr,ess)
 						}
 					}
 					case a:Assertion => {
-						val result = a.evaluate(resultCacheFor(a.calc))
+						val result = a.evaluate(results.formulaSetFor(a.calc).cache)
 						val s = Section(a.style,result._2:_*)
 						s.visit(visitor = this)
                     }
@@ -507,8 +507,8 @@ extends TreeVisitor[DocumentComponent] with FormulaSetCache {
 	
 }
 
-class XslFoTableOfContentsPrinterTraveler(output:XslFoOutput) 
-extends XslFoTextDocumentPrinterTraveler(output) {
+class XslFoTableOfContentsPrinterTraveler(output:XslFoOutput, results: Results)
+extends XslFoTextDocumentPrinterTraveler(output, results) {
     
     override def onEnter(node:Node[DocumentComponent]):Unit = {
         node.element match {

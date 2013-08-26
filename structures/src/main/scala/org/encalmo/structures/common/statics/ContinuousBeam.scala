@@ -63,7 +63,7 @@ object ContinuousBeamSymbols extends SymbolConfigurator {
 
 }
 
-class ContinuousBeam(id:String, length:Expression, load:Expression, force:Expression) extends Calculation(Option(id)) {
+class ContinuousBeam(name:String, length:Expression, load:Expression, force:Expression) extends Calculation(name) {
 	
 	import ContinuousBeamSymbols._
 	

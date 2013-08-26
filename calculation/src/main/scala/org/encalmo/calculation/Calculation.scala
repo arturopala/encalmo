@@ -3,37 +3,49 @@ package org.encalmo.calculation
 import scala.collection.mutable.{Map,LinkedHashSet,LinkedHashMap}
 import org.encalmo.expression._
 import scala.annotation.tailrec
+import java.util.UUID
 
 /** 
  * Calculation is a hierarchical, mutable context for expressions.
  */
-class Calculation(val id:Option[String] = None) extends MutableContext with MutableExpressionResolverSeq {
-	
-	private val context = new MapContext(id)
-	
-	override val map = context.map
-	
-	add(context)
-	
-	/** Maps symbols to the expressions */
-	def put(ts:(Symbol,Expression)*):Unit = {
-		if(opened) for((s,e) <- ts){
-		    update(s,e)
-		} else throwContextAlreadyLockedException
-	}
-	
-	/** Inserts new ExpressionResolver */
-	override def add(er:ExpressionResolver):Unit = {
+class Calculation(val name: String) extends MapContext with MutableContextSeq {
+
+    def label:Expression = text(name)
+
+	/** Inserts new Context */
+	override def add(er:Context):Unit = {
 		if(opened) super.add(er) else throwContextAlreadyLockedException
 	}
-	
-	def label:Expression = id.map(text).getOrElse(null)
-	
-    private var accuracy:Option[Double] = None
-    def acc(d:Double):Calculation = {
-        accuracy = Some(d)
-        this
+
+    /**
+     * Should return unresolved expression mapped to that symbol or None
+     */
+    override def getExpression(s:Symbol):Option[Expression]= {
+        getMappedExpression(s) orElse findNestedExpression(s)
     }
+
+    /**
+     * Should return true if exists expression mapped to that symbol
+     */
+    override def hasExpression(s:Symbol):Boolean = {
+        hasMappedExpression(s) || hasNestedExpression(s)
+    }
+
+    /**
+     * Should return sequence of used mappings
+     */
+    override def listMappings:Seq[(Symbol,Expression)] = {
+        listMappedHere ++ listNestedMappings
+    }
+
+    /**
+     * Should return sequence of mapped symbols
+     */
+    override def listSymbols:Seq[Symbol] = {
+        listMappedSymbols ++ listNestedSymbols
+    }
+
+    override def toString = s"Calculation($name)"
 
 }
 
@@ -41,21 +53,17 @@ class Calculation(val id:Option[String] = None) extends MutableContext with Muta
  * Calculation factory. 
  */
 object Calculation {
+
+	def apply(): Calculation = new Calculation("")
 	
-	def apply():Calculation = new Calculation()
+	def apply(name: String):Calculation = new Calculation(name)
 	
-	def apply(index:String):Calculation = new Calculation(Option(index))
-	
-	def apply(vmap:scala.collection.Map[Symbol,Expression]) = {
-	    val c = new Calculation()
-	    c.put(vmap.toSeq:_*)
-	    c
+	def apply(vmap:scala.collection.Map[Symbol,Expression]): Calculation = {
+	    Calculation() put (vmap.toSeq:_*)
 	}
 	
-	def apply(entries:(Symbol,Expression)*) = {
-		val c = new Calculation()
-	    c.put(entries:_*)
-	    c
+	def apply(entries:(Symbol,Expression)*): Calculation = {
+		Calculation() put (entries:_*)
 	}
 	
 }

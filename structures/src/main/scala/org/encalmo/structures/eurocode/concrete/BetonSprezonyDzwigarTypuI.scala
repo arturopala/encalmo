@@ -211,9 +211,9 @@ class BetonSprezonyDzwigarTypuI extends CalculationDocument {
     val w3 = w|3 is "Wytężenie dźwigara ze względu na ścinanie przy podporze" acc 0.1 unit SI.percent := 100*(Vsd/(alphac*VRd22))
     val w4 = w|4 is "Wytężenie dźwigara ze względu na dopuszczalne ugięcie" acc 0.1 unit SI.percent := 100*(u1/umax)
     val w5 = w|5 is "Wytężenie dźwigara ze względu na brak zarysowania" acc 0.1 unit SI.percent := 100*(Mk/Mcr)
-    
-    
-    val doc = Document("",
+
+
+    override val document = Document("",
         Predefined.stylesConfig,
         Chapter("",
         	Section(

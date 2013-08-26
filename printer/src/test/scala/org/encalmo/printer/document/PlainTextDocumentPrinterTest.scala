@@ -65,17 +65,17 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 	            EmptyDocumentComponent
             )
        )
-		
+
+        val results = Reckoner.reckon()
 		val o:TextOutput = new TextOutput(new java.util.Locale("PL"))
-		PlainTextDocumentPrinter.print(doc1,o)
-		o.printConsole
+		PlainTextDocumentPrinter.print(doc1)(o)(results)
 	}
 	
 	@Test def test2() {
 		
 		import BasicSymbols._
 		
-		val c1 = Calculation("1") 
+		implicit val c1 = Calculation("1")
 		
 	    val fi = phiv
 	    val bf = b|f
@@ -299,10 +299,9 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 		      )
 	      )
 		)
-		
+        val results = Reckoner.reckon()
 		val output:TextOutput = new TextOutput(new java.util.Locale("US"))
-		PlainTextDocumentPrinter.print(doc1,output)
-		output.printConsole
+		PlainTextDocumentPrinter.print(doc1)(output)(results)
 	}
 
 }

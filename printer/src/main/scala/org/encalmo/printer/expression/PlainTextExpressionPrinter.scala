@@ -12,7 +12,7 @@ import org.encalmo.common.Translator
  */
 object PlainTextExpressionPrinter extends TextExpressionPrinter {
 	
-	override def print(e:Expression,output:TextOutput = new TextOutput):TextOutput = {
+	override def print(e:Expression)(output:TextOutput = new TextOutput)(any: AnyRef = new Object()):TextOutput = {
 		val t = new PlainTextExpressionPrinterTraveler(output)
 		e.visit(visitor = t)
 		output

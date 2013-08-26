@@ -114,6 +114,7 @@ object RectangularSlenderSiloWithFlatBottomExpressions extends MapContext {
 
 /** Rectangular slender silos calculation */
 class RectangularSlenderSiloWithFlatBottom(
+    name: String,
 	vb1:Expression,
 	vb2:Expression,
 	vh1:Expression, 
@@ -124,7 +125,7 @@ class RectangularSlenderSiloWithFlatBottom(
 	particulateSolid:ParticulateSolid,
 	vD:Expression
 )
-extends Calculation {
+extends Calculation(name) {
 
 	import SiloSymbols._
 	import RectangularSiloSymbols._

@@ -2,7 +2,7 @@ package org.encalmo.structures.eurocode.steel
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.calculation.Context
+import org.encalmo.calculation.ContextFactory
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
 import org.encalmo.calculation.SymbolConfigurator
@@ -43,22 +43,22 @@ object SteelExpressions extends MapContext {
 }
 
 /** Steel context class */
-class Steel(id:String,data:Context) extends Calculation(Option(id)) {
+class Steel(name:String, data:Context) extends Calculation(name) {
 
 	import SteelSymbols._
 	
-	def info = NumSection(TextToTranslate("Steel",dictionary),id,"EN 10025-2",
+	def info = NumSection(TextToTranslate("Steel",dictionary),name,"EN 10025-2",
 		Evaluate(fy,gammaM0,fyd,E)
 	)
 	
 	this add SteelExpressions
 	this add data
 	
-	CLASS   := text(id)
+	CLASS   := text(name)
 	gammaM0 := 1
 	gammaM1 := 1
 	gammaV  := 1.25
-	
+
 	override def label = this(CLASS)
 }
 
