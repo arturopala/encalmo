@@ -3,10 +3,10 @@ package org.encalmo.structures
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Test
 import org.encalmo.structures.eurocode.timber.{SlupDrewnianyZlozonyWkrety, DzwigarDrewnianyKlejonyTrapezowy}
-import org.encalmo.structures.eurocode.concrete.{DomeCalculationDocument, RectangularConreteSiloCalculation, BetonSprezonyDzwigarTypuI}
+import org.encalmo.structures.eurocode.concrete.{DomeWorksheet, RectangularConreteSiloCalculation, BetonSprezonyDzwigarTypuI}
 import org.encalmo.structures.eurocode.steel.CircularSteelSiloCalculation
-import org.encalmo.structures.eurocode.composite.CompositeSlabCalculationDocument
-import org.encalmo.structures.miscellaneous.TRBCalculationDocument
+import org.encalmo.structures.eurocode.composite.CompositeSlabWorksheet
+import org.encalmo.structures.miscellaneous.TRBWorksheet
 
 class AllStructuresCalculationsUnitTest extends AssertionsForJUnit {
 
@@ -37,17 +37,17 @@ class AllStructuresCalculationsUnitTest extends AssertionsForJUnit {
 
     @Test
     def testDomeCalculationDocument() = {
-        new DomeCalculationDocument().printHtml
+        new DomeWorksheet().printHtml
     }
 
     @Test
     def testCompositeSlabCalculationDocument() = {
-        new CompositeSlabCalculationDocument().printHtml()
+        new CompositeSlabWorksheet().printHtml()
     }
 
     @Test
     def testTRBCalculationDocument() = {
-        new TRBCalculationDocument().printHtml()
+        new TRBWorksheet().printHtml()
     }
 
 }

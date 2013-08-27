@@ -26,13 +26,13 @@ class ExpressionResolverUnitTest extends AssertionsForJUnit {
 	@Test def testResolve1() {
         implicit val cache = new ResultsCache()
 		val context = ContextFactory(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
-		assertEquals(Number(5)*Number(2),context.resolve(c))
+		assertEquals(Number(5)*Number(2),context.expand(c))
 	}
 	
 	@Test def testResolve2() {
         implicit val cache = new ResultsCache()
 		val context = ContextFactory(a -> 5, b -> 2, c -> a*b, d -> (c/a+1))
-		assertEquals(Sum(Quot(Prod(Number(5.0),Number(2.0)),Number(5.0)),Number(1.0)),context.resolve(d))
+		assertEquals(Sum(Quot(Prod(Number(5.0),Number(2.0)),Number(5.0)),Number(1.0)),context.expand(d))
 	}
 	
 	@Test def testSubstitute1() {

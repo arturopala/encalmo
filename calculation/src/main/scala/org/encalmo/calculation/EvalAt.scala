@@ -19,8 +19,8 @@ class EvalAt(val expr:Expression, val er:Context) extends Expression {
         if(ve==expr) f(this) else f(new EvalAt(ve, er))
 	}
 	
-	def resolve = {
-        er.resolve(expr)(new ResultsCache())
+	def expand = {
+        er.expand(expr)(new ResultsCache())
     }
 	
 	def substitute = {

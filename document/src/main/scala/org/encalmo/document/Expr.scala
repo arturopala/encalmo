@@ -11,8 +11,7 @@ import org.encalmo.style.StylesConfig
  */
 abstract class Expr (
         val customStyle:Style,
-        val context: Context,
-        val expressions:Expression*) 
+        val expressions:Expression*)(implicit val context: Context)
 extends DocumentComponent(customStyle) with StylesResolver {
 
     assert(context!=null, "Context reference MUST not be null")
@@ -35,8 +34,8 @@ extends DocumentComponent(customStyle) with StylesResolver {
  * Block-style expression
  * @author artur.opala
  */
-abstract class BlockExpr(customStyle:Style, context: Context, expressions:Expression*)
-extends Expr(customStyle,context,expressions:_*) with BlockComponent {
+abstract class BlockExpr(customStyle:Style, expressions:Expression*)(implicit context: Context)
+extends Expr(customStyle,expressions:_*)(context) with BlockComponent {
 	
 	def isPrintDescription:Boolean
 	
@@ -46,7 +45,7 @@ extends Expr(customStyle,context,expressions:_*) with BlockComponent {
  * Inline-style expression
  * @author artur.opala
  */
-abstract class InlineExpr(customStyle:Style, context: Context, expressions:Expression*)
-extends Expr(customStyle,context,expressions:_*) with InlineComponent {
+abstract class InlineExpr(customStyle:Style, expressions:Expression*)(implicit context: Context)
+extends Expr(customStyle,expressions:_*)(context) with InlineComponent {
 	
 }

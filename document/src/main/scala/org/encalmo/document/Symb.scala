@@ -8,8 +8,8 @@ import org.encalmo.calculation.{Context, ContextFactory}
  * Symb inline component class
  * @author artur.opala
  */
-class Symb(sStyle:Style, context: Context, expr:Expression*)
-extends InlineExpr(sStyle,context,expr:_*){
+class Symb(sStyle:Style, expr:Expression*)(implicit context: Context)
+extends InlineExpr(sStyle,expr:_*)(context){
 	
     override lazy val myStyle:Style = sStyle
     
@@ -24,11 +24,11 @@ extends InlineExpr(sStyle,context,expr:_*){
 object Symb {
 	
 	def apply(expr:Expression*)(implicit context:Context):Symb = {
-		new Symb(null,context,expr:_*)
+		new Symb(null,expr:_*)(context)
 	}
 	
 	def apply(customStyle:Style,expr:Expression*)(implicit context:Context):Symb = {
-		new Symb(customStyle,context,expr:_*)
+		new Symb(customStyle,expr:_*)(context)
 	}
 	
 }

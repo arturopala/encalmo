@@ -1,6 +1,6 @@
 package org.encalmo.structures
 
-import org.encalmo.calculation.{Results, Calculation}
+import org.encalmo.calculation.{Context, Results, Calculation}
 import org.encalmo.document.Document
 import org.encalmo.fop.FOPHelper
 import org.encalmo.printer.document.HtmlTextDocumentPrinter
@@ -19,18 +19,10 @@ import org.encalmo.expression.{Expression,Symbol}
  * Base class for documented calculations
  * @author artur
  */
-abstract class CalculationDocument {
-
-    /** Calculation's output files base name */
-    def name:String
-    
-    /** Documented calculation */
-    implicit lazy val calc:Calculation = new Calculation(name)
+abstract class Worksheet(name: String) extends Calculation(name) {
     
     /** Produced document */
     implicit val document:Document
-
-    def apply(symbol: Symbol): Expression = calc(symbol)
 
     def results: Results = new Results()
 

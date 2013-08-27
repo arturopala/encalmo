@@ -12,8 +12,8 @@ case class PinnedExpression(context:Context, symbol:Symbol) extends Expression w
         context.evaluate(symbol)(new ResultsCache())
     }
 	
-	def resolve(cache: ResultsCache) = {
-        context.resolve(symbol)(cache)
+	def expand(cache: ResultsCache) = {
+        context.expand(symbol)(cache)
     }
 	
 	def substitute(cache: ResultsCache) = {

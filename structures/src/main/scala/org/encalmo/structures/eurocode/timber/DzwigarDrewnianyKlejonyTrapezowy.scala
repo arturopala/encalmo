@@ -5,13 +5,11 @@ import org.encalmo.document._
 import org.encalmo.calculation._
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
-import org.encalmo.structures.CalculationDocument
+import org.encalmo.structures.Worksheet
 
-class DzwigarDrewnianyKlejonyTrapezowy extends CalculationDocument {
+class DzwigarDrewnianyKlejonyTrapezowy extends Worksheet("kd2-dzwigar") {
     
     import BasicSymbols._
-    
-    override val name = "kd2-dzwigar"
     
     val LE = Character.LE
     val ARROW = Character.RARROW
@@ -301,27 +299,27 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
             NumSection("Sprawdzenie stanu granicznego nośności SGN wg PN-EN 1995-1-1",
                 NumSection("Sprawdzenie naprężeń maksymalnych od zginania",
                         Evaluate(xmax,hmax,RA,My,Wy,sigmam0d),
-                        AssertionLE("6.11", calc, sigmam0d, fmd)),
+                        AssertionLE("6.11",  sigmam0d, fmd)),
                 NumSection("Uwzględnienie zmiennego przekroju dźwigara",
                         Evaluate(kmalpha),
                         Evaluate(fmalphad),
-                        AssertionLE("6.38", calc, sigmam0d, fmalphad)),
+                        AssertionLE("6.38",  sigmam0d, fmalphad)),
                 NumSection("Sprawdzenie stateczności przekroju",
                         Evaluate(leff,sigmamcrit,lambdarel),
                         Evaluate(kcritm),
                         Evaluate(fmcritd),
-                        AssertionLE("6.33", calc, sigmam0d, fmcritd)),
+                        AssertionLE("6.33",  sigmam0d, fmcritd)),
                 NumSection("Sprawdzenie nośności na ścinanie",
                         Evaluate(Vd,kcr,beff,taud),
-                        AssertionLE("6.13", calc, taud, fvd)),
+                        AssertionLE("6.13",  taud, fvd)),
                 NumSection("Sprawdzenie nośności na docisk w poprzek włókien na podporze",
                         Evaluate(lpod,Aef,Fc90d,sigmac90d,kc90),
-                        AssertionLE("6.3", calc, sigmac90d, kc90*fc90d))
+                        AssertionLE("6.3",  sigmac90d, kc90*fc90d))
             ),
             NumSection("Sprawdzenie stanu granicznego użytkowania SGU wg PN-EN 1995-1-1",
                 NumSection("Obliczenie ugięć",
                         Evaluate(wmax,kdef,psi21,Iy,umG,uinstG,umQ1,uinstQ1,umQi,uinstQi,ufinG,ufinQ1,ufinQi,wfin),
-                        AssertionLE("SGU", calc, wfin, wmax))
+                        AssertionLE("SGU",  wfin, wmax))
             ),
             NumSection("Sprawdzenie nośności w warunkach pożarowych wg PN-EN 1995-1-2",
                 Section(style1,"Oczekiwana klasa odporności ogniowej R30."),
@@ -329,11 +327,11 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
                 NumSection("Obliczenie nośności metodą zredukowanych właściwości",
                         Evaluate(t,betan,dcharn,Ar,pr,kfi,kmodmfi,kmodEfi,gammaMfi,fmdfi,Edfi,lefffi,sigmamcritfi,lambdarelfi,kcritfi,fmcritfi),
                         Evaluate(xmaxfi,hmaxfi,RAfi,Myfi,Wyfi,sigmam0fi),
-                        AssertionLE("SGN w trakcie pożaru", calc, sigmam0fi, kcritfi*fmdfi)),
+                        AssertionLE("SGN w trakcie pożaru",  sigmam0fi, kcritfi*fmdfi)),
                 NumSection("Obliczenie nośności metodą zredukowanego przekroju",
                         Evaluate(k0,d0,deff,kmodmfi2,kmodEfi2,gammaMfi,fmdfi2,Edfi2,lefffi2,sigmamcritfi2,lambdarelfi2,kcritfi2,fmcritfi2),
                         Evaluate(xmaxfi2,hmaxfi2,RAfi2,Myfi2,Wyfi2,sigmam0fi2),
-                        AssertionLE("SGN w trakcie pożaru", calc, sigmam0fi2, kcritfi2*fmdfi2))
+                        AssertionLE("SGN w trakcie pożaru",  sigmam0fi2, kcritfi2*fmdfi2))
             ),
 			Section(style1.marginTop(30),""),
 			Section("Koniec obliczeń.")

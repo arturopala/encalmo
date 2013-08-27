@@ -271,21 +271,21 @@ extends Calculation(name) {
 	def ULS1 = NumSection(TextToTranslate("ULS","eurocode"),
 		NumSection("Sprawdzenie stateczności środnika wg PN-EN 1993-1-5 pkt. 5.1(2)",
 			Evaluate(hw,epsi,eta),
-			AssertionL("stateczności środnika",this,hw/tw,(72*epsi)/eta)
+			AssertionL("stateczności środnika",hw/tw,(72*epsi)/eta)
 		),
 		NumSection("Określenie klasy przekroju",
 			Evaluate(ctf,ctw,Cf1,Cw1,C),
-			AssertionE("dopuszczalności określania nośności wg nośności plastycznej",this,C,1)
+			AssertionE("dopuszczalności określania nośności wg nośności plastycznej",C,1)
 		),
 		NumSection("Sprawdzenie nośności belki na zginanie w fazie montażu",
 			Evaluate(MelRd,MEdm),
-			AssertionLE("nośności na zginanie",this,MEdm/MelRd,1),
+			AssertionLE("nośności na zginanie",MEdm/MelRd,1),
 			Evaluate(sigmamplus),
-			AssertionLE("braku uplastycznienia",this,sigmamplus,fy)
+			AssertionLE("braku uplastycznienia",sigmamplus,fy)
 		),
 		NumSection("Sprawdzenie nośności belki na ścinanie w fazie montażu",
 			Evaluate(AVz,VplRd,VEdm),
-			AssertionLE("nośności na ścinanie",this,VEdm/VplRd,1)
+			AssertionLE("nośności na ścinanie",VEdm/VplRd,1)
 		),
 		NumSection("Naprężenia pozostające w belce po fazie montażu",
 			Evaluate(MEdm1,Mkm1,Mkm,sigmadm1,sigmakm1)
@@ -295,7 +295,7 @@ extends Calculation(name) {
 	def SLS1 = NumSection(TextToTranslate("SLS","eurocode"),
 		NumSection("Sprawdzenie ugięć w fazie montażu",
 			Evaluate(deltam1,deltam0,deltam),
-			AssertionLE("dopuszczalnych ugięć",this,deltam-deltam0,l/250)
+			AssertionLE("dopuszczalnych ugięć",deltam-deltam0,l/250)
 		)
 	)
 	
@@ -304,48 +304,48 @@ extends Calculation(name) {
 	def ULS2 = NumSection(TextToTranslate("ULS","eurocode"),
 		NumSection("Siły wewnętrzne w belce w fazie eksploatacji",
 			Evaluate(ΔMEd,ΔVEd,MEde,VEde),
-			AssertionLE("braku interakcji zginania i ścinania",this,VEde,0.5*VplRd)
+			AssertionLE("braku interakcji zginania i ścinania",VEde,0.5*VplRd)
 		),
 		NumSection("Szerokość współpracująca i położenie osi obojętnej wg PN-EN 1994-1-1 pkt. 5.4.1.2(5)",
 			Evaluate(b0,bei,beff,Ncf,Npla,N1pla,x)
 		),
 		NumSection("Sprawdzenie nośności belki na zginanie bez uwzględniania zwichrzenia zgodnie z PN-EN 1994-1-1 pkt. 6.4.1(1)",
 			Evaluate(MplRd),
-			AssertionLE("nośności na zginanie",this,MEde/MplRd,1)
+			AssertionLE("nośności na zginanie",MEde/MplRd,1)
 		),
 		NumSection("Sprawdzenie naprężeń we włóknach skrajnych belki",
 			Evaluate(Eceff2,nE,bn,Sy,z0,I1,Wel,ΔMk,sigmake,sigmamax),
-			AssertionLE("naprężeń dopuszczalnych we włóknach skrajnych",this,sigmamax,1.02*fy)
+			AssertionLE("naprężeń dopuszczalnych we włóknach skrajnych",sigmamax,1.02*fy)
 		),
 		NumSection("Sprawdzenie łączników na ścinanie wg PN-EN 1994-1-1 pkt. 6.6",
 			Evaluate(MaRd),
-			AssertionL("PN-EN 1994-1-1 pkt. 6.6.1.3(3)",this,MplRd/MaRd,2.5),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.7(1)",this,STUD.hsc/STUD.d,3),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(1)",this,STUD.hsc,hp+2*STUD.d),			
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(2)",this,bo,50 unit SI.mm),			
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,bo,hp),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,hp,85E-5),
-			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",this,STUD.d,20 unit SI.mm),
+			AssertionL("PN-EN 1994-1-1 pkt. 6.6.1.3(3)",MplRd/MaRd,2.5),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.7(1)",STUD.hsc/STUD.d,3),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(1)",STUD.hsc,hp+2*STUD.d),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(2)",bo,50 unit SI.mm),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",bo,hp),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",hp,85E-5),
+			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",STUD.d,20 unit SI.mm),
 			Evaluate(s,alpha,PRd,ktmax,kt,VEdr,Ls,nf,nfprim,smin,smax),
-			AssertionL("maksymalnego rozstawu łączników",this,bs,smax),
-			AssertionG("minimanego rozstawu łączników",this,bs,smin)
+			AssertionL("maksymalnego rozstawu łączników",bs,smax),
+			AssertionG("minimanego rozstawu łączników",bs,smin)
 		),
 		NumSection("Sprawdzenie ścinania podłużnego w płycie zespolonej wg pkt. 6.6.6",
 			Evaluate(VEdc,kphi,PpbRd,thetat,VRdsr),
-			AssertionLE("nośności prętów zbrojeniowych na ścinanie podłużne",this,VEdc,VRdsr),
+			AssertionLE("nośności prętów zbrojeniowych na ścinanie podłużne",VEdc,VRdsr),
 			Evaluate(vc,VRdsc),
-			AssertionLE("nośności ściskanych krzyżulców betonowych",this,VEdc,VRdsc)
+			AssertionLE("nośności ściskanych krzyżulców betonowych",VEdc,VRdsc)
 		)
 	)
 	
 	def SLS2 = NumSection(TextToTranslate("SLS","eurocode"),
 		NumSection("Sprawdzenie ugięcia maksymalnego",
 			Evaluate(deltae,deltamax),
-			AssertionLE("ugięcia maksymalnego",this,deltamax,l/250)
+			AssertionLE("ugięcia maksymalnego",deltamax,l/250)
 		),
 		NumSection("Sprawdzenie drgań",
 			Evaluate(bn2,Sy2,z2,I2,Gk,yw,f),
-			AssertionG("częstotliwości drgań własnych",this,f,3)
+			AssertionG("częstotliwości drgań własnych",f,3)
 		)
 	)
 	

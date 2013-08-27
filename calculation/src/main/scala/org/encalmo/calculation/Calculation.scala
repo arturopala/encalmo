@@ -13,8 +13,8 @@ class Calculation(val name: String) extends MapContext with MutableContextSeq {
     def label:Expression = text(name)
 
 	/** Inserts new Context */
-	override def add(er:Context):Unit = {
-		if(opened) super.add(er) else throwContextAlreadyLockedException
+	override def add(context: Context):Unit = {
+		if(opened) super.add(context) else throwContextAlreadyLockedException
 	}
 
     /**

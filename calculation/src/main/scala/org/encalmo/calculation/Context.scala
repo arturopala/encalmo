@@ -5,7 +5,7 @@ import java.util.UUID
 import scala.annotation.tailrec
 
 /** 
- * Expression's context trait
+ * Expression's calculation context trait
  */
 trait Context {
     
@@ -51,9 +51,9 @@ trait Context {
 	/**
 	 * Expands symbols to their mapped expressions.
 	 */
-	def resolve(expression: Expression)(implicit cache: ResultsCache):Expression = {
+	def expand(expression: Expression)(implicit cache: ResultsCache):Expression = {
         try {
-            map(expression,resolver(cache))
+            map(expression,expander(cache))
         }
         catch {
             case exception:Exception => {
@@ -148,7 +148,7 @@ trait Context {
 	 * Single-pass resolving transformation. 
 	 * Expends symbols to their mapped expressions
 	 */
-	private def resolver(cache: ResultsCache):Transformation = {
+	private def expander(cache: ResultsCache):Transformation = {
 		case s:Symbol => this.getExpression(s).getOrElse(s)
 		case de:DynamicExpression => de.f(cache)
 		case e => e
