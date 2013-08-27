@@ -1,19 +1,19 @@
 package org.encalmo.document
 
 import org.encalmo.expression.Expression
-import org.encalmo.calculation.Calculation
+import org.encalmo.calculation.{Context, Calculation}
 import org.encalmo.style.Style
 
 /**
  * Result inline component class
  * @author artur.opala
  */
-class Result(rStyle:Style, calc:Calculation, expr:Expression*) 
-extends InlineExpr(rStyle,calc,expr:_*){
+class Result(rStyle:Style, expr:Expression*)(implicit context: Context)
+extends InlineExpr(rStyle,expr:_*)(context){
     
     override lazy val myStyle:Style = rStyle
 	
-	override def toString = "Result("+myStyle+","+calc+","+expr.mkString(",")+")"
+	override def toString = s"Result($myStyle,${expr.mkString(",")})($context)"
 	
 }
 
@@ -23,12 +23,12 @@ extends InlineExpr(rStyle,calc,expr:_*){
  */
 object Result {
 	
-	def apply(calc:Calculation, expr:Expression*):Result = {
-		new Result(null,calc,expr:_*)
+	def apply(expr:Expression*)(implicit context: Context):Result = {
+		new Result(null,expr:_*)(context)
 	}
 	
-	def apply(mystyle:Style, calc:Calculation, expr:Expression*):Result = {
-		new Result(mystyle,calc,expr:_*)
+	def apply(mystyle:Style,expr:Expression*)(implicit context: Context):Result = {
+		new Result(mystyle,expr:_*)(context)
 	}
 	
 }

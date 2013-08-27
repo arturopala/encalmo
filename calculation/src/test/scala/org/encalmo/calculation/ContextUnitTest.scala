@@ -16,17 +16,17 @@ class ContextUnitTest extends AssertionsForJUnit {
 		context(context.p1) = 3
 		context(context.p2) = 4
 		context(context.p3) = 0
-		val r_a = context.resolve(a).eval
+		val r_a = context.expand(a).eval
 		assertEquals(Number(14),r_a);
-		val r_b = context.resolve(b).eval
+		val r_b = context.expand(b).eval
 		assertEquals(Number(12),r_b);
-		val r_c = context.resolve(c).eval
+		val r_c = context.expand(c).eval
 		assertEquals(Number(5),r_c);
-		val r_d = context.resolve(d).eval
+		val r_d = context.expand(d).eval
 		assertEquals(Number(10),r_d);
-		val r_1 = context.resolve(a*b+d).eval
+		val r_1 = context.expand(a*b+d).eval
 		assertEquals(Number(178),r_1);
-		val r_e = context.resolve(e).eval
+		val r_e = context.expand(e).eval
 		assertEquals(Number(81),r_e);
 	}
 	
@@ -36,7 +36,7 @@ class ContextUnitTest extends AssertionsForJUnit {
 		context(context.p1) = 3
 		context(context.p2) = 4
 		context(context.p3) = 0
-		val r_b = context.resolve(a);
+		val r_b = context.expand(a);
 		val r_a = context.evaluate(a);
 		assertEquals(Number(14),r_a);
 		assertEquals(Sum(Prod(Number(2.0),Number(3.0)),Prod(Number(2.0),Number(4.0))),r_b)
@@ -49,7 +49,7 @@ class ContextUnitTest extends AssertionsForJUnit {
 		context(context.p2) = 4
 		context(context.p3) = 0
 		val r_a = context.evaluate(a);
-		val r_b = context.resolve(a);
+		val r_b = context.expand(a);
 		assertEquals(Number(14),r_a);
 		assertEquals(Sum(Prod(Number(2.0),Number(3.0)),Prod(Number(2.0),Number(4.0))),r_b)
 	}
@@ -63,8 +63,8 @@ class ContextUnitTest extends AssertionsForJUnit {
         val n = Number(123.45)
         c1(s1) = n
         c2(s2) = n
-        val r1 = c1.resolve(s1)
-        val r2 = c2.resolve(s2)
+        val r1 = c1.expand(s1)
+        val r2 = c2.expand(s2)
         assertEquals(Number(123.45),r1)
         assertEquals(SI.kg,r1.unit)
         assertEquals(Number(123.45),r2)
@@ -80,8 +80,8 @@ class ContextUnitTest extends AssertionsForJUnit {
         val n = Number(123.45) unit SI.g
         c1(s1) = n
         c2(s2) = n
-        val r1 = c1.resolve(s1)
-        val r2 = c2.resolve(s2)
+        val r1 = c1.expand(s1)
+        val r2 = c2.expand(s2)
         assertEquals(Number(0.12345),r1)
         assertEquals(SI.kg,r1.unit)
         assertEquals(Number(123.45),r2)
@@ -97,8 +97,8 @@ class ContextUnitTest extends AssertionsForJUnit {
         val n = Number(123.45) unit SI.m
         c1(s1) = n
         c2(s2) = n
-        val r1 = c1.resolve(s1)
-        val r2 = c2.resolve(s2)
+        val r1 = c1.expand(s1)
+        val r2 = c2.expand(s2)
         assertEquals(Number(0.12345),r1)
         assertEquals(SI.km,r1.unit)
         assertEquals(Number(12345),r2)

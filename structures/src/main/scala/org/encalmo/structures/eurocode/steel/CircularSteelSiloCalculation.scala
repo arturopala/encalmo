@@ -6,15 +6,12 @@ import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.actions.silos.ParticulateSolid
 import org.encalmo.structures.eurocode.actions.silos.ThinWalledCircularSlenderSiloWithSteepHopper
-import org.encalmo.structures.CalculationDocument
+import org.encalmo.structures.Worksheet
 
 /**
  * Calculation of the circular steel silos with steep hopper
  */
-class CircularSteelSiloCalculation extends CalculationDocument {
-
-
-    val name = "km-silos"
+class CircularSteelSiloCalculation extends Worksheet("km-silos") {
    
     val particulateSolid = ParticulateSolid.Cement
     val steel = Steel.S275
@@ -34,7 +31,7 @@ class CircularSteelSiloCalculation extends CalculationDocument {
             steel = Steel.S275
     )
     
-    calc add silos
+    this add silos
 
     override val document = Document("",
         Predefined.stylesConfig,

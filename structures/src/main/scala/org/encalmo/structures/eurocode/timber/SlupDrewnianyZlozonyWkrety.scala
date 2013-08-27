@@ -3,22 +3,20 @@ package org.encalmo.structures.eurocode.timber
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.structures.{CalculationDocument, Predefined}
+import org.encalmo.structures.{Worksheet, Predefined}
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.common.section.Square
 import org.encalmo.structures.common.section.SectionSymbols
 
-class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
-
-    val name = "kd1-slup"
+class SlupDrewnianyZlozonyWkrety extends Worksheet("kd1-slup") {
 
     import BasicSymbols._
 
     val calc2 = Calculation("2")
     val calc3 = Calculation()
     
-    calc add calc2
-    calc add calc3
+    this add calc2
+    this add calc3
     
     val l0 = l|0 is "rozpiętość obliczeniowa" unit "cm"
     calc2(l0) = 380
@@ -29,77 +27,77 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
     val daneWejsciowe = Seq(l0,Fcd,mic)
     
     val b1 = BasicSymbols.b|1 is "szerokość przekroju półki" unit SI.cm
-    calc(b1) = 6.3
+    b1 := 6.3
     val h1 = BasicSymbols.h|1 is "wysokość przekroju półki" unit SI.cm
-    calc(h1) = 6.3
+    h1 := 6.3
     val b2 = BasicSymbols.b|2 is "szerokość przekroju środnika" unit SI.cm
-    calc(b2) = 3.2
+    b2 := 3.2
     val h2 = BasicSymbols.h|2 is "wysokość przekroju środnika" unit SI.cm
-    calc(h2) = 16
+    h2 := 16
     val b = BasicSymbols.b is "szerokość całkowita przekroju złożonego" unit SI.cm
-    calc(b) = b2+2*b1
+    b := b2+2*b1
     val h = BasicSymbols.h is "wysokość całkowita przekroju złożonego" unit SI.cm
-    calc(h) = h2
+    h := h2
     val az = BasicSymbols.a|"z" is "odległość środka ciężkości półki od środka ciężkości przekroju złożonego, wzdłuż osi Z" unit SI.cm
-    calc(az) = (h-h1)/2
+    az := (h-h1)/2
     val ay = BasicSymbols.a|"y" is "odległość środka ciężkości półki od środka ciężkości przekroju złożonego, wzdłuż osi Y" unit SI.cm
-    calc(ay) = (b-b1)/2
+    ay := (b-b1)/2
     val przyjetaGeometria = Seq(b1,h1,b2,h2,b,h)
     
     val A1 = BasicSymbols.A|1 is "pole powierzchni segmentu półki" unit "cm2"
-    calc(A1) = b1*h1
+    A1 := b1*h1
     val A2 = BasicSymbols.A|2 is "pole powierzchni środnika" unit "cm2"
-    calc(A2) = b2*h2
-    val A = BasicSymbols.A is "całkowite pole powierzchni przekroju" unit "cm2"
-    calc(A) = A2+4*A1
+    A2 := b2*h2
+    val As = BasicSymbols.A|s is "całkowite pole powierzchni przekroju" unit "cm2"
+    As := A2+4*A1
     val Iz1 = BasicSymbols.I|"z,1" is "moduł bezwładności segmentu półki względem osi Z" unit "cm4" acc 1
-    calc(Iz1) = (b1*(h1^3))/12
+    Iz1 := (b1*(h1^3))/12
     val Iy1 = BasicSymbols.I|"y,1" is "moduł bezwładności segmentu półki względem osi Y" unit "cm4" acc 1
-    calc(Iy1) = (h1*(b1^3))/12
+    Iy1 := (h1*(b1^3))/12
     val Iz2 = BasicSymbols.I|"z,2" is "moduł bezwładności środnika względem osi Z" unit "cm4" acc 1
-    calc(Iz2) = (b2*(h2^3))/12
+    Iz2 := (b2*(h2^3))/12
     val Iy2 = BasicSymbols.I|"y,2" is "moduł bezwładności segmentu półki względem osi Y" unit "cm4" acc 1
-    calc(Iy2) = (h2*(b2^3))/12
+    Iy2 := (h2*(b2^3))/12
     val Iz = BasicSymbols.I|"y" is "moduł bezwładności przekroju złożonego względem osi Z" unit "cm4" acc 1
-    calc(Iz) = Iz2+4*(Iz1+A1*(ay^2))
+    Iz := Iz2+4*(Iz1+A1*(ay^2))
     val Iy = BasicSymbols.I|"z" is "moduł bezwładności przekroju złożonego względem osi Y" unit "cm4" acc 1
-    calc(Iy) = Iy2+4*(Iy1+A1*(az^2))
+    Iy := Iy2+4*(Iy1+A1*(az^2))
     val Imin = BasicSymbols.I|"min" is "mniejszy z modułów bezwładności" unit "cm4" acc 1
-    calc(Imin) = min(Iz,Iy)
+    Imin := min(Iz,Iy)
     val imin = BasicSymbols.i|"min" is "promień bezwładności" unit "cm"
-    calc(imin) = sqrt(Imin/A)
-    val wlasciwosciGeometryczne = Seq(ay,az,A1,A2,A,Iz1,Iy1,Iz2,Iy2,Iz,Iy,Imin,imin)
+    imin := sqrt(Imin/As)
+    val wlasciwosciGeometryczne = Seq(ay,az,A1,A2,As,Iz1,Iy1,Iz2,Iy2,Iz,Iy,Imin,imin)
     
     val d = BasicSymbols.d is "przyjęta średnica wewnętrzna trzpienia dla wkręta samowiercącego SPAX&reg; T-STAR T40(8mm)" unit "mm"
-    calc(d) = 5.6
+    d := 5.6
     val deff = BasicSymbols.d|"ef" is "przyjęta efektywna średnica trzpienia wkręta" unit "mm"
-    calc(deff) = 6.0
+    deff := 6.0
     val s1min = s|"1,min" is "minimalny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
-    calc(s1min) = (5+5)*d
+    s1min := (5+5)*d
     val s1 = s|"1" is "przyjęty rozstaw wkrętów w szeregu wzdłuż włókien " unit "mm"
-    calc(s1) = 60
+    s1 := 60
     val nh = n|"h" is "przyjęta ilość wkrętów w rzędzie na szerokości półki"
-    calc(nh) = 1
+    nh := 1
     val np = n|"p" is "ilość płaszczyzn styku środnika z półką wg B.1.3(1) [1]"
-    calc(np) = 2
+    np := 2
     val s1eff = s|"1,eff" is "efektywny rozstaw wkrętów w szeregu wzdłuż włókien" unit "mm"
-    calc(s1eff) = s1/(nh*np)
+    s1eff := s1/(nh*np)
     val s2 = s|"2" is "minimalny rozstaw wkrętów w poprzek włókien wg tablicy 8.2 [1]" unit "mm"
-    calc(s2) = 5*d
+    s2 := 5*d
     val s3c = s|"3,c" is "minimalna odległość wkręta od końca nieobciążonego" unit "mm"
-    calc(s3c) = 10*d
+    s3c := 10*d
     val s3t = s|"3,t" is "minimalna odległość wkręta od końca obciążonego" unit "mm"
-    calc(s3t) = 15*d
+    s3t := 15*d
     val s4c = s|"4,c" is "minimalna odległość wkręta od boku nieobciążonego" unit "mm"
-    calc(s4c) = 5*d
+    s4c := 5*d
     val s4t = s|"4,t" is "minimalna odległość wkręta od boku obciążonego" unit "mm"
-    calc(s4t) = 5*d
+    s4t := 5*d
     val t2 = t|"2" is "minimalna długość zakotwienia wkręta w elemencie od strony ostrza" unit "mm"
-    calc(t2) = 6*d
+    t2 := 6*d
     val lw = l|"w" is "wymagana długość wkręta" unit "mm"
-    calc(lw) = round(b1+t2,RoundingMode.Step(true,10))
+    lw := round(b1+t2,RoundingMode.Step(true,10))
     val nw = n|"w" is "całkowita liczba wkrętów w słupie"
-    calc(nw) = 4*nh* ceil((l0 - 2 * s3c) / s1)
+    nw := 4*nh* ceil((l0 - 2 * s3c) / s1)
     val przyjeteLaczniki = Seq(d,deff,s1min,s1,nh,np,s1eff,s2,s3c,s3t,s4c,s4t,t2,lw,nw)
     
     val kmod = k|"mod" is """współczynnik modyfikujący efekt czasu trwania obciążenia i zmiany wilgotności materiału,
@@ -162,67 +160,67 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
     calc2(betac) = 0.2
     
     val Kser = K|"ser" is "moduł podatności łączników mechanicznych dla stanu granicznego nośności (SGN) wg tablicy 7.1 [1]" unit "N/mm"
-    calc(Kser) = (((rhom).nounit^1.5)*(deff).nounit)/23
+    Kser := (((rhom).nounit^1.5)*(deff).nounit)/23
     val Ku = K|"u" is "moduł podatności łączników mechanicznych dla stanu granicznego użytkowalności (SGU) wg 2.1 [1]" unit "N/mm"
-    calc(Ku) = (2*Kser)/3
+    Ku := (2*Kser)/3
     val gamma1SGN = (gamma|"1") is "współczynnik zmniejszający moment bezwładności półek ze względu na podatność połączeń dla SGN wg B.5 [1]"
-    calc(gamma1SGN) = (1+(((PI^2)*E0mean*A1*(s1eff))/(Ku*(l0^2))))^(-1)
+    gamma1SGN := (1+(((PI^2)*E0mean*A1*(s1eff))/(Ku*(l0^2))))^(-1)
     val gamma1SGU = (gamma|"1")!"SGU" is "współczynnik zmniejszający moment bezwładności półek ze względu na podatność połączeń dla SGU wg B.5 [1]"
-    calc(gamma1SGU) = (1+(((PI^2)*E0mean*A1*(s1eff))/(Kser*(l0^2))))^(-1)
+    gamma1SGU := (1+(((PI^2)*E0mean*A1*(s1eff))/(Kser*(l0^2))))^(-1)
     val EIzeffSGN = (Symbol("(EI)")|"z,ef") is "sztywność zastępcza względem osi Z dla SGN wg B.1 [1]" unit SI.kN*SI.m2
-    calc(EIzeffSGN) = E0mean*(Iz2+4*(Iz1+gamma1SGN*A1*(ay^2)))
+    EIzeffSGN := E0mean*(Iz2+4*(Iz1+gamma1SGN*A1*(ay^2)))
     val EIzeffSGU = (Symbol("(EI)")|"z,ef")!"SGU" is "sztywność zastępcza względem osi Z dla SGU wg B.1 [1]" unit SI.kN*SI.m2
-    calc(EIzeffSGU) = E0mean*(Iz2+4*(Iz1+gamma1SGU*A1*(ay^2)))
+    EIzeffSGU := E0mean*(Iz2+4*(Iz1+gamma1SGU*A1*(ay^2)))
     val EIyeffSGN = (Symbol("(EI)")|"y,ef") is "sztywność zastępcza względem osi Y dla SGN wg B.1 [1]" unit SI.kN*SI.m2
-    calc(EIyeffSGN) = E0mean*(Iy2+4*(Iy1+gamma1SGN*A1*(az^2)))
+    EIyeffSGN := E0mean*(Iy2+4*(Iy1+gamma1SGN*A1*(az^2)))
     val EIyeffSGU = (Symbol("(EI)")|"y,ef")!"SGU" is "sztywność zastępcza względem osi Y dla SGU wg B.1 [1]" unit SI.kN*SI.m2
-    calc(EIyeffSGU) = E0mean*(Iy2+4*(Iy1+gamma1SGU*A1*(az^2)))
+    EIyeffSGU := E0mean*(Iy2+4*(Iy1+gamma1SGU*A1*(az^2)))
     val EIeffSGN = (Symbol("(EI)")|"ef") is "sztywność zastępcza dla SGN" unit SI.kN*SI.m2
-    calc(EIeffSGN) = min(EIzeffSGN,EIyeffSGN)
+    EIeffSGN := min(EIzeffSGN,EIyeffSGN)
     val EIeffSGU = (Symbol("(EI)")|"ef")!"SGU" is "sztywność zastępcza dla SGU" unit SI.kN*SI.m2
-    calc(EIeffSGU) = min(EIzeffSGU,EIyeffSGU)
+    EIeffSGU := min(EIzeffSGU,EIyeffSGU)
     val xiEI = xi|"(EI)" is "stosunek sztywności zastępczych względem osi Y/Z" unit "%"
-    calc(xiEI) = (EIyeffSGN/EIzeffSGN)*100
+    xiEI := (EIyeffSGN/EIzeffSGN)*100
     val sztywnoscZastepcza = Seq(Kser,Ku,gamma1SGN/*,gamma1SGU*/,EIzeffSGN,EIyeffSGN,EIeffSGN/*,EIzeffSGU,EIyeffSGU,EIeffSGU*/,xiEI)
     
     val Ief = I|"ef" is "efektywny moduł bezwładności wg C.4 [1]" unit "cm4" acc 1
-    calc(Ief) = EIeffSGN/E0mean
+    Ief := EIeffSGN/E0mean
     val lambdaeff = lambda|"ef" is "smukłość efektywna wg C.3 [1]"
-    calc(lambdaeff) = lc*sqrt(A/Ief)
+    lambdaeff := lc*sqrt(As/Ief)
     val lambdarel = lambda|"rel" is "smukłość względna wg 6.22 [1]"
-    calc(lambdarel) = ((lambdaeff/PI)*sqrt(fc0k/E005)).nounit
+    lambdarel := ((lambdaeff/PI)*sqrt(fc0k/E005)).nounit
     val kmin = k|"min" is "współczynnik pomocniczy do obliczenia współczynnika wyboczeniowego wg 6.27 [1]"
-    calc(kmin) = 0.5*(1+betac*(lambdarel-0.3)+(lambdarel^2))
+    kmin := 0.5*(1+betac*(lambdarel-0.3)+(lambdarel^2))
     val kc = k|c is "współczynnik wyboczeniowy wg 6.25 [1]"
-    calc(kc) = 1/(kmin+sqrt((kmin^2)-(lambdarel^2)))
+    kc := 1/(kmin+sqrt((kmin^2)-(lambdarel^2)))
     val sigmac0d = sigma|"c,0,d" is "obliczeniowe naprężenie ściskające wzdłuż włókien wg C.2 [1]" unit "MPa"
-    calc(sigmac0d) = Fcd/A
+    sigmac0d := Fcd/As
     val NRc = N|"R,c" is "nośność obliczeniowa na ściskanie" unit "kN"
-    calc(NRc) = fc0d*A
+    NRc := fc0d*As
     val Fmax = F|"max" is "maksymalna osiowa siła ściskająca" unit "kN"
-    calc(Fmax) = kc*NRc
+    Fmax := kc*NRc
     val xiS = BasicSymbols.xi|"c" is "wytężenie słupa na ściskanie" unit "%"
-    calc(xiS) = (Fcd/Fmax)*100
+    xiS := (Fcd/Fmax)*100
     val nosnoscObliczeniowa = Seq(lc,betac,Ief,lambdaeff,lambdarel,kmin,kc,sigmac0d,NRc,Fmax,xiS)
 
     val Vd = V|"d" is "siła ścinająca wg C.5 [1]" unit "kN"
-    calc(Vd) = Fcd/(120*kc) unless (InRangeLLE(30,lambdaeff,60) thenUse (Fcd/(3600*kc))) unless (GreaterThan(lambdaeff,60) thenUse (Fcd/(60*kc)))
+    Vd := Fcd/(120*kc) unless (InRangeLLE(30,lambdaeff,60) thenUse (Fcd/(3600*kc))) unless (GreaterThan(lambdaeff,60) thenUse (Fcd/(60*kc)))
     val tau2max = tau|"2,max" is "maksymalne naprężenia ścinające w środniku wg B.9 [1]" unit "MPa"
-    calc(tau2max) = E0mean*(gamma1SGN*A1*az+0.5*b2*(h^2))/(b2*EIeffSGN)*Vd
+    tau2max := E0mean*(gamma1SGN*A1*az+0.5*b2*(h^2))/(b2*EIeffSGN)*Vd
     val nosnoscScinanie = Seq(Vd,tau2max)
     
     val Fi = F|"i" is "obciążenie łącznika wg B.10 [1]" unit "kN"
-    calc(Fi) = ((gamma1SGN*E0mean*A1*ay* s1eff)/EIeffSGN)*Vd
+    Fi := ((gamma1SGN*E0mean*A1*ay* s1eff)/EIeffSGN)*Vd
     val kef = k|"ef" is "współczynnik efektywnej liczby łączników w szeregu z tablicy 8.1 [1]"
-    calc(kef) = 0.85
+    kef := 0.85
     val betal = beta|l is "stosunek wytrzymałości charakterystycznych na docisk łącznika do elementów złącza"
-    calc(betal) = 1
+    betal := 1
     val fhk = f|"h,k" is "wytrzymałość charakterystyczna na docisk w elemencie drewnianym wg 8.16 [1]" unit "N/mm2"
-    calc(fhk) = 0.082*(1-0.01* deff.nounit)* rhok.nounit
+    fhk := 0.082*(1-0.01* deff.nounit)* rhok.nounit
     val MyRk = M|"y,Rk" is "moment charakterystyczny uplastycznienia wkręta wg 2.2.1.a [2]" unit SI.N*SI.mm
-    calc(MyRk) = 75*(d.nounit^2.6)
+    MyRk := 75*(d.nounit^2.6)
     val FaxRk = F|"ax,Rk" is "nośność charakterystyczna łącznika na wyciąganie" unit "kN"
-    calc(FaxRk) = 0
+    FaxRk := 0
     val FvRk = F|"v,Rk" is "nośność charakterystyczna łącznika odniesiona do jednej płaszczyzny ścinania wg 8.6 [1]" unit "kN"
     val FvRka = F|"v,Rk,a" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia a" unit "kN"
     val FvRkb = F|"v,Rk,b" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia b" unit "kN"
@@ -230,15 +228,15 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
     val FvRkd = F|"v,Rk,d" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia d" unit "kN"
     val FvRke = F|"v,Rk,e" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia e" unit "kN"
     val FvRkf = F|"v,Rk,f" is "nośność charakterystyczna łącznika jednociętego dla schematu zniszczenia f" unit "kN"
-    calc(FvRka) = fhk*b1* deff
-    calc(FvRkb) = fhk*b2* deff
-    calc(FvRkc) = (fhk*b1* deff /(1+betal))*(sqrt(betal+2*(betal^2)*(1+b2/b1+((b2/b1)^2))+(betal^3)*((b2/b1)^2))-betal*(1+(b2/b1)))+FaxRk/4
-    calc(FvRkd) = 1.05*(fhk*b1* deff /(2+betal))*(sqrt(2*betal*(1+betal)+((4*betal*(2+betal)*MyRk)/(fhk*deff*(b1^2))))-betal)+FaxRk/4
-    calc(FvRke) = 1.05*(fhk*b2* deff /(1+2*betal))*(sqrt(2*(betal^2)*(1+betal)+((4*betal*(1+2*betal)*MyRk)/(fhk*deff*(b2^2))))-betal)+FaxRk/4
-    calc(FvRkf) = (1.15*sqrt((2*betal)/(1+betal))*sqrt(2*MyRk*fhk*deff)+FaxRk/4).nounit
-    calc(FvRk) = min(FvRka,FvRkb,FvRkc,FvRkd,FvRke,FvRkf)
+    FvRka := fhk*b1* deff
+    FvRkb := fhk*b2* deff
+    FvRkc := (fhk*b1* deff /(1+betal))*(sqrt(betal+2*(betal^2)*(1+b2/b1+((b2/b1)^2))+(betal^3)*((b2/b1)^2))-betal*(1+(b2/b1)))+FaxRk/4
+    FvRkd := 1.05*(fhk*b1* deff /(2+betal))*(sqrt(2*betal*(1+betal)+((4*betal*(2+betal)*MyRk)/(fhk*deff*(b1^2))))-betal)+FaxRk/4
+    FvRke := 1.05*(fhk*b2* deff /(1+2*betal))*(sqrt(2*(betal^2)*(1+betal)+((4*betal*(1+2*betal)*MyRk)/(fhk*deff*(b2^2))))-betal)+FaxRk/4
+    FvRkf := (1.15*sqrt((2*betal)/(1+betal))*sqrt(2*MyRk*fhk*deff)+FaxRk/4).nounit
+    FvRk := min(FvRka,FvRkb,FvRkc,FvRkd,FvRke,FvRkf)
     val FvRd = F|"v,Rd" is "nośność obliczeniowa łącznika" unit "kN"
-    calc(FvRd) = (kmod*FvRk)/gamM
+    FvRd := (kmod*FvRk)/gamM
     
     val nosnoscLacznikow = Seq(Fi,kef,betal,fhk,MyRk,FvRka,FvRkb,FvRkc,FvRkd,FvRke,FvRkf,FvRk,FvRd)
     
@@ -251,7 +249,7 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
     val kc2 = k|("c","'") is "współczynnik wyboczeniowy"
     calc2(kc2) = 1/(kmin2+sqrt((kmin2^2)-(lambdarel2^2)))
     val NRc2 = N|("R,c","'") is "nośność obliczeniowa na ściskanie" unit "kN"
-    calc2(NRc2) = fc0d*A
+    calc2(NRc2) = fc0d*As
     val Fmax2 = F|("max","'") is "maksymalna osiowa siła ściskająca" unit "kN"
     calc2(Fmax2) = kc2*NRc2
     val deltaJW = delta|"1" is "strata nośności maksymalnej słupa spowodowana zastosowaniem łączników podatnych" unit "%"
@@ -263,13 +261,13 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
     val Sec2 = Square("rec",arec)
     val calc4 = Calculation("slup kwadratowy jednorodny")
     calc4(arec) = 0.138
-    calc4(A) = SectionSymbols.A
+    calc4(As) = SectionSymbols.A
     calc4(imin) = SectionSymbols.imin
     calc4 add calc2
     calc4 add calc3
     calc4 add Sec2
-    val Aof1 = calc(A)
-    val Fmaxof1 = calc(Fmax)
+    val Aof1 = this(As)
+    val Fmaxof1 = this(Fmax)
     val xi2 = xi|"2" is "stosunek nośności na ściskanie słupa kwadratowego i zaprojektowanego" unit "%"
     calc4(xi2) = (Fmax2/Fmaxof1)*100
     val delta2 = delta|"2" is "zmiana pola przekroju słupa wielogałęziowego w stosunku do słupa kwadratowego o zbliżonej niegorszej nośności" unit "%"
@@ -306,19 +304,19 @@ class SlupDrewnianyZlozonyWkrety extends CalculationDocument {
            NumSection("Sprawdzenie stanów granicznych nośności wg PN-EN 1995-1-1",
                 NumSection("Obliczenie sztywności zastępczej",Evaluate(sztywnoscZastepcza:_*)),
                 NumSection("Sprawdzenie nośności na ściskanie",Evaluate(nosnoscObliczeniowa:_*)),
-                AssertionLE("C.1 [1]",calc,sigmac0d,kc*fc0d),
+                AssertionLE("C.1 [1]",sigmac0d,kc*fc0d),
 				NumSection("Sprawdzenie nośności środnika na ścinanie",Evaluate(nosnoscScinanie:_*)),
-				AssertionLE("6.13 [1]",calc,tau2max,fvd),
+				AssertionLE("6.13 [1]",tau2max,fvd),
 				NumSection("Sprawdzenie nośności łączników (wkrętów)",Evaluate(nosnoscLacznikow:_*)),
-				AssertionLE("nośności wkręta",calc,Fi,FvRd)
+				AssertionLE("nośności wkręta",Fi,FvRd)
 			),
 			NumSection("Obliczenia porównawcze",
 				NumSection("Porównanie ze słupem wielogałęziowym z elementów połączonych niepodatnie (klejonych)",Evaluate(nosnoscSlupaNiepodatnie:_*)),
 				NumSection("Porównanie ze słupem jednorodnym kwadratowym o zbliżonej nośności na ściskanie",Evaluate(przekrojKwadratowy:_*)(calc4)),
 				NumSection("Wnioski",
-					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem klejonym wykazało ",Result(calc,round(deltaJW)),
+					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem klejonym wykazało ",Result(round(deltaJW)),
 					" utratę nośności ze względu na podatność łączników."),
-					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem jednorodnym kwadratowym o zbliżonej nośności wykazało ",Result(calc4,round(delta2,RoundingMode.HALF)),
+					Section(styleComment,"Porównanie zaprojektowanego słupa ze słupem jednorodnym kwadratowym o zbliżonej nośności wykazało ",Result(round(delta2,RoundingMode.HALF))(calc4),
 					" stratę na przekroju słupa wielogałęziowego. Zastosowanie słupa o przekroju kwadratowym przy zadanym obciążeniu byłoby bardziej uzasadnione.")
 				)
 			),

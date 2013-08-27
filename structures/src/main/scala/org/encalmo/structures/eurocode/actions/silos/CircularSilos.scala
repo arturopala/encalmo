@@ -314,10 +314,10 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
     //calculated geometry
     def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry", SiloSymbols.dictionary),
         Evaluate(r, dc, A, U, AU, beta, hh, he, htp, ho, hc, hb, hcdc, Sc, Sh, S),
-        AssertionL("[1991-4] 1.1.2 (3)", this, hb / dc, 10),
-        AssertionL("[1991-4] 1.1.2 (3)", this, hb, 100 unit SI.m),
-        AssertionL("[1991-4] 1.1.2 (3)", this, dc, 60 unit SI.m),
-        AssertionGE("[1991-4] 5.1 (2)", this, hc / dc, 2)
+        AssertionL("[1991-4] 1.1.2 (3)", hb / dc, 10),
+        AssertionL("[1991-4] 1.1.2 (3)", hb, 100 unit SI.m),
+        AssertionL("[1991-4] 1.1.2 (3)", dc, 60 unit SI.m),
+        AssertionGE("[1991-4] 5.1 (2)", hc / dc, 2)
     )
 
     //volumes
@@ -363,7 +363,7 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
 
     //filling loads on silo hoppers
     def fillingHopperLoad = NumSection(TextToTranslate("_fillingHopperLoad", SiloSymbols.dictionary), "[1991-4] 6.1.2, 6.3.2",
-        AssertionL("leja stromego [1991-4] 6.1", this, tan(beta), (1 - K_l) / (2 * mu_u)),
+        AssertionL("leja stromego [1991-4] 6.1",  tan(beta), (1 - K_l) / (2 * mu_u)),
         Evaluate(Cb, pvft, muheff, Ff, nh, pv, pnf, ptf, pnf0, ptf0, pnf1, ptf1)
     )
 
@@ -374,42 +374,42 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
 
     def statecznosc = Section(
         Evaluate(omega, Cteta),
-        AssertionRangeLELE("[1993-1-6] D.1.2.1 (4) zastosowania współczynnika Cx=1.0", this, 1.7, omega, 0.5 * (r / t)),
-        AssertionRangeLELE("[1993-1-6] D.1.3.1 (3) skorzystania ze wzoru D.21", this, 20, omega / Cteta, 1.63 * (r / t)),
+        AssertionRangeLELE("[1993-1-6] D.1.2.1 (4) zastosowania współczynnika Cx=1.0",  1.7, omega, 0.5 * (r / t)),
+        AssertionRangeLELE("[1993-1-6] D.1.3.1 (3) skorzystania ze wzoru D.21",  20, omega / Cteta, 1.63 * (r / t)),
         Evaluate(Cx)
     )
 
     def naprezeniaKrytycznePoludnikowe = Section(
         Evaluate(sigxRcr, Qx, dwk, alphax, betax, etax, lambdax0, lambdax, lambdapx, chix, sigxRd),
-        AssertionLE("[1993-1-6] D.18 możliwości rezygnacji ze sprawdzania wyboczenia południkowego", this, r / t, 0.03 * (E / fy))
+        AssertionLE("[1993-1-6] D.18 możliwości rezygnacji ze sprawdzania wyboczenia południkowego",  r / t, 0.03 * (E / fy))
     )
 
     def naprezeniaKrytyczneRownoleznikowe = Section(
         Evaluate(sigtRcr, alphat, betat, etat, lambdat0, lambdat, lambdapt, chiteta, sigtRd),
-        AssertionLE("[1993-1-6] D.27 możliwości rezygnacji ze sprawdzania wyboczenia równoleżnikowego", this, r / t, 0.21 * (E / fy)),
+        AssertionLE("[1993-1-6] D.27 możliwości rezygnacji ze sprawdzania wyboczenia równoleżnikowego",  r / t, 0.21 * (E / fy)),
         Evaluate(kw)
     )
 
     def naprezeniaKrytyczneScinajace = Section(
-        AssertionRangeLELE("[1993-1-6] D.33 zastosowania współczynnika Cτ=1.0", this, 10, omega, 8.7 * (r / t)),
+        AssertionRangeLELE("[1993-1-6] D.33 zastosowania współczynnika Cτ=1.0",  10, omega, 8.7 * (r / t)),
         Evaluate(Ctau, tauxtRcr, alphatau, betatau, etatau, lambdatau0, lambdatau, lambdaptau, chitau, tauRd),
-        AssertionLE("[1993-1-6] D.40 możliwości rezygnacji ze sprawdzania wyboczenia przy ścinaniu", this, r / t, 0.16 * ((E / fy) ^ 0.67))
+        AssertionLE("[1993-1-6] D.40 możliwości rezygnacji ze sprawdzania wyboczenia przy ścinaniu",  r / t, 0.16 * ((E / fy) ^ 0.67))
     )
 
     def statecznoscKombinacja1 = Section(
         Evaluate(lR, lf, qwzd, NxEd1, MwEd, QtauEd1, sigmaxEd1, sigmatEd1, tauEd1, kx, kt, ktau, ki, zeta1),
-        AssertionLE("interakcji naprężeń [1993-1-6] 8.19", this, zeta1, 1)
+        AssertionLE("interakcji naprężeń [1993-1-6] 8.19",  zeta1, 1)
     )
 
     def statecznoscKombinacja2 = Section(
         Evaluate(NxEd2, MeEd, QtauEd2, sigmaxEd2, sigmatEd2, tauEd2, zeta2),
-        AssertionLE("interakcji naprężeń [1993-1-6] 8.19", this, zeta2, 1)
+        AssertionLE("interakcji naprężeń [1993-1-6] 8.19",  zeta2, 1)
     )
 
     def statecznoscLokalnaPodpory = Section(
         Evaluate(tp, tpp, s1, hpp, s2, ns, N1, sigmax1, sigmax1cr, lambdax1, chix1, sigxRd1, sigmax2),
-        AssertionLE("nośności lokalnej przy podporze", this, sigmax1, sigxRd1),
-        AssertionLE("nośności lokalnej przy podporze", this, sigmax2, sigxRd)
+        AssertionLE("nośności lokalnej przy podporze",  sigmax1, sigxRd1),
+        AssertionLE("nośności lokalnej przy podporze",  sigmax2, sigxRd)
     )
 
 }	

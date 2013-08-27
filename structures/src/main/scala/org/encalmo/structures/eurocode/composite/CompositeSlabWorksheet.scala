@@ -14,9 +14,9 @@ import org.encalmo.structures.eurocode.steel.IPESection
 import org.encalmo.structures.eurocode.steel.HeadedStud
 import org.encalmo.structures.eurocode.steel.Steel
 import org.encalmo.structures.eurocode.steel.FLORSTROP
-import org.encalmo.structures.CalculationDocument
+import org.encalmo.structures.Worksheet
 
-class CompositeSlabCalculationDocument extends CalculationDocument {
+class CompositeSlabWorksheet extends Worksheet("kz-strop") {
     
     import BasicSymbols._
     import SteelSymbols.{gammaM0,gammaM1}
@@ -24,8 +24,6 @@ class CompositeSlabCalculationDocument extends CalculationDocument {
     import ActionsSymbols.{gammaG,gammaQ}
     
     import CompositeSlabWithProfiledSheetingSymbols.{Gsk,qk,Fk,dmesh,sd}
-    
-    override val name = "kz-strop"
     
     //dane wejsciowe zadania
     val L1 = L|1 is "Rozpiętośc belki" unit SI.m := 15

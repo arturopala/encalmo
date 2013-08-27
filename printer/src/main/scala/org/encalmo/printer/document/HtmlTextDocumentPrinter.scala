@@ -176,7 +176,7 @@ div {padding:5pt 0 2pt 0}
                 }
             }
             case a:Assertion => {
-                val result = a.evaluate(results.formulaSetFor(a.calc).cache)
+                val result = a.evaluate(results.formulaSetFor(a.context).cache)
                 val s = Section(a.style,result._2:_*)
                 s.parent = a.parent
                 s.visit(visitor = this)

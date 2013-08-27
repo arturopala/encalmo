@@ -2,21 +2,19 @@ package org.encalmo.structures.eurocode.concrete
 
 import org.encalmo.expression._
 import org.encalmo.document._
-import org.encalmo.structures.{CalculationDocument, Predefined}
+import org.encalmo.structures.{Worksheet, Predefined}
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.actions.silos.ParticulateSolid
 import org.encalmo.structures.eurocode.actions.silos.RectangularSlenderSiloWithFlatBottom
 
-class RectangularConreteSiloCalculation extends CalculationDocument {
-
-    val name = "kb-silos"
+class RectangularConreteSiloCalculation extends Worksheet("kb-silos") {
 
     val solid = ParticulateSolid.Flyash
     val concrete = Concrete.C_20_25
     val reinforcement = ReinforcingSteel.B500SP
     val silos = new RectangularSlenderSiloWithFlatBottom("Silos prostokątny żelbetowy",5.7, 6.0, 12, 4.2, 0.2, 0.4, 0.25, solid, 3)
 
-    calc add silos
+    this add silos
 
     override val document = Document("",
         Predefined.stylesConfig,

@@ -10,11 +10,9 @@ import org.encalmo.fop.FOPHelper
 import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.actions.ActionsSymbols
-import org.encalmo.structures.CalculationDocument
+import org.encalmo.structures.Worksheet
 
-class DomeCalculationDocument extends CalculationDocument {
-    
-    override val name = "dome"
+class DomeWorksheet extends Worksheet("dome") {
         
     import BasicSymbols._
     import ConcreteSymbols._
@@ -23,8 +21,8 @@ class DomeCalculationDocument extends CalculationDocument {
     
     val concrete = Concrete.C_30_37
     val reinforcement = ReinforcingSteel.B500SP
-    calc add concrete
-    calc add reinforcement
+    this add concrete
+    this add reinforcement
     
     val r = BasicSymbols.r unit SI.m is "Promień rzutu kopuły"
 	val R = BasicSymbols.R unit SI.m is "Promień kopuły"
@@ -272,21 +270,21 @@ class DomeCalculationDocument extends CalculationDocument {
                         NumSection("Oddziaływania od obciążenia wiatrem",Evaluate(vbo,qbo,coz,cez,qpz,ze,we,cpi,wi,w))
                     ),
                     NumSection("Siły wewnętrzne w powłoce w stanie błonowym",
-                        NumSection("Funkcje sił wewnętrznych",Resolve(calc,Nφg,NΘg,Nφs,NΘs,Nφw,NφΘw,NΘw)),
+                        NumSection("Funkcje sił wewnętrznych",Expand(Nφg,NΘg,Nφs,NΘs,Nφw,NφΘw,NΘw)),
                         NumSection("Obliczenie sił na krawędzi dolnej",Evaluate(Nφ1,NΘ1,Nφ2,NΘ2)),
                         NumSection("Obliczenie sił na poziomie linii przejściowej",Evaluate(Nφ3,NΘ3,Nφ4,NΘ4,Nφ5,NΘ5)),
                         NumSection("Obliczenie sił na krawędzi górnej",Evaluate(Nφ6,NΘ6,Nφ7,NΘ7,Nφ8,NΘ8))
                     ),
                     NumSection("Siły w pierścieniu górnym",Evaluate(Sg)),
                     NumSection("Odkształcenie powłoki i reakcje utwierdzenia",
-                        NumSection("Funkcje odkształceń",Resolve(calc,Δrg,Δχg,Δrs,Δχs)),
+                        NumSection("Funkcje odkształceń",Expand(Δrg,Δχg,Δrs,Δχs)),
                         NumSection("Obliczenie odkształceń na krawędzi dolnej",Evaluate(Δrg1,Δχg1)),
                         NumSection("Siły reakcji od utwierdzenia krawędzi dolnej",Evaluate(kappa,Hg,Mg))
                     ),
                     NumSection("Wymiarowanie zbrojenia powłoki",
                         NumSection("Zbrojenie obwodowe rozciągane",
                                 Evaluate(NΘt1,Ac,sigt1),
-                                AssertionLE("naprężeń rozciągających w betonie",calc,sigt1,fctd),
+                                AssertionLE("naprężeń rozciągających w betonie",sigt1,fctd),
                                 Section(styleComment1,"Naprężenia rozciągające nie przekraczają wytrzymałości obliczeniowej betonu na rozciąganie. " +
                                 		"Sprawdzamy zbrojenie obwodowe #8mm jak dla warunku wytrzymałości stali zbrojeniowej:"),
                                 Evaluate(As1,as,nt1,dt1),
@@ -294,14 +292,14 @@ class DomeCalculationDocument extends CalculationDocument {
                          ),
                                 
                         NumSection("Zbrojenie południkowe ściskane ",Evaluate(Nφc1,sigc1),
-                            AssertionGE("naprężeń ściskających w betonie",calc,sigc1,-fcd),
+                            AssertionGE("naprężeń ściskających w betonie",sigc1,-fcd),
                             Section(styleComment1,"Naprężenia ściskające nie przekraczają wytrzymałości obliczeniowej betonu na ściskanie. " +
                             		"Przyjmujemy zbrojenie południkowe konstrukcyjne #8mm co 20cm")
                         )
                         
                     ),
                     NumSection("Stateczność powłoki",Evaluate(sigcr),
-                           AssertionGE("stateczności",calc,sigc1,sigcr/4) 
+                           AssertionGE("stateczności",sigc1,sigcr/4)
                     )
                 )
             )

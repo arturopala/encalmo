@@ -70,28 +70,28 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
 		            Text(style2,"test3")
 	            ),
 	    		Section(
-		            Resolve(calc1,d1)),
+		            Expand(d1)),
 	    		Section(
 		            Evaluate(d1+sin(4.126)),
-		            Evaluate(style1,calc1,d1+sin(4.126)),
-		            Evaluate(style2,calc1,d1+sin(4.126)),
-		            Evaluate(style2.fontBold,style2,calc1,d1+sin(4.126))),
+		            Evaluate(style1,d1+sin(4.126)),
+		            Evaluate(style2,d1+sin(4.126)),
+		            Evaluate(style2.fontBold,style2,d1+sin(4.126))),
 		        Section(
 		            Evaluate(expr4)(calc1)),
 	    		Section(
-		            Result(calc1,d1)),
+		            Result(d1)),
 	            Section(style2,
 		            Text("test1"),
 		            Text(style1,"test2"),
 		            Text(style2,"test3"),
 		            "Test expression output forms",
-		            Resolve(calc1,d2)),
+		            Expand(d2)),
 	    		Section(
-		            Resolve(calc1,d2)),
+		            Expand(d2)),
 	    		Section(
 		            Evaluate(d2)),
 	    		Section(
-		            Result(style1,calc1,d2)
+		            Result(style1,d2)
 	            ),
 	            Section("Section test 1a"),
 	            Section(style1,"Section test 2a"),
@@ -112,7 +112,7 @@ class XslFoTextDocumentPrinterTest extends AssertionsForJUnit  {
         				),
 	            		NumSection("NumSection test 3d"),
 	            		"Test expression 1:",
-	            		Resolve(calc1,d3),
+	            		Expand(d3),
 	            		"Test expression 2:",
 	            		Evaluate(expr1),
 			            Section("Section test 1a"),
@@ -152,9 +152,9 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	            		NumSection(style1,"Section test 2d"),
 	            		NumSection(style2,"Section test 3d"),
 	            		"Test expression 1:",
-	            		Evaluate(style2,calc1,d3),
+	            		Evaluate(style2,d3),
 	            		"Test expression 2:",
-	            		Evaluate(style2,calc1,expr1)
+	            		Evaluate(style2,expr1)
 	        		)
 	            ),
 	            NumSection(
@@ -165,9 +165,9 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	            		NumSection(style1,"Section test 2d"),
 	            		NumSection(style2,"Section test 3d"),
 	            		"Test expression 1:",
-	            		Evaluate(style2,calc1,d3),
+	            		Evaluate(style2,d3),
 	            		"Test expression 2:",
-	            		Evaluate(style2,calc1,expr1)
+	            		Evaluate(style2,expr1)
 	        		)
 	            )
             ),
@@ -188,9 +188,9 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	            		NumSection(style1,"Section test 2d"),
 	            		NumSection(style2,"Section test 3d"),
 	            		"Test expression 1:",
-	            		Evaluate(style2,calc1,d3),
+	            		Evaluate(style2,d3),
 	            		"Test expression 2:",
-	            		Evaluate(style2,calc1,expr1)
+	            		Evaluate(style2,expr1)
 	        		)
 	            ),
 	            NumSection(style3,
@@ -201,9 +201,9 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	            		NumSection(style1,"Section test 2d"),
 	            		NumSection(style2,"Section test 3d"),
 	            		"Test expression 1:",
-	            		Evaluate(style2,calc1,d3),
+	            		Evaluate(style2,d3),
 	            		"Test expression 2:",
-	            		Evaluate(style2,calc1,expr1)
+	            		Evaluate(style2,expr1)
 	        		)
 	            )
             )

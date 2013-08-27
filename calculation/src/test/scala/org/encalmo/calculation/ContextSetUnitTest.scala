@@ -21,32 +21,32 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		calc(y) = 4
 		calc(z) = 0
 		
-		val r_a1 = calc.resolve(context1.a).eval()
+		val r_a1 = calc.expand(context1.a).eval()
 		assertEquals(Number(14),r_a1)
-        val r_b1 = calc.resolve(context1.b).eval()
+        val r_b1 = calc.expand(context1.b).eval()
 		assertEquals(Number(12),r_b1)
-        val r_c1 = calc.resolve(context1.c).eval()
+        val r_c1 = calc.expand(context1.c).eval()
 		assertEquals(Number(5),r_c1)
-        val r_d1 = calc.resolve(context1.d).eval()
+        val r_d1 = calc.expand(context1.d).eval()
 		assertEquals(Number(10),r_d1)
-        val r_11 = calc.resolve(context1.a * context1.b + context1.d).eval()
+        val r_11 = calc.expand(context1.a * context1.b + context1.d).eval()
 		assertEquals(Number(178),r_11)
 
-        val r_a2 = calc.resolve(context2.a).eval()
+        val r_a2 = calc.expand(context2.a).eval()
 		assertEquals(Number(10),r_a2)
-        val r_b2 = calc.resolve(context2.b).eval()
+        val r_b2 = calc.expand(context2.b).eval()
 		assertEquals(Number(6),r_b2)
-        val r_c2 = calc.resolve(context2.c).eval()
+        val r_c2 = calc.expand(context2.c).eval()
 		assertEquals(Number(3.605551275),r_c2)
-        val r_d2 = calc.resolve(context2.d).eval()
+        val r_d2 = calc.expand(context2.d).eval()
 		assertEquals(Number(7.211102550),r_d2)
-        val r_12 = calc.resolve(context2.a * context2.b + context2.d).eval()
+        val r_12 = calc.expand(context2.a * context2.b + context2.d).eval()
 		assertEquals(Number(67.21110255),r_12)
 
-        assertEquals(Number(14),calc.resolve(context1.a).eval())
-        assertEquals(Number(12),calc.resolve(context1.b).eval())
-        assertEquals(Number(10),calc.resolve(context2.a).eval())
-        assertEquals(Number(6),calc.resolve(context2.b).eval())
+        assertEquals(Number(14),calc.expand(context1.a).eval())
+        assertEquals(Number(12),calc.expand(context1.b).eval())
+        assertEquals(Number(10),calc.expand(context2.a).eval())
+        assertEquals(Number(6),calc.expand(context2.b).eval())
     }
 	
 	@Test def testContextSet2() {
@@ -59,7 +59,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		calc(z) = 0
 		context1(a) = a
 		
-		val r_a1 = calc.resolve(a)
+		val r_a1 = calc.expand(a)
 		assertEquals(a,r_a1)
     }
 	
@@ -72,10 +72,10 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		calc(y) = 4
 		calc(z) = 0
 		context1(a) = pi*b
-		val r_a1 = calc.resolve(a)
+		val r_a1 = calc.expand(a)
 		assertEquals(pi*b,r_a1)
         context1(b) = 2*c
-		val r_a2 = calc.resolve(a)
+		val r_a2 = calc.expand(a)
 		//assertEquals(pi*(2*c),r_a2);
 	}
 	
@@ -91,7 +91,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		context1(a) = 2*b
 		context1(b) = 2*c
 		context1(c) = a/4
-        val r_a3 = calc.resolve(a)
+        val r_a3 = calc.expand(a)
         assertEquals(a,r_a3)
 	}
 	
@@ -105,7 +105,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		calc(z) = 0
 		val r_a1 = calc.evaluate(context1.a)
 		assertEquals(Number(14),r_a1)
-        val r_a2 = calc.resolve(context1.a)
+        val r_a2 = calc.expand(context1.a)
 		assertEquals(Sum(Prod(Number(2),Number(3)),Prod(Number(2),Quot(Number(4),Number(1)))),r_a2)
     }
 	
@@ -117,7 +117,7 @@ class ContextSetUnitTest extends AssertionsForJUnit {
 		calc(x) = 3
 		calc(y) = 4
 		calc(z) = 0
-		val r_a2 = calc.resolve(context1.a)
+		val r_a2 = calc.expand(context1.a)
 		assertEquals(Sum(Prod(Number(2),Number(3)),Prod(Number(2),Quot(Number(4),Number(1)))),r_a2)
         val r_a1 = calc.evaluate(context1.a)
 		assertEquals(Number(14),r_a1)

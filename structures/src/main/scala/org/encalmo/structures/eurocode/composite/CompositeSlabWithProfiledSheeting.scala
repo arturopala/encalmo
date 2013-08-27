@@ -236,10 +236,10 @@ extends Calculation(name) {
 	
 	def info = NumSection(TextToTranslate("CompositeSlabWithProfiledSheeting",CompositeSlabWithProfiledSheetingSymbols.dictionary),
 		Evaluate(l,nsp,h,hc),
-		AssertionGE("EN 1994-1-1 3.5(2)",this,t, Number(0.7,SI.mm)),
-		AssertionLE("EN 1994-1-1 9.1.1(2)",this,br/bs,0.6),
-		AssertionGE("EN 1994-1-1 9.2.1(2)",this,h,Number(90,SI.mm)),
-		AssertionGE("EN 1994-1-1 9.2.1(2)",this,hc,Number(50,SI.mm))
+		AssertionGE("EN 1994-1-1 3.5(2)",t, Number(0.7,SI.mm)),
+		AssertionLE("EN 1994-1-1 9.1.1(2)",br/bs,0.6),
+		AssertionGE("EN 1994-1-1 9.2.1(2)",h,Number(90,SI.mm)),
+		AssertionGE("EN 1994-1-1 9.2.1(2)",hc,Number(50,SI.mm))
 	)
 	
 	def LOAD1 = Evaluate(gammaG,gammaQ,Gcck,Gccd,Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Qk1,Qd1)
@@ -247,34 +247,34 @@ extends Calculation(name) {
 	def ULS1 = NumSection(TextToTranslate("ULS","eurocode"),
 		NumSection("Sprawdzenie nośności na zginanie w fazie montażu",
 			Evaluate(MEdmm,MRdm),
-			AssertionLE("nośności na zginanie",this,abs(MEdmm/MRdm),1),
+			AssertionLE("nośności na zginanie",abs(MEdmm/MRdm),1),
 			Evaluate(MEdmp,MRdp),
-			AssertionLE("nośności na zginanie",this,abs(MEdmp/MRdp),1)
+			AssertionLE("nośności na zginanie",abs(MEdmp/MRdp),1)
 		),
 		NumSection("Sprawdzenie nośności na ścinanie w fazie montażu",
 			sheet.web,
 			sheet.shearForce,
 			Evaluate(VEdm,VwRd),
-			AssertionLE("nośności na ścinanie",this,abs(VEdm/VwRd),1),
-			AssertionLE("braku interakcji ścinania i zginania",this,abs(VEdm),0.5*VwRd)
+			AssertionLE("nośności na ścinanie",abs(VEdm/VwRd),1),
+			AssertionLE("braku interakcji ścinania i zginania",abs(VEdm),0.5*VwRd)
 		),
 		NumSection("Sprawdzenie obciążenia miejscowego siłą poprzeczną nad podporą pośrednią wg PN-EN 1993-1-3",
-			AssertionL("6.1.7.3(1)",this,r/t,10),
-			AssertionL("6.1.7.3(1)",this,hw/t,200*sin(Phi)),
-			AssertionRangeLL("6.1.7.3(1)",this,45,Phi,90),
+			AssertionL("6.1.7.3(1)",r/t,10),
+			AssertionL("6.1.7.3(1)",hw/t,200*sin(Phi)),
+			AssertionRangeLL("6.1.7.3(1)",45,Phi,90),
 			Evaluate(VEdm1,VEdm2,alpha,betav,ss,la,Rw1Rd,RwRd,FEdm),
-			AssertionLE("nośności na miejscową siłą poprzeczną",this,abs(FEdm/RwRd),1)
+			AssertionLE("nośności na miejscową siłą poprzeczną",abs(FEdm/RwRd),1)
 		),
 		NumSection("Sprawdzenie interakcji momentu zginającego i obciążenia lokalnego nad podporą wg PN-EN 1993-1-3",
-			AssertionL("6.1.11(1)",this,abs(MEdmm/MRdm)+abs(FEdm/RwRd),1.25)
+			AssertionL("6.1.11(1)",abs(MEdmm/MRdm)+abs(FEdm/RwRd),1.25)
 		)
 	)
 	
 	def SLS1 = NumSection(TextToTranslate("SLS","eurocode"),
 		Evaluate(MEkm1,deltasm,MEkm2,deltam),
-		AssertionLE("EN 1994-1-1 9.3.2(2)",this,deltasm,h/10),
-		AssertionLE("EN 1994-1-1 9.6(2)",this,deltasm,l/180),
-		AssertionLE("EN 1993-1-1 NA.22 7.2.1(1)B",this,deltam,l/150)
+		AssertionLE("EN 1994-1-1 9.3.2(2)",deltasm,h/10),
+		AssertionLE("EN 1994-1-1 9.6(2)",deltasm,l/180),
+		AssertionLE("EN 1993-1-1 NA.22 7.2.1(1)B",deltam,l/150)
 	)
 	
 	def LOAD2 = Evaluate(gammaG,gammaQ,Gck,Gcd,Gsk,Gsd,qk,qd,SigmaQk,SigmaQd,SigmaGk,SigmaGd,Qk2,Qd2,DeltaQk,DeltaQd,Fk,Fd)
@@ -282,37 +282,37 @@ extends Calculation(name) {
 	def ULS2 = NumSection(TextToTranslate("ULS","eurocode"),
 		NumSection("Sprawdzenie nośności na zginanie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.2",
 			Evaluate(MEdep,xpl),
-			AssertionLE("usytuowania osi obojętnej",this,xpl,hc),
+			AssertionLE("usytuowania osi obojętnej",xpl,hc),
 			Evaluate(dp,Np,z,MplRd),
-			AssertionLE("nośności na zginanie w fazie eksploatacji",this,abs(MEdep/MplRd),1)
+			AssertionLE("nośności na zginanie w fazie eksploatacji",abs(MEdep/MplRd),1)
 		),
 		NumSection("Sprawdzenie nośności na rozwarstwienie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.3",
 			Evaluate(VEde,mV,kV,gammaVs,Ls,V1Rd),
-			AssertionLE("nośności na rozwarstwienie",this,abs(VEde/V1Rd),1)
+			AssertionLE("nośności na rozwarstwienie",abs(VEde/V1Rd),1)
 		),
 		NumSection("Sprawdzenie nośności na ścinanie poprzeczne w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.5(1) i PN-EN 1992-1-1 pkt. 6.2.2",
 			Evaluate(dv,kv,vmin,VRdc),
-			AssertionLE("nośności na ścinanie",this,abs(VEde/VRdc),1),
-			AssertionLE("EN 1992-1-1 (6.5)",this,VEde,(0.5*dv*fcd*(0.6*(1-(fck/Number(250,SI.MPa))))).setunit("kN/m"))
+			AssertionLE("nośności na ścinanie",abs(VEde/VRdc),1),
+			AssertionLE("EN 1992-1-1 (6.5)",VEde,(0.5*dv*fcd*(0.6*(1-(fck/Number(250,SI.MPa))))).setunit("kN/m"))
 		),
 		NumSection("Sprawdzenie nośności na przebicie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.6(1) i PN-EN 1992-1-1 pkt.6.4.4",
 			Evaluate(ap,bp,cp,VpRd,Qvd),
-			AssertionLE("nośności na przebicie",this,abs(Qvd/VpRd),1)
+			AssertionLE("nośności na przebicie",abs(Qvd/VpRd),1)
 		)
 	)
 	
 	def SLS2 = NumSection(TextToTranslate("SLS","eurocode"),
 		NumSection("Sprawdzenie braku zarysowania betonu na podporami wg PN-EN 1994-1-1 pkt. 9.8.1",
 			Evaluate(Asmin,dmesh,sd,sdmax),
-			AssertionLE("minimalnego zbrojenia na zarysowanie nad podporą",this,sd,sdmax)
+			AssertionLE("minimalnego zbrojenia na zarysowanie nad podporą",sd,sdmax)
 		),
 		NumSection("Sprawdzenie braku zarysowania betonu w przęśle od obciążeń przyłożonych po zespoleniu wg PN-EN 1994-1-1 pkt. 9.8.2(3)",
 			Evaluate(Eceff2,nE,e0,I0,W0,Mk,sigmactplus),
-			AssertionLE("braku zarysowania przekroju",this,sigmactplus,fctm)
+			AssertionLE("braku zarysowania przekroju",sigmactplus,fctm)
 		),
 		NumSection("Sprawdzenie ugięcia całkowitego",
 			Evaluate(deltae,deltamax),
-			AssertionLE("ugięcia całkowitego",this,deltamax,l/250)
+			AssertionLE("ugięcia całkowitego",deltamax,l/250)
 		)
 	)
 	

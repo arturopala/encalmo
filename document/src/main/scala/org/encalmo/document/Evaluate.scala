@@ -12,10 +12,9 @@ class Evaluate(
         customStyle:Style,
         val styleOfResolved:Style, 
         val styleOfEvaluated:Style, 
-        val isPrintDescription:Boolean, 
-        context: Context,
-        expressions:Expression*) 
-extends BlockExpr(customStyle,context,expressions:_*){
+        val isPrintDescription:Boolean,
+        expressions:Expression*)(implicit context: Context)
+extends BlockExpr(customStyle,expressions:_*){
 	
 	override def toString = "Evaluate("+customStyle+","+styleOfResolved+","+styleOfEvaluated+","+context+","+expressions.mkString(",")+")"
 	
@@ -27,24 +26,24 @@ extends BlockExpr(customStyle,context,expressions:_*){
  */
 object Evaluate {
 	
-	def apply(customStyle:Style, styleOfResolved:Style, styleOfEvaluated:Style, calc:Calculation, expressions:Expression*) = {
-		new Evaluate(customStyle,styleOfResolved,styleOfEvaluated,true,calc,expressions:_*)
+	def apply(customStyle:Style, styleOfResolved:Style, styleOfEvaluated:Style, expressions:Expression*)(implicit context: Context) = {
+		new Evaluate(customStyle,styleOfResolved,styleOfEvaluated,true,expressions:_*)(context)
 	}
 	
-	def apply(customStyle:Style, style2:Style, calc:Calculation, expressions:Expression*) = {
-		new Evaluate(customStyle,style2,style2,true,calc,expressions:_*)
+	def apply(customStyle:Style, style2:Style, expressions:Expression*)(implicit context: Context) = {
+		new Evaluate(customStyle,style2,style2,true,expressions:_*)(context)
 	}
 	
-	def apply(customStyle:Style, calc:Calculation, expressions:Expression*) = {
-		new Evaluate(customStyle,customStyle,customStyle,true,calc,expressions:_*)
+	def apply(customStyle:Style, expressions:Expression*)(implicit context: Context) = {
+		new Evaluate(customStyle,customStyle,customStyle,true,expressions:_*)(context)
 	}
 	
 	def apply(expressions:Expression*)(implicit context: Context) = {
-        new Evaluate(null,null,null,true,context,expressions:_*)
+        new Evaluate(null,null,null,true,expressions:_*)(context)
     }
 	
-	def apply(isPrintDescription:Boolean, calc:Calculation, expressions:Expression*) = {
-		new Evaluate(null,null,null,isPrintDescription,calc,expressions:_*)
+	def apply(isPrintDescription:Boolean, expressions:Expression*)(implicit context: Context) = {
+		new Evaluate(null,null,null,isPrintDescription,expressions:_*)(context)
 	}
 	
 	def unapply(e:Evaluate) = Some(e.myStyle,e.styleOfResolved,e.styleOfEvaluated,e.context,e.expressions)
