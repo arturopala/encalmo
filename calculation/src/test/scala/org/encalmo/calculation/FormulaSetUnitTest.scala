@@ -10,7 +10,7 @@ class FormulaSetUnitTest extends AssertionsForJUnit {
   @Test def shouldAppendFormulasToFormulaSet = {
     import BasicSymbols._
     //given
-    val formulaSet = new FormulaSet("0")
+    val formulaSet = new FormulaSet()
     //when
     val f1: Formula = Formula(Seq(FormulaPart(a, FormulaPosition.LEFT), FormulaPart(b, FormulaPosition.RIGHT)))
     formulaSet put f1

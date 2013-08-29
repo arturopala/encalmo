@@ -20,6 +20,10 @@ object TextToTranslate{
 	def apply(text:String, dictionary:String) = {
 		new TextToTranslate(null,text,dictionary)
 	}
+
+    def apply(text:String, dictionary:Option[String]) = {
+        new TextToTranslate(null,text,dictionary.getOrElse(null))
+    }
 	
 	def unapply(t:TextToTranslate) = Some((t.myStyle,t.text,t.dictionary))
 	

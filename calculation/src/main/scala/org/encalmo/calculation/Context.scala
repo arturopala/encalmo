@@ -7,7 +7,7 @@ import scala.annotation.tailrec
 /** 
  * Expression's calculation context trait
  */
-trait Context {
+trait Context extends SymbolConfigurator {
     
     val MAX_MAP_ALL_LOOP_COUNT:Int = 256
 
@@ -47,13 +47,20 @@ trait Context {
 
     /** Returns expression pinned to the context */
     def apply(s:Symbol):PinnedExpression = PinnedExpression(this,s)
+
+    def ifValue(expression: Expression): Option[Value] = expression match {
+        case value: Value => Some(value)
+        case _ => None
+    }
 	
 	/**
 	 * Expands symbols to their mapped expressions.
 	 */
 	def expand(expression: Expression)(implicit cache: ResultsCache):Expression = {
         try {
-            map(expression,expander(cache))
+            ifValue(expression).getOrElse {
+                map(expression,expander(cache))
+            }
         }
         catch {
             case exception:Exception => {
@@ -68,12 +75,14 @@ trait Context {
 	 */
 	def substitute(expression: Expression)(implicit cache: ResultsCache):Expression = {
         try {
-            map(expression match {
-                case symbol: Symbol => getExpression(symbol) getOrElse symbol
-                case other => other
-            },substitutor(cache)) match {
-                case evalAt: EvalAt => substitute(evalAt.substitute)(cache)
-                case other => other
+            ifValue(expression).getOrElse {
+                map(expression match {
+                    case symbol: Symbol => getExpression(symbol) getOrElse symbol
+                    case other => other
+                },substitutor(cache)) match {
+                    case evalAt: EvalAt => substitute(evalAt.substitute)(cache)
+                    case other => other
+                }
             }
         }
         catch {
@@ -94,6 +103,7 @@ trait Context {
         }
         try {
             expression match {
+                case value: Value => value
                 case symbol: Symbol => {
                     cache.get(symbol) getOrElse {
                         val result = evaluateRaw
@@ -117,7 +127,9 @@ trait Context {
      */
     def partiallyEvaluate(expression: Expression)(implicit cache: ResultsCache = new ResultsCache()):Expression = {
         try {
-            map(expression, partialEvaluator(cache))
+            ifValue(expression).getOrElse {
+                map(expression, partialEvaluator(cache))
+            }
         }
         catch {
             case exc:Exception => {
@@ -149,6 +161,7 @@ trait Context {
 	 * Expends symbols to their mapped expressions
 	 */
 	private def expander(cache: ResultsCache):Transformation = {
+        case value: Value => value
 		case s:Symbol => this.getExpression(s).getOrElse(s)
 		case de:DynamicExpression => de.f(cache)
 		case e => e
@@ -169,6 +182,7 @@ trait Context {
 	 * Evaluates expressions.
 	 */
 	private def evaluator(cache: ResultsCache):Transformation = {
+        case value: Value => value
         case s:Symbol => this.getExpression(s, cache) match {
             case Some(x) => x match {
                 case v: Value => v
@@ -178,6 +192,7 @@ trait Context {
             case None => s
         }
 		case de:DynamicExpression => de.f(cache)
+        case pinned: PinnedExpression => pinned.context.evaluate(pinned.symbol)(cache)
 		case sl:SymbolLike => sl.eval()
 		case e => e.eval()
 	}
@@ -187,9 +202,11 @@ trait Context {
 	 * Substitutes symbols with their evaluated values.
 	 */
 	private def substitutor(cache: ResultsCache):Transformation = {
+        case value: Value => value
 		case symbol: Symbol => evaluate(symbol)(cache)
 		case dynamic: DynamicExpression => dynamic.f(cache)
-		case symbolLike: SymbolLike => symbolLike.eval()
+        case pinned: PinnedExpression => pinned.context.evaluate(pinned.symbol)(cache)
+        case symbolLike: SymbolLike => symbolLike.eval()
 		case selection: Selection => selection.trim
 		case evalAt: EvalAt => evalAt.substitute
 		case other => other
@@ -200,6 +217,7 @@ trait Context {
      * Partially evaluates expressions.
      */
     private def partialEvaluator(cache: ResultsCache):Transformation = {
+        case value: Value => value
         case o: Operation2 => {
             o.copy(evaluate(o.l)(cache), evaluate(o.r)(cache))
         }

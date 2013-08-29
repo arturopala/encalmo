@@ -1,49 +1,44 @@
 package org.encalmo.structures.eurocode.actions.silos
 
 import org.encalmo.expression._
-import org.encalmo.calculation.MapContext
-import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.SymbolConfigurator
+import org.encalmo.calculation.{MapContext,Catalog}
 import org.encalmo.document._
 
 // The European Standard EN 1991-4:2006 
 // Eurocode 1 — Actions on structures — Part 4: Silos and tanks
 
 /** ParticulateSolid symbols */
-object ParticulateSolidSymbols extends SymbolConfigurator {
-
-	val dictionary, contextId = "particulateSolid"
-	  
+trait ParticulateSolidSymbols extends SymbolConfigurator {
 	// particulate solid properties
 	
 	/** Bulk unit weight (lower) */
-	lazy val gammal = symbol(BasicSymbols.gamma|"l") unit "kN/m3"
+	val gammal = symbol(BasicSymbols.gamma|"l") unit "kN/m3"
 	/** Bulk unit weight (upper) */
-    lazy val gammau = symbol(BasicSymbols.gamma|"u") unit "kN/m3"
+    val gammau = symbol(BasicSymbols.gamma|"u") unit "kN/m3"
     /** angle of repose of a particulate solid (conical pile) */
-    lazy val fir = symbol(BasicSymbols.phi|"r") unit "°"
+    val fir = symbol(BasicSymbols.phi|"r") unit "°"
     /** Angle of internal friction (mean) */
-    lazy val fiim = symbol(BasicSymbols.phi|"im") unit "°"
+    val fiim = symbol(BasicSymbols.phi|"im") unit "°"
     /** Angle of internal friction (factor) */
-    lazy val afi = symbol(BasicSymbols.a|BasicSymbols.phi)
+    val afi = symbol(BasicSymbols.a|BasicSymbols.phi)
     /** Lateral pressure ratio (mean) */
-    lazy val Km = symbol(BasicSymbols.K|"m") 
+    val Km = symbol(BasicSymbols.K|"m") 
     /** Lateral pressure ratio (factor) */
-    lazy val aK = symbol(BasicSymbols.a|BasicSymbols.K) 
+    val aK = symbol(BasicSymbols.a|BasicSymbols.K) 
     /** Coefficient of wall friction (D1) */
-    lazy val mum1 = symbol(BasicSymbols.mu|("m","D1")) 
+    val mum1 = symbol(BasicSymbols.mu|("m","D1")) 
     /** Coefficient of wall friction (D2) */
-    lazy val mum2 = symbol(BasicSymbols.mu|("m","D2")) 
+    val mum2 = symbol(BasicSymbols.mu|("m","D2")) 
     /** Coefficient of wall friction (D3) */
-    lazy val mum3 = symbol(BasicSymbols.mu|("m","D3")) 
+    val mum3 = symbol(BasicSymbols.mu|("m","D3")) 
     /** Coefficient of wall friction */
-    lazy val mum = symbol(BasicSymbols.mu|"m") 
+    val mum = symbol(BasicSymbols.mu|"m") 
     /** Coefficient of wall friction (factor) */
-    lazy val amu = symbol(BasicSymbols.a|BasicSymbols.mu) 
+    val amu = symbol(BasicSymbols.a|BasicSymbols.mu) 
     /** Patch load solid reference factor */
-    lazy val Cop = symbol(BasicSymbols.C|"op") 
+    val Cop = symbol(BasicSymbols.C|"op") 
     /** Wall type (1,2,3) */
-    lazy val D = symbol(BasicSymbols.D)
+    val D = symbol(BasicSymbols.D)
     
     // characteristic values
     
@@ -60,26 +55,6 @@ object ParticulateSolidSymbols extends SymbolConfigurator {
     /** Angle of internal friction (lower characteristic value) */
     val fi_l = symbol(BasicSymbols.phi|("i","l")) unit "°" acc 0.1
    
-}
-
-/** ParticulateSolid expressions */
-object ParticulateSolidExpressions extends MapContext {
-
-	import ParticulateSolidSymbols._
-	
-	// coefficient of wall friction selection
-	this(mum) = mapChoice(ParticulateSolidSymbols.D,Map(Number(1) -> mum1, Number(2) -> mum2, Number(3) -> mum3))
-	
-	// characteristic values expressions
-	this(K_u) = Km*aK
-	this(K_l) = Km/aK
-	this(mu_u) = mum*amu
-	this(mu_l) = mum/amu
-	this(fi_u) = fiim*afi
-	this(fi_l) = fiim/afi
-	
-	// end of context initialization
-	lock()
 }
 
 /** 
@@ -101,11 +76,7 @@ class ParticulateSolid(
 	v_amu:Expression, 
 	v_Cop:Expression
 )
-extends Calculation(name) {
-
-	import ParticulateSolidSymbols._
-	
-	this add ParticulateSolidExpressions
+extends MapContext("particulateSolid") with ParticulateSolidSymbols {
 	
 	this(gammal) = v_gammal
 	this(gammau) = v_gammau
@@ -119,23 +90,31 @@ extends Calculation(name) {
 	this(mum3) = v_mum3
 	this(amu) = v_amu
 	this(Cop) = v_Cop
+
+    // coefficient of wall friction selection
+    this(mum) = mapChoice(D,Map(Number(1) -> mum1, Number(2) -> mum2, Number(3) -> mum3))
+
+    // characteristic values expressions
+    this(K_u) = Km*aK
+    this(K_l) = Km/aK
+    this(mu_u) = mum*amu
+    this(mu_l) = mum/amu
+    this(fi_u) = fiim*afi
+    this(fi_l) = fiim/afi
 	
-	def properties = NumSection(TextToTranslate("_properties",ParticulateSolidSymbols.dictionary),"(",TextToTranslate(name,ParticulateSolidSymbols.dictionary),")",
+	def properties = NumSection(TextToTranslate("_properties",dictionary),"(",TextToTranslate(name,dictionary),")",
 		Evaluate(gammal,gammau,fir,fiim,afi,Km,aK,mum1,mum2,mum3,amu,Cop)
 	)
 	
-	def characteristicValues = NumSection(TextToTranslate("_characteristicValues",ParticulateSolidSymbols.dictionary),
+	def characteristicValues = NumSection(TextToTranslate("_characteristicValues",dictionary),
 	    Evaluate(D,mum,K_u,K_l,mu_u,mu_l,fi_u,fi_l)
 	)
 }	
 
 /** Particulate solid library provided by EN 1991-4:2006 (E) */
-object ParticulateSolid {
-
-
-    def apply(s:String):ParticulateSolid = map.get(s).map(x => x()).getOrElse(throw new IllegalStateException)
+object ParticulateSolid extends Catalog[ParticulateSolid]("Particulate Solid") {
 	
-	lazy val map = Map[String,()=>ParticulateSolid](
+	override val map = Map[String,()=>ParticulateSolid](
 		"Default" -> Default _,
 		"Aggregate" -> Aggregate _,
 		"Alumina" -> Alumina _,

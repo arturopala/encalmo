@@ -8,7 +8,9 @@ import java.util.UUID
 /** 
  * Calculation is a hierarchical, mutable context for expressions.
  */
-class Calculation(val name: String) extends MapContext with MutableContextSeq {
+class Calculation(val name: String, dictionary: Option[String] = None) extends MapContext(dictionary) with MutableContextSeq {
+
+    def this(name: String, dict: String) = this(name,Option(dict))
 
     def label:Expression = text(name)
 

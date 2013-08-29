@@ -4,59 +4,47 @@ import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document.{Evaluate, TextToTranslate, NumSection}
 
-object IBeamSectionSymbols extends SymbolConfigurator {
+trait IBeamSectionSymbols extends SymbolConfigurator {
 
-    val dictionary, contextId = "section_ibeam"
+    val ibeamDict = "section_ibeam"
 
-    val ID = symbol("ID").makeNonPrintable
+    val ID = symbol("ID").makeNonPrintable dict ibeamDict
     //Dimensions for detailing
-    val tw = symbol(BasicSymbols.t|BasicSymbols.w) unit "mm"
-    val tf = symbol(BasicSymbols.t|BasicSymbols.f) unit "mm"
-    val r = symbol(BasicSymbols.r) unit "mm"
-    val r2 = symbol(BasicSymbols.r|2) unit "mm"
-    val hw = symbol(BasicSymbols.h|BasicSymbols.w) unit "mm"
-    val bf = symbol(BasicSymbols.b|BasicSymbols.f) unit "mm"
-    val hd = symbol(BasicSymbols.h|BasicSymbols.d) unit "mm"
-    val ss = symbol(BasicSymbols.s|BasicSymbols.s) unit "mm"
-    val pmin = symbol(BasicSymbols.p|"min") unit "mm"
-    val pmax = symbol(BasicSymbols.p|"max") unit "mm"
-    val phi = symbol(BasicSymbols.phi) unit "mm"
+    val tw = symbol(BasicSymbols.t|BasicSymbols.w) unit "mm" dict ibeamDict
+    val tf = symbol(BasicSymbols.t|BasicSymbols.f) unit "mm" dict ibeamDict
+    val r = symbol(BasicSymbols.r) unit "mm" dict ibeamDict
+    val r2 = symbol(BasicSymbols.r|2) unit "mm" dict ibeamDict
+    val hw = symbol(BasicSymbols.h|BasicSymbols.w) unit "mm" dict ibeamDict
+    val bf = symbol(BasicSymbols.b|BasicSymbols.f) unit "mm" dict ibeamDict
+    val hd = symbol(BasicSymbols.h|BasicSymbols.d) unit "mm" dict ibeamDict
+    val ss = symbol(BasicSymbols.s|BasicSymbols.s) unit "mm" dict ibeamDict
+    val pmin = symbol(BasicSymbols.p|"min") unit "mm" dict ibeamDict
+    val pmax = symbol(BasicSymbols.p|"max") unit "mm" dict ibeamDict
+    val phi = symbol(BasicSymbols.phi) unit "mm" dict ibeamDict
     //Classification ENV 1993-1-1
-    val ctf = symbol("c/t"|"f")
-    val ctw = symbol("c/t"|"w")
+    val ctf = symbol("c/t"|"f") dict ibeamDict
+    val ctw = symbol("c/t"|"w") dict ibeamDict
         
 }
 
-object IBeamSectionExpressions extends MapContext {
-	
-	import SectionSymbols._
-	import IBeamSectionSymbols._
-	
-	this(Wzd) = Wz
-	this(Wzg) = Wz
-	this(Wyd) = Wy
-	this(Wyg) = Wy
-	this(hw) = h-2*tf
-	this(bf) = (b-tw)/2
-	this(ctf) = (bf-r)/tf
-	this(ctw) = (hw-2*r)/tw
-	this(AVz) = max(A-2*b*tf+(tw+2*r)*tf,1.2*hw*tw)
-
-}
-
 /** Section's shape trait */
-class IBeamSection(name:String, val beamType: String) extends Section(name) {
-
-	import SectionSymbols._
-	import IBeamSectionSymbols._
-	
-	this add IBeamSectionExpressions
+class IBeamSection(name:String, val sectionType: String) extends Section(name) with IBeamSectionSymbols {
 	
 	this(ID) = text(name)
 
-    override def label = this(ID)
+    this(Wzd) = Wz
+    this(Wzg) = Wz
+    this(Wyd) = Wy
+    this(Wyg) = Wy
+    this(hw) = h-2*tf
+    this(bf) = (b-tw)/2
+    this(ctf) = (bf-r)/tf
+    this(ctw) = (hw-2*r)/tw
+    this(AVz) = max(A-2*b*tf+(tw+2*r)*tf,1.2*hw*tw)
 
-	def info = NumSection(TextToTranslate(beamType,IBeamSectionSymbols.dictionary),name,
+    def label = this(ID)
+
+	def info = NumSection(TextToTranslate(sectionType,ibeamDict),name,
 		Evaluate(h,b,tw,tf,hw,bf,A,Iy,Iz,Wy,Wz,Wypl,Wzpl,m)
 	)
 	

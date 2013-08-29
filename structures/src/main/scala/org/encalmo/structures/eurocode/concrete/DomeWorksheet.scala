@@ -15,14 +15,16 @@ import org.encalmo.structures.Worksheet
 class DomeWorksheet extends Worksheet("dome") {
         
     import BasicSymbols._
-    import ConcreteSymbols._
-    import SI.{mm,mm2,cm,cm2,kN,MPa}
-    import ReinforcingSteelSymbols.{fyd,Es}
+    import SI.{mm}
     
     val concrete = Concrete.C_30_37
     val reinforcement = ReinforcingSteel.B500SP
+
     this add concrete
     this add reinforcement
+
+    import concrete._
+    import reinforcement.{fyd}
     
     val r = BasicSymbols.r unit SI.m is "Promień rzutu kopuły"
 	val R = BasicSymbols.R unit SI.m is "Promień kopuły"

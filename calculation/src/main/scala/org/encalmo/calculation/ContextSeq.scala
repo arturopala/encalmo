@@ -1,6 +1,5 @@
 package org.encalmo.calculation
 
-import scala.annotation.tailrec
 import org.encalmo.expression._
 
 /** 
@@ -13,22 +12,14 @@ trait ContextSeq extends Context {
     /**
      * Returns expression mapped to that symbol or None
      */
-    override def getExpression(s:Symbol):Option[Expression] = findNestedExpression(s,contexts.iterator)
+    override def getExpression(s:Symbol):Option[Expression] = findNestedExpression(s/*,contexts.iterator*/)
     
     /**
      * Resolves symbol in nested contexts
      */
-    @tailrec
-    protected final def findNestedExpression(s:Symbol, it:Iterator[Context] = contexts.iterator):Option[Expression] = {
-        if(!it.hasNext) None
-        else {
-            val rawExpr = it.next().getExpression(s)
-            if(rawExpr.isDefined) {
-                rawExpr
-            } else {
-                findNestedExpression(s,it)
-            }
-        }
+    protected final def findNestedExpression(s:Symbol/*, it:Iterator[Context] = contexts.iterator*/):Option[Expression] = {
+        contexts.foreach(_.getExpression(s).map(e => return Some(e)))
+        None
     }
     
     override def hasExpression(s:Symbol):Boolean = hasNestedExpression(s)

@@ -5,10 +5,9 @@ import org.encalmo.calculation._
 import org.encalmo.document._
 
 /** ReinforcingSteel symbols */
-object ReinforcingSteelSymbols extends SymbolConfigurator {
+trait ReinforcingSteelSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
-	val dictionary, contextId = "reinforcing_steel"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
 	val Es = symbol(BasicSymbols.E|"s") unit SI.GPa
@@ -25,52 +24,34 @@ object ReinforcingSteelSymbols extends SymbolConfigurator {
 	
 }
 
-/** Common ReinforcingSteel expressions */
-object ReinforcingSteelExpressions extends MapContext {
-
-	import ReinforcingSteelSymbols._
-	
-	this(Es) = 200
-	this(gammas) = 78.5
-	this(fyd) = fyk/gammaS
-	this(epsiu) = epsiuk/gammaS
-	
-	lock()
-}
-
 /** ReinforcingSteel context class */
-class ReinforcingSteel(name:String, data:Context) extends Calculation(name) {
+class ReinforcingSteel(name:String, p_fyk: Int, p_ft: Int, p_epsiuk: Double, standard: String) extends MapContext("reinforcing_steel") with ReinforcingSteelSymbols {
 
-	import ReinforcingSteelSymbols._
-	
-	def info = NumSection(TextToTranslate("ReinforcingSteel",dictionary),name,"EN 10080",
-		Evaluate(fyk,gammaS,fyd,Es)
-	)
-	
-	this add ReinforcingSteelExpressions
-	this add data
-	
-	this(CLASS) = text(name)
-	this(gammaS) = 1.15
+    fyk := p_fyk
+    ft := p_ft
+    epsiuk := p_epsiuk
+
+    Es := 200
+    gammas := 78.5
+    fyd := fyk/gammaS
+    epsiu := epsiuk/gammaS
+
+	CLASS := text(name)
+	gammaS := 1.15
+
+    def label = this(CLASS)
+
+    def info = NumSection(TextToTranslate("ReinforcingSteel",dictionary),name,standard,
+        Evaluate(fyk,gammaS,fyd,Es)
+    )
 }
 
 /** ReinforcingSteel library */
-object ReinforcingSteel {
+object ReinforcingSteel extends Catalog[ReinforcingSteel]("Reinforcing Steel"){
 	
-	import ReinforcingSteelSymbols._
-	
-	def apply(s:String):ReinforcingSteel = map.get(s).map(x => x()).getOrElse(throw new IllegalStateException)
-	
-	val map = Map[String,()=>ReinforcingSteel](
+	override val map = Map[String,()=>ReinforcingSteel](
 		"B500SP" -> B500SP _
 	)
 
-	def B500SP = new ReinforcingSteel("B500SP",data_B500SP)
-	
-	private lazy val data_B500SP = new MapContext {
-		this(fyk) = 500
-		this(ft) = 575
-		this(epsiuk) = 0.08
-		lock()
-	}
+	def B500SP = new ReinforcingSteel("B500SP",500,575,0.08,"EN 10080")
 }

@@ -3,12 +3,9 @@ package org.encalmo.structures.common.statics
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.SymbolConfigurator
+import org.encalmo.expression.abs
 
-object ContinuousBeamSymbols extends SymbolConfigurator {
-
-	import BasicSymbols._
-	val dictionary, contextId = "beam"
+trait ContinuousBeamSymbols extends SymbolConfigurator {
 	
 	val p = symbol(BasicSymbols.p) unit "kN/m"
 	val l = symbol(BasicSymbols.l) unit "m"
@@ -25,8 +22,8 @@ object ContinuousBeamSymbols extends SymbolConfigurator {
 	val TRmax1 = symbol(BasicSymbols.T|"Rmax,1") unit "kN"
 	val TRmax2 = symbol(BasicSymbols.T|"Rmax,2") unit "kN"
 	val Rmin = symbol(BasicSymbols.R|"min") unit "kN"
-	val Tmax = symbol(BasicSymbols.T|"max") unit "kNm"
-	val Tmin = symbol(BasicSymbols.T|"min") unit "kNm"
+	val Tmax = symbol(BasicSymbols.T|"max") unit "kN"
+	val Tmin = symbol(BasicSymbols.T|"min") unit "kN"
 	
 	
 	val M11max = symbol(BasicSymbols.M|"11,max") unit "kNm"
@@ -63,9 +60,7 @@ object ContinuousBeamSymbols extends SymbolConfigurator {
 
 }
 
-class ContinuousBeam(name:String, length:Expression, load:Expression, force:Expression) extends Calculation(name) {
-	
-	import ContinuousBeamSymbols._
+class ContinuousBeam(name:String, length:Expression, load:Expression, force:Expression) extends MapContext("beam") with ContinuousBeamSymbols {
 	
 	p := load
 	l := length
@@ -75,8 +70,6 @@ class ContinuousBeam(name:String, length:Expression, load:Expression, force:Expr
 
 /** Continuous beam static analysis */
 class ContinuousBeam_5_LinearLoad(id:String, length:Expression, load:Expression) extends ContinuousBeam(id,length,load,0) {
-
-	import ContinuousBeamSymbols._
 	
 	lBA := 0.2113*l
 	lBC := 0.2*l
@@ -129,6 +122,5 @@ class ContinuousBeam_5_LinearLoad(id:String, length:Expression, load:Expression)
 	Rmin := RCmin
 	Tmax := abs(TRmax1)
 	Tmin := T2Cmin
-
 
 }

@@ -7,24 +7,14 @@ import org.encalmo.structures.Predefined
 import org.encalmo.structures.Predefined._
 import org.encalmo.structures.eurocode.concrete.ReinforcingSteel
 import org.encalmo.structures.eurocode.concrete.Concrete
-import org.encalmo.structures.eurocode.concrete.ConcreteSymbols
-import org.encalmo.structures.eurocode.actions.ActionsSymbols
-import org.encalmo.structures.eurocode.steel.SteelSymbols
-import org.encalmo.structures.eurocode.steel.IPESection
-import org.encalmo.structures.eurocode.steel.HeadedStud
-import org.encalmo.structures.eurocode.steel.Steel
-import org.encalmo.structures.eurocode.steel.FLORSTROP
+import org.encalmo.structures.eurocode.steel._
 import org.encalmo.structures.Worksheet
+import org.encalmo.document.TableOfContents
 
 class CompositeSlabWorksheet extends Worksheet("kz-strop") {
-    
+
     import BasicSymbols._
-    import SteelSymbols.{gammaM0,gammaM1}
-    import ConcreteSymbols.gammaC
-    import ActionsSymbols.{gammaG,gammaQ}
-    
-    import CompositeSlabWithProfiledSheetingSymbols.{Gsk,qk,Fk,dmesh,sd}
-    
+
     //dane wejsciowe zadania
     val L1 = L|1 is "Rozpiętośc belki" unit SI.m := 15
     val L2 = L|2 is "Rozstaw belek" unit SI.m := 2.5
@@ -32,34 +22,43 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
     
     //przyjete materialy i wymiary
     val height:Expression = 11 unit SI.cm
-    val blacha = FLORSTROP.COFRAPLUS_60_100
+    val blacha = ProfiledSteelSheet.COFRAPLUS_60_100
     val beton = Concrete.C_20_25
     val stalZbrojeniowa = ReinforcingSteel.B500SP
     val stal = Steel.S355
     val profil = IPESection.IPE_450
     val sworzen = HeadedStud.NELSON_S3L_19_100
-    
-    val plyta = new CompositeSlabWithProfiledSheeting("Płyta stropowa zespolona beton + blacha trapezowa",height,this(L2),5,blacha,beton,stalZbrojeniowa)
-    
-    plyta(Gsk) = 1 unit "kN/m2"
-    plyta(qk) = this(pc)
-    plyta(Fk) = 10 unit SI.kN
-    
-    //wlasciwosci materialowe plyty
-    plyta(gammaG) = 1.35
-    plyta(gammaQ) = 1.5
-    blacha.steel(gammaM0) = 1.0
-    blacha.steel(gammaM1) = 1.0
-    beton(gammaC) = 1.5
-    
-    plyta(dmesh) = 8
-    plyta(sd) = 0.15
 
-    val belka = new BeamOfCompositeSlab("Belka zespolona stropu zespolonego",this(L1),profil,stal,plyta,sworzen)
-    belka(gammaG) = 1.35
-    belka(gammaQ) = 1.5
-    belka.steel(gammaM0) = 1.0
-    belka.steel(gammaM1) = 1.0
+    val plyta = new CompositeSlabWithProfiledSheeting(
+        name = "Płyta stropowa zespolona beton + blacha trapezowa",
+        height = height,
+        length = this(L2),
+        spans = 5,
+        sheet = blacha,
+        concrete = beton,
+        reinforcingSteel = stalZbrojeniowa,
+        p_gammaG = 1.35,
+        p_gammaQ = 1.5,
+        p_Gsk = 1 unit "kN/m2",
+        p_qk = this(pc),
+        p_Fk =  10 unit SI.kN,
+        p_dmesh = 8,
+        p_sd = 0.15
+    )
+
+    val belka = new BeamOfCompositeSlab(
+        name = "Belka stalowa zespolona z płytą stropową zespoloną",
+        length = this(L1),
+        section = profil,
+        steel = stal,
+        slab = plyta,
+        stud = sworzen,
+        p_gammaG = 1.35,
+        p_gammaQ = 1.5
+    )
+
+    this add plyta
+    this add belka
     
     override val document = Document("",
         Predefined.stylesConfig,
@@ -82,7 +81,7 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
            ),
            NumSection("Parametry zadania",
                NumSection("Dane wejściowe",Evaluate(L1,L2,pc),Evaluate(stal.label)(stal)),
-               NumSection("Przyjęto do obliczeń",Evaluate(plyta(CompositeSlabWithProfiledSheetingSymbols.h),beton.label,blacha.label,profil.label,sworzen.label)(plyta))
+               NumSection("Przyjęto do obliczeń",Evaluate(plyta(plyta.h),beton.label,blacha.label,profil.label,sworzen.label)(plyta))
            ),
            NumSection("Wymiarowanie płyty stropowej",
                NumSection("Przyjęte wymiary i właściwości materiałowe",
@@ -118,7 +117,7 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
 	           )
            ),
            NumSection("Podsumowanie",
-           		Evaluate(BeamOfCompositeSlabSymbols.mS)(belka)
+           		Evaluate(belka.mS)(belka)
            ),
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),

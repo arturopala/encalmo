@@ -8,7 +8,7 @@ import org.encalmo.structures.eurocode.steel.CircularSteelSiloCalculation
 import org.encalmo.structures.eurocode.composite.CompositeSlabWorksheet
 import org.encalmo.structures.miscellaneous.TRBWorksheet
 
-class AllStructuresCalculationsUnitTest extends AssertionsForJUnit {
+class AllStructuresWorksheetsUnitTest extends AssertionsForJUnit {
 
     @Test
     def testDzwigarDrewnianyKlejonyTrapezowy() = {

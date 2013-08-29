@@ -209,7 +209,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
             )
        )
 
-        val results = Reckoner.reckon()
+        val results = Reckoner.reckon
 		val output:XslFoOutput = new XslFoOutput(Layout(),new java.util.Locale("PL"))
 		output.open()
 		XslFoTextDocumentPrinter.print(doc1)(output)(results)
@@ -466,7 +466,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 	      )
 		)
 
-        val results = Reckoner.reckon()
+        val results = Reckoner.reckon
 		val output:XslFoOutput = new XslFoOutput(Layout(), new java.util.Locale("PL"))
 		output.open()
 		XslFoTextDocumentPrinter.print(doc1)(output)(results)

@@ -1,6 +1,6 @@
 package org.encalmo.structures
 
-import org.encalmo.calculation.{Context, Results, Calculation}
+import org.encalmo.calculation.{Reckoner, Context, Results, Calculation}
 import org.encalmo.document.Document
 import org.encalmo.fop.FOPHelper
 import org.encalmo.printer.document.HtmlTextDocumentPrinter
@@ -24,7 +24,7 @@ abstract class Worksheet(name: String) extends Calculation(name) {
     /** Produced document */
     implicit val document:Document
 
-    def results: Results = new Results()
+    def results: Results = Reckoner.reckon
 
     def printHtml(path: String) {
         val layout = Predefined.layout

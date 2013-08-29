@@ -35,10 +35,10 @@ object ExpressionToPrint {
     def prepare(expression:Expression, element: Expr, results: Results):Seq[ExpressionToPrint] = {
         val formula = expression match {
             case pinnedExpression:PinnedExpression => {
-                results.formulaSetFor(pinnedExpression.context).getOrReckon(pinnedExpression.symbol,pinnedExpression.context, results)
+                results.formulaSet.getOrReckon(pinnedExpression.symbol,pinnedExpression.context, results)
             }
             case _ => {
-                results.formulaSetFor(element.context).getOrReckon(expression,element.context, results)
+                results.formulaSet.getOrReckon(expression,element.context, results)
             }
         }
         prepare(formula, partFilterForElement(element),  element.customStyle, element)

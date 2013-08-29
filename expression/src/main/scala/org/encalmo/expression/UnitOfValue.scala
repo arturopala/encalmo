@@ -138,6 +138,8 @@ case class SimpleUnitOfValue (
     override def divideDimension(n: Double): UnitOfValue = if(n>0) system.find(baseUnitName.baseName,scale,dimension/n).getOrElse(copy(dimension = dimension/n)) else throw new IllegalStateException("Illegal value of unit dimension divider: "+n)
     override def multiplyDimension(n: Double): UnitOfValue = if(n>0) system.find(baseUnitName.baseName,scale,dimension*n).getOrElse(copy(dimension = dimension*n)) else throw new IllegalStateException("Illegal value of unit dimension multiplier: "+n)
 	
+    lazy val one: Number = Number(1,this)
+
 }
 
 /** Empty unit */

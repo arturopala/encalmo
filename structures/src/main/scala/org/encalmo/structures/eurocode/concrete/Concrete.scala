@@ -7,11 +7,10 @@ import org.encalmo.expression.min
 import org.encalmo.expression.cbrt
 import org.encalmo.expression.sqrt
 
-/** Concrete related symbols */
-object ConcreteSymbols extends SymbolConfigurator {
+/** Concrete symbols */
+trait ConcreteSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
-	val dictionary, contextId = "concrete"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
 	val fck = symbol(f|"ck") unit SI.MPa
@@ -58,77 +57,92 @@ object ConcreteSymbols extends SymbolConfigurator {
     val Eceff = symbol(E|"c,eff") unit SI.GPa is "Efektywny sieczny moduł sprężystości betonu z uwzględnieniem czasu trwania obciążenia"
 }
 
-/** Common Concrete expressions */
-object ConcreteExpressions extends MapContext {
-
-	import ConcreteSymbols._
-	
-	this(fcd) = fck/gammaC
-	this(fctd) = fctk/gammaC
-	this(gammac) = 25 unit SI.kN/SI.m3
-	this(gammacf) = gammac+Number(1,SI.kN/SI.m3)
-	this(vc) = 0.6*(1-fck/Number(250,SI.MPa))
-	this(betasc) = 5
-	this(betaRH) = 1.55*(1-((RH/100)^3))
-	this(epsicsdinf) = ((160+(betasc*((90-fcm).nounit)))*1E-3*betaRH)
-	this(betads) = ((dtimec)/(0.035*((ho.nounit)^2)+dtimec))^0.5
-	this(epsicsd) = epsicsdinf*betads
-	this(epsicsainf) = 2.5*(fck.nounit-10)*1E-3
-	this(epsicsainf) = 2.5*(fck.nounit-10)*1E-3
-	this(betaas) = 1-(EUL^(-0.2*sqrt(dtimec)))
-	this(epsicsa) = epsicsainf*betaas
-	this(epsics) = epsicsd+epsicsa
-	this(pfiRH) = (1 + (1-RH/100)/(0.1*cbrt(ho.nounit)*((35/fcm.nounit)^0.7)))*((35/fcm.nounit)^0.2)
-	this(betafcm) = 16.8/sqrt(fcm.nounit)
-	this(betat0) = 1/(0.1+(timec0^0.2))
-	this(phitinf) = pfiRH*betafcm*betat0
-	this(betaH) = min(1.5*(1+((0.012*RH)^18))*ho.nounit,1500)
-	this(betac) = (dtimec/(betaH+dtimec))^0.3
-	this(phit) = phitinf*betac
-	this(Eceff) = Ecm/(1+phit)
-}
-
 /** Concrete class */
-class Concrete(name:String,data:Context) extends Calculation(name) {
+class Concrete(
+    name:String,
+    p_fck: Double,
+    p_fckcube: Double,
+    p_fcm: Double,
+    p_fctm: Double,
+    p_fctk: Double,
+    p_fctk095: Double,
+    p_Ecm: Double,
+    p_epsic1: Double,
+    p_epsicu1: Double,
+    p_epsic2: Double,
+    p_epsicu2: Double,
+    p_nc: Double,
+    p_epsic3: Double,
+    p_epsicu3: Double
+) extends MapContext("concrete") with ConcreteSymbols {
 
-	import ConcreteSymbols._
+    fck := p_fck
+    fckcube := p_fckcube
+    fcm := p_fcm
+    fctm := p_fctm
+    fctk := p_fctk
+    fctk095 := p_fctk095
+    Ecm := p_Ecm
+    epsic1 := p_epsic1
+    epsicu1 := p_epsicu1
+    epsic2 := p_epsic2
+    epsicu2 := p_epsicu2
+    nc := p_nc
+    epsic3 := p_epsic3
+    epsicu3 := p_epsicu3
 
-	def info = NumSection(TextToTranslate("Concrete",ConcreteSymbols.dictionary),name,
+    CLASS := text(name)
+    gammaC := 1.5
+    fcd := fck/gammaC
+    fctd := fctk/gammaC
+    gammac := 25 unit SI.kN/SI.m3
+    gammacf := gammac+Number(1,SI.kN/SI.m3)
+    vc := 0.6*(1-fck/Number(250,SI.MPa))
+    betasc := 5
+    betaRH := 1.55*(1-((RH/100)^3))
+    epsicsdinf := ((160+(betasc*((90-fcm).nounit)))*1E-3*betaRH)
+    betads := ((dtimec)/(0.035*((ho.nounit)^2)+dtimec))^0.5
+    epsicsd := epsicsdinf*betads
+    epsicsainf := 2.5*(fck.nounit-10)*1E-3
+    epsicsainf := 2.5*(fck.nounit-10)*1E-3
+    betaas := 1-(EUL^(-0.2*sqrt(dtimec)))
+    epsicsa := epsicsainf*betaas
+    epsics := epsicsd+epsicsa
+    pfiRH := (1 + (1-RH/100)/(0.1*cbrt(ho.nounit)*((35/fcm.nounit)^0.7)))*((35/fcm.nounit)^0.2)
+    betafcm := 16.8/sqrt(fcm.nounit)
+    betat0 := 1/(0.1+(timec0^0.2))
+    phitinf := pfiRH*betafcm*betat0
+    betaH := min(1.5*(1+((0.012*RH)^18))*ho.nounit,1500)
+    betac := (dtimec/(betaH+dtimec))^0.3
+    phit := phitinf*betac
+    Eceff := Ecm/(1+phit)
+
+	def info = NumSection(TextToTranslate("Concrete",dictionary),name,
 		Evaluate(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1)
 	)
 	
 	def skurcz  = Evaluate(betasc,RH,betaRH,epsicsdinf,ho,dtimec,betads,epsicsd,epsicsainf,betaas,epsicsa,epsics,pfiRH,betafcm,betat0,phitinf,betaH,betac,phit)
-	
-	this add ConcreteExpressions
-	this add data
-	
-	this(CLASS) = text(name)
-	this(gammaC) = 1.5
 
-	override def label = this(CLASS)
+	def label = this(CLASS)
 
 }
 
-class NormalConcrete extends MapContext {
+class NormalConcrete(
+    name:String,
+    p_fck: Double,
+    p_fckcube: Double,
+    p_fcm: Double,
+    p_fctm: Double,
+    p_fctk: Double,
+    p_fctk095: Double,
+    p_Ecm: Double,
+    p_epsic1: Double
+) extends Concrete(name,p_fck,p_fckcube,p_fcm,p_fctm,p_fctk,p_fctk095,p_Ecm,p_epsic1,3.5,2.0,3.5,2.0,1.75,3.5)
 
-	import ConcreteSymbols._
-
-	this(epsicu1) = 3.5
-	this(epsic2) = 2.0
-	this(epsicu2) = 3.5
-	this(epsic3) = 1.75
-	this(epsicu3) = 3.5
-	this(nc) = 2.0
-}
-
-/** Concrete classes library */
-object Concrete {
-
-	import ConcreteSymbols._
+/** Concrete library */
+object Concrete extends Catalog[Concrete]("Concrete")  {
 	
-	def apply(s:String):Concrete = map.get(s).map(x => x()).getOrElse(throw new IllegalStateException)
-	
-	val map = Map[String,()=>Concrete](
+	override val map = Map[String,()=>Concrete](
 		"C12/15" -> C_12_15 _,
 		"C16/20" -> C_16_20 _,
 		"C20/25" -> C_20_25 _,
@@ -146,218 +160,20 @@ object Concrete {
 	)
 	
 	//normal
-	def C_12_15:Concrete = new Concrete("C12/15",data_C_12_15)
-	def C_16_20:Concrete = new Concrete("C16/20",data_C_16_20)
-	def C_20_25:Concrete = new Concrete("C20/25",data_C_20_25)
-	def C_25_30:Concrete = new Concrete("C25/30",data_C_25_30)
-	def C_30_37:Concrete = new Concrete("C30/37",data_C_30_37)
-	def C_35_45:Concrete = new Concrete("C35/45",data_C_35_45)
-	def C_40_50:Concrete = new Concrete("C40/50",data_C_40_50)
-	def C_45_55:Concrete = new Concrete("C45/55",data_C_45_55)
-	def C_50_60:Concrete = new Concrete("C50/60",data_C_50_60)
+	def C_12_15:Concrete = new NormalConcrete(name = "C12/15",p_fck = 12,p_fckcube = 15,p_fcm = 20,p_fctm = 1.6,p_fctk = 1.1,p_fctk095 = 2.0,p_Ecm = 27,p_epsic1 = 1.8)
+	def C_16_20:Concrete = new NormalConcrete(name = "C16/20",p_fck = 16,p_fckcube = 20,p_fcm = 24,p_fctm = 1.9,p_fctk = 1.3,p_fctk095 = 2.5,p_Ecm = 29,p_epsic1 = 1.9)
+	def C_20_25:Concrete = new NormalConcrete(name = "C20/25",p_fck = 20,p_fckcube = 25,p_fcm = 28,p_fctm = 2.2,p_fctk = 1.5,p_fctk095 = 2.9,p_Ecm = 30,p_epsic1 = 2)
+	def C_25_30:Concrete = new NormalConcrete(name = "C25/30",p_fck = 25,p_fckcube = 30,p_fcm = 33,p_fctm = 2.6,p_fctk = 1.8,p_fctk095 = 3.3,p_Ecm = 31,p_epsic1 = 2.1)
+	def C_30_37:Concrete = new NormalConcrete(name = "C30/37",p_fck = 30,p_fckcube = 37,p_fcm = 38,p_fctm = 2.9,p_fctk = 2.0,p_fctk095 = 3.8,p_Ecm = 32,p_epsic1 = 2.2)
+	def C_35_45:Concrete = new NormalConcrete(name = "C35/45",p_fck = 35,p_fckcube = 45,p_fcm = 43,p_fctm = 3.2,p_fctk = 2.2,p_fctk095 = 4.2,p_Ecm = 34,p_epsic1 = 2.25)
+	def C_40_50:Concrete = new NormalConcrete(name = "C40/50",p_fck = 40,p_fckcube = 50,p_fcm = 48,p_fctm = 3.5,p_fctk = 2.5,p_fctk095 = 4.6,p_Ecm = 35,p_epsic1 = 2.3)
+	def C_45_55:Concrete = new NormalConcrete(name = "C45/55",p_fck = 45,p_fckcube = 55,p_fcm = 53,p_fctm = 3.8,p_fctk = 2.7,p_fctk095 = 4.9,p_Ecm = 36,p_epsic1 = 2.4)
+	def C_50_60:Concrete = new NormalConcrete(name = "C50/60",p_fck = 50,p_fckcube = 60,p_fcm = 58,p_fctm = 4.1,p_fctk = 2.9,p_fctk095 = 5.3,p_Ecm = 37,p_epsic1 = 2.45)
 	//special
-	def C_55_67:Concrete = new Concrete("C57/67",data_C_55_67)
-	def C_60_75:Concrete = new Concrete("C60/75",data_C_60_75)
-	def C_70_85:Concrete = new Concrete("C70/85",data_C_70_85)
-	def C_80_95:Concrete = new Concrete("C80/95",data_C_80_95)
-	def C_90_105:Concrete = new Concrete("C50/60",data_C_90_105)
-	
-	private lazy val data_C_12_15 = new NormalConcrete{
-		this(fck) = 12
-		this(fckcube) = 15
-		this(fcm) = 20
-		this(fctm) = 1.6
-		this(fctk) = 1.1
-		this(fctk095) = 2.0
-		this(Ecm) = 27
-		this(epsic1) = 1.8
-		lock()
-	}
-	
-	private lazy val data_C_16_20 = new NormalConcrete{
-		this(fck) = 16
-		this(fckcube) = 20
-		this(fcm) = 24
-		this(fctm) = 1.9
-		this(fctk) = 1.3
-		this(fctk095) = 2.5
-		this(Ecm) = 29
-		this(epsic1) = 1.9
-		lock()
-	}
-	
-	private lazy val data_C_20_25 = new NormalConcrete{
-		this(fck) = 20
-		this(fckcube) = 25
-		this(fcm) = 28
-		this(fctm) = 2.2
-		this(fctk) = 1.5
-		this(fctk095) = 2.9
-		this(Ecm) = 30
-		this(epsic1) = 2
-		lock()
-	}
-	
-	private lazy val data_C_25_30 = new NormalConcrete{
-		this(fck) = 25
-		this(fckcube) = 30
-		this(fcm) = 33
-		this(fctm) = 2.6
-		this(fctk) = 1.8
-		this(fctk095) = 3.3
-		this(Ecm) = 31
-		this(epsic1) = 2.1
-		lock()
-	}
-	
-	private lazy val data_C_30_37 = new NormalConcrete{
-		this(fck) = 30
-		this(fckcube) = 37
-		this(fcm) = 38
-		this(fctm) = 2.9
-		this(fctk) = 2.0
-		this(fctk095) = 3.8
-		this(Ecm) = 32
-		this(epsic1) = 2.2
-		lock()
-	}
-	
-	private lazy val data_C_35_45 = new NormalConcrete{
-		this(fck) = 35
-		this(fckcube) = 45
-		this(fcm) = 43
-		this(fctm) = 3.2
-		this(fctk) = 2.2
-		this(fctk095) = 4.2
-		this(Ecm) = 34
-		this(epsic1) = 2.25
-		lock()
-	}
-	
-	private lazy val data_C_40_50 = new NormalConcrete{
-		this(fck) = 40
-		this(fckcube) = 50
-		this(fcm) = 48
-		this(fctm) = 3.5
-		this(fctk) = 2.5
-		this(fctk095) = 4.6
-		this(Ecm) = 35
-		this(epsic1) = 2.3
-		lock()
-	}
-	
-	private lazy val data_C_45_55 = new NormalConcrete{
-		this(fck) = 45
-		this(fckcube) = 55
-		this(fcm) = 53
-		this(fctm) = 3.8
-		this(fctk) = 2.7
-		this(fctk095) = 4.9
-		this(Ecm) = 36
-		this(epsic1) = 2.4
-		lock()
-	}
-	
-	private lazy val data_C_50_60 = new NormalConcrete{
-		this(fck) = 50
-		this(fckcube) = 60
-		this(fcm) = 58
-		this(fctm) = 4.1
-		this(fctk) = 2.9
-		this(fctk095) = 5.3
-		this(Ecm) = 37
-		this(epsic1) = 2.45
-		lock()
-	}
-	
-	private lazy val data_C_55_67 = new MapContext{
-		this(fck) = 55
-		this(fckcube) = 67
-		this(fcm) = 63
-		this(fctm) = 4.2
-		this(fctk) = 3
-		this(fctk095) = 5.5
-		this(Ecm) = 38
-		this(epsic1) = 2.5
-		this(epsicu1) = 3.2
-		this(epsic2) = 2.2
-		this(epsicu2) = 3.1
-		this(nc) = 1.75
-		this(epsic3) = 1.8
-		this(epsicu3) = 3.1
-		lock()
-	}
-	
-	private lazy val data_C_60_75 = new MapContext{
-		this(fck) = 60
-		this(fckcube) = 75
-		this(fcm) = 68
-		this(fctm) = 4.4
-		this(fctk) = 3.1
-		this(fctk095) = 5.7
-		this(Ecm) = 39
-		this(epsic1) = 2.6
-		this(epsicu1) = 3.0
-		this(epsic2) = 2.3
-		this(epsicu2) = 2.9
-		this(nc) = 1.6
-		this(epsic3) = 1.9
-		this(epsicu3) = 2.9
-		lock()
-	}
-	
-	private lazy val data_C_70_85 = new MapContext{
-		this(fck) = 70
-		this(fckcube) = 85
-		this(fcm) = 78
-		this(fctm) = 4.6
-		this(fctk) = 3.2
-		this(fctk095) = 6.0
-		this(Ecm) = 41
-		this(epsic1) = 2.7
-		this(epsicu1) = 2.8
-		this(epsic2) = 2.4
-		this(epsicu2) = 2.7
-		this(nc) = 1.45
-		this(epsic3) = 2.0
-		this(epsicu3) = 2.7
-		lock()
-	}
-	
-	private lazy val data_C_80_95 = new MapContext{
-		this(fck) = 80
-		this(fckcube) = 95
-		this(fcm) = 88
-		this(fctm) = 4.8
-		this(fctk) = 3.4
-		this(fctk095) = 6.3
-		this(Ecm) = 42
-		this(epsic1) = 2.8
-		this(epsicu1) = 2.8
-		this(epsic2) = 2.5
-		this(epsicu2) = 2.6
-		this(nc) = 1.4
-		this(epsic3) = 2.2
-		this(epsicu3) = 2.6
-		lock()
-	}
-	
-	private lazy val data_C_90_105 = new MapContext{
-		this(fck) = 90
-		this(fckcube) = 105
-		this(fcm) = 98
-		this(fctm) = 5.0
-		this(fctk) = 3.5
-		this(fctk095) = 6.6
-		this(Ecm) = 44
-		this(epsic1) = 2.8
-		this(epsicu1) = 2.8
-		this(epsic2) = 2.6
-		this(epsicu2) = 2.6
-		this(nc) = 1.4
-		this(epsic3) = 2.3
-		this(epsicu3) = 2.6
-		lock()
-	}
+	def C_55_67:Concrete = new Concrete(name = "C57/67",p_fck = 55,p_fckcube = 67,p_fcm = 63,p_fctm = 4.2,p_fctk = 3,p_fctk095 = 5.5,p_Ecm = 38,p_epsic1 = 2.5,p_epsicu1 = 3.2,p_epsic2 = 2.2,p_epsicu2 = 3.1,p_nc = 1.75,p_epsic3 = 1.8,p_epsicu3 = 3.1)
+	def C_60_75:Concrete = new Concrete(name = "C60/75",p_fck = 60,p_fckcube = 75,p_fcm = 68,p_fctm = 4.4,p_fctk = 3.1,p_fctk095 = 5.7,p_Ecm = 39,p_epsic1 = 2.6,p_epsicu1 = 3.0,p_epsic2 = 2.3,p_epsicu2 = 2.9,p_nc = 1.6,p_epsic3 = 1.9,p_epsicu3 = 2.9)
+	def C_70_85:Concrete = new Concrete(name = "C70/85",p_fck = 70,p_fckcube = 85,p_fcm = 78,p_fctm = 4.6,p_fctk = 3.2,p_fctk095 = 6.0,p_Ecm = 41,p_epsic1 = 2.7,p_epsicu1 = 2.8,p_epsic2 = 2.4,p_epsicu2 = 2.7,p_nc = 1.45,p_epsic3 = 2.0,p_epsicu3 = 2.7)
+	def C_80_95:Concrete = new Concrete(name = "C80/95",p_fck = 80,p_fckcube = 95,p_fcm = 88,p_fctm = 4.8,p_fctk = 3.4,p_fctk095 = 6.3,p_Ecm = 42,p_epsic1 = 2.8,p_epsicu1 = 2.8,p_epsic2 = 2.5,p_epsicu2 = 2.6,p_nc = 1.4,p_epsic3 = 2.2,p_epsicu3 = 2.6)
+	def C_90_105:Concrete = new Concrete(name ="C50/60",p_fck = 90,p_fckcube = 105,p_fcm = 98,p_fctm = 5.0,p_fctk = 3.5,p_fctk095 = 6.6,p_Ecm = 44,p_epsic1 = 2.8,p_epsicu1 = 2.8,p_epsic2 = 2.6,p_epsicu2 = 2.6,p_nc = 1.4,p_epsic3 = 2.3,p_epsicu3 = 2.6)
 	
 }

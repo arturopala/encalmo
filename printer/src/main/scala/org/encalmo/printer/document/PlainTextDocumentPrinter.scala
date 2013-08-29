@@ -200,7 +200,7 @@ extends TreeVisitor[DocumentComponent] {
 			    //writeLineEnd
 			}
 			case a:Assertion => {
-				val result = a.evaluate(results.formulaSetFor(a.context).cache)
+				val result = a.evaluate(results.cache)
 				val s = Section(a.style,result._2:_*)
 				s.visit(visitor = this)
                 result._1 match {

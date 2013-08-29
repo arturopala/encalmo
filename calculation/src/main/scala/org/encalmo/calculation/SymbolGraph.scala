@@ -13,6 +13,7 @@ object SymbolGraph {
             node.element match {
                 case symbol: Symbol => graph += ((symbol,rootSymbol))
                 case DynamicExpression(symbols, _) => for(symbol <- symbols) {graph += ((symbol,rootSymbol))}
+                case PinnedExpression(context,symbol) => graph += ((symbol,rootSymbol))
                 case _ => Unit
             }
         }
@@ -21,7 +22,8 @@ object SymbolGraph {
 
     def build(context:Context):Graph[Symbol] = {
         val graph = Graph[Symbol]()
-        for(symbol <- context.listSymbols) {
+        val symbols = context.listSymbols
+        for(symbol <- symbols) {
             graph.add(symbol)
             context.getExpression(symbol).map(
                 expr => {

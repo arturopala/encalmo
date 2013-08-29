@@ -21,7 +21,7 @@ class ReckonerUnitTest extends AssertionsForJUnit {
         e := sin(z) - 0.3
         k := 8
         //when
-        val formula = Reckoner.reckonExpression(a)
+        val formula = Reckoner.reckonExpression(a, calc, new Results(null))
         //then
         val expected = (10 + (hypot(-(sin(z) - 0.3), abs(f)))) * ((hypot(-(sin(z) - 0.3), abs(f))) - (h * ((sin(z) - 0.3) / 10)))
         assertEquals(3, formula.parts.size)
@@ -53,15 +53,11 @@ class ReckonerUnitTest extends AssertionsForJUnit {
         calc add calc2
         calc2 add calc1
         //when
-        val results = Reckoner.reckon()
+        val results = Reckoner.reckon
         val formulaSet = results.formulaSet
-        val formulaSet1 = results.formulaSetFor(calc1)
-        val formulaSet2 = results.formulaSetFor(calc2)
-        val cache = formulaSet.cache
+        val cache = results.cache
         //then
         assertTrue(formulaSet.size == 10)
-        assertTrue(formulaSet1.size == 6)
-        assertTrue(formulaSet2.size == 6)
         assertEquals(3, formulaSet.get(a).get.parts.size)
         assertTrue(formulaSet.get(b).get.parts.size == 4)
         assertTrue(formulaSet.get(c).get.parts.size == 3)
@@ -71,7 +67,6 @@ class ReckonerUnitTest extends AssertionsForJUnit {
         assertTrue(formulaSet.get(h).get.parts.size == 1)
         assertTrue(formulaSet.get(z).get.parts.size == 1)
         assertTrue(formulaSet.get(k).get.parts.size == 3)
-        assertTrue(formulaSet1.get(k).get.parts.size == 2)
         assertTrue(formulaSet.get(x).get.parts.size == 2)
         assertTrue(cache.contains(a))
         assertTrue(cache.contains(b))
@@ -94,7 +89,7 @@ class ReckonerUnitTest extends AssertionsForJUnit {
         m := n
         n := f + e
         //when
-        val results = Reckoner.reckon()
+        val results = Reckoner.reckon
         val formulaSet = results.formulaSet
         //then
         assertEquals(5, formulaSet.size)

@@ -208,7 +208,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
             )
        )
 
-        val results = Reckoner.reckon()
+        val results = Reckoner.reckon
 		val output:HtmlOutput = new HtmlOutput(Layout(),new java.util.Locale("PL"))
 		output.open()
 		HtmlTextDocumentPrinter.print(doc1)(output)(results)
@@ -361,7 +361,7 @@ Mauris commodo consequat ligula mollis accumsan. Integer aliquet urna sed purus 
 		      )
 	      )
 		)
-        val results = Reckoner.reckon()
+        val results = Reckoner.reckon
         val output:HtmlOutput = new HtmlOutput(Layout(),new java.util.Locale("PL"))
         output.open
         HtmlTextDocumentPrinter.print(doc1)(output)(results)

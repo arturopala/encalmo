@@ -13,32 +13,26 @@ import scala.annotation.tailrec
  */
 object Reckoner {
 
-    def reckon(results: Results = new Results())(implicit context: Context): Results = {
-        val reckonContextFx = reckonContext(results)(_:Context)
-        val contexts = /*context.listNestedResolvers :+ context filter (_.isInstanceOf[Calculation])*/Seq(context)
-        if(contexts.size>1) Console.println(s"Found ${contexts.size-1} nested contexts to reckon in $context")
-        for(context <- contexts){
-            val formulaSet = reckonContextFx(context)
-            results put (context, formulaSet)
-        }
+    def reckon(implicit context: Context): Results = {
+        reckonContext(context)
+    }
+
+    private[calculation] def reckonContext(context: Context): Results = {
+        val graph: Graph[Symbol] = SymbolGraph.build(context)
+        val symbols: List[Symbol] = Graph.sortTopologically(graph)
+        Console.println(s"Found ${symbols.size} symbols to reckon in $context:")
+        val formulaSet = new FormulaSet()
+        val cache = new ResultsCache()
+        val results = new Results(graph,formulaSet,cache)
+        symbols.foldLeft[FormulaSet](results.formulaSet)((set, symbol) => set put reckonExpression(symbol,context,results))
+        Console.println()
         results
     }
 
-    private[calculation] def reckonContext(results: Results = new Results())(implicit context: Context): FormulaSet = {
-        results.get(context) getOrElse {
-            val graph = SymbolGraph.build(context)
-            val symbols = Graph.sortTopologically(graph)
-            Console.println(s"Found ${symbols.size} symbols to reckon in $context: ")
-            val formulaSet = symbols.foldLeft[FormulaSet](FormulaSet(context.id))((set, symbol) => set put reckonExpression(symbol,results,set.cache)(context))
-            Console.println()
-            formulaSet
-        }
-    }
-
-    private[calculation] def reckonExpression(expression: Expression, results: Results = new Results(), cache: ResultsCache = new ResultsCache())(implicit context: Context): Formula = {
-        results.get(context, expression) getOrElse {
+    private[calculation] def reckonExpression(expression: Expression, context: Context, results: Results): Formula = {
+        results.formulaSet.get(expression) getOrElse {
             expression match {
-                case pinned: PinnedExpression => results.formulaSetFor(pinned.context).get(pinned.symbol) getOrElse reckonExpression(pinned.symbol,results,cache)(pinned.context)
+                case pinned: PinnedExpression => results.formulaSet.get(pinned.symbol) getOrElse reckonExpression(pinned.symbol,pinned.context,results)
                 case other => {
                     import org.encalmo.calculation.FormulaPosition._
                     import org.encalmo.calculation.FormulaPartRelation._
@@ -49,13 +43,13 @@ object Reckoner {
                     }
                     var list: List[Expression] = Nil
                     try {
-                        list = prepareUnresolved(list, expression, context, cache)
-                        list = prepareSubstituted(list, list.head, unit, accuracy, context, cache)
-                        list = preparePartiallyEvaluated(list, list.head, unit, accuracy, context, cache)
-                        list = prepareEvaluated(list, list.head, unit, accuracy, context, cache)
+                        list = prepareUnresolved(list, expression, context, results.cache)
+                        list = prepareSubstituted(list, list.head, unit, accuracy, context, results.cache)
+                        list = preparePartiallyEvaluated(list, list.head, unit, accuracy, context, results.cache)
+                        list = prepareEvaluated(list, list.head, unit, accuracy, context, results.cache)
                         expression match {
                             case symbol: Symbol => {
-                                cache.put(symbol, list.head)
+                                results.cache.put(symbol, list.head)
                                 Console.print(symbol.simpleFace + ",")
                             }
                             case _ =>
