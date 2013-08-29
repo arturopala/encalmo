@@ -10,11 +10,12 @@ import org.encalmo.structures.Worksheet
 class BetonSprezonyDzwigarTypuI extends Worksheet("bks") {
         
     import BasicSymbols._
-    import ConcreteSymbols._
     import SI.{mm,mm2,cm,cm2,kN,MPa}
 
     val beton = Concrete.C_40_50
     this add beton
+
+    import beton._
     
     val lr = l|r is "Rozstaw osi dźwigarów" unit SI.m; lr := 5.5
     val ld = l|d is "Rozpiętość dźwigara w osi podpór" unit SI.m; ld := 14

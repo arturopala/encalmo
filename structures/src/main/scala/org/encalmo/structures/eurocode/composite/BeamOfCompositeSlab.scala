@@ -2,20 +2,11 @@ package org.encalmo.structures.eurocode.composite
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.calculation.ContextFactory
-import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.SymbolConfigurator
-import org.encalmo.structures.eurocode.concrete.ConcreteSymbols
-import org.encalmo.structures.eurocode.steel.SteelSymbols
-import org.encalmo.structures.eurocode.steel.ProfiledSteelSheetSymbols
 import org.encalmo.structures.eurocode.actions.ActionsSymbols
-import org.encalmo.structures.eurocode.steel.HeadedStudSymbols
-import org.encalmo.structures.common.section.SectionSymbols
+import org.encalmo.structures.common.section.IBeamSection
 import org.encalmo.structures.eurocode.steel.HeadedStud
 import org.encalmo.structures.eurocode.steel.Steel
-import org.encalmo.structures.common.section.IBeamSectionSymbols
-import org.encalmo.structures.common.section.Section
 import org.encalmo.document.NumSection
 import org.encalmo.document.Evaluate
 import org.encalmo.document.TextToTranslate
@@ -24,12 +15,18 @@ import org.encalmo.document.AssertionE
 import org.encalmo.document.AssertionLE
 import org.encalmo.document.AssertionG
 import org.encalmo.document.Text
+import org.encalmo.expression.min
+import org.encalmo.expression.sin
+import org.encalmo.expression.cos
+import org.encalmo.expression.sqrt
+import org.encalmo.expression.max
+import org.encalmo.expression.round
+import org.encalmo.expression.cot
 
 /** Composite slab with profiled steel sheeting symbols */
-object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
+trait BeamOfCompositeSlabSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
-	val dictionary, contextId = "beamOfCompositeSlab"
 	
 	val l = symbol(BasicSymbols.l) unit "m"
 	val gk = symbol(BasicSymbols.g|BasicSymbols.k) unit "kN/m"
@@ -114,142 +111,26 @@ object BeamOfCompositeSlabSymbols extends SymbolConfigurator {
 	val mS = symbol(BasicSymbols.m|"S") unit "kg/m2" acc 1
 }
 
-/** Composite slab with profiled steel sheeting context */
-object BeamOfCompositeSlabExpressions extends MapContext {
-
-	val SHEET = ProfiledSteelSheetSymbols
-	val SLAB = CompositeSlabWithProfiledSheetingSymbols
-	val STUD = HeadedStudSymbols
-
-	import BeamOfCompositeSlabSymbols._
-	import ConcreteSymbols.{fck,fcd,Ecm,vc}
-	import SteelSymbols.{E,fyd,fy,fu,gammaM0,gammaV}
-	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,hc,Eceff2,nE,dmesh,sd,fyrd}
-	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,t,bo,bs,fypd}
-    import ActionsSymbols.{gammaG,gammaQ}
-    import SectionSymbols.{m,Wy,A,Iy,b,h,Wypl,AVz}
-    import IBeamSectionSymbols.{ctw,ctf,bf,tf}
-    
-    //obciazenia i schemat statyczny w fazie montazu
-    gk := 10*m.setunit("N/m")
-    gd := gk*gammaG
-    Qk1 := (Qcfk*SLAB.l)+(Gcck*SLAB.l)+gk+(Qmk*SLAB.l)
-    Qd1 := (Qcfk*gammaG*SLAB.l)+(Gccd*SLAB.l)+gd+(Qmd*SLAB.l)
-    //sprawdzenie statecznosci srodnika
-    eta := rangeChoiceLE(fy,1.2,460E6,1.0)
-	//klasa przekroju
-	Cf1 := rangeChoice4LE(ctf,1,9*eta,2,10*eta,3,14*eta,4)
-	Cw1 := rangeChoice4LE(ctw,1,72*eta,2,83*eta,3,124*eta,4)
-	C := max(Cf1,Cw1)
-	//nosnosci
-	MelRd := (Wy*fy)/gammaM0
-	VplRd := (AVz*(fy/sqrt(3)))/gammaM0
-	NcRd := (A*fy)/gammaM0
-	//sily wewnetrzne w fazie montazu
-	MEdm := (Qd1*(l^2))/8
-	VEdm := (Qd1*l)/2
-	MEdm1 := ((Qd1-(Qmd*SLAB.l))*(l^2))/8
-	Mkm := (Qk1*(l^2))/8
-	Mkm1 := ((Qk1-(Qmk*SLAB.l))*(l^2))/8
-	ΔMk := (ΔQk*(l^2))/8
-	//naprezenia
-	sigmamplus := MEdm/Wy
-	sigmadm1 := MEdm1/Wy
-	sigmakm1 := Mkm1/Wy
-	//ugiecia
-	deltam := (5*Qk1*(l^4))/(384*Iy*E)
-	deltam1 := (5*(Qk1-(Qmk*SLAB.l))*(l^4))/(384*Iy*E)
-	deltam0 := round(deltam1,RoundingMode.Step(true,0.01))
-	//obciazenia w fazie eksploatacji
-	Qk2 := (SLAB.qk*SLAB.l)+(SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk+(SLAB.Gsk*SLAB.l)
-    Qd2 := (SLAB.qd*SLAB.l)+(SLAB.Gcd*SLAB.l)+(Gccd*SLAB.l)+gd+(SLAB.Gsd*SLAB.l)
-    ΔQk := (SLAB.qk*SLAB.l)+(SLAB.Gsk*SLAB.l)
-	ΔQd := (SLAB.qd*SLAB.l)+(SLAB.Gsd*SLAB.l)
-	Gk := (SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk+(SLAB.Gsk*SLAB.l)
-	//sily wewnetrzne w fazie eksploatacji
-	ΔMEd := (ΔQd*(l^2))/8
-	ΔVEd := (ΔQd*l)/2
-	MEde := (Qd2*(l^2))/8
-	VEde := (Qd2*l)/2
-	//szerokosc wspolpracujaca
-	b0 := 0
-	bei := min(l/8,SLAB.l/2)
-	beff := b0+2*bei
-	//rownowaga sil w przekroju
-	Ncf := 0.85*fcd*beff*hc
-	Npla := A*fy
-	N1pla := (A-2*b*tf)*fy
-	x := rangeChoiceLE(Ncf,SLAB.h+(Npla-Ncf)/(2*b*fy),Npla,Npla/(beff*fcd))
-	MplRd := rangeChoiceLE(x,Npla*(h/2+(SLAB.h-(x/2))),SLAB.h,Npla*(h/2)+Ncf*(hp+(hc/2))-2*(x-SLAB.h)*b*fy*((x-SLAB.h)/2))
-	bn := beff/nE
-	Sy := bn*hc*(h/2+hp+hc/2)
-	z0 := Sy/(A+bn*hc)
-	I1 := Iy+A*(z0^2)+(bn*(hc^3))/12+bn*hc*((hc/2+hp+h/2-z0)^2)
-	Wel := I1/(z0+h/2)
-	//naprezenia
-	sigmake := ΔMk/Wel
-	sigmamax := sigmakm1+sigmake
-	//nosnosc sworznia
-	s := bs
-	alpha := rangeChoiceLELE(STUD.hsc/STUD.d,0,3,0.2*((STUD.hsc/STUD.d)+1),4,1)
-	PRd := min((0.8*fu*(PI*square(STUD.d))/4)/gammaV,(0.29*alpha*square(STUD.d)*sqrt(fck*Ecm))/gammaV)
-	ktmax := rangeChoiceLE(t,0.85,1,1)
-	kt := min(ktmax, (0.7*bo)/(sqrt(nr)*hp)*(STUD.hsc/hp-1))
-	VEdr := Ncf
-	Ls := 0.5*l
-	nf := VEdr/(kt*PRd)
-	nfprim := floor(Ls/s)
-	smin := min(5*STUD.d)
-	smax := min(6*SLAB.h,0.8)
-	MaRd := (Wypl*fy)/gammaM0
-	//sciananie podluzne w plycie zespolonej
-	VEdc := 0.5*(kt*PRd)/s
-	kphi := min(1+max(b/2,1.5*1.1*STUD.d)/(1.1*STUD.d),6)
-	PpbRd := kphi*1.1*STUD.d*SHEET.tcor*fypd
-	thetat := 45
-	VRdsr := cot(45)*((((PI*square(dmesh/1000))/4*fyrd)/sd)+min(SHEET.Ap*fypd,PpbRd/s))
-	VRdsc := vc*fcd*sin(thetat)*cos(thetat)*hc
-	//ugiecia w fazie eksploatacji
-	deltae := (5*ΔQk*(l^4))/(384*I1*E)
-	deltamax := deltam1-deltam0+deltae
-	//drgania
-	bn2 := beff*Ecm/E
-	Sy2 := bn2*hc*(h/2+hp+hc/2)
-	z2 := Sy2/(A+bn2*hc)
-	I2 := Iy+A*(z2^2)+(bn2*(hc^3))/12+bn2*hc*((hc/2+hp+h/2-z2)^2)
-	yw := (5*Gk*(l^4))/(384*I2*E)
-	f := 18/sqrt(yw).nounit
-	//unit mass
-	mS := ((SLAB.Gck*SLAB.l)+(Gcck*SLAB.l)+gk)/(GRAV*SLAB.l)
-	
-	// end of context initialization
-	lock()
-
-}
-
 class BeamOfCompositeSlab(
     name: String,
 	val length:Expression,
-	val section:Section, 
+	val section:IBeamSection,
 	val steel:Steel,
 	val slab:CompositeSlabWithProfiledSheeting,
-	val stud:HeadedStud
+	val stud:HeadedStud,
+    p_gammaG: Expression,
+    p_gammaQ: Expression
 )
-extends Calculation(name) {
+extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols with ActionsSymbols {
 
-	val SLAB = CompositeSlabWithProfiledSheetingSymbols
-	val STUD = HeadedStudSymbols
+    val sheet = slab.sheet
 
-	import BeamOfCompositeSlabSymbols._
-	import ConcreteSymbols.vc
-	import SteelSymbols.{E,fyd,epsi,fy}
-	import CompositeSlabWithProfiledSheetingSymbols.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff2,nE}
-	import ProfiledSteelSheetSymbols.{Gcck,Gccd,hp,bo,bs}
-    import ActionsSymbols.{gammaG,gammaQ}
-    import SectionSymbols.AVz
-    import IBeamSectionSymbols.{hw,tw,ctf,ctw}
+	import slab.concrete.{fck,fcd,Ecm,vc}
+	import steel.{E,epsi,fy,fu,gammaM0,gammaV}
+	import slab.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff2,nE,hc,dmesh,sd,fyrd}
+	import slab.sheet.{Gcck,Gccd,hp,bo,bs,t,fypd}
+    import section.{m,Wy,A,Iy,b,h,Wypl,AVz,hw,tw,ctf,ctw,tf}
 
-	this add BeamOfCompositeSlabExpressions
 	this add section
 	this add steel
 	this add slab
@@ -257,10 +138,105 @@ extends Calculation(name) {
 	
 	l := length
 	nr := 1
+
+    gammaG := p_gammaG
+    gammaQ := p_gammaQ
+
+    //obciazenia i schemat statyczny w fazie montazu
+    gk := 10*m.setunit("N/m")
+    gd := gk*gammaG
+    Qk1 := (Qcfk*slab.l)+(Gcck*slab.l)+gk+(Qmk*slab.l)
+    Qd1 := (Qcfk*gammaG*slab.l)+(Gccd*slab.l)+gd+(Qmd*slab.l)
+    //sprawdzenie statecznosci srodnika
+    eta := rangeChoiceLE(fy,1.2,460E6,1.0)
+    //klasa przekroju
+    Cf1 := rangeChoice4LE(ctf,1,9*eta,2,10*eta,3,14*eta,4)
+    Cw1 := rangeChoice4LE(ctw,1,72*eta,2,83*eta,3,124*eta,4)
+    C := max(Cf1,Cw1)
+    //nosnosci
+    MelRd := (Wy*fy)/gammaM0
+    VplRd := (AVz*(fy/sqrt(3)))/gammaM0
+    NcRd := (A*fy)/gammaM0
+    //sily wewnetrzne w fazie montazu
+    MEdm := (Qd1*(l^2))/8
+    VEdm := (Qd1*l)/2
+    MEdm1 := ((Qd1-(Qmd*slab.l))*(l^2))/8
+    Mkm := (Qk1*(l^2))/8
+    Mkm1 := ((Qk1-(Qmk*slab.l))*(l^2))/8
+    ΔMk := (ΔQk*(l^2))/8
+    //naprezenia
+    sigmamplus := MEdm/Wy
+    sigmadm1 := MEdm1/Wy
+    sigmakm1 := Mkm1/Wy
+    //ugiecia
+    deltam := (5*Qk1*(l^4))/(384*Iy*E)
+    deltam1 := (5*(Qk1-(Qmk*slab.l))*(l^4))/(384*Iy*E)
+    deltam0 := round(deltam1,RoundingMode.Step(true,0.01))
+    //obciazenia w fazie eksploatacji
+    Qk2 := (slab.qk*slab.l)+(slab.Gck*slab.l)+(Gcck*slab.l)+gk+(slab.Gsk*slab.l)
+    Qd2 := (slab.qd*slab.l)+(slab.Gcd*slab.l)+(Gccd*slab.l)+gd+(slab.Gsd*slab.l)
+    ΔQk := (slab.qk*slab.l)+(slab.Gsk*slab.l)
+    ΔQd := (slab.qd*slab.l)+(slab.Gsd*slab.l)
+    Gk := (slab.Gck*slab.l)+(Gcck*slab.l)+gk+(slab.Gsk*slab.l)
+    //sily wewnetrzne w fazie eksploatacji
+    ΔMEd := (ΔQd*(l^2))/8
+    ΔVEd := (ΔQd*l)/2
+    MEde := (Qd2*(l^2))/8
+    VEde := (Qd2*l)/2
+    //szerokosc wspolpracujaca
+    b0 := 0
+    bei := min(l/8,slab.l/2)
+    beff := b0+2*bei
+    //rownowaga sil w przekroju
+    Ncf := 0.85*fcd*beff*hc
+    Npla := A*fy
+    N1pla := (A-2*b*tf)*fy
+    x := rangeChoiceLE(Ncf,slab.h+(Npla-Ncf)/(2*b*fy),Npla,Npla/(beff*fcd))
+    MplRd := rangeChoiceLE(x,Npla*(h/2+(slab.h-(x/2))),slab.h,Npla*(h/2)+Ncf*(hp+(hc/2))-2*(x-slab.h)*b*fy*((x-slab.h)/2))
+    bn := beff/nE
+    Sy := bn*hc*(h/2+hp+hc/2)
+    z0 := Sy/(A+bn*hc)
+    I1 := Iy+A*(z0^2)+(bn*(hc^3))/12+bn*hc*((hc/2+hp+h/2-z0)^2)
+    Wel := I1/(z0+h/2)
+    //naprezenia
+    sigmake := ΔMk/Wel
+    sigmamax := sigmakm1+sigmake
+    //nosnosc sworznia
+    s := bs
+    alpha := rangeChoiceLELE(stud.hsc/stud.d,0,3,0.2*((stud.hsc/stud.d)+1),4,1)
+    PRd := min((0.8*fu*(PI*square(stud.d))/4)/gammaV,(0.29*alpha*square(stud.d)*sqrt(fck*Ecm))/gammaV)
+    ktmax := rangeChoiceLE(t,0.85,1,1)
+    kt := min(ktmax, (0.7*bo)/(sqrt(nr)*hp)*(stud.hsc/hp-1))
+    VEdr := Ncf
+    Ls := 0.5*l
+    nf := VEdr/(kt*PRd)
+    nfprim := floor(Ls/s)
+    smin := min(5*stud.d)
+    smax := min(6*slab.h,0.8)
+    MaRd := (Wypl*fy)/gammaM0
+    //sciananie podluzne w plycie zespolonej
+    VEdc := 0.5*(kt*PRd)/s
+    kphi := min(1+max(b/2,1.5*1.1*stud.d)/(1.1*stud.d),6)
+    PpbRd := kphi*1.1*stud.d*sheet.tcor*fypd
+    thetat := 45
+    VRdsr := cot(45)*((((PI*square(dmesh/1000))/4*fyrd)/sd)+min(sheet.Ap*fypd,PpbRd/s))
+    VRdsc := vc*fcd*sin(thetat)*cos(thetat)*hc
+    //ugiecia w fazie eksploatacji
+    deltae := (5*ΔQk*(l^4))/(384*I1*E)
+    deltamax := deltam1-deltam0+deltae
+    //drgania
+    bn2 := beff*Ecm/E
+    Sy2 := bn2*hc*(h/2+hp+hc/2)
+    z2 := Sy2/(A+bn2*hc)
+    I2 := Iy+A*(z2^2)+(bn2*(hc^3))/12+bn2*hc*((hc/2+hp+h/2-z2)^2)
+    yw := (5*Gk*(l^4))/(384*I2*E)
+    f := 18/sqrt(yw).nounit
+    //unit mass
+    mS := ((slab.Gck*slab.l)+(Gcck*slab.l)+gk)/(GRAV*slab.l)
 	
-	def info = NumSection(TextToTranslate("BeamOfCompositeSlab",BeamOfCompositeSlabSymbols.dictionary),
+	def info = NumSection(TextToTranslate("BeamOfCompositeSlab",dictionary),
 		Text(section.name),
-		Evaluate(l,SLAB.l,SLAB.h),
+		Evaluate(l,slab.l,slab.h),
 		section.info,
 		steel.info,
 		stud.info
@@ -320,12 +296,12 @@ extends Calculation(name) {
 		NumSection("Sprawdzenie łączników na ścinanie wg PN-EN 1994-1-1 pkt. 6.6",
 			Evaluate(MaRd),
 			AssertionL("PN-EN 1994-1-1 pkt. 6.6.1.3(3)",MplRd/MaRd,2.5),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.7(1)",STUD.hsc/STUD.d,3),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(1)",STUD.hsc,hp+2*STUD.d),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.7(1)",stud.hsc/stud.d,3),
+			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(1)",stud.hsc,hp+2*stud.d),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(2)",bo,50 unit SI.mm),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",bo,hp),
 			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",hp,85E-5),
-			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",STUD.d,20 unit SI.mm),
+			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",stud.d,20 unit SI.mm),
 			Evaluate(s,alpha,PRd,ktmax,kt,VEdr,Ls,nf,nfprim,smin,smax),
 			AssertionL("maksymalnego rozstawu łączników",bs,smax),
 			AssertionG("minimanego rozstawu łączników",bs,smin)

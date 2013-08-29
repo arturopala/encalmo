@@ -3,11 +3,9 @@ package org.encalmo.calculation
 import org.encalmo.expression._
 import scala.collection.mutable
 
-case class FormulaSet(contextId: String) {
+case class FormulaSet() {
 
-    private val formulaMap = mutable.Map[Expression, Formula]()
-
-    val cache = new ResultsCache()
+    private val formulaMap = mutable.LinkedHashMap[Expression, Formula]()
 
     private[calculation] def put(formula: Formula): FormulaSet = {
         formulaMap(formula.left.expression) = formula
@@ -22,7 +20,7 @@ case class FormulaSet(contextId: String) {
 
     def getOrReckon(expression: Expression, context: Context, results: Results): Formula = {
         get(expression) getOrElse {
-            val formula = Reckoner.reckonExpression(expression, results, cache)(context)
+            val formula = Reckoner.reckonExpression(expression,context,results)
             this put formula
             formula
         }

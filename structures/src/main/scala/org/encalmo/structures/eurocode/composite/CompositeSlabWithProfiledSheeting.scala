@@ -2,27 +2,22 @@ package org.encalmo.structures.eurocode.composite
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.calculation.ContextFactory
-import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.SymbolConfigurator
 import org.encalmo.document._
 import org.encalmo.structures.eurocode.steel.ProfiledSteelSheet
 import org.encalmo.structures.eurocode.concrete.Concrete
 import org.encalmo.structures.eurocode.concrete.ReinforcingSteel
-import org.encalmo.structures.eurocode.steel.ProfiledSteelSheetSymbols
-import org.encalmo.structures.eurocode.concrete.ConcreteSymbols
 import org.encalmo.structures.eurocode.actions.ActionsSymbols
-import org.encalmo.structures.eurocode.steel.SteelSymbols
-import org.encalmo.structures.common.statics.ContinuousBeamSymbols
-import org.encalmo.structures.eurocode.concrete.ReinforcingSteelSymbols
 import org.encalmo.structures.common.statics.ContinuousBeam_5_LinearLoad
+import org.encalmo.expression.abs
+import org.encalmo.expression.sin
+import org.encalmo.expression.sqrt
+import org.encalmo.expression.max
 
 /** Composite slab with profiled steel sheeting symbols */
-object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
+trait CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
-	val dictionary, contextId = "compositeSlabWithProfiledSheeting"
 	
 	val l = symbol(BasicSymbols.l) unit SI.m
 	val nsp = symbol(BasicSymbols.n|"sp")
@@ -102,115 +97,31 @@ object CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val Mk = symbol(BasicSymbols.M|"k") unit "kNm/m"
 	val sigmactplus = symbol(BasicSymbols.sigma|("ct","+")) unit "MPa"
 	val fyrd = symbol(BasicSymbols.f|"yr,d") unit "MPa"
-}
-
-/** Composite slab with profiled steel sheeting context */
-object CompositeSlabWithProfiledSheetingExpressions extends MapContext {
-
-	import CompositeSlabWithProfiledSheetingSymbols._
-	import ProfiledSteelSheetSymbols._
-	import SteelSymbols.{E,fyd}
-    import ConcreteSymbols._
-    import ActionsSymbols._
-	
-	hc := h-hp
-	
-	//faza montazu - LOAD
-	Qcfk1 := (bs*hc+0.5*(bo+bb)*hp)*gammacf
-	Qcfk := Qcfk1/bs
-	Qcfd := Qcfk*gammaQ
-	Qmk := max(0.75 unit "kN/m2",0.1*Qcfk)
-	Qmd := gammaQ*Qmk
-	Qk1 := Gcck + Qcfk + Qmk
-	Qd1 := Gccd + Qcfd + Qmd
-
-	FEdm := abs(VEdm1)+abs(VEdm2)
-	alpha := 0.15
-	betav := abs(abs(VEdm1)-abs(VEdm2))/(abs(VEdm1)+abs(VEdm2))
-	ss := 180 unit SI.cm
-	la := rangeChoiceLELE(betav,ss,0.2,((betav-0.2)/0.1)*((10E-3-ss)/0.1),0.3,10E-3)
-	
-	//faza montazu - SLS
-	deltasm := 0.08*(MEkm1*(l^2))/(E*Iplus)
-	deltam := 0.08*(MEkm2*(l^2))/(E*Iplus)
-	
-	//faza eksploatacji - LOAD
-	Gck := Qcfk*(gammac/gammacf)
-	Gcd := Gck*gammaG
-	Gsd := Gsk*gammaG
-	qd := qk*gammaQ
-	SigmaQk := qk
-	SigmaGk := Gcck+Gck+Gsk
-	SigmaQd := qd
-	SigmaGd := Gccd+Gcd+Gsd
-	Qk2 := SigmaGk + SigmaQk
-	Qd2 := SigmaGd + SigmaQd
-	Fd := Fk*gammaQ
-	DeltaQk := Gsk+qk
-	DeltaQd := Gsd+qd
-	
-	//faza eksploatacji - ULS
-	MEdep := (Qd2*(l^2))/8
-	MEdep := (Qd2*(l^2))/8
-	xpl := (Ap*fyd)/(0.85*fcd)
-	dp := ep+hc
-	Np := Ap*fyd
-	z := dp-0.5*xpl
-	MplRd := Np*z
-	VEde := 0.5*Qd2*l
-	mV := 103 unit SI.MPa
-	kV := 0.19 unit SI.MPa
-	Ls := l/4
-	gammaVs := 1.25
-	V1Rd := (dp*(((mV*Ap)/(Ls))+kV))/gammaVs
-	//przebicie
-	ap := 0.1
-	bp := 0.1
-	cp := 2*(ap+bp)+4*(dp-hc)+2*PI*hc
-	dv := dp
-	kv := sqrt(1+(200/(dv*1000))).nounit
-	vmin := 35*sqrt(kv^3)*(sqrt(fck).setunit(SI.MPa))
-	VpRd := vmin*cp*dp
-	VRdc := vmin*dv
-	Qvd := Fd
-	//zarysowanie betonu nad podpora
-	Asmin := 0.002*hc*1
-	sdmax := (PI*(dmesh^2))/(4*Asmin)//*1E-6
-	//ugiecia w fazie eksploatacji
-	Eceff2 := Ecm/2
-	nE := E/Eceff2
-	e0 := (Ap*(h-epd)+(1/nE)*1*hc*(hc/2)+(1/nE)*(bo/bs)*hp*(h-(hp/2)))/(Ap+((1*hc)/nE)+(1*bo*hp)/(bs*nE))
-	I0 := Iplus+Ap*((h-e0-epd)^2)+((1*(hc^3))/(nE*12))+((1*hc)/nE)*((e0-hc/2)^2)+(1*bo*(hp^3))/(nE*bs*12)+(1*bo*hp)/(nE*bs)*((h-e0-(hp/2))^2)
-	W0 := I0/(h-e0)
-	Mk := (DeltaQk*(l^2))/8
-	sigmactplus := Mk/(W0*nE)
-	deltae := (5*DeltaQk*(l^4))/(384*I0*E)
-	deltamax := deltasm+deltae
-	
-	// end of context initialization
-	lock()
-
+    val la = symbol(BasicSymbols.l|"a") unit "m"
 }
 
 class CompositeSlabWithProfiledSheeting(
     name: String,
-	height:Expression,
-	length:Expression,
-	spans:Expression, 
-	sheet:ProfiledSteelSheet, 
-	concrete:Concrete,
-	reinforcingSteel:ReinforcingSteel
+	height: Expression,
+	length: Expression,
+	spans: Expression,
+	val sheet: ProfiledSteelSheet,
+	val concrete: Concrete,
+	val reinforcingSteel: ReinforcingSteel,
+    p_gammaG: Expression,
+    p_gammaQ: Expression,
+    p_Gsk: Expression,
+    p_qk: Expression,
+    p_Fk: Expression,
+    p_dmesh: Expression,
+    p_sd: Expression
 )
-extends Calculation(name) {
+extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSlabWithProfiledSheetingSymbols with ActionsSymbols {
 
-	import CompositeSlabWithProfiledSheetingSymbols._
-	import ProfiledSteelSheetSymbols._
-    import ConcreteSymbols.{fcd,fck,fctm}
-    import ActionsSymbols._
+	import sheet.{Gcck,hp,bs,bo,bb,Gccd,alpha,Iplus,Ap,ep,epd,t,br,MRdm,MRdp,VwRd,hw,r,Rw1Rd,Phi,RwRd}
+    import sheet.steel.{E,fyd}
+    import concrete.{fcd,fck,fctm,gammac,gammacf,Ecm}
 
-	val Beam = ContinuousBeamSymbols
-
-	this add CompositeSlabWithProfiledSheetingExpressions
 	this add sheet
 	this add concrete
 	this add reinforcingSteel
@@ -218,23 +129,113 @@ extends Calculation(name) {
 	l := length
 	nsp := spans
 	h := height
-	fyrd := reinforcingSteel(ReinforcingSteelSymbols.fyd)
+	fyrd := reinforcingSteel(reinforcingSteel.fyd)
+
+    this.gammaG := p_gammaG
+    this.gammaQ := p_gammaQ
+    sheet(sheet.gammaG) = p_gammaG
+    sheet(sheet.gammaQ) = p_gammaQ
+
+    Gsk := p_Gsk
+    qk := p_qk
+    Fk := p_Fk
+    dmesh := p_dmesh
+    sd := p_sd
 	
-	val beamULS = new ContinuousBeam_5_LinearLoad("ULS",l,Qd1)
-	val beamSLS1 = new ContinuousBeam_5_LinearLoad("SLS1",l,Qk1)
-	val beamSLS2 = new ContinuousBeam_5_LinearLoad("SLS2",l,Gcck + Qcfk)
+	val beamULS = new ContinuousBeam_5_LinearLoad("ULS",l,Qd1*SI.m.one)
+	val beamSLS1 = new ContinuousBeam_5_LinearLoad("SLS1",l,Qk1*SI.m.one)
+	val beamSLS2 = new ContinuousBeam_5_LinearLoad("SLS2",l,(Gcck + Qcfk)*SI.m.one)
+
+    this add beamULS
+    this add beamSLS1
+    this add beamSLS2
 	
 	//faza montazu - ULS
-	MEdmm := beamULS(Beam.Mmin)
-	MEdmp := beamULS(Beam.Mmax)
-	VEdm := beamULS(Beam.Tmax)
-	VEdm1 := beamULS(Beam.TRmax1)
-	VEdm2 := beamULS(Beam.TRmax2)
+	MEdmm := beamULS.Mmin/SI.m.one
+	MEdmp := beamULS.Mmax/SI.m.one
+	VEdm := beamULS.Tmax/SI.m.one
+	VEdm1 := beamULS.TRmax1/SI.m.one
+	VEdm2 := beamULS.TRmax2/SI.m.one
 	
-	MEkm1 := beamSLS2(Beam.Mmax)
-	MEkm2 := beamSLS1(Beam.Mmax)
+	MEkm1 := beamSLS2.Mmax/SI.m.one
+	MEkm2 := beamSLS1.Mmax/SI.m.one
+
+    hc := h-hp
+
+    //faza montazu - LOAD
+    Qcfk1 := (bs*hc+0.5*(bo+bb)*hp)*gammacf
+    Qcfk := Qcfk1/bs
+    Qcfd := Qcfk*gammaQ
+    Qmk := max(0.75 unit "kN/m2",0.1*Qcfk)
+    Qmd := gammaQ*Qmk
+    Qk1 := Gcck + Qcfk + Qmk
+    Qd1 := Gccd + Qcfd + Qmd
+
+    FEdm := abs(VEdm1)+abs(VEdm2)
+    alpha := 0.15
+    betav := abs(abs(VEdm1)-abs(VEdm2))/(abs(VEdm1)+abs(VEdm2))
+    ss := 180 unit SI.cm
+    la := rangeChoiceLELE(betav,ss,0.2,((betav-0.2)/0.1)*((10E-3-ss)/0.1),0.3,10E-3)
+    sheet(sheet.la) = this(la)
+
+    //faza montazu - SLS
+    deltasm := 0.08*(MEkm1*(l^2))/(E*Iplus)
+    deltam := 0.08*(MEkm2*(l^2))/(E*Iplus)
+
+    //faza eksploatacji - LOAD
+    Gck := Qcfk*(gammac/gammacf)
+    Gcd := Gck*gammaG
+    Gsd := Gsk*gammaG
+    qd := qk*gammaQ
+    SigmaQk := qk
+    SigmaGk := Gcck+Gck+Gsk
+    SigmaQd := qd
+    SigmaGd := Gccd+Gcd+Gsd
+    Qk2 := SigmaGk + SigmaQk
+    Qd2 := SigmaGd + SigmaQd
+    Fd := Fk*gammaQ
+    DeltaQk := Gsk+qk
+    DeltaQd := Gsd+qd
+
+    //faza eksploatacji - ULS
+    MEdep := (Qd2*(l^2))/8
+    MEdep := (Qd2*(l^2))/8
+    xpl := (Ap*fyd)/(0.85*fcd)
+    dp := ep+hc
+    Np := Ap*fyd
+    z := dp-0.5*xpl
+    MplRd := Np*z
+    VEde := 0.5*Qd2*l
+    mV := 103 unit SI.MPa
+    kV := 0.19 unit SI.MPa
+    Ls := l/4
+    gammaVs := 1.25
+    V1Rd := (dp*(((mV*Ap)/(Ls))+kV))/gammaVs
+    //przebicie
+    ap := 0.1
+    bp := 0.1
+    cp := 2*(ap+bp)+4*(dp-hc)+2*PI*hc
+    dv := dp
+    kv := sqrt(1+(200/(dv*1000))).nounit
+    vmin := 35*sqrt(kv^3)*(sqrt(fck).setunit(SI.MPa))
+    VpRd := vmin*cp*dp
+    VRdc := vmin*dv
+    Qvd := Fd
+    //zarysowanie betonu nad podpora
+    Asmin := 0.002*hc*1
+    sdmax := (PI*(dmesh^2))/(4*Asmin)
+    //ugiecia w fazie eksploatacji
+    Eceff2 := Ecm/2
+    nE := E/Eceff2
+    e0 := (Ap*(h-epd)+(1/nE)*1*hc*(hc/2)+(1/nE)*(bo/bs)*hp*(h-(hp/2)))/(Ap+((1*hc)/nE)+(1*bo*hp)/(bs*nE))
+    I0 := Iplus+Ap*((h-e0-epd)^2)+((1*(hc^3))/(nE*12))+((1*hc)/nE)*((e0-hc/2)^2)+(1*bo*(hp^3))/(nE*bs*12)+(1*bo*hp)/(nE*bs)*((h-e0-(hp/2))^2)
+    W0 := I0/(h-e0)
+    Mk := (DeltaQk*(l^2))/8
+    sigmactplus := Mk/(W0*nE)
+    deltae := (5*DeltaQk*(l^4))/(384*I0*E)
+    deltamax := deltasm+deltae
 	
-	def info = NumSection(TextToTranslate("CompositeSlabWithProfiledSheeting",CompositeSlabWithProfiledSheetingSymbols.dictionary),
+	def info = NumSection(TextToTranslate("CompositeSlabWithProfiledSheeting",dictionary),
 		Evaluate(l,nsp,h,hc),
 		AssertionGE("EN 1994-1-1 3.5(2)",t, Number(0.7,SI.mm)),
 		AssertionLE("EN 1994-1-1 9.1.1(2)",br/bs,0.6),

@@ -185,7 +185,7 @@ case class Number(
  * @author artur.opala
  *
  */
-object ZERO extends Number(Real.zero){
+object ZERO extends Number(Real.zero,EmptyUnitOfValue){
 
 	override def + (e:Expression):Expression = e
 	override def - (e:Expression):Expression = -e
@@ -204,7 +204,7 @@ object ZERO extends Number(Real.zero){
  * @author artur.opala
  *
  */
-object ONE extends Number(Real.one){
+object ONE extends Number(Real.one,EmptyUnitOfValue){
 
 	override def * (e:Expression):Expression = e
 	override def % (e:Expression):Expression = e

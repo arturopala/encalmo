@@ -20,7 +20,7 @@ class ExpressionToPrintUnitTest extends AssertionsForJUnit {
         e := sin(z) - 0.3
         val element = Evaluate(a, b, c, d, e)
         //when
-        val toPrint = ExpressionToPrint.prepare(element, new Results {})
+        val toPrint = ExpressionToPrint.prepare(element, new Results())
         //then
         assertTrue(toPrint.size == 5)
         val r1 = toPrint(0)

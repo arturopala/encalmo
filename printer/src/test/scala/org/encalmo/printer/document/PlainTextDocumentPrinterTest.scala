@@ -66,7 +66,7 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
             )
        )
 
-        val results = Reckoner.reckon()
+        val results = Reckoner.reckon
 		val o:TextOutput = new TextOutput(new java.util.Locale("PL"))
 		PlainTextDocumentPrinter.print(doc1)(o)(results)
 	}
@@ -299,7 +299,7 @@ class PlainTextDocumentPrinterTest extends AssertionsForJUnit  {
 		      )
 	      )
 		)
-        val results = Reckoner.reckon()
+        val results = Reckoner.reckon
 		val output:TextOutput = new TextOutput(new java.util.Locale("US"))
 		PlainTextDocumentPrinter.print(doc1)(output)(results)
 	}

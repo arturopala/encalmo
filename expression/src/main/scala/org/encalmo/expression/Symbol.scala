@@ -140,7 +140,7 @@ class Symbol(
     } else ""
     	
     /** Adds id to the contextId sequence */
-    def id(id:String):Symbol = copy(contextId = Some(id))
+    def id(id:String):Symbol = copy(contextId = Option(id))
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Appends comment to the description */
@@ -149,11 +149,12 @@ class Symbol(
     def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
     def unit(unit:UnitOfValue):Symbol = copy(unit = unit)
     /** Set accuracy of evaluations */
-    def accuracy(d:Double) = copy(accuracy = Some(d))
-    def acc(d:Double) = copy(accuracy = Some(d)) // short name
+    def accuracy(d:Double) = copy(accuracy = Option(d))
+    def acc(d:Double) = copy(accuracy = Option(d)) // short name
     def accuracy(optd:Option[Double]) = copy(accuracy = optd)
     /** Sets dictionary */
-    def dictionary(dict:String):Symbol = copy(dictionary = Option(dict))
+    def dict(dict:String):Symbol = copy(dictionary = Option(dict))
+    def dictionary(dictOpt:Option[String]):Symbol =  copy(dictionary = dictOpt)
     /** Copy entire symbol or selected attributes*/
     def copy(
 		name:String = this.name,
@@ -178,6 +179,7 @@ class Symbol(
     override def equals(a:Any):Boolean = {
     	a match {
     		case s:Symbol => {
+                (s eq this) || (
     			s.name == name &&
 		    	(s.contextId == contextId) &&
 		    	(s.subscript == subscript) &&
@@ -185,7 +187,7 @@ class Symbol(
 		    	(s.overscript == overscript) &&
 		    	(s.underscript == underscript) &&
 		    	(s.args == args) &&
-		    	(s.indexes == indexes)
+		    	(s.indexes == indexes))
     		}
     		case _ => false
     	}

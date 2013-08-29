@@ -3,37 +3,71 @@ package org.encalmo.structures.eurocode.actions.silos
 import org.encalmo.expression._
 import org.encalmo.document._
 import org.encalmo.calculation._
-import org.encalmo.structures.eurocode.steel.{Steel, SteelSymbols}
+import org.encalmo.structures.eurocode.steel.Steel
 
 
 /** Circular silos symbols */
-object CircularSiloSymbols extends SymbolConfigurator {
+trait CircularSiloSymbols extends SiloSymbols {
 
-    val dictionary, contextId = "circularSilos"
+    val circularSiloDict = "circularSilo"
 
     //input geometry
-    val d1 = symbol(BasicSymbols.d | 1) unit SI.mm acc 1
+    val d1 = symbol(BasicSymbols.d | 1) unit SI.mm acc 1 dict circularSiloDict
     //Średnica zewnętrzna silosu
-    val h1 = symbol(BasicSymbols.h | 1) unit SI.mm acc 1
+    val h1 = symbol(BasicSymbols.h | 1) unit SI.mm acc 1 dict circularSiloDict
     //Wysokość komory silosu
-    val h2 = symbol(BasicSymbols.h | 2) unit SI.mm acc 1
+    val h2 = symbol(BasicSymbols.h | 2) unit SI.mm acc 1 dict circularSiloDict
     //Wysokość leja silosu
-    val de = symbol(BasicSymbols.d | BasicSymbols.e) unit SI.mm acc 1
+    val de = symbol(BasicSymbols.d | BasicSymbols.e) unit SI.mm acc 1 dict circularSiloDict
     //Średnica otworu wysypowego leja
-    val h3 = symbol(BasicSymbols.h | 3) unit SI.mm acc 1
+    val h3 = symbol(BasicSymbols.h | 3) unit SI.mm acc 1 dict circularSiloDict
     //Prześwit pomiędzy lejem a poziomem terenu
-    val h4 = symbol(BasicSymbols.h | 4) unit SI.mm acc 1
+    val h4 = symbol(BasicSymbols.h | 4) unit SI.mm acc 1 dict circularSiloDict
     //Wysokość całkowita silosu
-    val r = symbol(BasicSymbols.r) unit "mm" acc 1 //Promień powłoki silosu
+    val r = symbol(BasicSymbols.r) unit "mm" acc 1 dict circularSiloDict//Promień powłoki silosu
 }
 
-/** Thin walled circular silos with steep hopper expressions */
-object ThinWalledCircularSlenderSiloWithSteepHopperExpressions extends MapContext {
+/** Circular slender silos calculation */
+class ThinWalledCircularSlenderSiloWithSteepHopper(
+       diameter: Expression,
+       heightOfChamber: Expression,
+       heightOfHopper: Expression,
+       thicknessOfChamberWall: Expression,
+       thicknessOfHopperWall: Expression,
+       thicknessOfRing: Expression,
+       heightOfRing: Expression,
+       widthOfColumn: Expression,
+       numberOfColumns: Expression,
+       diameterOfOutlet: Expression,
+       val particulateSolid: ParticulateSolid,
+       wallType: Expression,
+       val steel: Steel
+    )
+    extends Calculation("ThinWalledCircularSlenderSiloWithSteepHopper", "silo") with CircularSiloSymbols {
 
-    import SteelSymbols.{gammas, E, fy, gammaM1}
-    import SiloSymbols._
-    import CircularSiloSymbols._
-    import ParticulateSolidSymbols._
+    import steel.{E, fy, gammaM1, gammas}
+    import particulateSolid._
+
+    particulateSolid(particulateSolid.D) = wallType
+
+    this add particulateSolid
+    this add steel
+
+    d1 := diameter
+    h1 := heightOfChamber
+    h2 := heightOfHopper
+    t := thicknessOfChamberWall
+    th := thicknessOfHopperWall
+    de := diameterOfOutlet
+    h3 := 2.5 unit SI.m
+    alpha := 5 unit SI.deg
+    HM := 140 unit SI.m
+    s1 := widthOfColumn
+    hpp := heightOfRing
+    tp := t
+    tpp := thicknessOfRing
+    ns := numberOfColumns
+    gammaM1 := 1.1
 
     //calculated geometry
     dc := d1 - 2 * t
@@ -253,66 +287,15 @@ object ThinWalledCircularSlenderSiloWithSteepHopperExpressions extends MapContex
     chix1 := rangeChoiceLELE(lambdax1, 1, lambdax0, 1 - betax * (((lambdax1 - lambdax0) / (lambdapx - lambdax0)) ^ etax), lambdapx, alphax / (lambdax1 ^ 2))
     sigxRd1 := fy * chix1 / gammaM1
 
-    // end of context initialization
-    lock()
-
-}
-
-/** Circular slender silos calculation */
-class ThinWalledCircularSlenderSiloWithSteepHopper(
-       diameter: Expression,
-       heightOfChamber: Expression,
-       heightOfHopper: Expression,
-       thicknessOfChamberWall: Expression,
-       thicknessOfHopperWall: Expression,
-       thicknessOfRing: Expression,
-       heightOfRing: Expression,
-       widthOfColumn: Expression,
-       numberOfColumns: Expression,
-       diameterOfOutlet: Expression,
-       particulateSolid: ParticulateSolid,
-       wallType: Expression,
-       steel: Steel
-    )
-    extends Calculation("ThinWalledCircularSlenderSiloWithSteepHopper") {
-
-    import SteelSymbols.{E, fy, gammaM1}
-    import SiloSymbols._
-    import CircularSiloSymbols._
-    import ParticulateSolidSymbols._
-    import ThinWalledCircularSlenderSiloWithSteepHopperExpressions._
-
-    particulateSolid(ParticulateSolidSymbols.D) = wallType
-
-    this add ThinWalledCircularSlenderSiloWithSteepHopperExpressions
-    this add particulateSolid
-    this add steel
-
-    d1 := diameter
-    h1 := heightOfChamber
-    h2 := heightOfHopper
-    t := thicknessOfChamberWall
-    th := thicknessOfHopperWall
-    de := diameterOfOutlet
-    h3 := 2.5 unit SI.m
-    alpha := 5 unit SI.deg
-    HM := 140 unit SI.m
-    s1 := widthOfColumn
-    hpp := heightOfRing
-    tp := t
-    tpp := thicknessOfRing
-    ns := numberOfColumns
-    gammaM1 := 1.1
-
     //input geometry
-    def inputGeometry = NumSection(TextToTranslate("_inputGeometry", SiloSymbols.dictionary),
+    def inputGeometry = NumSection(TextToTranslate("_inputGeometry", dictionary),
         Evaluate(d1, h1, h2, de, t, th, tr, tp, tpp, alpha, h3, h4)
     )
 
     //input assertions
 
     //calculated geometry
-    def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry", SiloSymbols.dictionary),
+    def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry", dictionary),
         Evaluate(r, dc, A, U, AU, beta, hh, he, htp, ho, hc, hb, hcdc, Sc, Sh, S),
         AssertionL("[1991-4] 1.1.2 (3)", hb / dc, 10),
         AssertionL("[1991-4] 1.1.2 (3)", hb, 100 unit SI.m),
@@ -321,7 +304,7 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
     )
 
     //volumes
-    def volumes = NumSection(TextToTranslate("_volumes", SiloSymbols.dictionary),
+    def volumes = NumSection(TextToTranslate("_volumes", dictionary),
         Evaluate(Vc, Vh, V, W)
     )
 
@@ -334,41 +317,41 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
     def obciazenieWiatrem = NumSection("Oddziaływania od obciążenia wiatrem", Evaluate(qbo, cez, qpz, cscd, ze, Re, Aref, cf, Fw, wemax, cpi, wi))
 
     //filling symmetrical load
-    def fillingSymmetricalLoad = NumSection(TextToTranslate("_fillingSymmetricalLoad", SiloSymbols.dictionary), "[1991-4] 5.2.1.1",
-        NumSection(TextToTranslate("_fillingSymmetricalLoad_1", SiloSymbols.dictionary),
+    def fillingSymmetricalLoad = NumSection(TextToTranslate("_fillingSymmetricalLoad", dictionary), "[1991-4] 5.2.1.1",
+        NumSection(TextToTranslate("_fillingSymmetricalLoad_1", dictionary),
             Evaluate(zo(1), pho(1), YJ(1), phf(1), phf1, phf2, phf3, phft)
         ),
-        NumSection(TextToTranslate("_fillingSymmetricalLoad_2", SiloSymbols.dictionary),
+        NumSection(TextToTranslate("_fillingSymmetricalLoad_2", dictionary),
             Evaluate(zo(2), pho(2), YJ(2), phf(2), pwf, nfzSk, nfzSkt)
         ),
-        NumSection(TextToTranslate("_fillingSymmetricalLoad_3", SiloSymbols.dictionary),
+        NumSection(TextToTranslate("_fillingSymmetricalLoad_3", dictionary),
             Evaluate(zo(3), pho(3), YJ(3), pvf)
         )
     )
 
     //filling patch load
-    def fillingPatchLoad = NumSection(TextToTranslate("_fillingPatchLoad", SiloSymbols.dictionary), "[1991-4] 5.2.1.2, 5.2.1.4",
+    def fillingPatchLoad = NumSection(TextToTranslate("_fillingPatchLoad", dictionary), "[1991-4] 5.2.1.2, 5.2.1.4",
         Evaluate(ef, Ef, Cpf, ppf, zp, ppfzp, s, Fpf1)
     )
 
     //discharge symmetrical load
-    def dischargeSymmetricalLoad = NumSection(TextToTranslate("_dischargeSymmetricalLoad", SiloSymbols.dictionary), "[1991-4] 5.2.2.1",
+    def dischargeSymmetricalLoad = NumSection(TextToTranslate("_dischargeSymmetricalLoad", dictionary), "[1991-4] 5.2.2.1",
         Evaluate(Ch, Cw, phe, phet, pwe, nezSk, nezSkt)
     )
 
     //discharge patch load
-    def dischargePatchLoad = NumSection(TextToTranslate("_dischargePatchLoad", SiloSymbols.dictionary), "[1991-4] 5.2.2.2, 5.2.2.4",
+    def dischargePatchLoad = NumSection(TextToTranslate("_dischargePatchLoad", dictionary), "[1991-4] 5.2.2.2, 5.2.2.4",
         Evaluate(Cpe, ppe, zp, ppezp, Fpe1)
     )
 
     //filling loads on silo hoppers
-    def fillingHopperLoad = NumSection(TextToTranslate("_fillingHopperLoad", SiloSymbols.dictionary), "[1991-4] 6.1.2, 6.3.2",
+    def fillingHopperLoad = NumSection(TextToTranslate("_fillingHopperLoad", dictionary), "[1991-4] 6.1.2, 6.3.2",
         AssertionL("leja stromego [1991-4] 6.1",  tan(beta), (1 - K_l) / (2 * mu_u)),
         Evaluate(Cb, pvft, muheff, Ff, nh, pv, pnf, ptf, pnf0, ptf0, pnf1, ptf1)
     )
 
     //discharge loads on silo hoppers
-    def dischargeHopperLoad = NumSection(TextToTranslate("_dischargeHopperLoad", SiloSymbols.dictionary), "[1991-4] 6.3.3",
+    def dischargeHopperLoad = NumSection(TextToTranslate("_dischargeHopperLoad", dictionary), "[1991-4] 6.3.3",
         Evaluate(fiwh, epsilon, Fe, pne, pte, pne0, pte0, pne1, pte1)
     )
 

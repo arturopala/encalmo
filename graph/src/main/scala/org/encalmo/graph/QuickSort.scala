@@ -1,19 +1,19 @@
 package org.encalmo.graph
 
-import collection.mutable.Seq
+import collection.mutable
 
 /** Sorts mutable sequences in-place */
 object QuickSort {
 
-	def sort[T : Ordering](array: Seq[T]): Unit = sort(array, 0, array.length, random _)
-	def sort[T : Ordering](array: Seq[T], pivotStrategy: (Seq[T], Int, Int) => Int): Unit = sort(array, 0, array.length, pivotStrategy)
-	def sort[T : Ordering](array: Seq[T], start: Int, end: Int, pivotStrategy: (Seq[T], Int, Int) => Int): Unit = {
+	def sort[T : Ordering](array: mutable.Seq[T]): Unit = sort(array, 0, array.length, random _)
+	def sort[T : Ordering](array: mutable.Seq[T], pivotStrategy: (mutable.Seq[T], Int, Int) => Int): Unit = sort(array, 0, array.length, pivotStrategy)
+	def sort[T : Ordering](array: mutable.Seq[T], start: Int, end: Int, pivotStrategy: (mutable.Seq[T], Int, Int) => Int): Unit = {
 		val i = partition(array, start, end, pivotStrategy)
 		if (i > start) sort(array, start, i, pivotStrategy)
 		if (i + 1 < end) sort(array, i + 1, end, pivotStrategy)
 	}
 
-	def partition[T : Ordering](array: Seq[T], start: Int, end: Int, pivotStrategy: (Seq[T], Int, Int) => Int): Int = {
+	def partition[T : Ordering](array: mutable.Seq[T], start: Int, end: Int, pivotStrategy: (mutable.Seq[T], Int, Int) => Int): Int = {
 		val ordering = implicitly[Ordering[T]]
 		if (end - start == 1) return start
 		val p = pivotStrategy(array, start, end)
@@ -30,7 +30,7 @@ object QuickSort {
 		i
 	}
 
-	def swap[T](array: Seq[T], from: Int, to: Int): Unit = {
+	def swap[T](array: mutable.Seq[T], from: Int, to: Int): Unit = {
 		if (from != to) {
 			val elem: T = array(to)
 			array(to) = array(from)
@@ -38,9 +38,9 @@ object QuickSort {
 		}
 	}
 
-	def first(array: Seq[_], start: Int, end: Int): Int = start
-	def last(array: Seq[_], start: Int, end: Int): Int = end - 1
-	def median[T : Ordering](array: Seq[T], start: Int, end: Int): Int = {
+	def first(array: mutable.Seq[_], start: Int, end: Int): Int = start
+	def last(array: mutable.Seq[_], start: Int, end: Int): Int = end - 1
+	def median[T : Ordering](array: mutable.Seq[T], start: Int, end: Int): Int = {
 		val ordering = implicitly[Ordering[T]]
 		import ordering._
 		val a = array(start)
@@ -57,6 +57,6 @@ object QuickSort {
 			case _ => throw new IllegalStateException
 		}
 	}
-	def random(array: Seq[_], start: Int, end: Int): Int = start + (Math.random()*(end-start)).toInt
+	def random(array: mutable.Seq[_], start: Int, end: Int): Int = start + (Math.random()*(end-start)).toInt
 
 }

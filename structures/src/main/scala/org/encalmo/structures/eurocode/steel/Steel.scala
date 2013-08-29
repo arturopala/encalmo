@@ -5,14 +5,13 @@ import org.encalmo.calculation._
 import org.encalmo.calculation.ContextFactory
 import org.encalmo.calculation.MapContext
 import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.SymbolConfigurator
 import org.encalmo.document._
+import org.encalmo.expression.sqrt
 
 /** Steel symbols */
-object SteelSymbols extends SymbolConfigurator {
+trait SteelSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
-	val dictionary, contextId = "steel"
 	
 	val CLASS = symbol("CLASS").makeNonPrintable
 	val E = symbol(BasicSymbols.E) unit SI.GPa //Moduł sprężystości
@@ -29,94 +28,47 @@ object SteelSymbols extends SymbolConfigurator {
 	val epsi = symbol(BasicSymbols.epsi)       //Współczynnik korekcyjny klasy stali
 }
 
-/** Common steel expressions */
-object SteelExpressions extends MapContext {
-
-	import SteelSymbols._
-	
-	E      := 210
-	gammas := 78.5
-	fyd    := fy/gammaM0
-	epsiy  := fy/E
-	epsi   := sqrt(Number(235,SI.MPa)/fy)
-	lock()
-}
-
 /** Steel context class */
-class Steel(name:String, data:Context) extends Calculation(name) {
+class Steel(name:String, proof_strength: Int, tensile_strength: Int,  standard: String) extends MapContext("steel") with SteelSymbols {
 
-	import SteelSymbols._
-	
-	def info = NumSection(TextToTranslate("Steel",dictionary),name,"EN 10025-2",
-		Evaluate(fy,gammaM0,fyd,E)
-	)
-	
-	this add SteelExpressions
-	this add data
-	
+    fy := proof_strength
+    fu := tensile_strength
+
+    E      := 210
+    gammas := 78.5
+    fyd    := fy/gammaM0
+    epsiy  := fy/E
+    epsi   := sqrt(Number(235,SI.MPa)/fy)
+
 	CLASS   := text(name)
 	gammaM0 := 1
 	gammaM1 := 1
 	gammaV  := 1.25
 
-	override def label = this(CLASS)
+    def info = NumSection(TextToTranslate("Steel",dictionary),name,standard,
+        Evaluate(fy,gammaM0,fyd,E)
+    )
+
+	def label = this(CLASS)
 }
 
 /** Steel library */
-object Steel {
+object Steel extends Catalog[Steel]("Steel") {
 	
-	import SteelSymbols._
-	
-	def apply(s:String):Steel = map.get(s).map(x => x()).getOrElse(throw new IllegalStateException)
-	
-	val map = Map[String,()=>Steel](
+	override val map = Map[String,()=>Steel](
 		"S235" -> S235 _,
 		"S275" -> S275 _,
 		"S355" -> S355 _,
 		"S450" -> S450 _,
-		"S280 GD" -> S280GD _
+		"S280 GD" -> S280GD _,
+        "S350 GD" -> S350GD _
 	)
 
-	def S235 = new Steel("S235",data_S235)
-	def S275 = new Steel("S275",data_S275)
-	def S355 = new Steel("S355",data_S355)
-	def S450 = new Steel("S450",data_S450)
-	def S280GD = new Steel("S280 GD",data_S280GD)
-	def S350GD = new Steel("S350 GD",data_S350GD)
-	
-	private lazy val data_S235 = new MapContext {
-		fy := 235
-		fu := 360
-		lock()
-	}
-	
-	private lazy val data_S275 = new MapContext {
-		fy := 275
-		fu := 430
-		lock()
-	}
-	
-	private lazy val data_S355 = new MapContext {
-		fy := 355
-		fu := 510
-		lock()
-	}
-	
-	private lazy val data_S450 = new MapContext {
-		fy := 440
-		fu := 550
-		lock()
-	}
-	
-	private lazy val data_S280GD = new MapContext {
-		E  := 210
-		fy := 280
-		lock()
-	}
-	
-	private lazy val data_S350GD = new MapContext {
-        E  := 210
-        fy := 350
-        lock()
-    }
+	def S235 = new Steel("S235",235,360,"EN 10025-2")
+	def S275 = new Steel("S275",275,430,"EN 10025-2")
+	def S355 = new Steel("S355",355,510,"EN 10025-2")
+	def S450 = new Steel("S450",440,550,"EN 10025-2")
+	def S280GD = new Steel("S280 GD",280,360,"EN 10326")
+	def S350GD = new Steel("S350 GD",350,420,"EN 10326")
+
 }

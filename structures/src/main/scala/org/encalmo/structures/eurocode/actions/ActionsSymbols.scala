@@ -2,16 +2,15 @@ package org.encalmo.structures.eurocode.actions
 
 import org.encalmo.expression._
 import org.encalmo.calculation.Calculation
-import org.encalmo.calculation.SymbolConfigurator
 import org.encalmo.document._
 
 /** Actions symbols */
-object ActionsSymbols extends SymbolConfigurator {
+trait ActionsSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
-	val dictionary, contextId = "actions"
+	val actionsDict = "actions"
 	
-	val gammaG = symbol(gamma|"G")
-	val gammaQ = symbol(gamma|"Q")
+	val gammaG = symbol(gamma|"G", actionsDict)
+	val gammaQ = symbol(gamma|"Q", actionsDict)
 	
 }

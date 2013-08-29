@@ -261,8 +261,8 @@ class SlupDrewnianyZlozonyWkrety extends Worksheet("kd1-slup") {
     val Sec2 = Square("rec",arec)
     val calc4 = Calculation("slup kwadratowy jednorodny")
     calc4(arec) = 0.138
-    calc4(As) = SectionSymbols.A
-    calc4(imin) = SectionSymbols.imin
+    calc4(As) = Sec2.A
+    calc4(imin) = Sec2.imin
     calc4 add calc2
     calc4 add calc3
     calc4 add Sec2
@@ -271,9 +271,9 @@ class SlupDrewnianyZlozonyWkrety extends Worksheet("kd1-slup") {
     val xi2 = xi|"2" is "stosunek nośności na ściskanie słupa kwadratowego i zaprojektowanego" unit "%"
     calc4(xi2) = (Fmax2/Fmaxof1)*100
     val delta2 = delta|"2" is "zmiana pola przekroju słupa wielogałęziowego w stosunku do słupa kwadratowego o zbliżonej niegorszej nośności" unit "%"
-    calc4(delta2) = ((Aof1-SectionSymbols.A)/Aof1)*100
+    calc4(delta2) = ((Aof1-Sec2.A)/Aof1)*100
     
-    val przekrojKwadratowy = Seq(arec,SectionSymbols.A,SectionSymbols.Imin,SectionSymbols.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)
+    val przekrojKwadratowy = Seq(arec,Sec2.A,Sec2.Imin,Sec2.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)
 
     override val document = Document("",
         Predefined.stylesConfig,

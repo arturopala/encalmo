@@ -6,7 +6,9 @@ import org.encalmo.expression._
 /** 
  * Base mutable and lockable context implementation
  */
-class MapContext extends MutableContext {
+class MapContext(val dictionary: Option[String] = None) extends MutableContext {
+
+    def this(dict: String) = this(Option(dict))
 	
 	val map:mutable.Map[Symbol,Expression] = mutable.LinkedHashMap[Symbol,Expression]()
 
@@ -53,7 +55,7 @@ class MapContext extends MutableContext {
 
     override def listSymbols: Seq[Symbol] = listMappedSymbols
 
-    protected final def listMappedSymbols: Seq[Symbol] = map.keySet.toSeq
+    private[calculation] final def listMappedSymbols: Seq[Symbol] = map.keySet.toSeq
 
     override def listNestedResolvers:Seq[Context] = Seq.empty[Context]
 	

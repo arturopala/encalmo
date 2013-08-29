@@ -20,14 +20,14 @@ case class Selection(cases: Seq[Case], default: Option[CaseExpression] = None) e
      * or default expression if neither case succeeds.
      */
     def select: Expression = {
-        cases.find(_.test match {case Some(b) => b; case None => return this}) map (_.caseExpression.expression) getOrElse {
+        cases.find(_.test match {case Some(b) => b; case None => {return this}}) map (_.caseExpression.expression) getOrElse {
             default.map(_.expression).getOrElse(throw new IllegalStateException("No default expression defined for selection"))
         }
     }
 
     /** Trims this selection to one case element */
     def trim: Expression = {
-        cases.find(_.test match {case Some(b) => b; case None => return this}) map (cas => Selection(Seq(cas))) getOrElse {
+        cases.find(_.test match {case Some(b) => b; case None => {throw new IllegalStateException()}}) map (cas => Selection(Seq(cas))) getOrElse {
             default.map(e => Selection(Seq.empty,Some(e))).getOrElse(throw new IllegalStateException("No default expression defined for selection"))
         }
     }
