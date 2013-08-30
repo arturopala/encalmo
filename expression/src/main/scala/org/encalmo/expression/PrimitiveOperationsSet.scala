@@ -145,7 +145,7 @@ case class Modulo(l: Expression, r: Expression) extends InfixOperation {
 /**
  * Negation operation
  */
-case class Neg(e: Expression) extends PrefixOperation {
+case class Neg(expression: Expression) extends PrefixOperation {
 
 	override def copy(e: Expression) = Neg(e)
 	override val operator = "-"

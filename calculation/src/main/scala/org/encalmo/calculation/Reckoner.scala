@@ -17,7 +17,7 @@ object Reckoner {
         reckonContext(context)
     }
 
-    private[calculation] def reckonContext(context: Context): Results = {
+    def reckonContext(context: Context): Results = {
         val graph: Graph[Symbol] = SymbolGraph.build(context)
         val symbols: List[Symbol] = Graph.sortTopologically(graph)
         Console.println(s"Found ${symbols.size} symbols to reckon in $context:")
@@ -29,7 +29,7 @@ object Reckoner {
         results
     }
 
-    private[calculation] def reckonExpression(expression: Expression, context: Context, results: Results): Formula = {
+    def reckonExpression(expression: Expression, context: Context, results: Results): Formula = {
         results.formulaSet.get(expression) getOrElse {
             expression match {
                 case pinned: PinnedExpression => results.formulaSet.get(pinned.symbol) getOrElse reckonExpression(pinned.symbol,pinned.context,results)
@@ -81,14 +81,15 @@ object Reckoner {
 
     @tailrec
     private def prepareUnresolved(list: List[Expression], expression: Expression, context: Context, cache: ResultsCache): List[Expression] = {
-        (expression match {
+        val unresolved = expression match {
             case symbol: Symbol => {
                 context.getExpression(symbol).map(processUnresolved(_, context, cache)).getOrElse(symbol)
             }
             case other => other
-        }) match {
-            case symbol: Symbol if symbol != expression => {
-                prepareUnresolved(symbol :: list, symbol, context, cache)
+        }
+        unresolved match {
+            case symbol2: Symbol if symbol2 ne expression => {
+                prepareUnresolved(symbol2 :: list, symbol2, context, cache)
             }
             case other => other :: list
         }
