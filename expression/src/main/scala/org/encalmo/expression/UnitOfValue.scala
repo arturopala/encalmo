@@ -633,51 +633,55 @@ object UnitOfValue {
     }
 }
 
-case class NoUnit(e: Expression) extends Expression with Transparent {
+case class NoUnit(expression: Expression) extends Expression with Transparent {
 
-    override val children: Seq[Expression] = Seq(e)
+    override val children: Seq[Expression] = Seq(expression)
 
     final override def eval(): Expression = {
-        val ev = e eval()
+        val ev = expression eval()
         ev match {
             case value: Value => value.setUnit(EmptyUnitOfValue)
-            case _ if ev ne e => copy(ev)
+            case _ if ev ne expression => copy(ev)
             case _  => this
         }
     }
 
     final override def map(f: Transformation): Expression = {
-        val ev = e.map(f)
+        val ev = expression.map(f)
         f(ev match {
             case value: Value => value.setUnit(EmptyUnitOfValue)
-            case _ if ev ne e => copy(ev)
+            case _ if ev ne expression => copy(ev)
             case _  => this
         })
     }
+
+    override def wrap(e: Expression): Transparent = copy(expression = e)
 
 }
 
-case class SetUnit(e: Expression, override val unit:UnitOfValue) extends Expression with Transparent {
+case class SetUnit(expression: Expression, override val unit:UnitOfValue) extends Expression with Transparent {
 
-    override val children: Seq[Expression] = Seq(e)
+    override val children: Seq[Expression] = Seq(expression)
 
     final override def eval(): Expression = {
-        val ev = e eval()
+        val ev = expression eval()
         ev match {
             case value: Value => value.setUnit(unit)
-            case _ if ev ne e => copy(ev)
-            case _ if ev == e => this
+            case _ if ev ne expression => copy(ev)
+            case _ if ev == expression => this
         }
     }
 
     final override def map(f: Transformation): Expression = {
-        val ev = e.map(f)
+        val ev = expression.map(f)
         f(ev match {
             case value: Value => value.setUnit(unit)
-            case _ if ev ne e => copy(ev)
+            case _ if ev ne expression => copy(ev)
             case _ => this
         })
     }
+
+    override def wrap(e: Expression): Transparent = copy(expression = e)
 
 }
 

@@ -43,7 +43,8 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
         p_qk = this(pc),
         p_Fk =  10 unit SI.kN,
         p_dmesh = 8,
-        p_sd = 0.15
+        p_sd = 0.15,
+        p_ss = profil(profil.b)
     )
 
     val belka = new BeamOfCompositeSlab(
@@ -88,13 +89,18 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
 	               blacha.steel.info,blacha.info,beton.info,plyta.info
 	           ),
 	           NumSection("Obciążenia i schemat statyczny w fazie montażu",
+                   Section(styleDescription,
+                       """Schemat statyczny blachy trapezowej pełniącej funkcje deskowania przyjęto jak dla belki ciągłej pięcioprzęsłowej, wolnopodpartej, o stałej sztywności EI i stałym rozstawie przęseł.
+                          Siły wewnętrzne w przęśle i na podporze oraz reakcje podporowe obliczono dla obciążenia ciągłego, równomiernie rozłożonego, korzystając z tablic w [6]."""),
 	               plyta.LOAD1
 	           ),
 	           NumSection("Blacha trapezowa jako deskowanie",
-	           	   Section(styleDescription,"""Schemat statyczny blachy trapezowej pełniącej funkcje deskowania przyjęto jako belkę pięcioprzęsłową. Siły wewnętrzne i reakcje obliczono korzystając z tablic w [6]."""),
 	              plyta.ULS1,plyta.SLS1
 	           ),
 	           NumSection("Obciążenia i schemat statyczny w fazie eksploatacji",
+                   Section(styleDescription,
+                       """Schemat statyczny blachy trapezowej zespolonej z betonem przyjęto jak dla belki ciągłej pięcioprzęsłowej, wolnopodpartej, o stałej sztywności EI i stałym rozstawie przęseł.
+                          Siły wewnętrzne w przęśle i na podporze oraz reakcje podporowe obliczono dla obciążenia ciągłego, równomiernie rozłożonego, korzystając z tablic w [6]."""),
 	               plyta.LOAD2
 	           ),
 	           NumSection("Wymiarowanie płyty zespolonej w fazie eksploatacji",
@@ -104,12 +110,16 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
            NumSection("Wymiarowanie belki stropowej",
 	           belka.info,
 	           NumSection("Obciążenia i schemat statyczny w fazie montażu",
+                   Section(styleDescription,
+                       """Schemat statyczny belki w fazie montażu przyjęto jak dla belki jednoprzęsłowej, wolnopodpartej, obciążonej równomiernie na całej długości."""),
 	               belka.LOAD1
 	           ),
 	           NumSection("Wymiarowanie belki w fazie montażu",
 	               belka.ULS1,belka.SLS1
 	           ),
 	           NumSection("Obciążenia i schemat statyczny w fazie eksploatacji",
+                   Section(styleDescription,
+                       """Schemat statyczny belki w fazie eksploatacji przyjęto jak dla belki jednoprzęsłowej, wolnopodpartej, obciążonej równomiernie na całej długości."""),
 	               belka.LOAD2
 	           ),
 	           NumSection("Wymiarowanie belki w fazie eksploatacji",

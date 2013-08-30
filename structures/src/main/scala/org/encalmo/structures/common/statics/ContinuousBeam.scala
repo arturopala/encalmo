@@ -2,61 +2,60 @@ package org.encalmo.structures.common.statics
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.calculation.Calculation
 import org.encalmo.expression.abs
 
 trait ContinuousBeamSymbols extends SymbolConfigurator {
 	
-	val p = symbol(BasicSymbols.p) unit "kN/m"
-	val l = symbol(BasicSymbols.l) unit "m"
-	val P = symbol(BasicSymbols.P) unit "kN"
+	val p = symbol(BasicSymbols.p)
+	val l = symbol(BasicSymbols.l)
+	val P = symbol(BasicSymbols.P)
 	
-	val lBA = symbol(BasicSymbols.l|"BA") unit "m"
-	val lBC = symbol(BasicSymbols.l|"BC") unit "m"
-	val lCB = symbol(BasicSymbols.l|"CB") unit "m"
-	val lCD = symbol(BasicSymbols.l|"CD") unit "m"
+	val lBA = symbol(BasicSymbols.l|"BA")
+	val lBC = symbol(BasicSymbols.l|"BC")
+	val lCB = symbol(BasicSymbols.l|"CB")
+	val lCD = symbol(BasicSymbols.l|"CD")
 	
-	val Mmax = symbol(BasicSymbols.M|"max") unit "kNm"
-	val Mmin = symbol(BasicSymbols.M|"min") unit "kNm"
-	val Rmax = symbol(BasicSymbols.R|"max") unit "kN"
-	val TRmax1 = symbol(BasicSymbols.T|"Rmax,1") unit "kN"
-	val TRmax2 = symbol(BasicSymbols.T|"Rmax,2") unit "kN"
-	val Rmin = symbol(BasicSymbols.R|"min") unit "kN"
-	val Tmax = symbol(BasicSymbols.T|"max") unit "kN"
-	val Tmin = symbol(BasicSymbols.T|"min") unit "kN"
+	val Mmax = symbol(BasicSymbols.M|"max")
+	val Mmin = symbol(BasicSymbols.M|"min")
+	val Rmax = symbol(BasicSymbols.R|"max")
+	val TRmax1 = symbol(BasicSymbols.T|"Rmax,1")
+	val TRmax2 = symbol(BasicSymbols.T|"Rmax,2")
+	val Rmin = symbol(BasicSymbols.R|"min")
+	val Tmax = symbol(BasicSymbols.T|"max")
+	val Tmin = symbol(BasicSymbols.T|"min")
 	
 	
-	val M11max = symbol(BasicSymbols.M|"11,max") unit "kNm"
-	val M12max = symbol(BasicSymbols.M|"12,max") unit "kNm"
-	val M21max = symbol(BasicSymbols.M|"21,max") unit "kNm"
-	val M22max = symbol(BasicSymbols.M|"22,max") unit "kNm"
-	val M31max = symbol(BasicSymbols.M|"31,max") unit "kNm"
-	val M32max = symbol(BasicSymbols.M|"32,max") unit "kNm"
-	val MBmax = symbol(BasicSymbols.M|"B,max") unit "kNm"
-	val MCmax = symbol(BasicSymbols.M|"C,max") unit "kNm"
-	val RAmax = symbol(BasicSymbols.R|"A,max") unit "kN"
-	val RBmax = symbol(BasicSymbols.R|"B,max") unit "kN"
-	val RCmax = symbol(BasicSymbols.R|"C,max") unit "kN"
-	val T1Bmax = symbol(BasicSymbols.T|"1,B,max") unit "kN"
-	val T2Bmax = symbol(BasicSymbols.T|"2,B,max") unit "kN"
-	val T2Cmax = symbol(BasicSymbols.T|"2,C,max") unit "kN"
-	val T3Cmax = symbol(BasicSymbols.T|"3,C,max") unit "kN"
+	val M11max = symbol(BasicSymbols.M|"11,max")
+	val M12max = symbol(BasicSymbols.M|"12,max")
+	val M21max = symbol(BasicSymbols.M|"21,max")
+	val M22max = symbol(BasicSymbols.M|"22,max")
+	val M31max = symbol(BasicSymbols.M|"31,max")
+	val M32max = symbol(BasicSymbols.M|"32,max")
+	val MBmax = symbol(BasicSymbols.M|"B,max")
+	val MCmax = symbol(BasicSymbols.M|"C,max")
+	val RAmax = symbol(BasicSymbols.R|"A,max")
+	val RBmax = symbol(BasicSymbols.R|"B,max")
+	val RCmax = symbol(BasicSymbols.R|"C,max")
+	val T1Bmax = symbol(BasicSymbols.T|"1,B,max")
+	val T2Bmax = symbol(BasicSymbols.T|"2,B,max")
+	val T2Cmax = symbol(BasicSymbols.T|"2,C,max")
+	val T3Cmax = symbol(BasicSymbols.T|"3,C,max")
 	
-	val M11min = symbol(BasicSymbols.M|"11,min") unit "kNm"
-	val M12min = symbol(BasicSymbols.M|"12,min") unit "kNm"
-	val M21min = symbol(BasicSymbols.M|"21,min") unit "kNm"
-	val M22min = symbol(BasicSymbols.M|"22,min") unit "kNm"
-	val M31min = symbol(BasicSymbols.M|"31,min") unit "kNm"
-	val M32min = symbol(BasicSymbols.M|"32,min") unit "kNm"
-	val MBmin = symbol(BasicSymbols.M|"B,min") unit "kNm"
-	val MCmin = symbol(BasicSymbols.M|"C,min") unit "kNm"
-	val RAmin = symbol(BasicSymbols.R|"A,min") unit "kN"
-	val RBmin = symbol(BasicSymbols.R|"B,min") unit "kN"
-	val RCmin = symbol(BasicSymbols.R|"C,min") unit "kN"
-	val T1Bmin = symbol(BasicSymbols.T|"1,B,min") unit "kN"
-	val T2Bmin = symbol(BasicSymbols.T|"2,B,min") unit "kN"
-	val T2Cmin = symbol(BasicSymbols.T|"2,C,min") unit "kN"
-	val T3Cmin = symbol(BasicSymbols.T|"3,C,min") unit "kN"
+	val M11min = symbol(BasicSymbols.M|"11,min")
+	val M12min = symbol(BasicSymbols.M|"12,min")
+	val M21min = symbol(BasicSymbols.M|"21,min")
+	val M22min = symbol(BasicSymbols.M|"22,min")
+	val M31min = symbol(BasicSymbols.M|"31,min")
+	val M32min = symbol(BasicSymbols.M|"32,min")
+	val MBmin = symbol(BasicSymbols.M|"B,min")
+	val MCmin = symbol(BasicSymbols.M|"C,min")
+	val RAmin = symbol(BasicSymbols.R|"A,min")
+	val RBmin = symbol(BasicSymbols.R|"B,min")
+	val RCmin = symbol(BasicSymbols.R|"C,min")
+	val T1Bmin = symbol(BasicSymbols.T|"1,B,min")
+	val T2Bmin = symbol(BasicSymbols.T|"2,B,min")
+	val T2Cmin = symbol(BasicSymbols.T|"2,C,min")
+	val T3Cmin = symbol(BasicSymbols.T|"3,C,min")
 
 }
 

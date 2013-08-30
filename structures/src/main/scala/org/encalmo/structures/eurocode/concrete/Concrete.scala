@@ -34,26 +34,26 @@ trait ConcreteSymbols extends SymbolConfigurator {
 	val gammacf = symbol(gamma|"c,f") unit "kN/m3"
 	val vc = symbol(BasicSymbols.v|c)
 	
-	val epsics = epsiv|"cs" is "Odkształcenie skurczowe" unit SI.permille
-	val epsicsd = epsiv|"csd" is "Odkształcenie skurczowe spowodowane wysychaniem betonu" args(t,t|s) unit SI.permille
-	val epsicsdinf = epsiv|"csd,∞" is "Końcowe odkształcenie skurczowe spowodowane wysychaniem betonu" unit SI.permille
-    val epsicsa = epsiv|"csa" is "Odkształcenie skurczowe spowodowane skurczem autogenicznym betonu" unit SI.permille
-    val epsicsainf = epsiv|"csa,∞" is "Końcowe odkształcenie skurczowe spowodowane skurczem autogenicznym betonu" unit SI.permille
-    val betasc = beta|"sc" is "Współczynnik skurczowy zależny od rodzaju cementu"
-    val betads = beta|"ds" is "Funkcja przyrostu skurczu w czasie t-ts" args(t,t|s)
-	val betaas = beta|"as" is "Funkcja przyrostu skurczu autogenicznego w czasie t" args(t)
-    val betaRH = beta|"RH" is "Współczynnik skurczowy zależny od wilgotności względnej powietrza"
-    val RH = "RH" is "Wilgotność względna powietrza"
-    val dtimec = "t-ts" is "Liczba dni"
-    val timec0 = "t0" is "Wiek betonu w chwili przyłożenia obciążenia"
-    val ho = h|o is "Miarodajny wymiar przekroju elementu" unit SI.mm
-    val phit = phi args(t,t|0) is "Współczynnik pełzania betonu"
-    val phitinf = phi args ("∞",t) is "Końcowy współczynnik pełzania betonu"
-    val betac = beta|"c" is "Funkcja przyrostu pełzania po przyłożeniu obciążenia"
-    val pfiRH = phi|"RH" is ""
-    val betafcm = beta|"fcm" is ""
-    val betaH = beta|"H" is "Współczynnik zależny od wilgotności względnej powietrza"
-    val betat0 = beta|"t0" is ""
+	val epsics = symbol(epsiv|"cs") is "Odkształcenie skurczowe" unit SI.permille
+	val epsicsd = symbol(epsiv|"csd") is "Odkształcenie skurczowe spowodowane wysychaniem betonu" args(t,t|s) unit SI.permille
+	val epsicsdinf = symbol(epsiv|"csd,∞") is "Końcowe odkształcenie skurczowe spowodowane wysychaniem betonu" unit SI.permille
+    val epsicsa = symbol(epsiv|"csa") is "Odkształcenie skurczowe spowodowane skurczem autogenicznym betonu" unit SI.permille
+    val epsicsainf = symbol(epsiv|"csa,∞") is "Końcowe odkształcenie skurczowe spowodowane skurczem autogenicznym betonu" unit SI.permille
+    val betasc = symbol(beta|"sc") is "Współczynnik skurczowy zależny od rodzaju cementu"
+    val betads = symbol(beta|"ds") is "Funkcja przyrostu skurczu w czasie t-ts" args(t,t|s)
+	val betaas = symbol(beta|"as") is "Funkcja przyrostu skurczu autogenicznego w czasie t" args(t)
+    val betaRH = symbol(beta|"RH") is "Współczynnik skurczowy zależny od wilgotności względnej powietrza"
+    val RH = symbol("RH") is "Wilgotność względna powietrza"
+    val dtimec = symbol("t-ts") is "Liczba dni"
+    val timec0 = symbol(t|0) is "Wiek betonu w chwili przyłożenia obciążenia"
+    val ho =  symbol(h|o) is "Miarodajny wymiar przekroju elementu" unit SI.mm
+    val phit = symbol(phi) args(t,t|0) is "Współczynnik pełzania betonu"
+    val phitinf = symbol(phi) args ("∞",t) is "Końcowy współczynnik pełzania betonu"
+    val betac = symbol(beta|"c") is "Funkcja przyrostu pełzania po przyłożeniu obciążenia"
+    val pfiRH = symbol(phi|"RH") is ""
+    val betafcm = symbol(beta|"fcm") is ""
+    val betaH = symbol(beta|"H") is "Współczynnik zależny od wilgotności względnej powietrza"
+    val betat0 = symbol(beta|"t0") is ""
     val Eceff = symbol(E|"c,eff") unit SI.GPa is "Efektywny sieczny moduł sprężystości betonu z uwzględnieniem czasu trwania obciążenia"
 }
 

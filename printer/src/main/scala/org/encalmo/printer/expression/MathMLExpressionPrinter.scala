@@ -176,12 +176,13 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	            }
 	            case ct:CaseTest => {
 	               output.start(MTD)
-	               //output.attr("rowalign","left")
 	               output.body()
 	            }
 	            case ct:CaseExpression => {
+                   if(node.parent.element.isInstanceOf[Selection]){
+                       output.startb(MTR)
+                   }
 	               output.start(MTD)
-	               //output.attr("rowalign","left")
 	               output.body()
 	            }
 	            case su:SimpleUnitOfValue => {
@@ -414,6 +415,9 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
     	        }
     	        case ct:CaseExpression => {
     	           output.end(MTD)
+                    if(node.parent.element.isInstanceOf[Selection]){
+                        output.end(MTR)
+                    }
     	        }
                 case ev:EvalAt => {
                     output.start(MROW)

@@ -3,7 +3,7 @@ package org.encalmo.expression
 /**
  * Square root operation
  */
-case class sqrt(e:Expression) extends Operation1 with NamedOperation {
+case class sqrt(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(x:Expression) = sqrt(x)
   override val operator = "sqrt"
@@ -12,7 +12,7 @@ case class sqrt(e:Expression) extends Operation1 with NamedOperation {
 /**
  * Cube root operation
  */
-case class cbrt(e:Expression) extends Operation1 with NamedOperation {
+case class cbrt(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = cbrt(e)
   override val operator = "cbrt"
@@ -60,7 +60,7 @@ case class hypot(l:Expression,r:Expression) extends Operation2 with NamedOperati
 /**
  * Exponent function
  */
-case class exp(e:Expression) extends Operation1 with NamedOperation {
+case class exp(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = exp(e)
   override val operator = "exp"
@@ -69,7 +69,7 @@ case class exp(e:Expression) extends Operation1 with NamedOperation {
 /**
  * Natural logarithm (base is e) function
  */
-case class ln(e:Expression) extends Operation1 with NamedOperation {
+case class ln(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = ln(e)
   override val operator = "ln"
@@ -78,7 +78,7 @@ case class ln(e:Expression) extends Operation1 with NamedOperation {
 /**
  * Common logarithm (base is 10) function
  */
-case class log(e:Expression) extends Operation1 with NamedOperation {
+case class log(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = log(e)
   override val operator = "log"
@@ -88,7 +88,7 @@ case class log(e:Expression) extends Operation1 with NamedOperation {
  * Rounding operation
  * default strategy: RoundingMode.HALF
  */
-case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Operation1 with NamedOperation with Transparent {
+case class round(expression:Expression,rm:RoundingMode = RoundingMode.HALF) extends Operation1 with NamedOperation with Transparent {
 	
   override def calculate(v:Value):Expression = v match {
 	  case number: Number => {
@@ -107,12 +107,13 @@ case class round(e:Expression,rm:RoundingMode = RoundingMode.HALF) extends Opera
   }
   override def copy(x:Expression) = round(x,rm)
   override val operator = "~"
+  override def wrap(e: Expression): Transparent = copy(e)
 }
 
 /**
  * Absolute value operation
  */
-case class abs(e:Expression) extends Operation1 with NamedOperation {
+case class abs(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = abs(e)
   override val operator = "abs"

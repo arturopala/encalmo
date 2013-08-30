@@ -8,10 +8,10 @@ package org.encalmo.expression
 trait Operation1 extends Operation {
 
   /** Operation argument */
-  def e:Expression
+  def expression:Expression
   
   /** Children expressions */
-  override val children:Seq[Expression] = Seq(e)
+  override val children:Seq[Expression] = Seq(expression)
   
   /**
    * Operation copy with exchanged parameters
@@ -20,10 +20,10 @@ trait Operation1 extends Operation {
   def copy(e:Expression):Operation1
   
   final override def eval():Expression = {
-	  val ev = e eval()
+	  val ev = expression eval()
 	  ev match {
 	 	  case v:Value => calculate(v)
-	 	  case _ if ev ne e => copy(ev)
+	 	  case _ if ev ne expression => copy(ev)
 	 	  case _  => this
 	  }
   }
@@ -34,13 +34,13 @@ trait Operation1 extends Operation {
   }
   
   final override def map(f:Transformation):Expression = {
-	  val ve = e.map(f)
-	  if(ve eq e) f(this) else f(copy(ve))
+	  val ve = expression.map(f)
+	  if(ve eq expression) f(this) else f(copy(ve))
   }
 
   
 }
 
 object Operation1{
-  def unapply(o:Operation1) = Some(o.e,o.operator,o.precedence)
+  def unapply(o:Operation1) = Some(o.expression,o.operator,o.precedence)
 }

@@ -19,11 +19,11 @@ trait CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
 	
-	val l = symbol(BasicSymbols.l) unit SI.m
+	val ls = symbol(BasicSymbols.l|BasicSymbols.s) unit SI.m
 	val nsp = symbol(BasicSymbols.n|"sp")
 	/** height of the slab */
-	val h = symbol(BasicSymbols.h) unit SI.cm
-	val hc = symbol(BasicSymbols.h|c) unit SI.cm
+	val h = symbol(BasicSymbols.h) unit SI.mm
+	val hc = symbol(BasicSymbols.h|c) unit SI.mm
 	val Qcfk1 = symbol(Q|"cf,k1") unit "kN/m"
 	val Qcfk = symbol(Q|"cf,k") unit "kN/m2"
 	val Qcfd = symbol(Q|"cf,d") unit "kN/m2"
@@ -89,7 +89,7 @@ trait CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val dmesh = symbol(BasicSymbols.d|"mesh") unit "mm"
 	val sd = symbol(BasicSymbols.s|"d") unit SI.m
 	val sdmax = symbol(BasicSymbols.s|"d,max") unit SI.m
-	val Eceff2 = symbol(BasicSymbols.E|"ceff") unit "GPa"
+	val Eceff = symbol(BasicSymbols.E|"c,eff") unit "GPa"
 	val nE = symbol(BasicSymbols.n|"E")
 	val e0 = symbol(BasicSymbols.e|"0") unit SI.cm
 	val I0 = symbol(BasicSymbols.I|"0") unit "cm4/m"
@@ -114,19 +114,20 @@ class CompositeSlabWithProfiledSheeting(
     p_qk: Expression,
     p_Fk: Expression,
     p_dmesh: Expression,
-    p_sd: Expression
+    p_sd: Expression,
+    p_ss: Expression //szerokość podparcia  //support width
 )
 extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSlabWithProfiledSheetingSymbols with ActionsSymbols {
 
 	import sheet.{Gcck,hp,bs,bo,bb,Gccd,alpha,Iplus,Ap,ep,epd,t,br,MRdm,MRdp,VwRd,hw,r,Rw1Rd,Phi,RwRd}
-    import sheet.steel.{E,fyd}
+    import sheet.steel.{E,fyd,gammaM0}
     import concrete.{fcd,fck,fctm,gammac,gammacf,Ecm}
 
 	this add sheet
 	this add concrete
 	this add reinforcingSteel
 	
-	l := length
+	ls := length
 	nsp := spans
 	h := height
 	fyrd := reinforcingSteel(reinforcingSteel.fyd)
@@ -141,24 +142,25 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
     Fk := p_Fk
     dmesh := p_dmesh
     sd := p_sd
+    ss := p_ss
 	
-	val beamULS = new ContinuousBeam_5_LinearLoad("ULS",l,Qd1*SI.m.one)
-	val beamSLS1 = new ContinuousBeam_5_LinearLoad("SLS1",l,Qk1*SI.m.one)
-	val beamSLS2 = new ContinuousBeam_5_LinearLoad("SLS2",l,(Gcck + Qcfk)*SI.m.one)
+	val beamULS = new ContinuousBeam_5_LinearLoad("ULS",ls,Qd1)
+	val beamSLS1 = new ContinuousBeam_5_LinearLoad("SLS1",ls,Qk1)
+	val beamSLS2 = new ContinuousBeam_5_LinearLoad("SLS2",ls,Gcck + Qcfk)
 
     this add beamULS
     this add beamSLS1
     this add beamSLS2
 	
 	//faza montazu - ULS
-	MEdmm := beamULS.Mmin/SI.m.one
-	MEdmp := beamULS.Mmax/SI.m.one
-	VEdm := beamULS.Tmax/SI.m.one
-	VEdm1 := beamULS.TRmax1/SI.m.one
-	VEdm2 := beamULS.TRmax2/SI.m.one
+	MEdmm := beamULS.Mmin
+	MEdmp := beamULS.Mmax
+	VEdm := beamULS.Tmax
+	VEdm1 := beamULS.TRmax1
+	VEdm2 := beamULS.TRmax2
 	
-	MEkm1 := beamSLS2.Mmax/SI.m.one
-	MEkm2 := beamSLS1.Mmax/SI.m.one
+	MEkm1 := beamSLS2.Mmax
+	MEkm2 := beamSLS1.Mmax
 
     hc := h-hp
 
@@ -174,13 +176,12 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
     FEdm := abs(VEdm1)+abs(VEdm2)
     alpha := 0.15
     betav := abs(abs(VEdm1)-abs(VEdm2))/(abs(VEdm1)+abs(VEdm2))
-    ss := 180 unit SI.cm
     la := rangeChoiceLELE(betav,ss,0.2,((betav-0.2)/0.1)*((10E-3-ss)/0.1),0.3,10E-3)
     sheet(sheet.la) = this(la)
 
     //faza montazu - SLS
-    deltasm := 0.08*(MEkm1*(l^2))/(E*Iplus)
-    deltam := 0.08*(MEkm2*(l^2))/(E*Iplus)
+    deltasm := 0.08*(MEkm1*(ls^2))/(E*Iplus)
+    deltam := 0.08*(MEkm2*(ls^2))/(E*Iplus)
 
     //faza eksploatacji - LOAD
     Gck := Qcfk*(gammac/gammacf)
@@ -198,17 +199,17 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
     DeltaQd := Gsd+qd
 
     //faza eksploatacji - ULS
-    MEdep := (Qd2*(l^2))/8
-    MEdep := (Qd2*(l^2))/8
+    MEdep := (Qd2*(ls^2))/8
+    MEdep := (Qd2*(ls^2))/8
     xpl := (Ap*fyd)/(0.85*fcd)
     dp := ep+hc
     Np := Ap*fyd
     z := dp-0.5*xpl
     MplRd := Np*z
-    VEde := 0.5*Qd2*l
+    VEde := 0.5*Qd2*ls
     mV := 103 unit SI.MPa
     kV := 0.19 unit SI.MPa
-    Ls := l/4
+    Ls := ls/4
     gammaVs := 1.25
     V1Rd := (dp*(((mV*Ap)/(Ls))+kV))/gammaVs
     //przebicie
@@ -225,18 +226,18 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
     Asmin := 0.002*hc*1
     sdmax := (PI*(dmesh^2))/(4*Asmin)
     //ugiecia w fazie eksploatacji
-    Eceff2 := Ecm/2
-    nE := E/Eceff2
+    Eceff := Ecm/2
+    nE := E/Eceff
     e0 := (Ap*(h-epd)+(1/nE)*1*hc*(hc/2)+(1/nE)*(bo/bs)*hp*(h-(hp/2)))/(Ap+((1*hc)/nE)+(1*bo*hp)/(bs*nE))
     I0 := Iplus+Ap*((h-e0-epd)^2)+((1*(hc^3))/(nE*12))+((1*hc)/nE)*((e0-hc/2)^2)+(1*bo*(hp^3))/(nE*bs*12)+(1*bo*hp)/(nE*bs)*((h-e0-(hp/2))^2)
     W0 := I0/(h-e0)
-    Mk := (DeltaQk*(l^2))/8
+    Mk := (DeltaQk*(ls^2))/8
     sigmactplus := Mk/(W0*nE)
-    deltae := (5*DeltaQk*(l^4))/(384*I0*E)
+    deltae := (5*DeltaQk*(ls^4))/(384*I0*E)
     deltamax := deltasm+deltae
 	
 	def info = NumSection(TextToTranslate("CompositeSlabWithProfiledSheeting",dictionary),
-		Evaluate(l,nsp,h,hc),
+		Evaluate(ls,nsp,h,hc),
 		AssertionGE("EN 1994-1-1 3.5(2)",t, Number(0.7,SI.mm)),
 		AssertionLE("EN 1994-1-1 9.1.1(2)",br/bs,0.6),
 		AssertionGE("EN 1994-1-1 9.2.1(2)",h,Number(90,SI.mm)),
@@ -246,36 +247,37 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
 	def LOAD1 = Evaluate(gammaG,gammaQ,Gcck,Gccd,Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Qk1,Qd1)
 	
 	def ULS1 = NumSection(TextToTranslate("ULS","eurocode"),
-		NumSection("Sprawdzenie nośności na zginanie w fazie montażu",
+		NumSection("Sprawdzenie nośności na zginanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.4.1",
 			Evaluate(MEdmm,MRdm),
-			AssertionLE("nośności na zginanie",abs(MEdmm/MRdm),1),
+			AssertionLE("nośności na zginanie na podporze",abs(MEdmm/MRdm),1),
 			Evaluate(MEdmp,MRdp),
-			AssertionLE("nośności na zginanie",abs(MEdmp/MRdp),1)
+			AssertionLE("nośności na zginanie w przęśle",abs(MEdmp/MRdp),1)
 		),
-		NumSection("Sprawdzenie nośności na ścinanie w fazie montażu",
+		NumSection("Sprawdzenie nośności na ścinanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.4.3",
 			sheet.web,
 			sheet.shearForce,
-			Evaluate(VEdm,VwRd),
+			Evaluate(VEdm),
 			AssertionLE("nośności na ścinanie",abs(VEdm/VwRd),1),
 			AssertionLE("braku interakcji ścinania i zginania",abs(VEdm),0.5*VwRd)
 		),
-		NumSection("Sprawdzenie obciążenia miejscowego siłą poprzeczną nad podporą pośrednią wg PN-EN 1993-1-3",
-			AssertionL("6.1.7.3(1)",r/t,10),
-			AssertionL("6.1.7.3(1)",hw/t,200*sin(Phi)),
-			AssertionRangeLL("6.1.7.3(1)",45,Phi,90),
+		NumSection("Sprawdzenie obciążenia miejscowego siłą poprzeczną nad podporą pośrednią wg PN-EN 1993-1-3 pkt. 6.1.7.3(1)",
+			AssertionL("6.17a",r/t,10),
+			AssertionL("6.17b",hw/t,200*sin(Phi)),
+			AssertionRangeLL("6.17c",45,Phi,90),
 			Evaluate(VEdm1,VEdm2,alpha,betav,ss,la,Rw1Rd,RwRd,FEdm),
-			AssertionLE("nośności na miejscową siłą poprzeczną",abs(FEdm/RwRd),1)
+			AssertionLE("nośności na miejscową siłą poprzeczną (6.28b)",abs(FEdm/RwRd),1)
 		),
-		NumSection("Sprawdzenie interakcji momentu zginającego i obciążenia lokalnego nad podporą wg PN-EN 1993-1-3",
-			AssertionL("6.1.11(1)",abs(MEdmm/MRdm)+abs(FEdm/RwRd),1.25)
+		NumSection("Sprawdzenie interakcji momentu zginającego i obciążenia lokalnego nad podporą wg PN-EN 1993-1-3 pkt. 6.1.11(1)",
+            AssertionL("6.28a",abs(MEdmm/MRdm),1),
+			AssertionL("6.28c",abs(MEdmm/MRdm)+abs(FEdm/RwRd),1.25)
 		)
 	)
 	
 	def SLS1 = NumSection(TextToTranslate("SLS","eurocode"),
 		Evaluate(MEkm1,deltasm,MEkm2,deltam),
 		AssertionLE("EN 1994-1-1 9.3.2(2)",deltasm,h/10),
-		AssertionLE("EN 1994-1-1 9.6(2)",deltasm,l/180),
-		AssertionLE("EN 1993-1-1 NA.22 7.2.1(1)B",deltam,l/150)
+		AssertionLE("EN 1994-1-1 9.6(2)",deltasm,ls/180),
+		AssertionLE("EN 1993-1-1 NA.22 7.2.1(1)B",deltam,ls/150)
 	)
 	
 	def LOAD2 = Evaluate(gammaG,gammaQ,Gck,Gcd,Gsk,Gsd,qk,qd,SigmaQk,SigmaQd,SigmaGk,SigmaGd,Qk2,Qd2,DeltaQk,DeltaQd,Fk,Fd)
@@ -308,12 +310,12 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
 			AssertionLE("minimalnego zbrojenia na zarysowanie nad podporą",sd,sdmax)
 		),
 		NumSection("Sprawdzenie braku zarysowania betonu w przęśle od obciążeń przyłożonych po zespoleniu wg PN-EN 1994-1-1 pkt. 9.8.2(3)",
-			Evaluate(Eceff2,nE,e0,I0,W0,Mk,sigmactplus),
+			Evaluate(Eceff,nE,e0,I0,W0,Mk,sigmactplus),
 			AssertionLE("braku zarysowania przekroju",sigmactplus,fctm)
 		),
 		NumSection("Sprawdzenie ugięcia całkowitego",
 			Evaluate(deltae,deltamax),
-			AssertionLE("ugięcia całkowitego",deltamax,l/250)
+			AssertionLE("ugięcia całkowitego",deltamax,ls/250)
 		)
 	)
 	
