@@ -6,7 +6,7 @@ package org.encalmo.expression
  */
 case class Function(expr:Expression, vars:Symbol*) extends Expression {
     
-   override def children = Seq(expr)
+   override val children = Seq(expr)
    
    override def eval() = {
         expr.eval()

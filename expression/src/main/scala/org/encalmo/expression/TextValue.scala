@@ -5,7 +5,5 @@ package org.encalmo.expression
  * @author artur.opala
  */
 case class TextValue(text:String) extends Value {
-
-	def typeId = "Text"
-
+	def typeId = 'Text
 }

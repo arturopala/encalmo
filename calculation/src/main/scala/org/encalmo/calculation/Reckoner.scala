@@ -35,7 +35,7 @@ object Reckoner {
                 case pinned: PinnedExpression => results.formulaSet.get(pinned.symbol) getOrElse reckonExpression(pinned.symbol,pinned.context,results)
                 case other => {
                     import org.encalmo.calculation.FormulaPosition._
-                    import org.encalmo.calculation.FormulaPartRelation._
+                    import Relation._
                     val unit: UnitOfValue = expression.unit
                     val accuracy: Option[Double] = expression match {
                         case symbol: Symbol => symbol.accuracy

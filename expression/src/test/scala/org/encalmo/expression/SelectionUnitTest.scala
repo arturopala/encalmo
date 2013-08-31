@@ -39,7 +39,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
         assertEquals(expr4,expr4.map(identity))
 		val expr5 = expr4.map(negation)
 		assertTrue(expr4 ne expr5)
-		assertEquals("Selection(List(),Some(CaseExpression(Neg(Prod(Neg(Symbol(name=\"a\",unit=\"_\")),Neg(Symbol(name=\"b\",unit=\"_\")))))))",expr5.toString)
+		assertEquals("Selection(List(),Some(CaseExpression(Inv(Prod(Inv(Symbol(name=\"a\",unit=\"_\")),Inv(Symbol(name=\"b\",unit=\"_\")))))))",expr5.toString)
         val expr6 = expr4.map(resolver1)
 		assertEquals("Selection(List(),Some(CaseExpression(Prod(Number(1,_),Number(1,_)))))",expr6.toString)
         val expr7 = expr4.select
@@ -56,7 +56,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
         assertEquals(expr4,expr4.map(identity))
 		val expr5 = expr4.map(negation)
 		assertTrue(expr4 ne expr5)
-		assertEquals("Selection(List(Case(CaseExpression(Neg(Sum(Neg(Symbol(name=\"a\",unit=\"_\")),Neg(Symbol(name=\"b\",unit=\"_\"))))),IsZero(Neg(Symbol(name=\"c\",unit=\"_\"))))),Some(CaseExpression(Neg(Prod(Neg(Symbol(name=\"a\",unit=\"_\")),Neg(Symbol(name=\"b\",unit=\"_\")))))))",expr5.toString)
+		assertEquals("Selection(List(Case(CaseExpression(Inv(Sum(Inv(Symbol(name=\"a\",unit=\"_\")),Inv(Symbol(name=\"b\",unit=\"_\"))))),IsZero(Inv(Symbol(name=\"c\",unit=\"_\"))))),Some(CaseExpression(Inv(Prod(Inv(Symbol(name=\"a\",unit=\"_\")),Inv(Symbol(name=\"b\",unit=\"_\")))))))",expr5.toString)
         val expr6 = expr4.map(resolver1).asInstanceOf[Selection]
 		assertEquals("Selection(List(Case(CaseExpression(Sum(Number(1,_),Number(1,_))),IsZero(Number(1,_)))),Some(CaseExpression(Prod(Number(1,_),Number(1,_)))))",expr6.toString)
         val expr7 = expr6.select
@@ -82,7 +82,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
         assertEquals(expr4,expr4.map(identity))
 		val expr5 = expr4.map(negation)
 		assertTrue(expr4 ne expr5)
-		assertEquals("Selection(List(Case(CaseExpression(Neg(Quot(Neg(Symbol(name=\"a\",unit=\"_\")),Neg(Symbol(name=\"b\",unit=\"_\"))))),IsNotZero(Neg(Symbol(name=\"d\",unit=\"_\")))), Case(CaseExpression(Neg(Sum(Neg(Symbol(name=\"a\",unit=\"_\")),Neg(Symbol(name=\"b\",unit=\"_\"))))),IsZero(Neg(Symbol(name=\"c\",unit=\"_\"))))),Some(CaseExpression(Neg(Prod(Neg(Symbol(name=\"a\",unit=\"_\")),Neg(Symbol(name=\"b\",unit=\"_\")))))))",expr5.toString)
+		assertEquals("Selection(List(Case(CaseExpression(Inv(Quot(Inv(Symbol(name=\"a\",unit=\"_\")),Inv(Symbol(name=\"b\",unit=\"_\"))))),IsNotZero(Inv(Symbol(name=\"d\",unit=\"_\")))), Case(CaseExpression(Inv(Sum(Inv(Symbol(name=\"a\",unit=\"_\")),Inv(Symbol(name=\"b\",unit=\"_\"))))),IsZero(Inv(Symbol(name=\"c\",unit=\"_\"))))),Some(CaseExpression(Inv(Prod(Inv(Symbol(name=\"a\",unit=\"_\")),Inv(Symbol(name=\"b\",unit=\"_\")))))))",expr5.toString)
         val expr6 = expr4.map(resolver1).asInstanceOf[Selection]
 		assertEquals("Selection(List(Case(CaseExpression(Quot(Number(1,_),Number(1,_))),IsNotZero(Number(1,_))), Case(CaseExpression(Sum(Number(1,_),Number(1,_))),IsZero(Number(1,_)))),Some(CaseExpression(Prod(Number(1,_),Number(1,_)))))",expr6.toString)
         val expr7 = expr6.select
@@ -95,12 +95,12 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr1 = a*b
 		val expr2 = a+b
 		val expr3 = a/b
-		val expr4 = expr1 unless (IsZero(c)&IsNotZero(d) thenUse expr2)
+		val expr4 = expr1 unless (IsZero(c) && IsNotZero(d) thenUse expr2)
 		assertEquals("Selection(List(Case(CaseExpression(Sum(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\"))),AndCaseTest(IsZero(Symbol(name=\"c\",unit=\"_\")),IsNotZero(Symbol(name=\"d\",unit=\"_\"))))),Some(CaseExpression(Prod(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\")))))",expr4.toString)
         assertEquals(expr4,expr4.map(identity))
 		val expr5 = expr4.map(negation)
 		assertTrue(expr4 ne expr5)
-		assertEquals("Selection(List(Case(CaseExpression(Neg(Sum(Neg(Symbol(name=\"a\",unit=\"_\")),Neg(Symbol(name=\"b\",unit=\"_\"))))),AndCaseTest(IsZero(Neg(Symbol(name=\"c\",unit=\"_\"))),IsNotZero(Neg(Symbol(name=\"d\",unit=\"_\")))))),Some(CaseExpression(Neg(Prod(Neg(Symbol(name=\"a\",unit=\"_\")),Neg(Symbol(name=\"b\",unit=\"_\")))))))",expr5.toString)
+		assertEquals("Selection(List(Case(CaseExpression(Inv(Sum(Inv(Symbol(name=\"a\",unit=\"_\")),Inv(Symbol(name=\"b\",unit=\"_\"))))),AndCaseTest(IsZero(Inv(Symbol(name=\"c\",unit=\"_\"))),IsNotZero(Inv(Symbol(name=\"d\",unit=\"_\")))))),Some(CaseExpression(Inv(Prod(Inv(Symbol(name=\"a\",unit=\"_\")),Inv(Symbol(name=\"b\",unit=\"_\")))))))",expr5.toString)
         val expr6 = expr4.map(resolver1).asInstanceOf[Selection]
 		assertEquals("Selection(List(Case(CaseExpression(Sum(Number(1,_),Number(1,_))),AndCaseTest(IsZero(Number(1,_)),IsNotZero(Number(1,_))))),Some(CaseExpression(Prod(Number(1,_),Number(1,_)))))",expr6.toString)
         val expr7 = expr6.select
@@ -114,7 +114,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr1 = a*b
 		val expr2 = a+b
 		val expr3 = a/b
-		val expr4 = expr1 unless (IsZero(c)|IsNotZero(d) thenUse expr2)
+		val expr4 = expr1 unless (IsZero(c) || IsNotZero(d) thenUse expr2)
 		assertEquals("Selection(List(Case(CaseExpression(Sum(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\"))),OrCaseTest(IsZero(Symbol(name=\"c\",unit=\"_\")),IsNotZero(Symbol(name=\"d\",unit=\"_\"))))),Some(CaseExpression(Prod(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\")))))",expr4.toString)
     }
 	
@@ -122,7 +122,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr1 = a*b
 		val expr2 = a+b
 		val expr3 = a/b
-		val expr4 = expr1 unless (IsZero(c)|!IsZero(d) thenUse expr2)
+		val expr4 = expr1 unless (IsZero(c) ||! IsZero(d) thenUse expr2)
 		assertEquals("Selection(List(Case(CaseExpression(Sum(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\"))),OrCaseTest(IsZero(Symbol(name=\"c\",unit=\"_\")),NegCaseTest(IsZero(Symbol(name=\"d\",unit=\"_\")))))),Some(CaseExpression(Prod(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\")))))",expr4.toString)
     }
 	
@@ -130,7 +130,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr1 = a*b+5
 		val expr2 = a+b
 		val expr3 = a/b
-		val expr4 = expr1 unless (!IsZero(c)&!IsZero(d) thenUse expr2)
+		val expr4 = expr1 unless (!IsZero(c) &&! IsZero(d) thenUse expr2)
 		assertEquals("Selection(List(Case(CaseExpression(Sum(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\"))),AndCaseTest(NegCaseTest(IsZero(Symbol(name=\"c\",unit=\"_\"))),NegCaseTest(IsZero(Symbol(name=\"d\",unit=\"_\")))))),Some(CaseExpression(Sum(Prod(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\")),Number(5,_)))))",expr4.toString)
     }
 	
@@ -138,7 +138,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr1 = a*b+5
 		val expr2 = a+b
 		val expr3 = a/b
-		val expr4 = expr1 unless (!IsZero(c)&!IsZero(d)|Equals(c,d) thenUse expr2)
+		val expr4 = expr1 unless (!IsZero(c) &&! IsZero(d) || Equals(c,d) thenUse expr2)
 		assertEquals("Selection(List(Case(CaseExpression(Sum(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\"))),OrCaseTest(AndCaseTest(NegCaseTest(IsZero(Symbol(name=\"c\",unit=\"_\"))),NegCaseTest(IsZero(Symbol(name=\"d\",unit=\"_\")))),Equals(Symbol(name=\"c\",unit=\"_\"),Symbol(name=\"d\",unit=\"_\"))))),Some(CaseExpression(Sum(Prod(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\")),Number(5,_)))))",expr4.toString)
     }
 	

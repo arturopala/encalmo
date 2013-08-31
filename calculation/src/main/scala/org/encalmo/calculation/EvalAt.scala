@@ -8,7 +8,7 @@ import org.encalmo.expression._
  */
 class EvalAt(val expr:Expression, val er:Context) extends Expression {
     
-    override def children = Seq(expr)
+    override val children = Seq(expr)
 	
 	override def eval() = {
 	    er.evaluate(expr)(new ResultsCache())

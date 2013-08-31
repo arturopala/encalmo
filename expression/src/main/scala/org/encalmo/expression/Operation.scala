@@ -7,7 +7,7 @@ package org.encalmo.expression
  */
 trait Operation extends Expression {
 	
-  def operator:String
+  def operator:scala.Symbol
   def precedence:Int = 100
   
 }

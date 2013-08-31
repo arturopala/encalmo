@@ -1,6 +1,5 @@
 package org.encalmo.expression
 
-import scala.collection.mutable._
 import scala.collection.mutable
 
 /**
@@ -11,12 +10,12 @@ import scala.collection.mutable
 trait Value extends Expression {
 	
 	override final def eval():Expression = this
-	
+
 	/**
 	 * Unique id of the value type, as registered with ValueCalculator
 	 */
-	def typeId:String
-	
+	def typeId:scala.Symbol
+
 	/**
 	 * Converts this value to the new units
 	 */
@@ -60,22 +59,34 @@ trait Value extends Expression {
  * Value calculator
  */
 object Value {
+
+    import scala.Symbol
     
-    private val registry:scala.collection.mutable.Map[(String,String),ValueCalculator] = mutable.Map()
+    private val registry:scala.collection.mutable.Map[(Symbol,Symbol),ValueCalculator] = mutable.Map()
     
-    def register(key:(String,String),calculator:ValueCalculator):Unit = registry.put(key,calculator)
+    def register(key:(Symbol,Symbol),calculator:ValueCalculator):Unit = registry.put(key,calculator)
     
-    def calculate(operator:String, v1:Value,v2:Value):Option[Value] = {
-        registry.get((v1.typeId,v2.typeId)).map(_.calculate(operator,v1,v2)).getOrElse(None)
+    def calculate(operator:Symbol, v1:Value,v2:Value):Option[Value] = {
+        get((v1.typeId,v2.typeId)).map(_.calculate(operator,v1,v2)).getOrElse(None)
     }
     
-    def calculate(operator:String, v:Value):Option[Value] = {
-        registry.get((v.typeId,v.typeId)).map(_.calculate(operator,v)).getOrElse(None)
+    def calculate(operator:Symbol, v:Value):Option[Value] = {
+        get((v.typeId,v.typeId)).map(_.calculate(operator,v)).getOrElse(None)
+    }
+
+    def get(key: (Symbol,Symbol)): Option[ValueCalculator] = {
+        registry.get(key).orElse(
+            registry.get((key._1,'*)).orElse(
+                registry.get(('*,key._2)).orElse(None)
+            )
+        )
     }
     
 }
 
 trait ValueCalculator {
+
+    import scala.Symbol
     
     /**
      * Self register as a calculator
@@ -85,12 +96,12 @@ trait ValueCalculator {
     /** 
      * Calculates result of the operation with single argument. 
      */
-    def calculate(operator:String, v:Value):Option[Value]
+    def calculate(operator:Symbol, v:Value):Option[Value]
     
     /** 
      * Calculates result of the operation with two arguments. 
      */
-    def calculate(operator:String, v1:Value,v2:Value):Option[Value]
+    def calculate(operator:Symbol, v1:Value,v2:Value):Option[Value]
     
 }
 

@@ -5,6 +5,6 @@ package org.encalmo.graphics
  */
 abstract class GraphicsElementSeq(val flow:GraphicsElement*) extends GraphicsElement {
     
-    final override def children:Seq[GraphicsElement] = flow
+    final override val children:Seq[GraphicsElement] = flow
     
 }

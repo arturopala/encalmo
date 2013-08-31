@@ -83,21 +83,21 @@ object ExpressionToPrint {
         }
     }
 
-    private def prefixForPartRelation(relation: FormulaPartRelation.Value): String = {
+    private def prefixForPartRelation(relation: Relation.Value): String = {
         relation match {
-            case FormulaPartRelation.APPROXIMATELY_EQUAL => "≈"
-            case FormulaPartRelation.ASYMPTOTICALLY_EQUAL => "≃"
-            case FormulaPartRelation.EQUAL => "="
-            case FormulaPartRelation.GREATER => ">"
-            case FormulaPartRelation.GREATER_OR_EQUAL => ">="
-            case FormulaPartRelation.IDENTICAL => "="
-            case FormulaPartRelation.LESS => "<"
-            case FormulaPartRelation.LESS_OR_EQUAL => "<="
-            case FormulaPartRelation.LIMIT => "->"
-            case FormulaPartRelation.MUCH_GREATER => ">>"
-            case FormulaPartRelation.MUCH_LESS => "<<"
-            case FormulaPartRelation.NONE => null
-            case FormulaPartRelation.PROPORTIONAL => "~"
+            case Relation.APPROXIMATELY_EQUAL => "≈"
+            case Relation.ASYMPTOTICALLY_EQUAL => "≃"
+            case Relation.EQUAL => "="
+            case Relation.GREATER => ">"
+            case Relation.GREATER_OR_EQUAL => ">="
+            case Relation.IDENTICAL => "="
+            case Relation.LESS => "<"
+            case Relation.LESS_OR_EQUAL => "<="
+            case Relation.LIMIT => "->"
+            case Relation.MUCH_GREATER => ">>"
+            case Relation.MUCH_LESS => "<<"
+            case Relation.NONE => null
+            case Relation.PROPORTIONAL => "~"
         }
     }
 }

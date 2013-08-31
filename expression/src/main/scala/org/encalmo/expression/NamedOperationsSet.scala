@@ -6,7 +6,7 @@ package org.encalmo.expression
 case class sqrt(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(x:Expression) = sqrt(x)
-  override val operator = "sqrt"
+  override val operator = 'sqrt
 }
 
 /**
@@ -15,7 +15,7 @@ case class sqrt(expression:Expression) extends Operation1 with NamedOperation {
 case class cbrt(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = cbrt(e)
-  override val operator = "cbrt"
+  override val operator = 'cbrt
 }
 
 /**
@@ -24,7 +24,7 @@ case class cbrt(expression:Expression) extends Operation1 with NamedOperation {
 case class root(l:Expression,r:Expression) extends Operation2 with NamedOperation {
 
   override def copy(l:Expression,r:Expression) = root(l,r)
-  override val operator = "root"
+  override val operator = 'root
 }
 
 /**
@@ -33,7 +33,7 @@ case class root(l:Expression,r:Expression) extends Operation2 with NamedOperatio
 case class min(args:Expression*) extends OperationN with NamedOperation {
 
   override def copy(x:Expression*):min = min(x:_*)
-  override val operator = "min"
+  override val operator = 'min
 }
 
 /**
@@ -42,7 +42,7 @@ case class min(args:Expression*) extends OperationN with NamedOperation {
 case class max(args:Expression*) extends OperationN with NamedOperation {
 
   override def copy(x:Expression*) = max(x:_*)
-  override val operator = "max"
+  override val operator = 'max
 }
 
 /**
@@ -52,7 +52,7 @@ case class max(args:Expression*) extends OperationN with NamedOperation {
 case class hypot(l:Expression,r:Expression) extends Operation2 with NamedOperation  {
 
   override def copy(le:Expression,re:Expression) = hypot(le,re)
-  override val operator = "hypot"
+  override val operator = 'hypot
       
   def expand:Expression = sqrt(square(l)+square(r))
 }
@@ -63,7 +63,7 @@ case class hypot(l:Expression,r:Expression) extends Operation2 with NamedOperati
 case class exp(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = exp(e)
-  override val operator = "exp"
+  override val operator = 'exp
 }
 
 /**
@@ -72,7 +72,7 @@ case class exp(expression:Expression) extends Operation1 with NamedOperation {
 case class ln(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = ln(e)
-  override val operator = "ln"
+  override val operator = 'ln
 }
 
 /**
@@ -81,7 +81,7 @@ case class ln(expression:Expression) extends Operation1 with NamedOperation {
 case class log(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = log(e)
-  override val operator = "log"
+  override val operator = 'log
 }
 
 /**
@@ -106,7 +106,7 @@ case class round(expression:Expression,rm:RoundingMode = RoundingMode.HALF) exte
 	  case _ => copy(v)
   }
   override def copy(x:Expression) = round(x,rm)
-  override val operator = "~"
+  override val operator = '~
   override def wrap(e: Expression): Transparent = copy(e)
 }
 
@@ -116,5 +116,5 @@ case class round(expression:Expression,rm:RoundingMode = RoundingMode.HALF) exte
 case class abs(expression:Expression) extends Operation1 with NamedOperation {
 
   override def copy(e:Expression) = abs(e)
-  override val operator = "abs"
+  override val operator = 'abs
 }
