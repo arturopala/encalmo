@@ -19,27 +19,27 @@ trait CaseTest extends Expression with Auxiliary {
     /**
      * Returns AndCaseTest
      */
-    def &(t: CaseTest): CaseTest = AndCaseTest(this, t)
+    def &&(t: CaseTest): CaseTest = AndCaseTest(this, t)
 
     /**
      * Returns AndCaseTest with NegCaseTest of argument t
      */
-    def &!(t: CaseTest): CaseTest = AndCaseTest(this, NegCaseTest(t))
+    def &&!(t: CaseTest): CaseTest = AndCaseTest(this, NegCaseTest(t))
 
     /**
      * Returns OrCaseTest
      */
-    def |(t: CaseTest): CaseTest = OrCaseTest(this, t)
+    def ||(t: CaseTest): CaseTest = OrCaseTest(this, t)
 
     /**
      * Returns OrCaseTest with NegCaseTest of argument t
      */
-    def |!(t: CaseTest): CaseTest = OrCaseTest(this, NegCaseTest(t))
+    def ||!(t: CaseTest): CaseTest = OrCaseTest(this, NegCaseTest(t))
 
     /**
      * Returns NegCaseTest
      */
-    def unary_! = NegCaseTest(this)
+    override def unary_!(): CaseTest = NegCaseTest(this)
 
 }
 
@@ -69,7 +69,7 @@ object Always extends CaseTest {
  */
 case class IsZero(e: Expression) extends CaseTest {
 
-    override def children = Seq(e)
+    override val children = Seq(e)
 
     override def operator: Seq[String] = Seq("", "= 0")
 
@@ -92,7 +92,7 @@ case class IsZero(e: Expression) extends CaseTest {
  */
 case class IsNotZero(e: Expression) extends CaseTest {
 
-    override def children = Seq(e)
+    override val children = Seq(e)
 
     override def operator: Seq[String] = Seq("", "!= 0")
 
@@ -115,12 +115,12 @@ case class IsNotZero(e: Expression) extends CaseTest {
  */
 case class Equals(t1: Expression, t2: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2)
+    override val children = Seq(t1, t2)
 
     override def operator: Seq[String] = Seq("", "=", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval()) match {
-        case (v1: Value, v2: Value) => Some(v1 == v2)
+        case (v1: Value, v2: Value) => v1 === v2
         case _ => None
     }
 
@@ -138,12 +138,12 @@ case class Equals(t1: Expression, t2: Expression) extends CaseTest {
  */
 case class GreaterThan(t1: Expression, t2: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2)
+    override val children = Seq(t1, t2)
 
     override def operator: Seq[String] = Seq("", ">", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval()) match {
-        case (v1: Value, v2: Value) => Some(v1 > v2)
+        case (v1: Value, v2: Value) => v1 > v2
         case _ => None
     }
 
@@ -161,12 +161,12 @@ case class GreaterThan(t1: Expression, t2: Expression) extends CaseTest {
  */
 case class GreaterOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2)
+    override val children = Seq(t1, t2)
 
     override def operator: Seq[String] = Seq("", ">=", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval()) match {
-        case (v1: Value, v2: Value) => Some(v1 >= v2)
+        case (v1: Value, v2: Value) => v1 >= v2
         case _ => None
     }
 
@@ -184,12 +184,12 @@ case class GreaterOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
  */
 case class LowerThan(t1: Expression, t2: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2)
+    override val children = Seq(t1, t2)
 
     override def operator: Seq[String] = Seq("", "<", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval()) match {
-        case (v1: Value, v2: Value) => Some(v1 < v2)
+        case (v1: Value, v2: Value) => v1 < v2
         case _ => None
     }
 
@@ -207,12 +207,12 @@ case class LowerThan(t1: Expression, t2: Expression) extends CaseTest {
  */
 case class LowerOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2)
+    override val children = Seq(t1, t2)
 
     override def operator: Seq[String] = Seq("", "<=", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval()) match {
-        case (v1: Value, v2: Value) => Some(v1 <= v2)
+        case (v1: Value, v2: Value) => v1 <= v2
         case _ => None
     }
 
@@ -230,12 +230,12 @@ case class LowerOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
  */
 case class InRangeLEL(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2, t3)
+    override val children = Seq(t1, t2, t3)
 
     override def operator: Seq[String] = Seq("", "<=", "<", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval(), t3.eval()) match {
-        case (v1: Value, v2: Value, v3: Value) => Some(v1 <= v2 && v2 < v3)
+        case (v1: Value, v2: Value, v3: Value) => v1 <= v2 & v2 < v3
         case _ => None
     }
 
@@ -254,12 +254,12 @@ case class InRangeLEL(t1: Expression, t2: Expression, t3: Expression) extends Ca
  */
 case class InRangeLLE(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2, t3)
+    override val children = Seq(t1, t2, t3)
 
     override def operator: Seq[String] = Seq("", "<", "<=", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval(), t3.eval()) match {
-        case (v1: Value, v2: Value, v3: Value) => Some(v1 < v2 && v2 <= v3)
+        case (v1: Value, v2: Value, v3: Value) => v1 < v2 & v2 <= v3
         case _ => None
     }
 
@@ -278,12 +278,12 @@ case class InRangeLLE(t1: Expression, t2: Expression, t3: Expression) extends Ca
  */
 case class InRangeLL(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2, t3)
+    override val children = Seq(t1, t2, t3)
 
     override def operator: Seq[String] = Seq("", "<", "<", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval(), t3.eval()) match {
-        case (v1: Value, v2: Value, v3: Value) => Some(v1 < v2 && v2 < v3)
+        case (v1: Value, v2: Value, v3: Value) => v1 < v2 & v2 < v3
         case _ => None
     }
 
@@ -302,12 +302,12 @@ case class InRangeLL(t1: Expression, t2: Expression, t3: Expression) extends Cas
  */
 case class InRangeLELE(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
 
-    override def children = Seq(t1, t2, t3)
+    override val children = Seq(t1, t2, t3)
 
     override def operator: Seq[String] = Seq("", "<=", "<=", "")
 
     override def test: Option[Boolean] = (t1.eval(), t2.eval(), t3.eval()) match {
-        case (v1: Value, v2: Value, v3: Value) => Some(v1 <= v2 && v2 <= v3)
+        case (v1: Value, v2: Value, v3: Value) => v1 <= v2 & v2 <= v3
         case _ => None
     }
 
@@ -326,7 +326,7 @@ case class InRangeLELE(t1: Expression, t2: Expression, t3: Expression) extends C
  */
 case class AndCaseTest(t1: CaseTest, t2: CaseTest) extends CaseTest {
 
-    override def children = Seq(t1, t2)
+    override val children = Seq(t1, t2)
 
     override def operator: Seq[String] = Seq("", "&", "")
 
@@ -349,7 +349,7 @@ case class AndCaseTest(t1: CaseTest, t2: CaseTest) extends CaseTest {
  */
 case class OrCaseTest(t1: CaseTest, t2: CaseTest) extends CaseTest {
 
-    override def children = Seq(t1, t2)
+    override val children = Seq(t1, t2)
 
     override def operator: Seq[String] = Seq("", "|", "")
 
@@ -372,7 +372,7 @@ case class OrCaseTest(t1: CaseTest, t2: CaseTest) extends CaseTest {
  */
 case class NegCaseTest(t: CaseTest) extends CaseTest {
 
-    override def children = Seq(t)
+    override val children = Seq(t)
 
     override def operator: Seq[String] = Seq("!", "")
 

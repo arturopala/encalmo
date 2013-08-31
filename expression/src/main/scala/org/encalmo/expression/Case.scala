@@ -9,7 +9,7 @@ import scala.language.postfixOps
  */
 case class Case(caseExpression: CaseExpression, caseTest: CaseTest) extends Expression with Auxiliary {
 
-    override def children = Seq(caseExpression,caseTest)
+    override val children = Seq(caseExpression,caseTest)
 
     def test:Option[Boolean] = caseTest.test
 

@@ -54,10 +54,10 @@ object Transformations {
 	def orderProd(e:Expression):Expression = e match {
 	    case Prod(Number(l,ul),Number(r,ur)) if r<0 && l<0 => Prod(Number(l.abs),Number(r.abs))
 	    case Prod(Number(l,ul),Number(r,ur)) if r<0 && l>0 => Prod(Number(r),Number(l))
-	    case Prod(l,Number(r,ur)) if r<0 && !l.isInstanceOf[Neg] => Prod(Number(r),l)
-	    case Prod(Neg(e),Number(r,ur)) if r<0 => Prod(Number(r.abs),e)
-	    case Prod(Number(r,ur),Neg(e)) if r<0 => Prod(Number(r.abs),e)
-	    case Prod(Neg(l),Neg(r)) => Prod(l,r)
+	    case Prod(l,Number(r,ur)) if r<0 && !l.isInstanceOf[Inv] => Prod(Number(r),l)
+	    case Prod(Inv(e),Number(r,ur)) if r<0 => Prod(Number(r.abs),e)
+	    case Prod(Number(r,ur),Inv(e)) if r<0 => Prod(Number(r.abs),e)
+	    case Prod(Inv(l),Inv(r)) => Prod(l,r)
 	    case _ => e
 	}
 	
@@ -69,9 +69,9 @@ object Transformations {
 	  
 	def orderQuot(e:Expression):Expression = e match {
 	    case Quot(Number(l,ul),Number(r,ur)) if r<0 && l<0 => Quot(Number(l.abs),Number(r.abs))
-	    case Quot(Neg(e),Number(r,ur)) if r<0 => Quot(e,Number(r.abs))
-	    case Quot(Number(r,ur),Neg(e)) if r<0 => Quot(Number(r.abs),e)
-	    case Quot(Neg(l),Neg(r)) => Quot(l,r)
+	    case Quot(Inv(e),Number(r,ur)) if r<0 => Quot(e,Number(r.abs))
+	    case Quot(Number(r,ur),Inv(e)) if r<0 => Quot(Number(r.abs),e)
+	    case Quot(Inv(l),Inv(r)) => Quot(l,r)
 	    case Quot(l,n:Number) => Prod(Quot(ONE,n),l)
 	    case _ => e
 	}
@@ -92,14 +92,14 @@ object Transformations {
 	  
 	def orderSum(e:Expression):Expression = e match {
 	    case Sum(l,Number(r,u)) if r.isNegative => Diff(l,Number(-r))
-	    case Sum(l,Neg(r)) => Diff(l,r)
+	    case Sum(l,Inv(r)) => Diff(l,r)
 	    case Sum(Number(r,u),l) if !l.isInstanceOf[Number] => Sum(l,Number(r))
 	    case _ => e
 	}
 	  
 	def simplifyDiff(e:Expression):Expression = e match {
 	    case Diff(l,r) if ZERO.eq(r) => l
-	    case Diff(l,r) if ZERO.eq(l) => Neg(r)
+	    case Diff(l,r) if ZERO.eq(l) => Inv(r)
 	    case Diff(Number(r1,u1),Diff(Number(r2,u2),e)) => Sum(Number(r1-r2),e)
 	    case Diff(Number(r1,u1),Diff(e,Number(r2,u2))) => Diff(Number(r1+r2),e)
 	    case _ => e
@@ -107,7 +107,7 @@ object Transformations {
 	  
 	def orderDiff(e:Expression):Expression = e match {
 	    case Diff(l,Number(r,u)) if r.isNegative => Sum(l,Number(-r))
-	    case Diff(l,Neg(r)) => Sum(l,r)
+	    case Diff(l,Inv(r)) => Sum(l,r)
 	    case Diff(l,Diff(r1,r2)) => Sum(Diff(l,r1),r2)
 	    case _ => e
 	}

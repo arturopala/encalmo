@@ -112,7 +112,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    			writeOpeningBracketIfNeeded(node, o)
 	    			o match {
 	    				case o: PrefixOperation => {
-	    					output.mo(o.operator,PREFIX)
+	    					output.mo(o.operator.name,PREFIX)
 	    				}
 	    				case o:Quot => { o match {
 	    				        case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.startb(MROW)
@@ -147,7 +147,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    				case o: NamedOperation => {
 	    					o match {
 	    						case _ => {
-	    							output.mo(o.operator,PREFIX)
+	    							output.mo(o.operator.name,PREFIX)
 	    							if (!o.isInstanceOf[Operation1]) {
 	    								output.leftBracket()
 	    							}else{
@@ -266,14 +266,14 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 			case o:Prod => {
                 (leftChild,rightChild) match {
                     case (n:Number,s:Symbol) if n.unit == EmptyUnitOfValue => output.append(MathMLTags.ENTITY_THIN_SPACE)
-                    case _ => output.mo(o.operator,INFIX,THINMATHSPACE,THINMATHSPACE)
+                    case _ => output.mo(o.operator.name,INFIX,THINMATHSPACE,THINMATHSPACE)
                 }
 			}
 			case o:MultipleInfixOperation => {
-			    output.mo(o.operator,INFIX,THICKMATHSPACE,THICKMATHSPACE)
+			    output.mo(o.operator.name,INFIX,THICKMATHSPACE,THICKMATHSPACE)
 			}
 			case o: InfixOperation => {
-				output.mo(o.operator,INFIX,THINMATHSPACE,THINMATHSPACE)
+				output.mo(o.operator.name,INFIX,THINMATHSPACE,THINMATHSPACE)
 			}
 			case o: Operation2 => {
 				output.separator()
@@ -357,7 +357,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
     			case o: Operation => {
     				o match {
     					case o: PostfixOperation => {
-    						output.mo(o.operator,"postfix")
+    						output.mo(o.operator.name,"postfix")
     					}
     					case o:Quot => {o match {
                                 case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.end(MROW)

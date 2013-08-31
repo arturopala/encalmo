@@ -6,7 +6,7 @@ package org.encalmo.expression
  */
 case class CaseExpression(expression:Expression) extends Expression with Auxiliary {
     
-    override def children = Seq(expression)
+    override val children = Seq(expression)
     
     final override def eval():Expression = expression.eval()
     

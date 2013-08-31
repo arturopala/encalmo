@@ -80,11 +80,11 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
         append(CSS.convertToClassDefinition(style,stylesConfig))
 	}
 	
-	def convertOperator(s:String):String = s match {
-        case "-" => "−"
-        case "+" => "+"
-        case "*" => "·"
-        case _ => s
+	def convertOperator(s:scala.Symbol):String = s match {
+        case '- => "−"
+        case '+ => "+"
+        case '* => "·"
+        case _ => s.name
     }
 	
 }

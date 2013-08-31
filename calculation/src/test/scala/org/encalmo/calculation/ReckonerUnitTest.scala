@@ -26,13 +26,13 @@ class ReckonerUnitTest extends AssertionsForJUnit {
         val expected = (10 + (hypot(-(sin(z) - 0.3), abs(f)))) * ((hypot(-(sin(z) - 0.3), abs(f))) - (h * ((sin(z) - 0.3) / 10)))
         assertEquals(3, formula.parts.size)
         assertTrue(formula.parts.head.expression.isInstanceOf[Symbol])
-        assertTrue(formula.parts.head.relation == FormulaPartRelation.NONE)
+        assertTrue(formula.parts.head.relation == Relation.NONE)
         assertTrue(formula.parts.head.position == FormulaPosition.LEFT)
         assertTrue(formula.parts(1).expression == (b * (c - d)))
-        assertTrue(formula.parts(1).relation == FormulaPartRelation.EQUAL)
+        assertTrue(formula.parts(1).relation == Relation.EQUAL)
         assertTrue(formula.parts(1).position == FormulaPosition.EXPR_UNRESOLVED)
         assertTrue(formula.parts(2).expression == expected)
-        assertTrue(formula.parts(2).relation == FormulaPartRelation.EQUAL)
+        assertTrue(formula.parts(2).relation == Relation.EQUAL)
         assertTrue(formula.parts(2).position == FormulaPosition.RIGHT)
     }
 

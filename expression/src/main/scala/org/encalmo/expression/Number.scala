@@ -3,7 +3,7 @@ package org.encalmo.expression
 
 object Number {
     
-    val typeId = "N"
+    val typeId = 'Number
 
     //Numbers calculator registration
     NumberValueCalculator.doRegister()
@@ -23,7 +23,7 @@ case class Number(
     
     private[encalmo] var isRounded:Boolean = false
     private[encalmo] var original:Option[Real] = None
-    
+
     val typeId = Number.typeId
 	
     override def equals(a:Any):Boolean = a match {
@@ -111,50 +111,50 @@ case class Number(
 		case _ => super.^-(e)
 	}
 
-	override def < (e:Expression):Boolean = e match {
+	override def < (e:Expression): Expression = e match {
 	    case Number(r1,u1) =>  if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r<r1
     	    else {
-    	        if(u1.isSameBaseAndDimension(unit)) r<r1.convert1(u1,unit) 
+    	        if(u1.isSameBaseAndDimension(unit)) r<r1.convert1(u1,unit)
     	        else if(u1.isSameExpandedUnit(this.unit)) r<r1.convert2(u1,unit) 
     	        else r<r1
     	    }
-	    case _ => false
+	    case _ => Unknown
     }
-	override def > (e:Expression):Boolean = e match {
+	override def > (e:Expression): Expression = e match {
 	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r>r1
             else {
                 if(u1.isSameBaseAndDimension(unit)) r>r1.convert1(u1,unit) 
                 else if(u1.isSameExpandedUnit(this.unit)) r>r1.convert2(u1,unit) 
                 else r>r1
             }
-	    case _ => false
+	    case _ => Unknown
     }
-	override def >= (e:Expression):Boolean = e match {
+	override def >= (e:Expression): Expression = e match {
 	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r>=r1
             else {
                 if(u1.isSameBaseAndDimension(unit)) r>=r1.convert1(u1,unit) 
                 else if(u1.isSameExpandedUnit(this.unit)) r>=r1.convert2(u1,unit) 
                 else r>=r1
             }
-	    case _ => false
+	    case _ => Unknown
     }
-	override def <= (e:Expression):Boolean = e match {
+	override def <= (e:Expression): Expression = e match {
 	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r<=r1
             else {
                 if(u1.isSameBaseAndDimension(unit)) r<=r1.convert1(u1,unit) 
                 else if(u1.isSameExpandedUnit(this.unit)) r<=r1.convert2(u1,unit) 
                 else r<=r1
             }
-	    case _ => false
+	    case _ => Unknown
     }
-	override def <> (e:Expression):Boolean = e match {
+	override def <> (e:Expression): Expression = e match {
 	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r<>r1
             else {
                 if(u1.isSameBaseAndDimension(unit)) r<>r1.convert1(u1,unit) 
                 else if(u1.isSameExpandedUnit(this.unit)) r<>r1.convert2(u1,unit) 
                 else r<>r1
             }
-	    case _ => false
+	    case _ => Unknown
     }
 	
 	def isInt = r.isInt
@@ -215,6 +215,8 @@ object ONE extends Number(Real.one,EmptyUnitOfValue){
 
 object NumberValueCalculator extends ValueCalculator {
     
+    import scala.Symbol
+    
     def doRegister():Unit = {
         Value.register((Number.typeId,Number.typeId),this)
     }
@@ -223,12 +225,12 @@ object NumberValueCalculator extends ValueCalculator {
      * Calculates result of the operation with two arguments. 
      * Supports arguments of the Number type.
      */
-    override def calculate(operator:String, v1:Value, v2:Value):Option[Value] = {
+    override def calculate(operator:Symbol, v1:Value, v2:Value):Option[Value] = {
         try {
         (v1,v2) match {
             case (Number(r1,u1),Number(r2,u2)) => {
                 Option(operator match {
-                    case "+" => {
+                    case '+ => {
                         if(u1==u2) Number(r1+r2,u1)
                         else if(u1.isSameBaseAndDimension(u2)){
                              if(u1.isLargerThan(u2)) Number(r1+ r2.convert1(u2, u1),u1) else Number(r1.convert1(u1,u2)+r2,u2)
@@ -240,7 +242,7 @@ object NumberValueCalculator extends ValueCalculator {
                             Number(r1+r2,u1+u2)
                         }
                     }
-                    case "-" => {
+                    case '- => {
                         if(u1==u2) Number(r1-r2,u1)
                         else if(u1.isSameBaseAndDimension(u2)){ 
                              if(u1.isLargerThan(u2)) Number(r1- r2.convert1(u2, u1),u1) else Number(r1.convert1(u1,u2)-r2,u2)
@@ -252,7 +254,7 @@ object NumberValueCalculator extends ValueCalculator {
                             Number(r1-r2,u1-u2)
                         }
                     }
-                    case "*" => {
+                    case '* => {
                         if(u1.isSameBase(u2)){
                              if(u1.isSameDimension(u2)){
                                  if(u1.isLargerScaleThan(u2)) 
@@ -280,7 +282,7 @@ object NumberValueCalculator extends ValueCalculator {
                             Number(r1*r2*su._2,su._1)
                         }
                     }
-                    case "/" => {
+                    case '/ => {
                        if(u1.isSameBase(u2)){
                              if(u1.isSameDimension(u2)){
                                  Number(r1/ r2.convert1(u2, u1),EmptyUnitOfValue)
@@ -308,7 +310,7 @@ object NumberValueCalculator extends ValueCalculator {
                             Number(r1/r2*su._2,su._1)
                         }
                     }
-                    case "%" => {
+                    case '% => {
                         if(u1==u2) Number(r1%r2,u1) 
                         else if(u1.isSameBaseAndDimension(u2)){
                              if(u1.isLargerThan(u2)) Number(r1.convert1(u1,u2)%r2,u2) else Number(r1% r2.convert1(u2, u1),u1)
@@ -320,17 +322,17 @@ object NumberValueCalculator extends ValueCalculator {
                             Number(r1%r2,u1%u2)
                         }
                     }
-                    case "^" => {
+                    case '^ => {
                         if(r2>=0){
                             Number(r1^r2,u1.multiplyDimension(r2.d))
                         }else{
                             Number(r1^r2,EmptyUnitOfValue/ u1.multiplyDimension(-r2.d))
                         }
                     }
-                    case "root" => {
+                    case 'root => {
                         Number(r1.root(r2),u1.divideDimension(r2.d))
                     }
-                    case "min" => {
+                    case 'min => {
                         if(u1.isSameBaseAndDimension(u2)){
                              if(u1==u2) if (r1 <= r2) v1 else v2
                              else if(r1<=r2.convert1(u2,u1)) v1 else v2
@@ -343,7 +345,7 @@ object NumberValueCalculator extends ValueCalculator {
                              if(r1<=r2) v1 else v2
                         }
                     }
-                    case "max" => {
+                    case 'max => {
                         if(u1.isSameBaseAndDimension(u2)){
                              if(u1==u2) if (r1 <= r2) v2 else v1
                              else if(r1<=r2.convert1(u2,u1)) v2 else v1
@@ -356,7 +358,7 @@ object NumberValueCalculator extends ValueCalculator {
                              if(r1<=r2) v2 else v1
                         }
                     }
-                    case "hypot" => Number(Real(java.lang.Math.hypot(r1.d,r2.convert(u2,u1).d)),u1)
+                    case 'hypot => Number(Real(java.lang.Math.hypot(r1.d,r2.convert(u2,u1).d)),u1)
                     case _ => null
                 })
             }
@@ -375,29 +377,29 @@ object NumberValueCalculator extends ValueCalculator {
      * Calculates result of the operation with two arguments. 
      * Supports arguments of the Number type. 
      */
-    override def calculate(operator:String, v:Value):Option[Value] = {
+    override def calculate(operator:Symbol, v:Value):Option[Value] = {
         v match {
             case Number(r,u) => {
                 Option(operator match {
-                    case "-" => Number(-r,u)
-                    case "sqrt" => Number(r.sqrt,u.divideDimension(2))
-                    case "cbrt" => Number(r.cbrt,u.divideDimension(3))
-                    case "exp" => Number(r.exp)
-                    case "ln" => Number(r.ln)
-                    case "log" => Number(r.log)
-                    case "abs" => Number(r.abs,u)
-                    case "sin" => if(u==SI.rad) Number(r.sin) else r.d match {case 0 => 0; case 90 => 1; case 180 => 0; case 270 => -1; case _ => Number(r.rad.sin)}
-                    case "cos" => if(u==SI.rad) Number(r.cos) else r.d match {case 0 => 1; case 90 => 0; case 180 => -1; case 270 => 0; case _ => Number(r.rad.cos)}
-                    case "tan" => if(u==SI.rad) Number(r.tan) else Number(r.rad.tan)
-                    case "cot" => if(u==SI.rad) Number(r.cot) else Number(r.rad.cot)
-                    case "arcsin" => Number(r.arcsin.deg,SI.deg)
-                    case "arccos" => Number(r.arccos.deg,SI.deg)
-                    case "arctan" => Number(r.arctan.deg,SI.deg)
-                    case "arccot" => Number(r.arccot.deg,SI.deg)
-                    case "sinh" => if(u==SI.rad) Number(r.sinh) else Number(r.rad.sinh)
-                    case "cosh" => if(u==SI.rad) Number(r.cosh) else Number(r.rad.cosh)
-                    case "tanh" => if(u==SI.rad) Number(r.tanh) else Number(r.rad.tanh)
-                    case "coth" => if(u==SI.rad) Number(r.coth) else Number(r.rad.coth)
+                    case '- => Number(-r,u)
+                    case 'sqrt => Number(r.sqrt,u.divideDimension(2))
+                    case 'cbrt => Number(r.cbrt,u.divideDimension(3))
+                    case 'exp => Number(r.exp)
+                    case 'ln => Number(r.ln)
+                    case 'log => Number(r.log)
+                    case 'abs => Number(r.abs,u)
+                    case 'sin => if(u==SI.rad) Number(r.sin) else r.d match {case 0 => 0; case 90 => 1; case 180 => 0; case 270 => -1; case _ => Number(r.rad.sin)}
+                    case 'cos => if(u==SI.rad) Number(r.cos) else r.d match {case 0 => 1; case 90 => 0; case 180 => -1; case 270 => 0; case _ => Number(r.rad.cos)}
+                    case 'tan => if(u==SI.rad) Number(r.tan) else Number(r.rad.tan)
+                    case 'cot => if(u==SI.rad) Number(r.cot) else Number(r.rad.cot)
+                    case 'arcsin => Number(r.arcsin.deg,SI.deg)
+                    case 'arccos => Number(r.arccos.deg,SI.deg)
+                    case 'arctan => Number(r.arctan.deg,SI.deg)
+                    case 'arccot => Number(r.arccot.deg,SI.deg)
+                    case 'sinh => if(u==SI.rad) Number(r.sinh) else Number(r.rad.sinh)
+                    case 'cosh => if(u==SI.rad) Number(r.cosh) else Number(r.rad.cosh)
+                    case 'tanh => if(u==SI.rad) Number(r.tanh) else Number(r.rad.tanh)
+                    case 'coth => if(u==SI.rad) Number(r.coth) else Number(r.rad.coth)
                     case _ => null
                 })
             }

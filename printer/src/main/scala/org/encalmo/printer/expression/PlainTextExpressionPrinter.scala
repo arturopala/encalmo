@@ -112,13 +112,13 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
     			writeOpeningBracketIfNeeded(node,o)
     			o match {
     				case o:PrefixOperation => {
-    					w.write(o.operator)
+    					w.write(o.operator.name)
     				}
     				case o:abs => {
     					w.write('|')
 					}
     				case o:NamedOperation => {
-    					w.write(o.operator)
+    					w.write(o.operator.name)
     					if(!o.isInstanceOf[Operation1]){
     						writeOpeningBracket()
     					}
@@ -157,12 +157,12 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 	override def onBetweenChildren(node:Node[Expression], leftChild:Expression, rightChild:Expression):Unit = node.element match {
 		case o:MultipleInfixOperation => {
             writeSpace()
-            w.write(o.operator)
+            w.write(o.operator.name)
             writeSpace()
         }
 	    case o:InfixOperation => {
 			writeSpace()
-			w.write(o.operator)
+			w.write(o.operator.name)
 			writeSpace()
 		}
 		case o:OperationN => {
@@ -189,7 +189,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 			case o:Operation => {
 				o match {
 					case o:PostfixOperation => {
-						w.write(o.operator)
+						w.write(o.operator.name)
 					}
     				case o:abs => {
     					w.write('|')

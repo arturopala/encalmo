@@ -146,11 +146,11 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		})
 	}
 	
-    def convertOperator(s:String):String = s match {
-        case "-" => "−"
-        case "+" => "+"
-        case "*" => "·"
-        case _ => s
+    def convertOperator(s:scala.Symbol):String = s match {
+        case '- => "−"
+        case '+ => "+"
+        case '* => "·"
+        case _ => s.name
     }
 
     def inline(text:String,style:Style, currentStyle:Style, paragraphStyles:Boolean = true): Unit = {

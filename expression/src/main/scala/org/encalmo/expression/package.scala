@@ -25,15 +25,26 @@ package object expression {
 	implicit def float2Real(f:Float):Real = new Real(f)
 	implicit def double2Real(d:Double):Real = new Real(d)
 	  
-	implicit def int2Number(i:Int):Number = i match{case _ if i==0 =>ZERO; case _ if i==1 =>ONE; case _=>Number(new Real(i))}
-	implicit def long2Number(l:Long):Number = l match{case _ if l==0 =>ZERO; case _ if l==1 =>ONE; case _=>Number(new Real(l))}
-	implicit def float2Number(f:Float):Number = f match{case _ if f==0 =>ZERO; case _ if f==1 =>ONE; case _=>Number(new Real(f))}
-	implicit def double2Number(d:Double):Number = d match{case _ if d==0 =>ZERO; case _ if d==1 =>ONE; case _=>Number(new Real(d))}
+	implicit def int2Number(i:Int):Number = i match{case _ if i==0 =>ZERO; case _ if i==1 =>ONE; case _=> Number(new Real(i))}
+	implicit def long2Number(l:Long):Number = l match{case _ if l==0 =>ZERO; case _ if l==1 =>ONE; case _=> Number(new Real(l))}
+	implicit def float2Number(f:Float):Number = f match{case _ if f==0 =>ZERO; case _ if f==1 =>ONE; case _=> Number(new Real(f))}
+	implicit def double2Number(d:Double):Number = d match{case _ if d==0 =>ZERO; case _ if d==1 =>ONE; case _=> Number(new Real(d))}
 	  
 	implicit def exprFx2Expression(m:()=>Expression):Expression = new ExprFx(m)
 	implicit def realFx2Expression(m:()=>Real):Expression = new RealFx(m)
 	
 	implicit def string2Symbol(string:String):Symbol = Symbol(string)
+
+    implicit def booleanValue2Boolean(b:BooleanValue):Boolean = b.boolean
+    implicit def boolean2BooleanValue(b:Boolean):BooleanValue = BooleanValue(b)
+    implicit def expression2BooleanOpt(e:Expression):Option[Boolean] = e match {
+        case BooleanValue(b) => Some(b)
+        case op:BooleanOperation => expression2BooleanOpt(op.eval())
+        case _ => None}
+    implicit def expression2Boolean(e:Expression):Boolean = e match {
+        case BooleanValue(b) => b
+        case op:BooleanOperation => expression2Boolean(op.eval())
+        case _ => false}
 	
 	val console:java.io.PrintWriter = new java.io.PrintWriter(Console.out)
 	

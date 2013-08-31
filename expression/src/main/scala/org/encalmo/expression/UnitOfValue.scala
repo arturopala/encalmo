@@ -188,11 +188,11 @@ case class UnitOfValueNameBuilder() extends TreeVisitor[Expression] {
         }
         case o:MultipleInfixOperation => {
             val buff = stack.pop()
-            stack.top.append(buff.sortBy(s => s.toLowerCase).mkString(o.operator))
+            stack.top.append(buff.sortBy(s => s.toLowerCase).mkString(o.operator.name))
         }
         case o:Prod2 => {
             val buff = stack.pop()
-            stack.top.append(buff.sortBy(s => s.toLowerCase).mkString(o.operator))
+            stack.top.append(buff.sortBy(s => s.toLowerCase).mkString(o.operator.name))
         }
         case _ => Unit
     }
@@ -220,7 +220,7 @@ case class UnitOfValueNameBuilder() extends TreeVisitor[Expression] {
     
     override def onBetweenChildren(node:Node[Expression], leftChild:Expression, rightChild:Expression):Unit = node.element match { 
         case o:Prod2 => Unit
-        case o:Operation2 => stack.top.append(o.operator)
+        case o:Operation2 => stack.top.append(o.operator.name)
         case o:MultipleInfixOperation => Unit
         case _ => Unit
     }
