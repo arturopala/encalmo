@@ -10,7 +10,7 @@ import org.encalmo.style.StylesConfig
  * @author artur.opala
  */
 abstract class Expr (
-        val customStyle:Style,
+        customStyle: Option[Style],
         val expressions:Expression*)(implicit val context: Context)
 extends DocumentComponent(customStyle) with StylesResolver {
 
@@ -20,21 +20,21 @@ extends DocumentComponent(customStyle) with StylesResolver {
 	
 	lazy val parentStylesConfig:Option[StylesConfig] = document.map(_.stylesConfig)
 	
-	override lazy val myStyle:Style = {
+	/*override lazy val myStyle:Style = {
         Option(customStyle).getOrElse(
             parentStylesConfig match {
                 case Some(psc) => psc.expression.getOrElse(null)
                 case None => null
             }
         )
-    }
+    }*/
 }
 
 /**
  * Block-style expression
  * @author artur.opala
  */
-abstract class BlockExpr(customStyle:Style, expressions:Expression*)(implicit context: Context)
+abstract class BlockExpr(customStyle: Option[Style], expressions:Expression*)(implicit context: Context)
 extends Expr(customStyle,expressions:_*)(context) with BlockComponent {
 	
 	def isPrintDescription:Boolean
@@ -45,7 +45,7 @@ extends Expr(customStyle,expressions:_*)(context) with BlockComponent {
  * Inline-style expression
  * @author artur.opala
  */
-abstract class InlineExpr(customStyle:Style, expressions:Expression*)(implicit context: Context)
+abstract class InlineExpr(customStyle: Option[Style], expressions:Expression*)(implicit context: Context)
 extends Expr(customStyle,expressions:_*)(context) with InlineComponent {
 	
 }

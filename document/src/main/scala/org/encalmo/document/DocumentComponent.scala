@@ -1,10 +1,8 @@
 package org.encalmo.document
 
 import org.encalmo.common._
-import annotation.tailrec
 import org.encalmo.common.AdHocVisitor
 import org.encalmo.common.Node
-import scala.collection.mutable.{Set,LinkedHashSet}
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
 import scala.collection.mutable
@@ -13,16 +11,18 @@ import scala.collection.mutable
  * DocumentComponent trait
  * @author artur.opala
  */
-abstract class DocumentComponent(private val dcStyle:Style) extends TreeNodeWithParentRef[DocumentComponent] {
-    
+abstract class DocumentComponent(protected val customStyleOfComponent: Option[Style] = None) extends TreeNodeWithParentRef[DocumentComponent] {
+
+    assert(customStyleOfComponent!=null,"Document component style option MUST not be null: "+this)
+
     /** Component's own style declaration */
-    def myStyle:Style = dcStyle
+    def customStyle:Style = customStyleOfComponent.getOrElse(null)
     
     /** Component's resolved style */
     //TODO @tailrec
     lazy val style:Style = {
-    	if(myStyle!=null){
-    		myStyle
+    	if(customStyle!=null){
+    		customStyle
     	}else{
     		if(!parent.isDefined) {
     			DefaultStyle 
@@ -42,26 +42,21 @@ abstract class DocumentComponent(private val dcStyle:Style) extends TreeNodeWith
         case Some(d) => d.stylesConfig.matchStyleClassId(style)
     }
     
-    lazy val myStyleClassId:Option[String] = myStyle match {
+    lazy val customStyleClassId:Option[String] = customStyle match {
         case null => None
         case _ => {
             document match {
-                case None => Some(myStyle.classId)
-                case Some(d) => d.stylesConfig.matchStyleClassId(myStyle)
+                case None => Some(customStyle.classId)
+                case Some(d) => d.stylesConfig.matchStyleClassId(customStyle)
             }
         }
     }
     
 	lazy val allStyles:mutable.Set[Style] = {
 	    val stylesSet:mutable.Set[Style] = mutable.LinkedHashSet()
-	    if(dcStyle!=null){
-        	stylesSet.add(dcStyle)
-        }
-	    val t = AdHocVisitor[DocumentComponent](onEnterFx = Some({n:Node[DocumentComponent] => {
-	        val style = n.element.dcStyle
-	        if(style!=null){
-	        	stylesSet.add(style)
-	        }
+        customStyleOfComponent.map(stylesSet.add)
+	    val t = AdHocVisitor[DocumentComponent](onEnterFx = Some({node: Node[DocumentComponent] => {
+	        node.element.customStyleOfComponent.map(stylesSet.add)
 	    }}))
 	    this.visit(visitor = t)
 	    stylesSet

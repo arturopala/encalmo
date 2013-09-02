@@ -4,8 +4,8 @@ import org.encalmo.style.Style
 /**
  * TextToTranslate component class
  */
-class TextToTranslate(myStyle:Style, text:String, val dictionary:String) 
-extends Text(myStyle,text)
+class TextToTranslate(customStyle: Option[Style], text:String, val dictionary:String)
+extends Text(customStyle,text)
 
 /**
  * TextToTranslate class companion object
@@ -13,18 +13,18 @@ extends Text(myStyle,text)
  */
 object TextToTranslate{
 	
-	def apply(mystyle:Style, text:String, dictionary:String) = {
-		new TextToTranslate(mystyle,text,dictionary)
+	def apply(customStyle:Style, text:String, dictionary:String) = {
+		new TextToTranslate(Option(customStyle),text,dictionary)
 	}
 	
 	def apply(text:String, dictionary:String) = {
-		new TextToTranslate(null,text,dictionary)
+		new TextToTranslate(None,text,dictionary)
 	}
 
     def apply(text:String, dictionary:Option[String]) = {
-        new TextToTranslate(null,text,dictionary.getOrElse(null))
+        new TextToTranslate(None,text,dictionary.getOrElse(null))
     }
 	
-	def unapply(t:TextToTranslate) = Some((t.myStyle,t.text,t.dictionary))
+	def unapply(t:TextToTranslate) = Some((t.customStyle,t.text,t.dictionary))
 	
 }

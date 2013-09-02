@@ -9,9 +9,9 @@ import org.encalmo.style.Style
  * Evaluate: symbol = unresolved = substituted = partially evaluated = evaluated
  */
 class Evaluate(
-        customStyle:Style,
-        val styleOfResolved:Style, 
-        val styleOfEvaluated:Style, 
+        customStyle: Option[Style],
+        val styleOfResolved: Option[Style],
+        val styleOfEvaluated: Option[Style],
         val isPrintDescription:Boolean,
         expressions:Expression*)(implicit context: Context)
 extends BlockExpr(customStyle,expressions:_*){
@@ -27,25 +27,25 @@ extends BlockExpr(customStyle,expressions:_*){
 object Evaluate {
 	
 	def apply(customStyle:Style, styleOfResolved:Style, styleOfEvaluated:Style, expressions:Expression*)(implicit context: Context) = {
-		new Evaluate(customStyle,styleOfResolved,styleOfEvaluated,true,expressions:_*)(context)
+		new Evaluate(Option(customStyle),Option(styleOfResolved),Option(styleOfEvaluated),true,expressions:_*)(context)
 	}
 	
 	def apply(customStyle:Style, style2:Style, expressions:Expression*)(implicit context: Context) = {
-		new Evaluate(customStyle,style2,style2,true,expressions:_*)(context)
+		new Evaluate(Option(customStyle),Option(style2),Option(style2),true,expressions:_*)(context)
 	}
 	
 	def apply(customStyle:Style, expressions:Expression*)(implicit context: Context) = {
-		new Evaluate(customStyle,customStyle,customStyle,true,expressions:_*)(context)
+		new Evaluate(Option(customStyle),Option(customStyle),Option(customStyle),true,expressions:_*)(context)
 	}
 	
 	def apply(expressions:Expression*)(implicit context: Context) = {
-        new Evaluate(null,null,null,true,expressions:_*)(context)
+        new Evaluate(None,None,None,true,expressions:_*)(context)
     }
 	
 	def apply(isPrintDescription:Boolean, expressions:Expression*)(implicit context: Context) = {
-		new Evaluate(null,null,null,isPrintDescription,expressions:_*)(context)
+		new Evaluate(None,None,None,isPrintDescription,expressions:_*)(context)
 	}
 	
-	def unapply(e:Evaluate) = Some(e.myStyle,e.styleOfResolved,e.styleOfEvaluated,e.context,e.expressions)
+	def unapply(e:Evaluate) = Some(e.customStyle,e.styleOfResolved,e.styleOfEvaluated,e.context,e.expressions)
 	
 }

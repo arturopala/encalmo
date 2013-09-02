@@ -52,7 +52,6 @@ object ExpressionToPrint {
     private def partFilterForElement(element: Expr): FormulaPart => Boolean = {
         element match {
             case _:Evaluate => ALL_PARTS
-            case _:Symb => ONLY_LEFT
             case _:Result => ONLY_RIGHT
             case _:Expand => ONLY_LEFT_AND_UNRESOLVED
         }

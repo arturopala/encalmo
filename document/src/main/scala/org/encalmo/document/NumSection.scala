@@ -8,13 +8,13 @@ import org.encalmo.style.StylesConfig
  * Numbered section component class
  * @author artur.opala
  */
-class NumSection(val title:Option[String], val nsStyle:Style, val myEnumerator:Enumerator, flow:DocumentComponent*) 
-extends Section(nsStyle,flow:_*) {
+class NumSection(val title:Option[String], customStyleOfNumSection: Option[Style], val myEnumerator:Enumerator, flow:DocumentComponent*)
+extends Section(customStyleOfNumSection,flow:_*) {
     
     lazy val parentNumSection = parentOfType[NumSection](classOf[NumSection])
     lazy val parentEnumeratorProvider = parentOrSiblingOfType[EnumeratorProvider](classOf[EnumeratorProvider])
 	
-	override def toString = "NumSection("+nsStyle+","+flow.mkString(",")+")"
+	override def toString = "NumSection("+customStyleOfComponent+","+flow.mkString(",")+")"
 	
 	/** Section's resolved enumerator */
 	//TDOD @tailrec
@@ -32,15 +32,15 @@ extends Section(nsStyle,flow:_*) {
     
     lazy val enumeratorLevel:Int = countParentsOfTypeUntil[NumSection](classOf[NumSection],(x)=>{x.enumerator.eq(this.enumerator)})
     
-    override lazy val myStyle:Style = {
-    	Option(nsStyle).getOrElse(resolveStyle(enumeratorLevel))
+    override lazy val customStyle:Style = {
+    	customStyleOfComponent.getOrElse(resolveStyle(enumeratorLevel))
     }
 	
 	/**
 	 * Resolves style for this numbered section
 	 */
     private def resolveStyle(level:Int):Style = {
-		Option(nsStyle).getOrElse(
+        customStyleOfComponent.getOrElse(
 		    document match {
 		        case None => null
 		        case Some(d) => resolveStyle(d.stylesConfig,level)
@@ -74,26 +74,26 @@ object NumSection {
 	
 	val defaultEnumerator = Enumerator()
 	
-	def apply(myStyle:Style, enumerator:Enumerator, flow:DocumentComponent*) = {
-		new NumSection(None, myStyle, enumerator, flow:_*)
+	def apply(customStyle: Style, enumerator:Enumerator, flow:DocumentComponent*) = {
+		new NumSection(None, Option(customStyle), enumerator, flow:_*)
 	}
 	
-	def apply(myStyle:Style, flow:DocumentComponent*) = {
-		new NumSection(None, myStyle, null, flow:_*)
+	def apply(customStyle:Style, flow:DocumentComponent*) = {
+		new NumSection(None, Option(customStyle), null, flow:_*)
 	}
 	
 	def apply(enumerator:Enumerator, flow:DocumentComponent*) = {
-		new NumSection(None, null, enumerator, flow:_*)
+		new NumSection(None, None, enumerator, flow:_*)
 	}
 	
 	def apply(flow:DocumentComponent*) = {
-		new NumSection(None, null, null, flow:_*)
+		new NumSection(None, None, null, flow:_*)
 	}
 	
 	def apply(title:String, flow:DocumentComponent*) = {
-		new NumSection(Some(title), null, null, flow:_*)
+		new NumSection(Some(title), None, null, flow:_*)
 	}
 	
-	def unapply(s:NumSection) = Some(s.nsStyle,s.myEnumerator,s.flow)
+	def unapply(s:NumSection) = Some(s.customStyleOfComponent,s.myEnumerator,s.flow)
 	
 }

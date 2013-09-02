@@ -8,12 +8,10 @@ import org.encalmo.style.Style
  * Result inline component class
  * @author artur.opala
  */
-class Result(rStyle:Style, expr:Expression*)(implicit context: Context)
-extends InlineExpr(rStyle,expr:_*)(context){
-    
-    override lazy val myStyle:Style = rStyle
+class Result(customStyle: Option[Style], expr:Expression*)(implicit context: Context)
+extends InlineExpr(customStyle,expr:_*)(context){
 	
-	override def toString = s"Result($myStyle,${expr.mkString(",")})($context)"
+	override def toString = s"Result($customStyle,${expr.mkString(",")})($context)"
 	
 }
 
@@ -24,11 +22,11 @@ extends InlineExpr(rStyle,expr:_*)(context){
 object Result {
 	
 	def apply(expr:Expression*)(implicit context: Context):Result = {
-		new Result(null,expr:_*)(context)
+		new Result(None,expr:_*)(context)
 	}
 	
-	def apply(mystyle:Style,expr:Expression*)(implicit context: Context):Result = {
-		new Result(mystyle,expr:_*)(context)
+	def apply(customStyle:Style,expr:Expression*)(implicit context: Context):Result = {
+		new Result(Option(customStyle),expr:_*)(context)
 	}
 	
 }

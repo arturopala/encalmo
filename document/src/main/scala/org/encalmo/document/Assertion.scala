@@ -16,7 +16,7 @@ abstract class Assertion(
 		val text:String,
 		val expressions:Seq[Expression],
         val context: Context)
-    extends DocumentComponent(null){
+    extends DocumentComponent {
 	
 	lazy val parentStylesConfig:Option[StylesConfig] = document.map(_.stylesConfig)
 	
@@ -58,22 +58,22 @@ abstract class Assertion(
 		},"document")
 		seq += Text(":")
 		seq += Character.LONGSPACE
-		seq += Symb(expressions.head)(context)
+		seq += Symb(expressions.head)
 		for(i <-1 to expressions.tail.size){
 		    seq += Character.SPACE
 		    seq += operator(i-1)
 		    seq += Character.SPACE
-		    seq += Symb(expressions(i))(context)
+		    seq += Symb(expressions(i))
 		}
 		seq += Character.LONGSPACE
 		seq += Character.RARROW
 		seq += Character.LONGSPACE
-		seq += Symb(results.head)(context)
+		seq += Symb(results.head)
         for(i <-1 to results.tail.size){
             seq += Character.SPACE
             seq += operator(i-1)
             seq += Character.SPACE
-            seq += Symb(results(i))(context)
+            seq += Symb(results(i))
         }
 		(ob,seq)
 	}
