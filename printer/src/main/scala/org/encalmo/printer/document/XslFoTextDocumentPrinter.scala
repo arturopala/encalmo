@@ -205,29 +205,29 @@ extends TreeVisitor[DocumentComponent] {
 						output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
 					}
 					case t:TextContent => {
-						if(t.myStyle!=null){
+						if(t.customStyle!=null){
 							output.start(INLINE)
-							output.appendInlineStyleAttributes(t.myStyle, styleStack.top)
+							output.appendInlineStyleAttributes(t.customStyle, styleStack.top)
 							output.body()
 						}
 						output.append(t.textContent)
-                        if(t.myStyle!=null){
+                        if(t.customStyle!=null){
 							output.end(INLINE)
 						}
 					}
 					case expr:InlineExpr => {
 						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
 						ess.foreach(es => {
-							if(expr.myStyle!=null){
+							if(expr.customStyle!=null){
 								output.start(INLINE)
-								output.appendInlineStyleAttributes(expr.myStyle, styleStack.top)
+								output.appendInlineStyleAttributes(expr.customStyle, styleStack.top)
 								output.attr("padding-end","1em")
 								output.body()
 							}
 							es.foreach(etp => {
 			                    writeExpression(etp, expr.style)
 			                })
-							if(expr.myStyle!=null){
+							if(expr.customStyle!=null){
 								output.end(INLINE)
 							}
 						})
@@ -242,6 +242,18 @@ extends TreeVisitor[DocumentComponent] {
 						val result = a.evaluate(results.cache)
 						val s = Section(a.style,result._2:_*)
 						s.visit(visitor = this)
+                    }
+                    case symb:Symb => {
+                        if(symb.customStyle!=null){
+                            output.start(INLINE)
+                            output.appendInlineStyleAttributes(symb.customStyle, styleStack.top)
+                            output.attr("padding-end","1em")
+                            output.body()
+                        }
+                        writeExpression(ExpressionToPrint(symb.expression,symb.customStyle,"",""), symb.style)
+                        if(symb.customStyle!=null){
+                            output.end(INLINE)
+                        }
                     }
 					case _ => {}
 				}

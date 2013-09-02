@@ -8,14 +8,14 @@ import org.encalmo.style.Style
  * Expand: symbol = resolved
  */
 class Expand(
-        myStyle:Style, 
-        val styleOfResolved:Style, 
+        customStyle: Option[Style],
+        val styleOfResolved: Option[Style],
         val isPrintDescription:Boolean, 
         val variant:Int,
         expressions:Expression*)(implicit context: Context)
-extends BlockExpr(myStyle,expressions:_*)(context){
+extends BlockExpr(customStyle,expressions:_*)(context){
 	
-	override def toString = "Expand("+myStyle+","+styleOfResolved+","+context+","+expressions.mkString(",")+")"
+	override def toString = "Expand("+customStyle+","+styleOfResolved+","+context+","+expressions.mkString(",")+")"
 }
 
 /**
@@ -25,25 +25,25 @@ extends BlockExpr(myStyle,expressions:_*)(context){
 object Expand {
 	
 	def apply(styleOfSymbol:Style, styleOfResolved:Style, expr:Expression*)(implicit context: Context) = {
-		new Expand(styleOfSymbol,styleOfResolved,true,1,expr:_*)(context)
+		new Expand(Option(styleOfSymbol),Option(styleOfResolved),true,1,expr:_*)(context)
 	}
 	
-	def apply(mystyle:Style, expr:Expression*)(implicit context: Context) = {
-		new Expand(mystyle,mystyle,true,1,expr:_*)(context)
+	def apply(customStyle:Style, expr:Expression*)(implicit context: Context) = {
+		new Expand(Option(customStyle),Option(customStyle),true,1,expr:_*)(context)
 	}
 	
 	def apply(expr:Expression*)(implicit context: Context) = {
-		new Expand(null,null,true,1,expr:_*)(context)
+		new Expand(None,None,true,1,expr:_*)(context)
 	}
 	
 	def apply(isPrintDescription:Boolean, expr:Expression*)(implicit context: Context) = {
-		new Expand(null,null,isPrintDescription,1,expr:_*)(context)
+		new Expand(None,None,isPrintDescription,1,expr:_*)(context)
 	}
 	
 	def apply(isPrintDescription:Boolean, variant:Int, expr:Expression*)(implicit context: Context) = {
-		new Expand(null,null,isPrintDescription,variant,expr:_*)(context)
+		new Expand(None,None,isPrintDescription,variant,expr:_*)(context)
 	}
 	
-	def unapply(e:Expand) = Some(e.myStyle, e.styleOfResolved ,e.context)
+	def unapply(e:Expand) = Some(e.customStyle, e.styleOfResolved ,e.context)
 	
 }

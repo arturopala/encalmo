@@ -6,8 +6,8 @@ import org.encalmo.style.Style
  * Document's components sequence abstract class
  * @author artur.opala
  */
-abstract class DocumentComponentSeq(myStyle:Style, val flow:DocumentComponent*) 
-extends DocumentComponent(myStyle) {
+abstract class DocumentComponentSeq(customStyle: Option[Style], val flow:DocumentComponent*)
+extends DocumentComponent(customStyle) {
     
     final override def children:Seq[DocumentComponent] = flow
     

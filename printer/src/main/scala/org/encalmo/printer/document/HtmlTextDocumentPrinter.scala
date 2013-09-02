@@ -145,26 +145,26 @@ div {padding:5pt 0 2pt 0}
                 if(first)output.end(SPAN)
             }
             case t:TextContent => {
-                if(t.myStyle!=null){
-                    output.startb(SPAN,t.myStyleClassId)
+                if(t.customStyle!=null){
+                    output.startb(SPAN,t.customStyleClassId)
                 }
                 output.append(t.textContent)
-                if(t.myStyle!=null){
+                if(t.customStyle!=null){
                     output.end(SPAN)
                 }
             }
             case expr:InlineExpr => {
                 val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
                 ess.foreach(es => {
-                    if(expr.myStyle!=null){
-                        output.start(SPAN,expr.myStyleClassId)
+                    if(expr.customStyle!=null){
+                        output.start(SPAN,expr.customStyleClassId)
                         output.attr("style","padding-end:1em")
                         output.body()
                     }
                     es.foreach(etp => {
                         writeExpression(etp, expr.style)
                     })
-                    if(expr.myStyle!=null){
+                    if(expr.customStyle!=null){
                         output.end(SPAN)
                     }
                 })
@@ -180,6 +180,17 @@ div {padding:5pt 0 2pt 0}
                 val s = Section(a.style,result._2:_*)
                 s.parent = a.parent
                 s.visit(visitor = this)
+            }
+            case symb:Symb => {
+                if(symb.customStyle!=null){
+                    output.start(SPAN,symb.customStyleClassId)
+                    output.attr("style","padding-end:1em")
+                    output.body()
+                }
+                writeExpression(ExpressionToPrint(symb.expression,symb.customStyle,"",""), symb.style)
+                if(symb.customStyle!=null){
+                    output.end(SPAN)
+                }
             }
             case _ => {}
 		}

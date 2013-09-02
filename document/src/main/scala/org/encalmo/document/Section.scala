@@ -5,10 +5,10 @@ import org.encalmo.style.Style
  * Section component class
  * @author artur.opala
  */
-class Section(myStyle:Style, flow:DocumentComponent*) 
-extends DocumentComponentSeq(myStyle,flow:_*) with BlockComponent {
+class Section(customStyle: Option[Style], flow:DocumentComponent*)
+extends DocumentComponentSeq(customStyle,flow:_*) with BlockComponent {
 	
-	override def toString = "Section("+myStyle+","+flow.mkString(",")+")"
+	override def toString = "Section("+customStyle+","+flow.mkString(",")+")"
 	
 }
 
@@ -18,27 +18,27 @@ extends DocumentComponentSeq(myStyle,flow:_*) with BlockComponent {
  */
 object Section {
 	
-	def apply(myStyle:Style, flow:DocumentComponent*) = {
-		new Section(myStyle,flow:_*)
+	def apply(customStyle:Style, flow:DocumentComponent*) = {
+		new Section(Option(customStyle),flow:_*)
 	}
 	
 	def apply(flow:DocumentComponent*) = {
-		new Section(null,flow:_*)
+		new Section(None,flow:_*)
 	}
 	
-	def apply(myStyle:Style):Section = {
-		new Section(myStyle)
+	def apply(customStyle:Style):Section = {
+		new Section(Option(customStyle))
 	}
 	
 	def apply():Section = {
-		new Section(null)
+		new Section(None)
 	}
 	
-	def unapply(s:Section) = Some(s.myStyle,s.flow)
+	def unapply(s:Section) = Some(s.customStyle,s.flow)
 	
 }
 
-object EmptySection extends Section(null) {
+object EmptySection extends Section(None) {
 	
 	override def toString = "EmptySection"
 		

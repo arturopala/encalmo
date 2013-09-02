@@ -210,6 +210,11 @@ extends TreeVisitor[DocumentComponent] {
 				}
 				canNewLine = true
             }
+            case symb: Symb => {
+                write(" ")
+                writeExpressionPart(ExpressionToPrint(symb.expression,symb.customStyle,"",""))
+                write(" ")
+            }
 			case _ =>
 		}
 	}

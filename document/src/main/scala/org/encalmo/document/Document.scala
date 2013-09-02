@@ -10,9 +10,9 @@ class Document(
         val title:String, 
         val stylesConfig:StylesConfig,
         flow:DocumentComponent*) 
-extends DocumentComponentSeq(stylesConfig.default.get, flow:_*) with BlockComponent {
+extends DocumentComponentSeq(stylesConfig.default, flow:_*) with BlockComponent {
 	
-	override def toString = "Document("+myStyle+","+title+","+flow.mkString(",")+")"
+	override def toString = "Document("+customStyle+","+title+","+flow.mkString(",")+")"
 	
 }
 
@@ -34,6 +34,6 @@ object Document {
 		new Document("", StylesConfig(DefaultStyle), flow:_*)
 	}
 	
-	def unapply(d:Document) = Some(d.myStyle,d.title,d.flow)
+	def unapply(d:Document) = Some(d.customStyle,d.title,d.flow)
 	
 }

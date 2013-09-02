@@ -4,8 +4,8 @@ import org.encalmo.style.Style
 /**
  * Character component class
  */
-class Character(myStyle:Style, val text:String) 
-extends DocumentComponent(myStyle)
+class Character(customStyle: Option[Style], val text:String)
+extends DocumentComponent(customStyle)
 
 /**
  * Character class companion object
@@ -13,15 +13,15 @@ extends DocumentComponent(myStyle)
  */
 object Character{
 	
-	def apply(mystyle:Style, text:String) = {
-		new Character(mystyle,text)
+	def apply(customStyle:Style, text:String) = {
+		new Character(Option(customStyle),text)
 	}
 	
 	def apply(text:String) = {
-		new Character(null,text)
+		new Character(None,text)
 	}
 	
-	def unapply(t:Character) = Some((t.myStyle,t.text))
+	def unapply(t:Character) = Some((t.customStyle,t.text))
 	
 	/** space */
 	val SPACE = Character(" ")
