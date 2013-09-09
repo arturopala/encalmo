@@ -67,7 +67,7 @@ abstract class DocumentComponent(protected val customStyleOfComponent: Option[St
  * Empty content singleton
  * @author artur.opala
  */
-object EmptyDocumentComponent extends DocumentComponent(null){
+object EmptyDocumentComponent extends DocumentComponent(None){
 	
 	override def toString = "EmptyDocumentComponent"
 	

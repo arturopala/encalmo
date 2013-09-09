@@ -46,7 +46,7 @@ object Enumerator {
  * @author artur.opala
  */
 class EnumeratorComponent(val enumerator:Enumerator)
-extends DocumentComponent(null) with EnumeratorProvider with NonVisualComponent
+extends DocumentComponent(None) with EnumeratorProvider with NonVisualComponent
 
 /**
  * Default enumerator singleton
