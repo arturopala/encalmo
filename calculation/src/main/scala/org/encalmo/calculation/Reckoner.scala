@@ -50,27 +50,28 @@ object Reckoner {
                         expression match {
                             case symbol: Symbol => {
                                 results.cache.put(symbol, list.head)
-                                Console.print(symbol.simpleFace + ",")
                             }
                             case _ =>
                         }
-                        val items = list.foldRight(List(expression))((e, l) => if (e != l.head) e :: l else l)
-                        items match {
+                        val items: List[Expression] = list.foldRight(List(expression))((e, l) => if (e != l.head) e :: l else l)
+                        val formula = items match {
                             case Nil => throw new IllegalStateException()
-                            case List(e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE)))
-                            case List(e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE), FormulaPart(e2, RIGHT)))
-                            case List(e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL), FormulaPart(e3, RIGHT)))
-                            case List(e4, e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL), FormulaPart(e3, EXPR_SUBSTITUTED, EQUAL), FormulaPart(e4, RIGHT)))
-                            case List(e5, e4, e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL), FormulaPart(e3, EXPR_SUBSTITUTED, EQUAL), FormulaPart(e4, EXPR_PARTIALLY_EVALUATED, EQUAL), FormulaPart(e5, RIGHT)))
+                            case List(e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE, 0)))
+                            case List(e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE, 0), FormulaPart(e2, RIGHT, 1)))
+                            case List(e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE,0), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL,1), FormulaPart(e3, RIGHT,2)))
+                            case List(e4, e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE,0), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL,1), FormulaPart(e3, EXPR_SUBSTITUTED, EQUAL,2), FormulaPart(e4, RIGHT,3)))
+                            case List(e5, e4, e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE,0), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL,1), FormulaPart(e3, EXPR_SUBSTITUTED, EQUAL,2), FormulaPart(e4, EXPR_PARTIALLY_EVALUATED, EQUAL,3), FormulaPart(e5, RIGHT,4)))
                             case _ => {
                                 val ritems = items.reverse
-                                Formula(Seq(FormulaPart(ritems.head, LEFT, NONE), FormulaPart(ritems.tail.head, EXPR_UNRESOLVED, EQUAL), FormulaPart(ritems.tail.tail.head, EXPR_SUBSTITUTED, EQUAL)) ++ (for (i <- 3 until (items.size - 1)) yield FormulaPart(ritems(i), EXPR_PARTIALLY_EVALUATED)) :+ FormulaPart(items.head, RIGHT))
+                                Formula(Seq(FormulaPart(ritems.head, LEFT, NONE,0), FormulaPart(ritems.tail.head, EXPR_UNRESOLVED, EQUAL,1), FormulaPart(ritems.tail.tail.head, EXPR_SUBSTITUTED, EQUAL, 2)) ++ (for (i <- 3 until (items.size - 1)) yield FormulaPart(ritems(i), EXPR_PARTIALLY_EVALUATED, i)) :+ FormulaPart(items.head, RIGHT,items.size-1))
                             }
                         }
+                        printDebug(formula)
+                        formula
                     }
                     catch {
                         case exc: Exception => {
-                            Console.err.println(s"\r\nCould not reckon expression: $expression\r\n$list\r\nCause: " + exc.getMessage)
+                            Console.err.println(s"\r\nCould not reckon expression: ${expression.face} -> ${list.map(_.face).mkString(" -> ")}\r\nCause: " + exc.getMessage)
                             throw exc
                         }
                     }
@@ -129,6 +130,18 @@ object Reckoner {
     private def adjustUnits(expression: Expression, unit: UnitOfValue, accuracy: Option[Double]): Expression = expression match {
         case v: Value => v.convertTo(unit, accuracy)
         case other => other.map(unitAdjustor(unit, accuracy))
+    }
+
+    def printDebug(formula: Formula): Unit = {
+         formula.parts.foreach(
+            part => {
+                Console.print(" ")
+                Console.print(Relation.faceOf(part.relation))
+                Console.print(" ")
+                Console.print(part.expression.face)
+            }
+         )
+         Console.println()
     }
 
 }

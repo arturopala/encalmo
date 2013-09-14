@@ -15,6 +15,8 @@ trait OperationN extends Operation {
   
   /** Makes copy of this operation type with provided arguments */
   def copy(e:Expression*):OperationN
+
+  override def face = operator.name + "(" + args.foldLeft("")((s,e) => if(!s.isEmpty) s + "," + e.face else e.face) + ")"
 	
   final override def eval():Expression = {
 	  val ps = args.map(_.eval()).partition(_.isInstanceOf[Value])

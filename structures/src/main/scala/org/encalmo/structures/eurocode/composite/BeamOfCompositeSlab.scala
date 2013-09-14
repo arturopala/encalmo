@@ -7,7 +7,7 @@ import org.encalmo.structures.eurocode.actions.ActionsSymbols
 import org.encalmo.structures.eurocode.steel.{IBeamSection, HeadedStud, Steel}
 import org.encalmo.document.NumSection
 import org.encalmo.document.Evaluate
-import org.encalmo.document.TextToTranslate
+import org.encalmo.document.Text
 import org.encalmo.document.AssertionL
 import org.encalmo.document.AssertionE
 import org.encalmo.document.AssertionLE
@@ -232,7 +232,7 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
     //unit mass
     mS := ((slab.Gck*slab.ls)+(Gcck*slab.ls)+gk)/(GRAV*slab.ls)
 	
-	def info = NumSection(TextToTranslate("BeamOfCompositeSlab",dictionary),
+	def info = NumSection(Text("BeamOfCompositeSlab",dictionary),
 		Text(section.name),
 		Evaluate(lb,slab.ls,slab.h),
 		section.info,
@@ -242,7 +242,7 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 	
 	def LOAD1 = Evaluate(gammaG,gammaQ,gk,gd,Gcck,Gccd,Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Qk1,Qd1)
 	
-	def ULS1 = NumSection(TextToTranslate("ULS","eurocode"),
+	def ULS1 = NumSection(Text("ULS","eurocode"),
 		NumSection("Sprawdzenie stateczności środnika wg PN-EN 1993-1-5 pkt. 5.1(2)",
 			Evaluate(hw,epsi,eta),
 			AssertionL("stateczności środnika",hw/tw,(72*epsi)/eta)
@@ -266,7 +266,7 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 		)
 	)
 	
-	def SLS1 = NumSection(TextToTranslate("SLS","eurocode"),
+	def SLS1 = NumSection(Text("SLS","eurocode"),
 		NumSection("Sprawdzenie ugięć w fazie montażu",
 			Evaluate(deltam1,deltam0,deltam),
 			AssertionLE("dopuszczalnych ugięć",deltam-deltam0,lb/250)
@@ -275,7 +275,7 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 	
 	def LOAD2 = Evaluate(Qk2,Qd2,ΔQk,ΔQd)
 	
-	def ULS2 = NumSection(TextToTranslate("ULS","eurocode"),
+	def ULS2 = NumSection(Text("ULS","eurocode"),
 		NumSection("Siły wewnętrzne w belce w fazie eksploatacji",
 			Evaluate(ΔMEd,ΔVEd,MEde,VEde),
 			AssertionLE("braku interakcji zginania i ścinania",VEde,0.5*VplRd)
@@ -312,7 +312,7 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 		)
 	)
 	
-	def SLS2 = NumSection(TextToTranslate("SLS","eurocode"),
+	def SLS2 = NumSection(Text("SLS","eurocode"),
 		NumSection("Sprawdzenie ugięcia maksymalnego",
 			Evaluate(deltae,deltamax),
 			AssertionLE("ugięcia maksymalnego",deltamax,lb/250)

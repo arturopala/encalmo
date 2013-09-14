@@ -8,4 +8,6 @@ case class DynamicExpression(symbols: Seq[Symbol], body: (ResultsCache) => Expre
         body(cache)
     }
 
+    override def face = "dynamic("+ symbols.foldLeft("")((s,e) => s + "," + e.face) +")"
+
 }

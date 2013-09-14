@@ -6,7 +6,8 @@ package org.encalmo.expression
  *
  */
 case class Definition(s:Symbol,e:Expression) extends Expression {
-	
-  override def map(f:Transformation):Expression = e.map(f)
+
+    override def face = s.face + " -> " + e.face
+    override def map(f:Transformation):Expression = e.map(f)
   
 }

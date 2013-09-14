@@ -16,5 +16,7 @@ case class Function(expr:Expression, vars:Symbol*) extends Expression {
         val ve = f(expr.map(f))
        if(ve==expr) f(this) else f(new Function(ve,vars:_*))
     }
+
+    override def face = "fx("+vars.foldLeft("")((s,e) => s + "," + e.face)+")["+expr.face+"]"
   
 }

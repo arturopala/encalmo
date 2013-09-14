@@ -7,6 +7,6 @@ package org.encalmo.expression
 trait Transparent extends Expression {
 
     def expression: Expression
-
     def wrap(e: Expression): Transparent
+    override def face = expression.face
 }

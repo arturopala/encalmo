@@ -28,6 +28,8 @@ class EvalAt(val expr:Expression, val er:Context) extends Expression {
     }
 	
 	override def toString = "EvalAt("+expr+","+er+")"
+
+    override def face = "["+ expr.face + "from" + er.id +"]"
   
 }
 

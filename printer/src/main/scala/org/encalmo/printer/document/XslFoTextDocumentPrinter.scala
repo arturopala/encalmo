@@ -201,16 +201,13 @@ extends TreeVisitor[DocumentComponent] {
 					case ch:Character => {
 						output.append(ch)
 					}
-					case ttt:TextToTranslate => {
-						output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
-					}
 					case t:TextContent => {
 						if(t.customStyle!=null){
 							output.start(INLINE)
 							output.appendInlineStyleAttributes(t.customStyle, styleStack.top)
 							output.body()
 						}
-						output.append(t.textContent)
+						output.append(t.translate(locale))
                         if(t.customStyle!=null){
 							output.end(INLINE)
 						}
@@ -536,12 +533,8 @@ extends XslFoTextDocumentPrinterTraveler(output, results) {
                     output.append(ns.title.get)
                 }
                 ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
-                    case ttt:TextToTranslate => {
-                        output.append(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
-                        output.append(output.SPACE)
-                    }
-                    case t:Text => {
-                        output.append(t.textContent)
+                    case t:TextContent => {
+                        output.append(t.translate(locale))
                         output.append(output.SPACE)
                     }
                     case _ =>

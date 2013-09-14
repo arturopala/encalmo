@@ -12,6 +12,8 @@ case class Selection(cases: Seq[Case], default: Option[CaseExpression] = None) e
 
     override val children = default.map(cases :+ _) getOrElse cases
 
+    override def face = "select {"+cases.foldLeft("")((s,c) => if(!s.isEmpty) s + " or " + c.face else c.face)+default.map(" or "+_.face).getOrElse("")+"}"
+
     /** Return true if only one choice exists */
     def isSingle: Boolean = cases.isEmpty || (default.isEmpty && cases.size==1)
 
@@ -21,14 +23,14 @@ case class Selection(cases: Seq[Case], default: Option[CaseExpression] = None) e
      */
     def select: Expression = {
         cases.find(_.test match {case Some(b) => b; case None => {return this}}) map (_.caseExpression.expression) getOrElse {
-            default.map(_.expression).getOrElse(throw new IllegalStateException("No default expression defined for selection"))
+            default.map(_.expression).getOrElse(throw new IllegalStateException("Selection select failed: No default expression defined for selection"))
         }
     }
 
     /** Trims this selection to one case element */
     def trim: Expression = {
-        cases.find(_.test match {case Some(b) => b; case None => {throw new IllegalStateException()}}) map (cas => Selection(Seq(cas))) getOrElse {
-            default.map(e => Selection(Seq.empty,Some(e))).getOrElse(throw new IllegalStateException("No default expression defined for selection"))
+        cases.find(_.test match {case Some(b) => b; case None => {throw new IllegalStateException("Selection trim failed: Could not evaluate all tests")}}) map (cas => Selection(cas)) getOrElse {
+            default.map(e => Selection(Seq.empty,Some(e))).getOrElse(throw new IllegalStateException("Selection trim failed: No default expression defined for selection"))
         }
     }
 
@@ -39,7 +41,7 @@ case class Selection(cases: Seq[Case], default: Option[CaseExpression] = None) e
      */
     override def eval(): Expression = {
         cases.find(_.test match {case Some(b) => b; case None => return this}) map (_.caseExpression.expression.eval()) getOrElse {
-            default.map(_.expression.eval()).getOrElse(throw new IllegalStateException("No default expression defined for selection"))
+            default.map(_.expression.eval()).getOrElse(throw new IllegalStateException("Selection eval failed: No default expression defined for selection"))
         }
     }
 
@@ -64,6 +66,17 @@ case class Selection(cases: Seq[Case], default: Option[CaseExpression] = None) e
 object Selection {
 
     def apply(cases: Seq[Case], default: CaseExpression): Selection = Selection(cases, Some(default))
+
+    def apply(_case: Case, default: CaseExpression): Expression = _case match {
+        case Case(ce,Always) => ce.expression
+        case Case(ce,Never) => default.expression
+        case _ => Selection(Seq(_case), Some(default))
+    }
+
+    def apply(_case: Case): Expression = _case match {
+        case Case(ce,Always) => ce.expression
+        case _ => Selection(Seq(_case), None)
+    }
 
 }
 

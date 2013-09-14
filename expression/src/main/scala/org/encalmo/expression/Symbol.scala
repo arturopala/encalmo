@@ -97,7 +97,7 @@ class Symbol(
     }
     
     /** Unique symbol face */
-    lazy val face:String = name + 
+    override lazy val face: String = name +
     	Seq(toFace(overscript),toFace(underscript),toFace(superscript),toFace(subscript))
     	.foldLeft[Option[String]](None)((l,r) => l match {
     		case None => r
@@ -108,14 +108,14 @@ class Symbol(
     	}).getOrElse("") + toArgsFace(args)
     	
     /** Simplified symbol face */
-    lazy val simpleFace:String = new StringOps(name).filter(_ match {
+    lazy val simpleFace: String = new StringOps(name).filter(_ match {
             case ',' => false
             case '/' => false
             case '.' => false
             case _ => true
         }) + toFace2(subscript) + toFace2(superscript) + toFace2(underscript) + toFace2(overscript) + toArgsFace2(args)  + toIndexesFace2(indexes)
         
-    lazy val simpleFaceNoArgs:String = new StringOps(name).filter(_ match {
+    lazy val simpleFaceNoArgs: String = new StringOps(name).filter(_ match {
             case ',' => false
             case '/' => false
             case '.' => false

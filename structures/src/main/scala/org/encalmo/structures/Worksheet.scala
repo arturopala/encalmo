@@ -1,19 +1,19 @@
 package org.encalmo.structures
 
-import org.encalmo.calculation.{Reckoner, Context, Results, Calculation}
-import org.encalmo.document.Document
+import org.encalmo.calculation.{Reckoner, Results, Calculation}
+import org.encalmo.document._
 import org.encalmo.fop.FOPHelper
 import org.encalmo.printer.document.HtmlTextDocumentPrinter
 import org.encalmo.printer.document.PlainTextDocumentPrinter
 import org.encalmo.printer.document.XslFoTextDocumentPrinter
 import org.encalmo.printer.HtmlOutput
-import org.encalmo.printer.HtmlOutputPreferences
 import org.encalmo.printer.TextOutput
 import org.encalmo.printer.XslFoOutput
 import org.junit.Test
 
 import scalax.file.Path
-import org.encalmo.expression.{Expression,Symbol}
+import org.encalmo.structures.Predefined._
+import org.encalmo.printer.HtmlOutputPreferences
 
 /**
  * Base class for documented calculations
@@ -21,10 +21,20 @@ import org.encalmo.expression.{Expression,Symbol}
  */
 abstract class Worksheet(name: String) extends Calculation(name) {
     
-    /** Produced document */
-    implicit val document:Document
-
+    /** Document to print */
+    def document:Document = defaultDocument()
+    /** Calculation results */
     def results: Results = Reckoner.reckon
+
+    def defaultDocument(component: DocumentComponent = Section(Evaluate(this.topologicallySortedConnectedSymbols:_*)(this))): Document = Document("",
+        Predefined.stylesConfig,
+        Chapter("",
+            Section(""),
+            Section(""),
+            Section(styleTitle,name),
+            component
+        )
+    )
 
     def printHtml(path: String) {
         val layout = Predefined.layout

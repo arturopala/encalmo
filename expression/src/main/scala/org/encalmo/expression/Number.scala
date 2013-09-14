@@ -42,7 +42,7 @@ case class Number(
         case u:UnitOfValue if this.unit eq EmptyUnitOfValue => Number(r,newunit)
         case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert1(unit,newunit),newunit)
         case u:UnitOfValue if this.unit.isSameExpandedUnit(u) => Number(r.convert2(unit,newunit),newunit)
-        case _ => throw new IllegalValueConversionException(s"Could not convert value ${r.d} from ${this.unit.toNameString} to ${newunit.toNameString}")
+        case _ => throw new IllegalValueConversionException(s"Could not convert value ${r.d} from ${this.unit.face} to ${newunit.face}")
     }
     
     override def convertTo(newunit:UnitOfValue,accuracy:Option[Double]):Number = newunit match {
@@ -51,7 +51,7 @@ case class Number(
         case u:UnitOfValue if this.unit eq EmptyUnitOfValue => Number(r,newunit).convertTo(accuracy)
         case u:UnitOfValue if this.unit.isSameBaseAndDimension(u) => Number(r.convert1(unit,newunit),newunit).convertTo(accuracy)
         case u:UnitOfValue if this.unit.isSameExpandedUnit(u) => Number(r.convert2(unit,newunit),newunit).convertTo(accuracy)
-        case _ => throw new IllegalValueConversionException(s"Could not convert value ${r.d} from ${this.unit.toNameString} to ${newunit.toNameString}")
+        case _ => throw new IllegalValueConversionException(s"Could not convert value ${r.d} from ${this.unit.face} to ${newunit.face}")
     }
     
     private def roundedCopy(newr:Real):Number = {
@@ -176,7 +176,8 @@ case class Number(
 	    if(r.isZero) Void else doIfTrue
 	}
 
-    lazy val formattedForPrint: NumberFormatted = NumberFormatted.formatForPrint(this)
+    lazy val formattedToPrint: NumberFormatted = NumberFormatted.formatForPrint(this)
+    def face = formattedToPrint.face + unit.face
 	
 }
 
@@ -377,7 +378,7 @@ object NumberValueCalculator extends ValueCalculator {
      * Calculates result of the operation with two arguments. 
      * Supports arguments of the Number type. 
      */
-    override def calculate(operator:Symbol, v:Value):Option[Value] = {
+    override def calculate(operator:scala.Symbol, v:Value):Option[Value] = {
         v match {
             case Number(r,u) => {
                 Option(operator match {

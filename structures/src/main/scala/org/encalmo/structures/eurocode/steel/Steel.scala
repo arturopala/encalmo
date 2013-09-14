@@ -45,7 +45,7 @@ class Steel(name:String, proof_strength: Int, tensile_strength: Int,  standard: 
 	gammaM1 := 1
 	gammaV  := 1.25
 
-    def info = NumSection(TextToTranslate("Steel",dictionary),name,standard,
+    def info = NumSection(Text("Steel",dictionary),name,standard,
         Evaluate(fy,gammaM0,fyd,E)
     )
 

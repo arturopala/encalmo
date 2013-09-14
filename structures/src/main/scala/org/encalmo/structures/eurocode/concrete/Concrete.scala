@@ -117,7 +117,7 @@ class Concrete(
     phit := phitinf*betac
     Eceff := Ecm/(1+phit)
 
-	def info = NumSection(TextToTranslate("Concrete",dictionary),name,
+	def info = NumSection(Text("Concrete",dictionary),name,
 		Evaluate(fck,gammaC,fcd,fcm,fctk,fctd,Ecm,epsic1,epsicu1)
 	)
 	

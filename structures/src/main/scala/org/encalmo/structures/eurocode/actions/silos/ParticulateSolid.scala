@@ -92,7 +92,7 @@ extends MapContext("particulateSolid") with ParticulateSolidSymbols {
 	this(Cop) = v_Cop
 
     // coefficient of wall friction selection
-    this(mum) = mapChoice(D,Map(Number(1) -> mum1, Number(2) -> mum2, Number(3) -> mum3))
+    this(mum) = mapChoice(D,Number(1) -> mum1, Number(2) -> mum2, Number(3) -> mum3)
 
     // characteristic values expressions
     this(K_u) = Km*aK
@@ -102,11 +102,11 @@ extends MapContext("particulateSolid") with ParticulateSolidSymbols {
     this(fi_u) = fiim*afi
     this(fi_l) = fiim/afi
 	
-	def properties = NumSection(TextToTranslate("_properties",dictionary),"(",TextToTranslate(name,dictionary),")",
+	def properties = NumSection(Text("_properties",dictionary),"(",Text(name,dictionary),")",
 		Evaluate(gammal,gammau,fir,fiim,afi,Km,aK,mum1,mum2,mum3,amu,Cop)
 	)
 	
-	def characteristicValues = NumSection(TextToTranslate("_characteristicValues",dictionary),
+	def characteristicValues = NumSection(Text("_characteristicValues",dictionary),
 	    Evaluate(D,mum,K_u,K_l,mu_u,mu_l,fi_u,fi_l)
 	)
 }	

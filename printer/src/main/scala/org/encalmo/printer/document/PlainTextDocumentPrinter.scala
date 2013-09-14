@@ -125,12 +125,9 @@ extends TreeVisitor[DocumentComponent] {
 			case ch:Character => {
 				write(ch.text)
 			}
-			case ttt:TextToTranslate => {
-				write(Translator.translate(ttt.text,locale,ttt.dictionary).getOrElse(ttt.text))
-			}
 			case tc:TextContent => {
-				if(tc.textContent!=null){
-					write(tc.textContent)
+				if(tc.text!=null){
+					write(tc.translate(locale))
 				}
 			}
 			case _ =>

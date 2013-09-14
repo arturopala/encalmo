@@ -24,7 +24,7 @@ object SymbolGraph {
         val graph = Graph[Symbol]()
         val symbols = context.listSymbols
         for(symbol <- symbols) {
-            graph.add(symbol)
+            graph.addNode(symbol)
             context.getExpression(symbol).map(
                 expr => {
                     val visitor = new ExpressionTreeVisitor(symbol, graph)

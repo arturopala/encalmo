@@ -18,7 +18,9 @@ trait Operation1 extends Operation {
    * @param e
    */
   def copy(e:Expression):Operation1
-  
+
+  override def face = operator.name+"("+expression.face+")"
+
   final override def eval():Expression = {
 	  val ev = expression eval()
 	  ev match {

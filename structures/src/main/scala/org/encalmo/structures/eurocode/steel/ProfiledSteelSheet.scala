@@ -120,7 +120,7 @@ extends Calculation(name,"profiledSteelSheet") with ProfiledSteelSheetSymbols wi
 	
 	override def label = this(ID)
 
-    def info = NumSection(TextToTranslate("ProfiledSteelSheet",dictionary),name,
+    def info = NumSection(Text("ProfiledSteelSheet",dictionary),name,
 		Evaluate(t,tcor,hp,br,bs,bo,bb,r,Ap,Iminus,Iplus,eminus,eplus,ep,epd,Wminus,Wplus)
 	)
 	
