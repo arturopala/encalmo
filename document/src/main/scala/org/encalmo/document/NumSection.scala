@@ -30,7 +30,10 @@ extends Section(customStyleOfNumSection,flow:_*) {
     	}
     }
     
-    lazy val enumeratorLevel:Int = countParentsOfTypeUntil[NumSection](classOf[NumSection],(x)=>{x.enumerator.eq(this.enumerator)})
+    lazy val enumeratorLevel:Int = {
+        val c = countParentsOfTypeUntil[NumSection](classOf[NumSection],(x)=>{x.enumerator.eq(this.enumerator)})
+        c
+    }
     
     override lazy val customStyle:Style = {
     	customStyleOfComponent.getOrElse(resolveStyle(enumeratorLevel))

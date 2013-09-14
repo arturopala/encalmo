@@ -4,7 +4,7 @@ import org.encalmo.printer._
 import org.encalmo.expression._
 import org.encalmo.calculation.{ResultsCache, EvalAt}
 import org.encalmo.common._
-import org.encalmo.common.Translator
+import java.text.DecimalFormatSymbols
 
 /**
  * Prints expressions as plain text 
@@ -28,13 +28,14 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 	
 	val w = output.asWriter
 	val locale = output.locale
-	
-	lazy val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val dimensionFormat:java.text.NumberFormat = new java.text.DecimalFormat("0.#",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",java.text.DecimalFormatSymbols.getInstance(locale))
+
+    val symbols = DecimalFormatSymbols.getInstance(locale)
+	val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",symbols)
+	val dimensionFormat:java.text.NumberFormat = new java.text.DecimalFormat("0.#",symbols)
+	val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",symbols)
+	val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",symbols)
+	val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",symbols)
+	val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",symbols)
 	
 	def writeOpeningBracket() = w.write('(')
 
@@ -44,8 +45,8 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 
     def writeSymbol(s:Symbol) = w.write(s.simpleFace)
 	def writeNumber(n:Number) = {
-		val nf:NumberFormatted = n.formattedForPrint
-		if (nf.isNegative)w.write("-")
+		val nf:NumberFormatted = n.formattedToPrint
+		if (nf.isNegative)w.write(symbols.getMinusSign)
         w.write(integerFormat1.format(nf.integer))
 		if(nf.fraction>0){
 			nf.decimals match {
@@ -60,7 +61,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
 			w.write(""+nf.exponent)
 		}
 	}
-	def writeListSeparator() = w.write(';')
+	def writeListSeparator() = w.write(symbols.getPatternSeparator)
 
     def writeOpeningBracketIfNeeded(node:Node[Expression],o:Operation):Unit = {
 		if(isBracketNeeded(node,o)){
@@ -137,7 +138,7 @@ class PlainTextExpressionPrinterTraveler(output:TextOutput) extends TreeVisitor[
             }
             case u:UnitOfValue => {
             	w.write("\u2009")
-            	w.write(u.toNameString)
+            	w.write(u.face)
             	if(u.dimension!=1){
             		u.dimension match {
             			case 2 => w.write("²")

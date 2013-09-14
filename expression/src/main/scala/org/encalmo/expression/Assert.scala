@@ -4,6 +4,8 @@ case class Assert(left: Expression, relation: Relation.Value, right: Expression)
 
     override val children = Seq(left,right)
 
+    def face = left.face +" " + Relation.faceOf(relation) + " " + right.face
+
     override def eval():Expression = {
         relation match {
             case Relation.EQUAL => left === right

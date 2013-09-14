@@ -23,10 +23,10 @@ trait UnitOfValue extends Expression {
     def isSameBaseAndDimension(u:UnitOfValue):Boolean = isSameBase(u) && isSameDimension(u)
 	def isSame(u:UnitOfValue):Boolean = isSameBase(u) && isSameDimension(u) && isSameScale(u)
 	def isLargerThan(u:UnitOfValue):Boolean = if(this.expandedUnitMultiplier != u.expandedUnitMultiplier) this.expandedUnitMultiplier > u.expandedUnitMultiplier 
-	    else this.toNameString.size < u.toNameString.size
+	    else this.face.size < u.face.size
 	def isLargerScaleThan(u:UnitOfValue):Boolean = scale > u.scale
 	
-	def isSameExpandedUnit(u:UnitOfValue):Boolean = this.expandedUnitBase.toNameString==u.expandedUnitBase.toNameString
+	def isSameExpandedUnit(u:UnitOfValue):Boolean = this.expandedUnitBase.face==u.expandedUnitBase.face
 	def isSameExpandedUnitAndMultiplier(u:UnitOfValue):Boolean = this.expandedUnit==u.expandedUnit
 	
 	/** Base unit of this unit's family */
@@ -95,11 +95,11 @@ trait UnitOfValue extends Expression {
     def divideDimension(n: Double): UnitOfValue
     def multiplyDimension(n: Double): UnitOfValue
 
-	def toNameString:String = name.toString + (if(dimension == 1) "" else UnitOfValue.dimensionFormat.format(dimension))
+	def face: String = name.toString + (if(dimension == 1) "" else UnitOfValue.dimensionFormat.format(dimension))
     
 }
 
-class IllegalUnitOperationException(u1: UnitOfValue, op: String, u2: UnitOfValue) extends RuntimeException(s"${u1.toNameString} $op ${u2.toNameString}")
+class IllegalUnitOperationException(u1: UnitOfValue, op: String, u2: UnitOfValue) extends RuntimeException(s"${u1.face} $op ${u2.face}")
 
 /**
  * BaseUnitOfValue class
@@ -133,7 +133,7 @@ case class SimpleUnitOfValue (
 	override lazy val simplifiedUnit:(UnitOfValue,Double) = if(baseUnitName eq EmptyUnitOfValueName) (baseUnit,multiplier) else (this,1)
 	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
 
-    override lazy val toString:String = toNameString
+    override lazy val toString:String = face
 
     override def divideDimension(n: Double): UnitOfValue = if(n>0) system.find(baseUnitName.baseName,scale,dimension/n).getOrElse(copy(dimension = dimension/n)) else throw new IllegalStateException("Illegal value of unit dimension divider: "+n)
     override def multiplyDimension(n: Double): UnitOfValue = if(n>0) system.find(baseUnitName.baseName,scale,dimension*n).getOrElse(copy(dimension = dimension*n)) else throw new IllegalStateException("Illegal value of unit dimension multiplier: "+n)
@@ -171,7 +171,7 @@ case class UnitOfValueNameBuilder() extends TreeVisitor[Expression] {
             if(node.parent!=null && node.parent.element.isInstanceOf[Quot] && node.position==0) "1"
             else "1"
         }
-        case u:UnitOfValue => stack.top.append(u.toNameString)
+        case u:UnitOfValue => stack.top.append(u.face)
         case o:MultipleInfixOperation => {
             stack.push(mutable.Buffer[String]())
         }
@@ -245,7 +245,7 @@ case class ComplexUnitOfValue(
 	override def isDefined:Boolean = true
 	override def dim(newdim:Double):UnitOfValue = if(newdim==0) EmptyUnitOfValue else copy(dimension=newdim)
 	override def exp(exp:Int):UnitOfValue = copy(scale=scale+exp)
-	override def toNameString:String = name.toString
+	override def face:String = name.toString
 
 	override lazy val simplifiedUnit:(UnitOfValue,Double) = UnitOfValue.simplifyUnit(this)
 	override lazy val expandedUnit:(UnitOfValue,Double) = UnitOfValue.expandUnit(this)
@@ -255,7 +255,7 @@ case class ComplexUnitOfValue(
         f(if(ve == expression) this else copy(expression = ve))
     }
     
-    override lazy val toString:String = toNameString
+    override lazy val toString:String = face
 
     override def divideDimension(n: Double): UnitOfValue = if(n>0) expression match {
         case Quot(l: UnitOfValue,r: UnitOfValue) => copy(expression=Quot(l.divideDimension(n),r.divideDimension(n)))
@@ -292,7 +292,7 @@ trait UnitOfValueSystem {
 	def multiplier(scale:Int):Double = this(scale).map(_.multiplier).getOrElse(Math.pow(10,scale))
 	def units:Seq[UnitOfValue] = Seq()
 	def expand(u:UnitOfValue):UnitOfValue = u
-	lazy val unitMap:Map[String,UnitOfValue] = units.map(u => (u.toNameString,u)).toMap
+	lazy val unitMap:Map[String,UnitOfValue] = units.map(u => (u.face,u)).toMap
 
 }
 

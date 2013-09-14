@@ -44,15 +44,18 @@ abstract class Assertion(
 		val results = expressions.map(context.evaluate(_)(cache))
 		val ob = assert(results)
 		if(text!=null){
-			seq += TextToTranslate("requirement","document")
+			seq += Text("requirement","document")
 			seq += Character.SPACE
 			seq += Text(text)
 			seq += Character.SPACE
 		}
-		seq += TextToTranslate(ob match {
+		seq += Text(ob match {
 			case Some(b) => b match {
 				case true => "verified"
-				case false => "not_verified"
+				case false => {
+                    Console.err.println("Requirement not fulfilled: "+text)
+                    "not_verified"
+                }
 			}
 			case None => "unknown"
 		},"document")

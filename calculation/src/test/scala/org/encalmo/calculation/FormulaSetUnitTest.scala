@@ -12,9 +12,9 @@ class FormulaSetUnitTest extends AssertionsForJUnit {
     //given
     val formulaSet = new FormulaSet()
     //when
-    val f1: Formula = Formula(Seq(FormulaPart(a, FormulaPosition.LEFT), FormulaPart(b, FormulaPosition.RIGHT)))
+    val f1: Formula = Formula(Seq(FormulaPart(a, FormulaPosition.LEFT,0), FormulaPart(b, FormulaPosition.RIGHT,1)))
     formulaSet put f1
-    val f2: Formula = Formula(Seq(FormulaPart(c, FormulaPosition.LEFT), FormulaPart(d, FormulaPosition.RIGHT)))
+    val f2: Formula = Formula(Seq(FormulaPart(c, FormulaPosition.LEFT,0), FormulaPart(d, FormulaPosition.RIGHT,1)))
     formulaSet put f2
     //then
     assertTrue(formulaSet.contains(a))

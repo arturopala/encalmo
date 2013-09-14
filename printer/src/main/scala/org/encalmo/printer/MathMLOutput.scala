@@ -122,7 +122,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
     }
 
 	def mn(n: Number):Unit = {
-		val nf:NumberFormatted = n.formattedForPrint
+		val nf:NumberFormatted = n.formattedToPrint
 		if(nf.hasExponent || nf.isNegative) {
 			start(MROW)
 			if(numberStyle!=null){
@@ -363,14 +363,8 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 		}
 	}
 	
-	def convert(s:String) = {
+	def convert(s:String): Unit = {
 	    val cs = s match {
-	        case "if" => {
-	            locale.getLanguage match {
-	                case "pl" => "dla"
-	                case _ => "if"
-	            }
-	        }
 	        case ">" => "&gt;"
 	        case "<" => "&lt;"
 	        case "<=" => "&le;"
@@ -384,5 +378,9 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	    }
 	    mo(cs)
 	}
+
+    def translate(s:String): Unit = {
+        mo(Translator.translate(s,locale,"document").getOrElse(s))
+    }
 	
 }

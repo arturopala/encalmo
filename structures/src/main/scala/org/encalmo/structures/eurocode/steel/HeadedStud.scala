@@ -26,7 +26,7 @@ class HeadedStud(name: String, p_d:Int, p_hsc:Int, p_a:Int, p_dh:Int) extends Ma
 	
 	def label = this(ID)
 
-	def info = NumSection(TextToTranslate("HeadedStud",dictionary),name,
+	def info = NumSection(Text("HeadedStud",dictionary),name,
 		Evaluate(d,hsc,dh,a)
 	)
 

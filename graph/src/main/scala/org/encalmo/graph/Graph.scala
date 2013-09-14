@@ -13,6 +13,9 @@ trait Graph[@specialized(Int) N] {
     def reverse: Graph[N]
 	def nodesCount:Int
 	def edgesCount:Long
+
+    def isAlone(node: N): Boolean = adjacent(node).isEmpty && reverse.adjacent(node).isEmpty
+    def isConnected(node: N): Boolean = !adjacent(node).isEmpty || !reverse.adjacent(node).isEmpty
 }
 
 trait Unidirected[@specialized(Int) N] extends Graph[N] {
@@ -38,7 +41,14 @@ trait GenericGraph[@specialized(Int) N] extends Graph[N] {
 }
 
 trait MutableGraph[@specialized(Int) N] extends GenericGraph[N] with Growable[(N,N)] with Shrinkable[(N,N)] {
-    def add(node: N): this.type
+    def addNode(node: N): this.type
+    def addNodes(nodes: Traversable[N]): this.type
+    def addEdge(edge: (N,N)): this.type
+    def removeEdge(edge: (N,N)): this.type
+    def addEdges(edges: Traversable[(N,N)]): this.type = this.++=(edges)
+    def removeEdges(edges: Traversable[(N,N)]): this.type = this.--=(edges)
+    def addEdgeReversed(edge: (N,N)): this.type
+    def addEdgesReversed(edges: Traversable[(N,N)]): this.type
 }
 
 class GenericReverseGraph[@specialized(Int) N](origin: Graph[N]) extends GenericGraph[N] {
@@ -75,24 +85,34 @@ class MutableMapGraph[@specialized(Int) N](
 	override def nodesCount: Int = nodeMap.size
 	override def contains(node: N): Boolean = nodeMap.contains(node)
 
-    override def add(node: N): this.type = {
+    override def addNode(node: N): this.type = {
         nodeMap.getOrElseUpdate(node,{new mutable.ArrayBuffer[N]()})
         this
     }
 
-	override def +=(edge: (N,N)): this.type = {
-        nodeMap.getOrElseUpdate(edge._1,{new mutable.ArrayBuffer[N]()}) += (edge._2)
+    override def addNodes(nodes: Traversable[N]): this.type = {
+        nodes.foreach(this.addNode)
+        this
+    }
+
+    override def +=(edge: (N,N)): this.type = addEdge(edge)
+
+    override def addEdge(edge: (N,N)): this.type = {
+        nodeMap.getOrElseUpdate(edge._1,{new mutable.ArrayBuffer[N]()}) += edge._2
 	    nodeMap.getOrElseUpdate(edge._2,{new mutable.ArrayBuffer[N]()})
 	    this
     }
-	override def -=(edge: (N,N)): this.type = {
+
+    override def -=(edge: (N,N)): this.type = removeEdge(edge)
+
+	override def removeEdge(edge: (N,N)): this.type = {
 		for(adjacent <- nodeMap.get(edge._1)){
-			adjacent -= (edge._2)
+			adjacent -= edge._2
 		}
 		this
 	}
-    def addReverse(edge: (N,N)): this.type = this += (edge.swap)
-    def addReverse(edges:Traversable[(N,N)]): this.type = {
+    def addEdgeReversed(edge: (N,N)): this.type = this += edge.swap
+    def addEdgesReversed(edges:Traversable[(N,N)]): this.type = {
         for (edge <- edges) +=(edge.swap); this
     }
 	override def clear() {nodeMap.clear()}
@@ -113,11 +133,11 @@ object Graph {
 		new WeightedGraphImpl[N,V](nodeWeightMap.keys, nodeWeightMap.mapValues{case m => m.keys}, (t:N,h:N) => nodeWeightMap(t)(h))
 	}
 	
-	def hardCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]() ++= (graph.edges)
+	def hardCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]().addNodes(graph.nodes).addEdges(graph.edges)
 	def hardCopyReversed[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  {
 		new MutableMapGraph[N](){
 			override lazy val reverse: Graph[N] = graph
-		}.addReverse(graph.edges)
+		}.addNodes(graph.nodes).addEdgesReversed(graph.edges)
 	}
 
 	def readFromEdgeListFile(path:Path, reversed:Boolean = false):Graph[Int] = {

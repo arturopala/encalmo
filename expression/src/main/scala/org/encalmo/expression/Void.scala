@@ -5,8 +5,8 @@ package org.encalmo.expression
  * @author artur.opala
  */
 object Void extends Expression {
-	
-  def dump(w:java.io.PrintWriter) = w.print("void")
+
+  def face = "VOID"
 	
   override def + (e:Expression):Expression = e
   

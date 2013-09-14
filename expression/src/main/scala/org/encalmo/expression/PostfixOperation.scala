@@ -5,4 +5,7 @@ package org.encalmo.expression
  * @author artur.opala
  *
  */
-trait PostfixOperation extends Operation1 with PrimitiveOperation
+trait PostfixOperation extends Operation1 with PrimitiveOperation {
+
+    override def face = "("+expression.face+")"+operator.name
+}

@@ -160,13 +160,16 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    			}
 	    		}
 	            case s:Selection => {
-	            	if(!s.isSingle){
-		                output.start(MFENCED)
-		                output.attr("open","{")
-		                output.attr("close","")
-		                output.attr("separators","")
-		                output.body()
-	                }
+                    output.start(MFENCED)
+                    if(s.isSingle){
+                        output.attr("open","")
+                        output.attr("close","")
+                    }else{
+                        output.attr("open","{")
+                        output.attr("close","}")
+                    }
+                    output.attr("separators","")
+                    output.body()
 	                output.start(MTABLE)
 	                output.attr("columnalign","left")
 	                output.body()
@@ -282,9 +285,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 				output.mo(";",INFIX,THICKMATHSPACE,THICKMATHSPACE)
 			}
             case ct:Case => {
-                output.startb(MTD)
-                output.convert("if")
-                output.end(MTD)
+                output.translate("if")
             }
 			case _ => Unit
 		}
@@ -405,7 +406,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
     			}
     	        case s:Selection => {
     	            output.end(MTABLE)
-    	            if(!s.isSingle) output.end(MFENCED)
+                    output.end(MFENCED)
     	        }
     	        case ct:Case => {
     	            output.end(MTR)

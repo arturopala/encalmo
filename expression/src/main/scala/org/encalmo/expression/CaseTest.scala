@@ -51,6 +51,8 @@ object Never extends CaseTest {
     override def operator: Seq[String] = Seq()
 
     override def test: Option[Boolean] = Some(false)
+
+    override def face = "(false)"
 }
 
 /**
@@ -61,6 +63,8 @@ object Always extends CaseTest {
     override def operator: Seq[String] = Seq()
 
     override def test: Option[Boolean] = Some(true)
+
+    override def face = "(true)"
 }
 
 /**
@@ -84,6 +88,8 @@ case class IsZero(e: Expression) extends CaseTest {
         if (ve eq e) f(this) else f(IsZero(ve))
     }
 
+    override def face = "(" + e.face + " == 0)"
+
 }
 
 /**
@@ -104,8 +110,10 @@ case class IsNotZero(e: Expression) extends CaseTest {
 
     override def map(f: Transformation): Expression = {
         val ve = e.map(f)
-        if (ve == e) f(this) else f(IsNotZero(ve))
+        if (ve eq e) f(this) else f(IsNotZero(ve))
     }
+
+    override def face = "(" + e.face + " != 0)"
 
 }
 
@@ -127,8 +135,12 @@ case class Equals(t1: Expression, t2: Expression) extends CaseTest {
     override def map(f: Transformation): Expression = {
         val vl = t1.map(f)
         val vr = t2.map(f)
-        if (vl == t1 && vr == t2) f(this) else f(Equals(vl, vr))
+        if ((vl eq t1) && (vr eq t2)) f(this) else {
+            if(vl == vr) f(Always) else f(Equals(vl, vr))
+        }
     }
+
+    override def face = "(" + t1.face + " == " + t2.face + ")"
 
 }
 
@@ -153,6 +165,8 @@ case class GreaterThan(t1: Expression, t2: Expression) extends CaseTest {
         if ((vl eq t1) && (vr eq t2)) f(this) else f(GreaterThan(vl, vr))
     }
 
+    override def face = "(" + t1.face + " > " + t2.face + ")"
+
 }
 
 /**
@@ -175,6 +189,8 @@ case class GreaterOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
         val vr = t2.map(f)
         if ((vl eq t1) && (vr eq t2)) f(this) else f(GreaterOrEqualThan(vl, vr))
     }
+
+    override def face = "(" + t1.face + " >= " + t2.face + ")"
 
 }
 
@@ -199,6 +215,8 @@ case class LowerThan(t1: Expression, t2: Expression) extends CaseTest {
         if ((vl eq t1) && (vr eq t2)) f(this) else f(LowerThan(vl, vr))
     }
 
+    override def face = "(" + t1.face + " < " + t2.face + ")"
+
 }
 
 /**
@@ -221,6 +239,8 @@ case class LowerOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
         val vr = t2.map(f)
         if ((vl eq t1) && (vr eq t2)) f(this) else f(LowerOrEqualThan(vl, vr))
     }
+
+    override def face = "(" + t1.face + " <= " + t2.face + ")"
 
 }
 
@@ -246,6 +266,8 @@ case class InRangeLEL(t1: Expression, t2: Expression, t3: Expression) extends Ca
         if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(InRangeLEL(v1, v2, v3))
     }
 
+    override def face = "(" + t1.face + " <= " + t2.face + " < " + t3.face + ")"
+
 }
 
 /**
@@ -269,6 +291,8 @@ case class InRangeLLE(t1: Expression, t2: Expression, t3: Expression) extends Ca
         val v3 = t3.map(f)
         if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(InRangeLLE(v1, v2, v3))
     }
+
+    override def face = "(" + t1.face + " < " + t2.face + " <= " + t3.face + ")"
 
 }
 
@@ -294,6 +318,8 @@ case class InRangeLL(t1: Expression, t2: Expression, t3: Expression) extends Cas
         if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(InRangeLL(v1, v2, v3))
     }
 
+    override def face = "(" + t1.face + " < " + t2.face + " < " + t3.face + ")"
+
 }
 
 /**
@@ -318,6 +344,8 @@ case class InRangeLELE(t1: Expression, t2: Expression, t3: Expression) extends C
         if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(InRangeLELE(v1, v2, v3))
     }
 
+    override def face = "(" + t1.face + " <= " + t2.face + " <= " + t3.face + ")"
+
 }
 
 /**
@@ -340,6 +368,8 @@ case class AndCaseTest(t1: CaseTest, t2: CaseTest) extends CaseTest {
         val vr = t2.map(f)
         if ((vl eq t1) && (vr eq t2)) f(this) else f(AndCaseTest(vl.asInstanceOf[CaseTest], vr.asInstanceOf[CaseTest]))
     }
+
+    override def face = "(" + t1.face + " & " + t2.face + ")"
 
 }
 
@@ -364,6 +394,8 @@ case class OrCaseTest(t1: CaseTest, t2: CaseTest) extends CaseTest {
         if ((vl eq t1) && (vr eq t2)) f(this) else f(OrCaseTest(vl.asInstanceOf[CaseTest], vr.asInstanceOf[CaseTest]))
     }
 
+    override def face = "(" + t1.face + " | " + t2.face + ")"
+
 }
 
 /**
@@ -382,6 +414,8 @@ case class NegCaseTest(t: CaseTest) extends CaseTest {
         val vt = t.map(f)
         if (vt eq t) f(this) else f(NegCaseTest(vt.asInstanceOf[CaseTest]))
     }
+
+    override def face = "(!" + t.face + ")"
 
 }
 

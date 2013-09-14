@@ -2,8 +2,7 @@ package org.encalmo.structures.eurocode.steel
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.document.{Evaluate, TextToTranslate, NumSection}
-import org.encalmo.structures.common.section.Section
+import org.encalmo.document.{Evaluate, Text, NumSection}
 
 trait IBeamSectionSymbols extends SymbolConfigurator {
 
@@ -21,9 +20,6 @@ trait IBeamSectionSymbols extends SymbolConfigurator {
     val pmin = symbol(BasicSymbols.p|"min") unit "mm" dict ibeamDict
     val pmax = symbol(BasicSymbols.p|"max") unit "mm" dict ibeamDict
     val phi = symbol(BasicSymbols.phi) unit "mm" dict ibeamDict
-    //Classification ENV 1993-1-1
-    val ctf = symbol("c/t"|"f") dict ibeamDict
-    val ctw = symbol("c/t"|"w") dict ibeamDict
         
 }
 
@@ -40,6 +36,7 @@ class IBeamSection(name:String, val sectionType: String) extends SteelSection(na
     this(ctw) = (hw-2*r)/tw
     this(AVz) = max(A-2*b*tf+(tw+2*r)*tf,1.2*hw*tw)
 
+    epsi := 0.814
     alphaw := 0.25
     alphaf := 0.25
     Thetaw := -0.5
@@ -54,13 +51,13 @@ class IBeamSection(name:String, val sectionType: String) extends SteelSection(na
     Cf3 := rangeChoice4LE(ctf,1,(9*epsi)/(alphaf*sqrt(alphaf)),2,(10*epsi)/(alphaf*sqrt(alphaf)),3,21*epsi*sqrt(ksigma),4)
 
     C1 := max(Cf1,Cw1)
-    C2 := max(Cf2,Cw2)
-    C3 := max(Cf3,Cw3)
+    C2 := max(Cf1,Cw2)
+    C3 := max(Cf2,Cf3,Cw3)
 
-    wy := rangeChoiceLE(h/b,rangeChoiceLE(tf,"b",Number(100,SI.mm),"d"),1.2,rangeChoiceLE(tf,"a",Number(40,SI.mm),"b"))
-    wz := rangeChoiceLE(h/b,rangeChoiceLE(tf,"c",Number(100,SI.mm),"d"),1.2,rangeChoiceLE(tf,"b",Number(40,SI.mm),"c"))
+    wy := rangeChoiceLE(h/b,rangeChoiceLE(tf,text("b"),Number(100,SI.mm),text("d")),1.2,rangeChoiceLE(tf,text("a"),Number(40,SI.mm),text("b")))
+    wz := rangeChoiceLE(h/b,rangeChoiceLE(tf,text("c"),Number(100,SI.mm),text("d")),1.2,rangeChoiceLE(tf,text("b"),Number(40,SI.mm),text("c")))
 
-	def info = NumSection(TextToTranslate(sectionType,ibeamDict),name,
+	def info = NumSection(Text(sectionType,ibeamDict),name,
 		Evaluate(h,b,tw,tf,hw,bf,A,Iy,Iz,Wy,Wz,Wypl,Wzpl,m)
 	)
 	

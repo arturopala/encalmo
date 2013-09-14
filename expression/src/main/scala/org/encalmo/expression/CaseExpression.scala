@@ -20,6 +20,8 @@ case class CaseExpression(expression:Expression) extends Expression with Auxilia
         }
     }
 
+    final override def face = expression.face
+
     def isVoid: Boolean = expression eq Void
 
 }

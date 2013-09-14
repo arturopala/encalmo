@@ -3,6 +3,7 @@ package org.encalmo.calculation
 import org.encalmo.expression._
 import java.util.UUID
 import scala.annotation.tailrec
+import org.encalmo.graph.Graph
 
 /** 
  * Expression's calculation context trait
@@ -45,6 +46,16 @@ trait Context extends SymbolConfigurator {
      */
     def listNestedResolvers:Seq[Context]
 
+    def topologicallySortedSymbols: Seq[Symbol] = {
+        val graph: Graph[Symbol] = SymbolGraph.build(this)
+        Graph.sortTopologically(graph)
+    }
+
+    def topologicallySortedConnectedSymbols: Seq[Symbol] = {
+        val graph: Graph[Symbol] = SymbolGraph.build(this)
+        Graph.sortTopologically(graph).filter(graph.isConnected)
+    }
+
     /** Returns expression pinned to the context */
     def apply(s:Symbol):PinnedExpression = PinnedExpression(this,s)
 
@@ -64,7 +75,7 @@ trait Context extends SymbolConfigurator {
         }
         catch {
             case exception:Exception => {
-                Console.err.println("Could not resolve expression: "+expression+".\r\nCause: "+exception.getMessage)
+                Console.err.println("Could not resolve expression: "+expression.face+".\r\nCause: "+exception.getMessage)
                 throw exception
             }
         }
@@ -87,7 +98,7 @@ trait Context extends SymbolConfigurator {
         }
         catch {
             case exception: Exception => {
-                Console.err.println("Could not substitute expression: "+expression+".\r\nCause: "+exception.getMessage)
+                Console.err.println("Could not substitute expression: "+expression.face+".\r\nCause: "+exception.getMessage)
                 throw exception
             }
         }
@@ -116,7 +127,7 @@ trait Context extends SymbolConfigurator {
         }
         catch {
             case exc:Exception => {
-                Console.err.println("Could not evaluate expression: "+expression+".\r\nCause: "+exc.getMessage)
+                Console.err.println("Could not evaluate expression: "+expression.face+".\r\nCause: "+exc.getMessage)
                 throw exc
             }
         }
@@ -133,7 +144,7 @@ trait Context extends SymbolConfigurator {
         }
         catch {
             case exc:Exception => {
-                Console.err.println("Could not evaluate expression: "+expression+".\r\nCause: "+exc.getMessage)
+                Console.err.println("Could not evaluate expression: "+expression.face+".\r\nCause: "+exc.getMessage)
                 throw exc
             }
         }

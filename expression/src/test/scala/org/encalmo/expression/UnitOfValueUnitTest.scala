@@ -39,50 +39,50 @@ class UnitOfValueUnitTest extends AssertionsForJUnit {
     
     @Test def testName1 {
         val u = SI.m*SI.kg
-        assertEquals("kg*m", u.toNameString)
+        assertEquals("kg*m", u.face)
     } 
     
     @Test def testName1a {
         val u = (SI.m*SI.kg) dim 2
-        assertEquals("[kg*m]2", u.toNameString)
+        assertEquals("[kg*m]2", u.face)
     } 
     
     @Test def testName1b {
         val u = SI.m*SI.kg
         val u2 = u*u
-        assertEquals("[kg*m]2", u2.toNameString)
+        assertEquals("[kg*m]2", u2.face)
     } 
     
     @Test def testName1c {
         val u = (SI.m*SI.kg)
         val u2 = SI.m*u
-        assertEquals("kg*m*m", u2.toNameString)
+        assertEquals("kg*m*m", u2.face)
     }  
     
     @Test def testName1d {
         val u = (EmptyUnitOfValue/SI.kg)
-        assertEquals("1/kg", u.toNameString)
+        assertEquals("1/kg", u.face)
     } 
     
     @Test def testName2 {
         val u = SI.m*SI.kg/SI.N
-        assertEquals("kg*m/N", u.toNameString)
+        assertEquals("kg*m/N", u.face)
     }
     
     @Test def testName3 {
         val u = SI.m*SI.kg/(SI.N*SI.Pa)
-        assertEquals("kg*m/(N*Pa)", u.toNameString)
+        assertEquals("kg*m/(N*Pa)", u.face)
     }
     
     @Test def testName4 {
         val u = ((SI.m*SI.kg) dim 3) / ((SI.N*SI.Pa) dim 2)
-        assertEquals("[kg*m]3/[N*Pa]2", u.toNameString)
+        assertEquals("[kg*m]3/[N*Pa]2", u.face)
     }
     
     @Test def testName5 {
         val u1 = SI.g*SI.cm
         val u = ((SI.m*u1) dim 3) / ((SI.N*u1) dim 2)
-        assertEquals("[cm*g*m]3/[cm*g*N]2", u.toNameString)
+        assertEquals("[cm*g*m]3/[cm*g*N]2", u.face)
     }
 
     @Test def testConvertUnits {
@@ -91,34 +91,34 @@ class UnitOfValueUnitTest extends AssertionsForJUnit {
     }
     
     @Test def testMultiplyUnits {
-    	assertEquals("kg*m",(SI.m*SI.kg).toNameString)
-    	assertEquals("m2",(SI.m*SI.m).toNameString)
-    	assertEquals("m",(SI.m*EmptyUnitOfValue).toNameString)
-    	assertEquals("m",(EmptyUnitOfValue*SI.m).toNameString)
+    	assertEquals("kg*m",(SI.m*SI.kg).face)
+    	assertEquals("m2",(SI.m*SI.m).face)
+    	assertEquals("m",(SI.m*EmptyUnitOfValue).face)
+    	assertEquals("m",(EmptyUnitOfValue*SI.m).face)
     }
     
     @Test def testDivideUnits {
-    	assertEquals("m/kg",(SI.m/SI.kg).toNameString)
-    	assertEquals("",(SI.m/SI.m).toNameString)
-    	assertEquals("m",(SI.m/EmptyUnitOfValue).toNameString)
-    	assertEquals("1/m",(EmptyUnitOfValue/SI.m).toNameString)
+    	assertEquals("m/kg",(SI.m/SI.kg).face)
+    	assertEquals("",(SI.m/SI.m).face)
+    	assertEquals("m",(SI.m/EmptyUnitOfValue).face)
+    	assertEquals("1/m",(EmptyUnitOfValue/SI.m).face)
     }
     
     @Test def testAddUnits {
-    	assertEquals("m",(SI.m+SI.m).toNameString)
-    	assertEquals("m",(SI.m+EmptyUnitOfValue).toNameString)
-    	assertEquals("m",(EmptyUnitOfValue+SI.m).toNameString)
+    	assertEquals("m",(SI.m+SI.m).face)
+    	assertEquals("m",(SI.m+EmptyUnitOfValue).face)
+    	assertEquals("m",(EmptyUnitOfValue+SI.m).face)
     }
     
     @Test def testSubtractUnits {
-    	assertEquals("m",(SI.m-SI.m).toNameString)
-    	assertEquals("m",(SI.m-EmptyUnitOfValue).toNameString)
-    	assertEquals("m",(EmptyUnitOfValue-SI.m).toNameString)
+    	assertEquals("m",(SI.m-SI.m).face)
+    	assertEquals("m",(SI.m-EmptyUnitOfValue).face)
+    	assertEquals("m",(EmptyUnitOfValue-SI.m).face)
     }
     
     @Test(expected = classOf[IllegalUnitOperationException])
     def testIllegalUnit {
-    	assertEquals("!m+kg!",(SI.m+SI.kg).toNameString)
+    	assertEquals("!m+kg!",(SI.m+SI.kg).face)
     }
     
     @Test def testPercent{

@@ -13,6 +13,8 @@ case class Case(caseExpression: CaseExpression, caseTest: CaseTest) extends Expr
 
     def test:Option[Boolean] = caseTest.test
 
+    override def face = "{if "+caseTest.face+" then "+ caseExpression.face + "}"
+
     final override def eval():Expression = {
             val ev = caseExpression.eval()
             if(ev ne caseExpression.expression) Case(CaseExpression(ev),caseTest) else this
@@ -38,4 +40,8 @@ case class Case(caseExpression: CaseExpression, caseTest: CaseTest) extends Expr
  * Special purpose empty case
  * @author artur.opala
  */
-object EmptyCase extends Case(CaseExpression(Void),Never)
+object EmptyCase extends Case(CaseExpression(Void),Never) {
+
+    final override def face = "{empty case}"
+
+}

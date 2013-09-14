@@ -9,4 +9,6 @@ trait SymbolLike extends Expression {
 	def symbol:Symbol
 	
 	override def printable:Boolean = symbol.printable
+
+    override def face = symbol.face
 }

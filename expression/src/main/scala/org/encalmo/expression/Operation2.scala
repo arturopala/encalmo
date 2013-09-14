@@ -15,6 +15,8 @@ trait Operation2 extends Operation {
   
   /** Makes copy of this operation type with provided arguments */
   def copy(l:Expression,r:Expression):Operation2
+
+  override def face = operator.name + "(" + l.face + "," + r.face + ")"
   
   final override def eval():Expression = {
 	  val le = l eval()

@@ -236,7 +236,7 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
     deltae := (5*DeltaQk*(ls^4))/(384*I0*E)
     deltamax := deltasm+deltae
 	
-	def info = NumSection(TextToTranslate("CompositeSlabWithProfiledSheeting",dictionary),
+	def info = NumSection(Text("CompositeSlabWithProfiledSheeting",dictionary),
 		Evaluate(ls,nsp,h,hc),
 		AssertionGE("EN 1994-1-1 3.5(2)",t, Number(0.7,SI.mm)),
 		AssertionLE("EN 1994-1-1 9.1.1(2)",br/bs,0.6),
@@ -246,7 +246,7 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
 	
 	def LOAD1 = Evaluate(gammaG,gammaQ,Gcck,Gccd,Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Qk1,Qd1)
 	
-	def ULS1 = NumSection(TextToTranslate("ULS","eurocode"),
+	def ULS1 = NumSection(Text("ULS","eurocode"),
 		NumSection("Sprawdzenie nośności na zginanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.4.1",
 			Evaluate(MEdmm,MRdm),
 			AssertionLE("nośności na zginanie na podporze",abs(MEdmm/MRdm),1),
@@ -273,7 +273,7 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
 		)
 	)
 	
-	def SLS1 = NumSection(TextToTranslate("SLS","eurocode"),
+	def SLS1 = NumSection(Text("SLS","eurocode"),
 		Evaluate(MEkm1,deltasm,MEkm2,deltam),
 		AssertionLE("EN 1994-1-1 9.3.2(2)",deltasm,h/10),
 		AssertionLE("EN 1994-1-1 9.6(2)",deltasm,ls/180),
@@ -282,7 +282,7 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
 	
 	def LOAD2 = Evaluate(gammaG,gammaQ,Gck,Gcd,Gsk,Gsd,qk,qd,SigmaQk,SigmaQd,SigmaGk,SigmaGd,Qk2,Qd2,DeltaQk,DeltaQd,Fk,Fd)
 	
-	def ULS2 = NumSection(TextToTranslate("ULS","eurocode"),
+	def ULS2 = NumSection(Text("ULS","eurocode"),
 		NumSection("Sprawdzenie nośności na zginanie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.2",
 			Evaluate(MEdep,xpl),
 			AssertionLE("usytuowania osi obojętnej",xpl,hc),
@@ -304,7 +304,7 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
 		)
 	)
 	
-	def SLS2 = NumSection(TextToTranslate("SLS","eurocode"),
+	def SLS2 = NumSection(Text("SLS","eurocode"),
 		NumSection("Sprawdzenie braku zarysowania betonu na podporami wg PN-EN 1994-1-1 pkt. 9.8.1",
 			Evaluate(Asmin,dmesh,sd,sdmax),
 			AssertionLE("minimalnego zbrojenia na zarysowanie nad podporą",sd,sdmax)

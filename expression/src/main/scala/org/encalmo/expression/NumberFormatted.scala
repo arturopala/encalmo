@@ -1,5 +1,8 @@
 package org.encalmo.expression
 
+import java.text.{DecimalFormatSymbols, DecimalFormat, NumberFormat}
+import java.util.Locale
+
 /**
  * Formatted number container
  * @author artur.opala
@@ -12,9 +15,28 @@ case class NumberFormatted(
 	exponent:Int,
 	decimals:Int,
 	unit:UnitOfValue
-)
+) {
+    lazy val face: String = (if(isNegative) "-" else "") + NumberFormatted.integerFormat1.format(integer) + (
+        if(fraction>0){
+            decimals match {
+                case 1 => NumberFormatted.fractionFormat1.format(fraction)
+                case 2 => NumberFormatted.fractionFormat2.format(fraction)
+                case 3 => NumberFormatted.fractionFormat3.format(fraction)
+                case _ => NumberFormatted.fractionFormat4.format(fraction)
+            }
+        } else ""
+    ) + (if(hasExponent && exponent!=0) "E"+exponent else "")
+}
 
 object NumberFormatted {
+
+    val symbols = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+    val integerFormat1:NumberFormat = new DecimalFormat("###,###,###,###",symbols)
+    val dimensionFormat:NumberFormat = new DecimalFormat("0.#",symbols)
+    val fractionFormat1:NumberFormat = new DecimalFormat(".#",symbols)
+    val fractionFormat2:NumberFormat = new DecimalFormat(".##",symbols)
+    val fractionFormat3:NumberFormat = new DecimalFormat(".###",symbols)
+    val fractionFormat4:NumberFormat = new DecimalFormat(".####",symbols)
 
     def formatForPrint(number: Number):NumberFormatted = {
 

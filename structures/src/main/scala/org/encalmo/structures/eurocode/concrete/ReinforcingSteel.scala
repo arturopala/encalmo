@@ -41,7 +41,7 @@ class ReinforcingSteel(name:String, p_fyk: Int, p_ft: Int, p_epsiuk: Double, sta
 
     def label = this(CLASS)
 
-    def info = NumSection(TextToTranslate("ReinforcingSteel",dictionary),name,standard,
+    def info = NumSection(Text("ReinforcingSteel",dictionary),name,standard,
         Evaluate(fyk,gammaS,fyd,Es)
     )
 }

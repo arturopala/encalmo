@@ -8,7 +8,7 @@ object Unknown extends Value {
 
   val typeId = 'Unknown
 
-  def dump(w: java.io.PrintWriter): Unit = w.print("unknown")
+  def face = "UNKNOWN"
   
   override def + (e:Expression):Expression = Unknown
   

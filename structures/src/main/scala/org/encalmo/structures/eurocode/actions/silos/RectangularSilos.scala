@@ -128,46 +128,46 @@ extends Calculation(name) with RectangularSiloSymbols {
     Fpe1 := ppenc1*s*s
 	
 	//input geometry
-	def inputGeometry = NumSection(TextToTranslate("_inputGeometry",dictionary),
+	def inputGeometry = NumSection(Text("_inputGeometry",dictionary),
 		Evaluate(b1,b2,h1,h2,t,th)
 	)
 	//input assertions
 	
 	//calculated geometry
-	def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry",dictionary),
+	def calculatedGeometry = NumSection(Text("_calculatedGeometry",dictionary),
 		Evaluate(h3,b3,b4,dc,A,U,AU,beta,hh,htp,ho,hc,hb,hcdc)
 	)
 	//volumes
-	def volumes = NumSection(TextToTranslate("_volumes",dictionary),
+	def volumes = NumSection(Text("_volumes",dictionary),
 		Evaluate(Vc,Vh,V,W)
 	)
 	//filling symmetrical load
-	def fillingSymmetricalLoad = NumSection(TextToTranslate("_fillingSymmetricalLoad",dictionary),
-        NumSection(TextToTranslate("_fillingSymmetricalLoad_1",dictionary),
+	def fillingSymmetricalLoad = NumSection(Text("_fillingSymmetricalLoad",dictionary),
+        NumSection(Text("_fillingSymmetricalLoad_1",dictionary),
 		Evaluate(zo(1),pho(1),YJ(1),phf(1),phf1,phf2,phf3,phft)
 		),
-		NumSection(TextToTranslate("_fillingSymmetricalLoad_2",dictionary),
+		NumSection(Text("_fillingSymmetricalLoad_2",dictionary),
         Evaluate(zo(2),pho(2),YJ(2),phf(2),pwf,nfzSk,nfzSkt)
         ),
-        NumSection(TextToTranslate("_fillingSymmetricalLoad_3",dictionary),
+        NumSection(Text("_fillingSymmetricalLoad_3",dictionary),
         Evaluate(zo(3),pho(3),YJ(3),pvf,pvft)
         )
 	)
 	//filling patch load
-	def fillingPatchLoad = NumSection(TextToTranslate("_fillingPatchLoad",dictionary),
+	def fillingPatchLoad = NumSection(Text("_fillingPatchLoad",dictionary),
         Evaluate(ef,Ef,Cpf,ppf,ppfnc,ppfnc1,s,Fpf1)
     )
     //discharge symmetrical load
-	def dischargeSymmetricalLoad = NumSection(TextToTranslate("_dischargeSymmetricalLoad",dictionary),
+	def dischargeSymmetricalLoad = NumSection(Text("_dischargeSymmetricalLoad",dictionary),
         Evaluate(CS,Ch,Cw,phe,phet,pwe,nezSk,nezSkt)
     )
     //discharge patch load
-    def dischargePatchLoad = NumSection(TextToTranslate("_dischargePatchLoad",dictionary),
+    def dischargePatchLoad = NumSection(Text("_dischargePatchLoad",dictionary),
         Evaluate(Cpe,ppe,ppenc,ppenc1,Fpe1)
     )
     
     //loads on silo hoppers
-    def loadsOnSiloBottom = NumSection(TextToTranslate("_loadsOnSiloBottom",dictionary),
+    def loadsOnSiloBottom = NumSection(Text("_loadsOnSiloBottom",dictionary),
         Evaluate(pvft)
     )
     

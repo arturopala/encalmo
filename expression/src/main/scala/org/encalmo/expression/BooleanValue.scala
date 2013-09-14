@@ -2,6 +2,7 @@ package org.encalmo.expression
 
 sealed abstract class BooleanValue(val boolean: Boolean) extends Value {
     val typeId = BooleanValue.typeId
+    def face = if(boolean) "true" else "false"
 }
 
 object BooleanValue {

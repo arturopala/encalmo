@@ -8,6 +8,8 @@ import org.encalmo.common._
  */
 trait Expression extends TreeNode[Expression] {
 
+    def face: String
+
     /**
      * Evaluates expression.
      * Subtypes should calculate possibly the simplest and numerical form of this expression.

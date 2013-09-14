@@ -288,14 +288,14 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
     sigxRd1 := fy * chix1 / gammaM1
 
     //input geometry
-    def inputGeometry = NumSection(TextToTranslate("_inputGeometry", dictionary),
+    def inputGeometry = NumSection(Text("_inputGeometry", dictionary),
         Evaluate(d1, h1, h2, de, t, th, tr, tp, tpp, alpha, h3, h4)
     )
 
     //input assertions
 
     //calculated geometry
-    def calculatedGeometry = NumSection(TextToTranslate("_calculatedGeometry", dictionary),
+    def calculatedGeometry = NumSection(Text("_calculatedGeometry", dictionary),
         Evaluate(r, dc, A, U, AU, beta, hh, he, htp, ho, hc, hb, hcdc, Sc, Sh, S),
         AssertionL("[1991-4] 1.1.2 (3)", hb / dc, 10),
         AssertionL("[1991-4] 1.1.2 (3)", hb, 100 unit SI.m),
@@ -304,7 +304,7 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
     )
 
     //volumes
-    def volumes = NumSection(TextToTranslate("_volumes", dictionary),
+    def volumes = NumSection(Text("_volumes", dictionary),
         Evaluate(Vc, Vh, V, W)
     )
 
@@ -317,41 +317,41 @@ class ThinWalledCircularSlenderSiloWithSteepHopper(
     def obciazenieWiatrem = NumSection("Oddziaływania od obciążenia wiatrem", Evaluate(qbo, cez, qpz, cscd, ze, Re, Aref, cf, Fw, wemax, cpi, wi))
 
     //filling symmetrical load
-    def fillingSymmetricalLoad = NumSection(TextToTranslate("_fillingSymmetricalLoad", dictionary), "[1991-4] 5.2.1.1",
-        NumSection(TextToTranslate("_fillingSymmetricalLoad_1", dictionary),
+    def fillingSymmetricalLoad = NumSection(Text("_fillingSymmetricalLoad", dictionary), "[1991-4] 5.2.1.1",
+        NumSection(Text("_fillingSymmetricalLoad_1", dictionary),
             Evaluate(zo(1), pho(1), YJ(1), phf(1), phf1, phf2, phf3, phft)
         ),
-        NumSection(TextToTranslate("_fillingSymmetricalLoad_2", dictionary),
+        NumSection(Text("_fillingSymmetricalLoad_2", dictionary),
             Evaluate(zo(2), pho(2), YJ(2), phf(2), pwf, nfzSk, nfzSkt)
         ),
-        NumSection(TextToTranslate("_fillingSymmetricalLoad_3", dictionary),
+        NumSection(Text("_fillingSymmetricalLoad_3", dictionary),
             Evaluate(zo(3), pho(3), YJ(3), pvf)
         )
     )
 
     //filling patch load
-    def fillingPatchLoad = NumSection(TextToTranslate("_fillingPatchLoad", dictionary), "[1991-4] 5.2.1.2, 5.2.1.4",
+    def fillingPatchLoad = NumSection(Text("_fillingPatchLoad", dictionary), "[1991-4] 5.2.1.2, 5.2.1.4",
         Evaluate(ef, Ef, Cpf, ppf, zp, ppfzp, s, Fpf1)
     )
 
     //discharge symmetrical load
-    def dischargeSymmetricalLoad = NumSection(TextToTranslate("_dischargeSymmetricalLoad", dictionary), "[1991-4] 5.2.2.1",
+    def dischargeSymmetricalLoad = NumSection(Text("_dischargeSymmetricalLoad", dictionary), "[1991-4] 5.2.2.1",
         Evaluate(Ch, Cw, phe, phet, pwe, nezSk, nezSkt)
     )
 
     //discharge patch load
-    def dischargePatchLoad = NumSection(TextToTranslate("_dischargePatchLoad", dictionary), "[1991-4] 5.2.2.2, 5.2.2.4",
+    def dischargePatchLoad = NumSection(Text("_dischargePatchLoad", dictionary), "[1991-4] 5.2.2.2, 5.2.2.4",
         Evaluate(Cpe, ppe, zp, ppezp, Fpe1)
     )
 
     //filling loads on silo hoppers
-    def fillingHopperLoad = NumSection(TextToTranslate("_fillingHopperLoad", dictionary), "[1991-4] 6.1.2, 6.3.2",
+    def fillingHopperLoad = NumSection(Text("_fillingHopperLoad", dictionary), "[1991-4] 6.1.2, 6.3.2",
         AssertionL("leja stromego [1991-4] 6.1",  tan(beta), (1 - K_l) / (2 * mu_u)),
         Evaluate(Cb, pvft, muheff, Ff, nh, pv, pnf, ptf, pnf0, ptf0, pnf1, ptf1)
     )
 
     //discharge loads on silo hoppers
-    def dischargeHopperLoad = NumSection(TextToTranslate("_dischargeHopperLoad", dictionary), "[1991-4] 6.3.3",
+    def dischargeHopperLoad = NumSection(Text("_dischargeHopperLoad", dictionary), "[1991-4] 6.3.3",
         Evaluate(fiwh, epsilon, Fe, pne, pte, pne0, pte0, pne1, pte1)
     )
 
