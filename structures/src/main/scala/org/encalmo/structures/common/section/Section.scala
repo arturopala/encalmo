@@ -8,7 +8,8 @@ import org.encalmo.document._
 trait SectionSymbols extends SymbolConfigurator {
 
     val sectionDict = "section"
-    
+
+    val ID = symbol("ID").makeNonPrintable dict sectionDict
     //Dimensions
     val h = symbol("h") unit "mm" dict sectionDict
     val b = symbol("b") unit "mm" dict sectionDict
@@ -51,7 +52,11 @@ abstract class Section(val name:String) extends MapContext with SectionSymbols {
 	def descriptionRef:String = ""
 	def info:DocumentComponent
 
+    ID := text(name)
+
     Imin := min(Iz,Iy)
     imin := min(iy,iz)
+
+    def label = this(ID)
 
 }
