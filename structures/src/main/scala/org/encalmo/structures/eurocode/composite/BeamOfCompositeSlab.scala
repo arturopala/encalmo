@@ -4,9 +4,7 @@ import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.calculation.Calculation
 import org.encalmo.structures.eurocode.actions.ActionsSymbols
-import org.encalmo.structures.common.section.IBeamSection
-import org.encalmo.structures.eurocode.steel.HeadedStud
-import org.encalmo.structures.eurocode.steel.Steel
+import org.encalmo.structures.eurocode.steel.{IBeamSection, HeadedStud, Steel}
 import org.encalmo.document.NumSection
 import org.encalmo.document.Evaluate
 import org.encalmo.document.TextToTranslate

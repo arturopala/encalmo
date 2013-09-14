@@ -1,15 +1,15 @@
-package org.encalmo.structures.common.section
+package org.encalmo.structures.eurocode.steel
 
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document.{Evaluate, TextToTranslate, NumSection}
+import org.encalmo.structures.common.section.Section
 
 trait IBeamSectionSymbols extends SymbolConfigurator {
 
     val ibeamDict = "section_ibeam"
 
-    val ID = symbol("ID").makeNonPrintable dict ibeamDict
-    //Dimensions for detailing
+    //Dimensions of details
     val tw = symbol(BasicSymbols.t|BasicSymbols.w) unit "mm" dict ibeamDict
     val tf = symbol(BasicSymbols.t|BasicSymbols.f) unit "mm" dict ibeamDict
     val r = symbol(BasicSymbols.r) unit "mm" dict ibeamDict
@@ -28,9 +28,7 @@ trait IBeamSectionSymbols extends SymbolConfigurator {
 }
 
 /** Section's shape trait */
-class IBeamSection(name:String, val sectionType: String) extends Section(name) with IBeamSectionSymbols {
-	
-	this(ID) = text(name)
+class IBeamSection(name:String, val sectionType: String) extends SteelSection(name) with IBeamSectionSymbols {
 
     this(Wzd) = Wz
     this(Wzg) = Wz
@@ -42,7 +40,25 @@ class IBeamSection(name:String, val sectionType: String) extends Section(name) w
     this(ctw) = (hw-2*r)/tw
     this(AVz) = max(A-2*b*tf+(tw+2*r)*tf,1.2*hw*tw)
 
-    def label = this(ID)
+    alphaw := 0.25
+    alphaf := 0.25
+    Thetaw := -0.5
+    ksigma := 1
+
+    Cw1 := rangeChoice4LE(ctw,1,72*epsi,2,83*epsi,3,124*epsi,4)
+    Cw2 := rangeChoice4LE(ctw,1,33*epsi,2,38*epsi,3,42*epsi,4)
+    Cw3 := rangeChoice4LE(ctw,1,rangeChoiceLE(alphaw,(36*epsi)/alphaw,0.5,(396*epsi)/(13*alphaw-1)),2,rangeChoiceLE(alphaw,(41.5*epsi)/alphaw,0.5,(456*epsi)/(13*alphaw-1)),3,rangeChoiceLE(Thetaw,(62*epsi*(1-Thetaw)*sqrt(-Thetaw)),-1,(42*epsi)/(0.67+0.33*Thetaw)),4)
+
+    Cf1 := rangeChoice4LE(ctf,1,9*epsi,2,10*epsi,3,14*epsi,4)
+    Cf2 := rangeChoice4LE(ctf,1,(9*epsi)/alphaf,2,(10*epsi)/alphaf,3,21*epsi*sqrt(ksigma),4)
+    Cf3 := rangeChoice4LE(ctf,1,(9*epsi)/(alphaf*sqrt(alphaf)),2,(10*epsi)/(alphaf*sqrt(alphaf)),3,21*epsi*sqrt(ksigma),4)
+
+    C1 := max(Cf1,Cw1)
+    C2 := max(Cf2,Cw2)
+    C3 := max(Cf3,Cw3)
+
+    wy := rangeChoiceLE(h/b,rangeChoiceLE(tf,"b",Number(100,SI.mm),"d"),1.2,rangeChoiceLE(tf,"a",Number(40,SI.mm),"b"))
+    wz := rangeChoiceLE(h/b,rangeChoiceLE(tf,"c",Number(100,SI.mm),"d"),1.2,rangeChoiceLE(tf,"b",Number(40,SI.mm),"c"))
 
 	def info = NumSection(TextToTranslate(sectionType,ibeamDict),name,
 		Evaluate(h,b,tw,tf,hw,bf,A,Iy,Iz,Wy,Wz,Wypl,Wzpl,m)
