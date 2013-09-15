@@ -1,7 +1,7 @@
-package org.encalmo.structures.eurocode.steel
+package org.encalmo.structures.eurocode.fasteners
 
 import org.encalmo.expression._
-import org.encalmo.calculation.{Catalog, MapContext, Calculation}
+import org.encalmo.calculation._
 import org.encalmo.document._
 
 /** HeadedStud symbols */
@@ -18,11 +18,11 @@ trait HeadedStudSymbols extends SymbolConfigurator {
 /** HeadedStud context class */
 class HeadedStud(name: String, p_d:Int, p_hsc:Int, p_a:Int, p_dh:Int) extends MapContext("headedstud") with HeadedStudSymbols {
 	
-	this(ID) = text(name)
-    this(d) = 19
-    this(hsc) = 100
-    this(a) = 9
-    this(dh) = 31
+	ID := text(name)
+    d := p_d
+    hsc := p_hsc
+    a := p_a
+    dh := p_dh
 	
 	def label = this(ID)
 

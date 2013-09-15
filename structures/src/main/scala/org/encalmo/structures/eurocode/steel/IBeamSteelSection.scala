@@ -4,7 +4,7 @@ import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document.{Evaluate, Text, NumSection}
 
-trait IBeamSectionSymbols extends SymbolConfigurator {
+trait IBeamSteelSectionSymbols extends SymbolConfigurator {
 
     val ibeamDict = "section_ibeam"
 
@@ -24,7 +24,7 @@ trait IBeamSectionSymbols extends SymbolConfigurator {
 }
 
 /** Section's shape trait */
-class IBeamSection(name:String, val sectionType: String) extends SteelSection(name) with IBeamSectionSymbols {
+class IBeamSteelSection(name:String, val sectionType: String) extends SteelSection(name) with IBeamSteelSectionSymbols {
 
     this(Wzd) = Wz
     this(Wzg) = Wz

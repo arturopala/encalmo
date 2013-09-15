@@ -4,7 +4,7 @@ import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.calculation.Calculation
 import org.encalmo.structures.eurocode.actions.ActionsSymbols
-import org.encalmo.structures.eurocode.steel.{IBeamSection, HeadedStud, Steel}
+import org.encalmo.structures.eurocode.steel.{IBeamSteelSection, Steel}
 import org.encalmo.document.NumSection
 import org.encalmo.document.Evaluate
 import org.encalmo.document.Text
@@ -20,6 +20,7 @@ import org.encalmo.expression.sqrt
 import org.encalmo.expression.max
 import org.encalmo.expression.round
 import org.encalmo.expression.cot
+import org.encalmo.structures.eurocode.fasteners.HeadedStud
 
 /** Composite slab with profiled steel sheeting symbols */
 trait BeamOfCompositeSlabSymbols extends SymbolConfigurator {
@@ -112,7 +113,7 @@ trait BeamOfCompositeSlabSymbols extends SymbolConfigurator {
 class BeamOfCompositeSlab(
     name: String,
 	val length:Expression,
-	val section:IBeamSection,
+	val section:IBeamSteelSection,
 	val steel:Steel,
 	val slab:CompositeSlabWithProfiledSheeting,
 	val stud:HeadedStud,

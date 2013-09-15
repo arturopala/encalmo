@@ -161,11 +161,13 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    		}
 	            case s:Selection => {
                     output.start(MFENCED)
+                    node.parent match {
+                        case Node(_,ce:CaseExpression,position) if position==0 && s.isSingle => output.attr("open","")
+                        case _ => output.attr("open","{")
+                    }
                     if(s.isSingle){
-                        output.attr("open","")
                         output.attr("close","")
                     }else{
-                        output.attr("open","{")
                         output.attr("close","}")
                     }
                     output.attr("separators","")

@@ -10,6 +10,7 @@ import org.encalmo.structures.eurocode.concrete.Concrete
 import org.encalmo.structures.eurocode.steel._
 import org.encalmo.structures.Worksheet
 import org.encalmo.document.TableOfContents
+import org.encalmo.structures.eurocode.fasteners.HeadedStud
 
 class CompositeSlabWorksheet extends Worksheet("kz-strop") {
 
@@ -26,7 +27,7 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
     val beton = Concrete.C_20_25
     val stalZbrojeniowa = ReinforcingSteel.B500SP
     val stal = Steel.S355
-    val profil = IPESection.IPE_450
+    val profil = IPESteelSection.IPE_450
     val sworzen = HeadedStud.NELSON_S3L_19_100
 
     val plyta = new CompositeSlabWithProfiledSheeting(
