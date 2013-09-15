@@ -235,8 +235,8 @@ trait Context extends SymbolConfigurator {
         case o: OperationN => {
             o.copy(o.args.map(evaluate(_)(cache)): _*)
         }
-        case sel: Selection => {
-            substitute(sel.select)(cache)
+        case caseTest: CaseTest => {
+            caseTest.map(evaluator(cache))
         }
         case other => other
     }

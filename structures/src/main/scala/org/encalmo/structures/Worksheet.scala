@@ -36,40 +36,48 @@ abstract class Worksheet(name: String) extends Calculation(name) {
         )
     )
 
-    def printHtml(path: String) {
+    def printHtml(path: String): Results =  {
         val layout = Predefined.layout
         val prefs: HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path.fromString("src/main/resources/style.css"))
         val output: HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"), prefs)
         output.open()
-        HtmlTextDocumentPrinter.print(document)(output)(results)
+        val res = results
+        HtmlTextDocumentPrinter.print(document)(output)(res)
         output.close()
         output.saveToFile(new java.io.File(path))
+        res
     }
 
-    def printXslFo(path: String) {
+    def printXslFo(path: String): Results = {
         val layout = Predefined.layout
         val output: XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open()
-        XslFoTextDocumentPrinter.print(document)(output)(results)
+        val res = results
+        XslFoTextDocumentPrinter.print(document)(output)(res)
         output.close()
         output.saveToFile(new java.io.File(path))
+        res
     }
 
-    def printPdf(path: String) {
+    def printPdf(path: String): Results = {
         val layout = Predefined.layout
         val output: XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open()
-        XslFoTextDocumentPrinter.print(document)(output)(results)
+        val res = results
+        XslFoTextDocumentPrinter.print(document)(output)(res)
         output.close()
         FOPHelper.buildPDF(output.getResult, path)
+        res
     }
 
-    def printText(path: String) {
+    def printText(path: String): Results = {
         val output: TextOutput = new TextOutput(new java.util.Locale("PL"))
         output.open()
-        PlainTextDocumentPrinter.print(document)(output)(results)
+        val res = results
+        PlainTextDocumentPrinter.print(document)(output)(res)
         output.close()
         output.saveToFile(new java.io.File(path))
+        res
     }
 
     @Test def printHtml():Unit = {
