@@ -62,4 +62,46 @@
 		<version>4.3.1</version>
 	</dependency>
   </dependencies>
+
+    <profiles>
+        <profile>
+            <id>one-time-init</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>jeuclid-fop</id>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <file>src/main/repository/net/sourceforge/jeuclid/jeuclid-fop/3.1.9/jeuclid-fop-3.1.9.jar</file>
+                                    <groupId>net.sourceforge.jeuclid</groupId>
+                                    <artifactId>jeuclid-fop</artifactId>
+                                    <version>3.1.9</version>
+                                    <packaging>jar</packaging>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>my-local-fop-repo</id>
+            <url>file://${basedir}/src/main/repository</url>
+        </repository>
+    </repositories>
+    
 </project>
+
+
