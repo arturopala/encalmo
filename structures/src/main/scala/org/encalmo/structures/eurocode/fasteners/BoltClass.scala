@@ -9,17 +9,19 @@ trait BoltClassSymbols extends SymbolConfigurator {
 
   import org.encalmo.expression.BasicSymbols._
 
-  val ID = symbol("ID").makeNonPrintable
+  val CLASS = symbol("CLASS").makeNonPrintable
   val fyb = symbol(f|"yb") unit SI.MPa //Charakterystyczna granica plastyczności
   val fub = symbol(f|"ub") unit SI.MPa //Charakterystyczna wytrzymałość na rozciąganie
+  val alphav = symbol(alpha|v) //Współczynnik nośności na ścinanie
 
 }
 
-class BoltClass(val name: String, p_fyb: Double, p_fub: Double) extends MapContext("bolt") with BoltClassSymbols {
+class BoltClass(val name: String, p_fyb: Double, p_fub: Double, p_alphav: Double) extends MapContext("bolt") with BoltClassSymbols {
 
-    ID := text(name)
+    CLASS := text(name)
     fyb := p_fyb
     fub := p_fub
+    alphav := p_alphav
 
     def label = text(name)
 
@@ -44,15 +46,15 @@ object BoltClass extends Catalog[BoltClass]("BoltClass") {
         "12.9" -> C_12_9 _
     )
 
-    def C_3_6 = new BoltClass("3.6",180,300)
-    def C_4_6 = new BoltClass("4.6",240,400)
-    def C_4_8 = new BoltClass("4.8",320,400)
-    def C_5_6 = new BoltClass("5.6",300,500)
-    def C_5_8 = new BoltClass("5.8",400,500)
-    def C_6_8 = new BoltClass("6.8",480,600)
-    def C_8_8 = new BoltClass("8.8",640,800)
-    def C_10_9 = new BoltClass("10.9",900,1000)
-    def C_12_9 = new BoltClass("12.9",1080,1200)
+    def C_3_6 = new BoltClass("3.6",180,300,0.6)
+    def C_4_6 = new BoltClass("4.6",240,400,0.6)
+    def C_4_8 = new BoltClass("4.8",320,400,0.5)
+    def C_5_6 = new BoltClass("5.6",300,500,0.6)
+    def C_5_8 = new BoltClass("5.8",400,500,0.5)
+    def C_6_8 = new BoltClass("6.8",480,600,0.5)
+    def C_8_8 = new BoltClass("8.8",640,800,0.6)
+    def C_10_9 = new BoltClass("10.9",900,1000,0.5)
+    def C_12_9 = new BoltClass("12.9",1080,1200,0.5)
 
 }
 
