@@ -44,6 +44,7 @@ trait BoltSymbols extends SymbolConfigurator {
 
     val gammaM2 = symbol(BasicSymbols.gamma|"M2") dict boltDict //Współczynnik częściowy przy obliczaniu nośności śrub, nitów, sworzni
     val gammaM3 = symbol(BasicSymbols.gamma|"M3") dict boltDict //Współczynnik częściowy przy obliczaniu nośności na poślizg
+    val gammaM3ser = symbol(BasicSymbols.gamma|"M3,ser") dict boltDict //Współczynnik częściowy przy obliczaniu nośności na poślizg
     val gammaM7 = symbol(BasicSymbols.gamma|"M7") dict boltDict //Współczynnik częściowy przy obliczaniu siły sprężania śrub wysokiej wytrzymałości
     val alphab0 = symbol(BasicSymbols.alpha|"b,0") dict boltDict //Współczynnik nośności na docisk śruby skrajnej
     val alphabi = symbol(BasicSymbols.alpha|"b,i") dict boltDict //Współczynnik nośności na docisk śruby posredniej
@@ -51,12 +52,17 @@ trait BoltSymbols extends SymbolConfigurator {
     val k10 = symbol(BasicSymbols.k|"1,0") dict boltDict //Współczynnik pomocniczy nośności na docisk śruby skrajnej
     val k1i = symbol(BasicSymbols.k|"1,i") dict boltDict //Współczynnik pomocniczy nośności na docisk śruby skrajnej
     val k1 = symbol(BasicSymbols.k|"1") dict boltDict //Współczynnik pomocniczy nośności na docisk
+    val ks = symbol(BasicSymbols.k|"1") dict boltDict //Współczynnik kształtu otworów na śruby
+    val mu = symbol(BasicSymbols.mu) dict boltDict //Współczynnik tarcia elementów łączonych (według PN-EN 1090-2)
+    val FpC = symbol(BasicSymbols.F|"p,C") unit SI.kN dict boltDict //Charakterystyczna siła sprężenia
     val FpCd = symbol(BasicSymbols.F|"p,Cd") unit SI.kN dict boltDict //Obliczeniowa siła sprężenia
     val FvRd = symbol(BasicSymbols.F|"v,Rd") unit SI.kN dict boltDict //Nośność na ścinanie w jednej płaszczyźnie
     val FvsRd = symbol(BasicSymbols.F|"vs,Rd") unit SI.kN dict boltDict //Nośność na ścinanie przez gwint w jednej płaszczyźnie
     val FbRd = symbol(BasicSymbols.F|"b,Rd") unit SI.kN dict boltDict //Nośność na docisk
     val FtRd = symbol(BasicSymbols.F|"t,Rd") unit SI.kN dict boltDict //Nośność na rozciąganie
     val BpRd = symbol(BasicSymbols.B|"p,Rd") unit SI.kN dict boltDict //Nośność na przeciąganie
+    val FsRdB = symbol(BasicSymbols.F|"s,Rd,B") unit SI.kN dict boltDict //Nośność na poślizg w połączeniu sprężonym kategorii B
+    val FsRdC = symbol(BasicSymbols.F|"s,Rd,C") unit SI.kN dict boltDict //Nośność na poślizg w połączeniu sprężonym kategorii C
 }
 
 /** HexagonHeadBolt symbols */
@@ -113,8 +119,10 @@ class HexagonHeadBolt(name: String, val boltClass: BoltClass, p_d:Int, p_L:Expre
 
     gammaM2 := 1.25
     gammaM3 := 1.25
+    gammaM3ser := 1.1
     gammaM7 := 1.1
-    FpCd := (0.7*fub*A)/gammaM7
+    FpC := 0.7*fub*As
+    FpCd := (0.7*fub*As)/gammaM7
     FvsRd := (alphav*fub*As)/gammaM2
     FvRd := (0.6*fub*A)/gammaM2
     k10 := min(2.8 * (e2 / d0) - 1.7,2.5)
@@ -127,6 +135,10 @@ class HexagonHeadBolt(name: String, val boltClass: BoltClass, p_d:Int, p_L:Expre
     FtRd := (0.9*fub*As)/gammaM2
     BpRd := (0.6*PI*dm*t*fu)/gammaM2
 
+    ks := 1.0
+    mu := 0.5
+    FsRdB := (ks*mu*FpC)/gammaM3ser
+    FsRdC := (ks*mu*FpC)/gammaM3
 
 	def info = NumSection(Text(name),Text(boltClass.name),Text("Hexagon Head Bolt",dictionary),
 		Evaluate(d,d0,s,e,k,m,w,L,b,bv,t),
@@ -134,7 +146,7 @@ class HexagonHeadBolt(name: String, val boltClass: BoltClass, p_d:Int, p_L:Expre
         "Odległości od krawędzi i rozstawy otworów",
         Evaluate(e1,e2,e3,e4,p1,p2),
         "Wytrzymałość i nośność",
-        Evaluate(A,fyb,fub,gammaM2,FpCd,FvRd,FvsRd,fu,k10,k1i,k1,alphab0,alphabi,alphab,FbRd,FtRd,BpRd)
+        Evaluate(A,fyb,fub,gammaM2,FpCd,FvRd,FvsRd,fu,k10,k1i,k1,alphab0,alphabi,alphab,FbRd,FtRd,BpRd,FsRdC)
 	)
 
 }
