@@ -20,6 +20,7 @@ trait CaseTest extends Expression with Auxiliary {
      * Returns AndCaseTest
      */
     def &&(t: CaseTest): CaseTest = AndCaseTest(this, t)
+    def and(t: CaseTest): CaseTest = AndCaseTest(this, t)
 
     /**
      * Returns AndCaseTest with NegCaseTest of argument t
@@ -30,6 +31,7 @@ trait CaseTest extends Expression with Auxiliary {
      * Returns OrCaseTest
      */
     def ||(t: CaseTest): CaseTest = OrCaseTest(this, t)
+    def or(t: CaseTest): CaseTest = OrCaseTest(this, t)
 
     /**
      * Returns OrCaseTest with NegCaseTest of argument t
@@ -40,6 +42,7 @@ trait CaseTest extends Expression with Auxiliary {
      * Returns NegCaseTest
      */
     override def unary_!(): CaseTest = NegCaseTest(this)
+    def unary_not(): CaseTest = NegCaseTest(this)
 
 }
 
@@ -121,7 +124,7 @@ case class IsNotZero(e: Expression) extends CaseTest {
  * IsEqual tests if given expressions are equals after evaluation
  * @author artur.opala
  */
-case class Equals(t1: Expression, t2: Expression) extends CaseTest {
+case class IsEqualTo(t1: Expression, t2: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2)
 
@@ -136,7 +139,7 @@ case class Equals(t1: Expression, t2: Expression) extends CaseTest {
         val vl = t1.map(f)
         val vr = t2.map(f)
         if ((vl eq t1) && (vr eq t2)) f(this) else {
-            if(vl == vr) f(Always) else f(Equals(vl, vr))
+            if(vl == vr) f(Always) else f(IsEqualTo(vl, vr))
         }
     }
 
@@ -148,7 +151,7 @@ case class Equals(t1: Expression, t2: Expression) extends CaseTest {
  * GreaterThan test
  * @author artur.opala
  */
-case class GreaterThan(t1: Expression, t2: Expression) extends CaseTest {
+case class IsGreaterThan(t1: Expression, t2: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2)
 
@@ -162,7 +165,7 @@ case class GreaterThan(t1: Expression, t2: Expression) extends CaseTest {
     override def map(f: Transformation): Expression = {
         val vl = t1.map(f)
         val vr = t2.map(f)
-        if ((vl eq t1) && (vr eq t2)) f(this) else f(GreaterThan(vl, vr))
+        if ((vl eq t1) && (vr eq t2)) f(this) else f(IsGreaterThan(vl, vr))
     }
 
     override def face = "(" + t1.face + " > " + t2.face + ")"
@@ -173,7 +176,7 @@ case class GreaterThan(t1: Expression, t2: Expression) extends CaseTest {
  * GreaterThan test
  * @author artur.opala
  */
-case class GreaterOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
+case class IsGreaterThanOrEqualTo(t1: Expression, t2: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2)
 
@@ -187,7 +190,7 @@ case class GreaterOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
     override def map(f: Transformation): Expression = {
         val vl = t1.map(f)
         val vr = t2.map(f)
-        if ((vl eq t1) && (vr eq t2)) f(this) else f(GreaterOrEqualThan(vl, vr))
+        if ((vl eq t1) && (vr eq t2)) f(this) else f(IsGreaterThanOrEqualTo(vl, vr))
     }
 
     override def face = "(" + t1.face + " >= " + t2.face + ")"
@@ -198,7 +201,7 @@ case class GreaterOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
  * LowerThan test
  * @author artur.opala
  */
-case class LowerThan(t1: Expression, t2: Expression) extends CaseTest {
+case class IsLowerThan(t1: Expression, t2: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2)
 
@@ -212,7 +215,7 @@ case class LowerThan(t1: Expression, t2: Expression) extends CaseTest {
     override def map(f: Transformation): Expression = {
         val vl = t1.map(f)
         val vr = t2.map(f)
-        if ((vl eq t1) && (vr eq t2)) f(this) else f(LowerThan(vl, vr))
+        if ((vl eq t1) && (vr eq t2)) f(this) else f(IsLowerThan(vl, vr))
     }
 
     override def face = "(" + t1.face + " < " + t2.face + ")"
@@ -223,7 +226,7 @@ case class LowerThan(t1: Expression, t2: Expression) extends CaseTest {
  * LowerOrEqualThan test
  * @author artur.opala
  */
-case class LowerOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
+case class IsLessThanOrEqualTo(t1: Expression, t2: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2)
 
@@ -237,7 +240,7 @@ case class LowerOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
     override def map(f: Transformation): Expression = {
         val vl = t1.map(f)
         val vr = t2.map(f)
-        if ((vl eq t1) && (vr eq t2)) f(this) else f(LowerOrEqualThan(vl, vr))
+        if ((vl eq t1) && (vr eq t2)) f(this) else f(IsLessThanOrEqualTo(vl, vr))
     }
 
     override def face = "(" + t1.face + " <= " + t2.face + ")"
@@ -248,7 +251,7 @@ case class LowerOrEqualThan(t1: Expression, t2: Expression) extends CaseTest {
  * InRangeLEL test
  * @author artur.opala
  */
-case class InRangeLEL(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
+case class IsInRangeLessOrEqualAndLessThan(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2, t3)
 
@@ -263,7 +266,7 @@ case class InRangeLEL(t1: Expression, t2: Expression, t3: Expression) extends Ca
         val v1 = t1.map(f)
         val v2 = t2.map(f)
         val v3 = t3.map(f)
-        if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(InRangeLEL(v1, v2, v3))
+        if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(IsInRangeLessOrEqualAndLessThan(v1, v2, v3))
     }
 
     override def face = "(" + t1.face + " <= " + t2.face + " < " + t3.face + ")"
@@ -274,7 +277,7 @@ case class InRangeLEL(t1: Expression, t2: Expression, t3: Expression) extends Ca
  * InRangeLLE test
  * @author artur.opala
  */
-case class InRangeLLE(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
+case class IsInRangeLessAndLessOrEqual(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2, t3)
 
@@ -289,7 +292,7 @@ case class InRangeLLE(t1: Expression, t2: Expression, t3: Expression) extends Ca
         val v1 = t1.map(f)
         val v2 = t2.map(f)
         val v3 = t3.map(f)
-        if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(InRangeLLE(v1, v2, v3))
+        if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(IsInRangeLessAndLessOrEqual(v1, v2, v3))
     }
 
     override def face = "(" + t1.face + " < " + t2.face + " <= " + t3.face + ")"
@@ -300,7 +303,7 @@ case class InRangeLLE(t1: Expression, t2: Expression, t3: Expression) extends Ca
  * InRangeLL test
  * @author artur.opala
  */
-case class InRangeLL(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
+case class IsInRangeLessAndLess(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2, t3)
 
@@ -315,7 +318,7 @@ case class InRangeLL(t1: Expression, t2: Expression, t3: Expression) extends Cas
         val v1 = t1.map(f)
         val v2 = t2.map(f)
         val v3 = t3.map(f)
-        if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(InRangeLL(v1, v2, v3))
+        if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(IsInRangeLessAndLess(v1, v2, v3))
     }
 
     override def face = "(" + t1.face + " < " + t2.face + " < " + t3.face + ")"
@@ -326,7 +329,7 @@ case class InRangeLL(t1: Expression, t2: Expression, t3: Expression) extends Cas
  * InRangeLELE test
  * @author artur.opala
  */
-case class InRangeLELE(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
+case class IsInRangeLessOrEqualAndLessOrEqual(t1: Expression, t2: Expression, t3: Expression) extends CaseTest {
 
     override val children = Seq(t1, t2, t3)
 
@@ -341,7 +344,7 @@ case class InRangeLELE(t1: Expression, t2: Expression, t3: Expression) extends C
         val v1 = t1.map(f)
         val v2 = t2.map(f)
         val v3 = t3.map(f)
-        if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(InRangeLELE(v1, v2, v3))
+        if ((v1 eq t1) && (v2 eq t2) && (v3 eq t3)) f(this) else f(IsInRangeLessOrEqualAndLessOrEqual(v1, v2, v3))
     }
 
     override def face = "(" + t1.face + " <= " + t2.face + " <= " + t3.face + ")"

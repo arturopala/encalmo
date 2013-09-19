@@ -138,7 +138,7 @@ class SelectionUnitTest extends AssertionsForJUnit {
 		val expr1 = a*b+5
 		val expr2 = a+b
 		val expr3 = a/b
-		val expr4 = expr1 unless (!IsZero(c) &&! IsZero(d) || Equals(c,d) thenUse expr2)
+		val expr4 = expr1 unless (!IsZero(c) &&! IsZero(d) || IsEqualTo(c,d) thenUse expr2)
 		assertEquals("Selection(List(Case(CaseExpression(Sum(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\"))),OrCaseTest(AndCaseTest(NegCaseTest(IsZero(Symbol(name=\"c\",unit=\"_\"))),NegCaseTest(IsZero(Symbol(name=\"d\",unit=\"_\")))),Equals(Symbol(name=\"c\",unit=\"_\"),Symbol(name=\"d\",unit=\"_\"))))),Some(CaseExpression(Sum(Prod(Symbol(name=\"a\",unit=\"_\"),Symbol(name=\"b\",unit=\"_\")),Number(5,_)))))",expr4.toString)
     }
 	

@@ -119,7 +119,7 @@ zgodnie z Tablicą 6.1 [1] dla obciążenia równomiernie rozłożonego i przył
     val lambdarel = lambda|"rel" is "smukłość względna przy zginaniu"
     lambdarel := sqrt(fmk/sigmamcrit)
     val kcritm = k|"crit,m" is "współczynnik uwzględniający redukcję wytrzymałości ze względu na zwichrowanie elementu"
-    kcritm := 1 unless (InRangeLLE(0.75,lambdarel,1.4) thenUse (1.56-(0.75*lambdarel))) unless (GreaterThan(lambdarel,1.4) thenUse (1/(lambdarel^2)))
+    kcritm := 1 unless (IsInRangeLessAndLessOrEqual(0.75,lambdarel,1.4) thenUse (1.56-(0.75*lambdarel))) unless (IsGreaterThan(lambdarel,1.4) thenUse (1/(lambdarel^2)))
     val fmcritd = f|"m,crit,d" is "zredukowana wytrzymałość na zginanie ze względu na zwichrzenie" unit "MPa"
     fmcritd := kcritm*fmd
     
@@ -211,7 +211,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     val lambdarelfi = lambda|"rel,fi" is "smukłość względna przy zginaniu"
     lambdarelfi := sqrt(fmdfi/sigmamcritfi)
     val kcritfi = k|"crit,fi" is "współczynnik uwzględniający redukcję wytrzymałości ze względu na zwichrowanie elementu"
-    kcritfi := 1 unless (InRangeLLE(0.75,lambdarelfi,1.4) thenUse (1.56-(0.75*lambdarelfi))) unless (GreaterThan(lambdarelfi,1.4) thenUse (1/(lambdarelfi^2)))
+    kcritfi := 1 unless (IsInRangeLessAndLessOrEqual(0.75,lambdarelfi,1.4) thenUse (1.56-(0.75*lambdarelfi))) unless (IsGreaterThan(lambdarelfi,1.4) thenUse (1/(lambdarelfi^2)))
     val fmcritfi = f|"m,crit,fi" is "zredukowana wytrzymałość na zginanie ze względu na zwichrzenie" unit "MPa"
     fmcritfi := kcritfi*fmdfi
     
@@ -251,7 +251,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     val lambdarelfi2 = lambda|"rel,fi,2" is "smukłość względna przy zginaniu"
     lambdarelfi2 := sqrt(fmdfi2/sigmamcritfi2)
     val kcritfi2 = k|"crit,fi,2" is "współczynnik uwzględniający redukcję wytrzymałości ze względu na zwichrowanie elementu"
-    kcritfi2 := 1 unless (InRangeLLE(0.75,lambdarelfi2,1.4) thenUse (1.56-(0.75*lambdarelfi2))) unless (GreaterThan(lambdarelfi2,1.4) thenUse (1/(lambdarelfi2^2)))
+    kcritfi2 := 1 unless (IsInRangeLessAndLessOrEqual(0.75,lambdarelfi2,1.4) thenUse (1.56-(0.75*lambdarelfi2))) unless (IsGreaterThan(lambdarelfi2,1.4) thenUse (1/(lambdarelfi2^2)))
     val fmcritfi2 = f|"m,crit,fi,2" is "zredukowana wytrzymałość na zginanie ze względu na zwichrzenie" unit "MPa"
     fmcritfi2 := kcritfi2*fmdfi2
     

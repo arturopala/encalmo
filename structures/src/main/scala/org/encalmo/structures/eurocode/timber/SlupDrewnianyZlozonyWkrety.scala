@@ -204,7 +204,7 @@ class SlupDrewnianyZlozonyWkrety extends Worksheet("kd1-slup") {
     val nosnoscObliczeniowa = Seq(lc,betac,Ief,lambdaeff,lambdarel,kmin,kc,sigmac0d,NRc,Fmax,xiS)
 
     val Vd = V|"d" is "siła ścinająca wg C.5 [1]" unit "kN"
-    Vd := Fcd/(120*kc) unless (InRangeLLE(30,lambdaeff,60) thenUse (Fcd/(3600*kc))) unless (GreaterThan(lambdaeff,60) thenUse (Fcd/(60*kc)))
+    Vd := Fcd/(120*kc) unless (IsInRangeLessAndLessOrEqual(30,lambdaeff,60) thenUse (Fcd/(3600*kc))) unless (IsGreaterThan(lambdaeff,60) thenUse (Fcd/(60*kc)))
     val tau2max = tau|"2,max" is "maksymalne naprężenia ścinające w środniku wg B.9 [1]" unit "MPa"
     tau2max := E0mean*(gamma1SGN*A1*az+0.5*b2*(h^2))/(b2*EIeffSGN)*Vd
     val nosnoscScinanie = Seq(Vd,tau2max)

@@ -6,7 +6,7 @@ import org.encalmo.document.{Evaluate, Text, NumSection}
 
 trait IBeamSteelSectionSymbols extends SymbolConfigurator {
 
-    val ibeamDict = "section_ibeam"
+    val ibeamDict = "IBeamSteelSection"
 
     //Dimensions of details
     val tw = symbol(BasicSymbols.t|BasicSymbols.w) unit "mm" dict ibeamDict
@@ -19,22 +19,30 @@ trait IBeamSteelSectionSymbols extends SymbolConfigurator {
     val ss = symbol(BasicSymbols.s|BasicSymbols.s) unit "mm" dict ibeamDict
     val pmin = symbol(BasicSymbols.p|"min") unit "mm" dict ibeamDict
     val pmax = symbol(BasicSymbols.p|"max") unit "mm" dict ibeamDict
-    val phi = symbol(BasicSymbols.phi) unit "mm" dict ibeamDict
+
+    val ctf = symbol("c/t"|"f") dict ibeamDict //Smukłość półki
+    val ctw = symbol("c/t"|"w") dict ibeamDict //Smukłość środnika
+    val Cf1 = symbol("C"|"f,1") dict ibeamDict //Klasa półki równomiernie ściskanej
+    val Cw1 = symbol("C"|"w,1") dict ibeamDict //Klasa środnika zginanego
+    val Cf2 = symbol("C"|"f,2") dict ibeamDict //Klasa półki zginanej z brzegiem ściskanym
+    val Cw2 = symbol("C"|"w,2") dict ibeamDict //Klasa środnika ściskanego
+    val Cf3 = symbol("C"|"f,3") dict ibeamDict //Klasa półki zginanej z brzegiem rozciąganym
+    val Cw3 = symbol("C"|"w,3") dict ibeamDict //Klasa środnika zginanego i ściskanego
         
 }
 
 /** Section's shape trait */
 class IBeamSteelSection(name:String, val sectionType: String) extends SteelSection(name) with IBeamSteelSectionSymbols {
 
-    this(Wzd) = Wz
-    this(Wzg) = Wz
-    this(Wyd) = Wy
-    this(Wyg) = Wy
-    this(hw) = h-2*tf
-    this(bf) = (b-tw)/2
-    this(ctf) = (bf-r)/tf
-    this(ctw) = (hw-2*r)/tw
-    this(AVz) = max(A-2*b*tf+(tw+2*r)*tf,1.2*hw*tw)
+    Wzd := Wz
+    Wzg := Wz
+    Wyd := Wy
+    Wyg := Wy
+    hw := h-2*tf
+    bf := (b-tw)/2
+    ctf := (bf-r)/tf
+    ctw := (hw-2*r)/tw
+    AVz := max(A-2*b*tf+(tw+2*r)*tf,1.2*hw*tw)
 
     epsi := 0.814
     alphaw := 0.25

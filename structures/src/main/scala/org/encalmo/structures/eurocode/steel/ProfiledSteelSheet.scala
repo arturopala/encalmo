@@ -7,9 +7,9 @@ import org.encalmo.document._
 import org.encalmo.structures.eurocode.actions._
 import org.encalmo.expression.min
 import org.encalmo.expression.sin
-import org.encalmo.expression.GreaterThan
+import org.encalmo.expression.IsGreaterThan
 import org.encalmo.expression.sqrt
-import org.encalmo.expression.InRangeLLE
+import org.encalmo.expression.IsInRangeLessAndLessOrEqual
 
 trait ProfiledSteelSheetSymbols extends SymbolConfigurator {
 
@@ -111,7 +111,7 @@ extends Calculation(name,"profiledSteelSheet") with ProfiledSteelSheetSymbols wi
     lambdaw := 0.346*(sw/tcor)*sqrt(fyb/E)
     Gcck := m*GRAV
     Gccd := Gcck*gammaG
-    fbv := (0.58*fyb) unless (InRangeLLE(0.83,lambdaw,1.40) thenUse (0.48*fyb)/lambdaw) unless (GreaterThan(lambdaw,1.40) thenUse ((0.67*fyb)/(lambdaw^2)))
+    fbv := (0.58*fyb) unless (IsInRangeLessAndLessOrEqual(0.83,lambdaw,1.40) thenUse (0.48*fyb)/lambdaw) unless (IsGreaterThan(lambdaw,1.40) thenUse ((0.67*fyb)/(lambdaw^2)))
     VbRd := ((hw/sin(Phi))*tcor*fbv)/gammaM0
     VplRd := ((hw/sin(Phi))*tcor*(fyb/sqrt(3)))/gammaM0
     VwRd := (2*min(VbRd,VplRd))/bs

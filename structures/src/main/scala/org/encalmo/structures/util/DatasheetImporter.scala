@@ -21,40 +21,46 @@ class DatasheetImporter {
 	
 	@Test
 	def importIPN() = doImport("IPNSection","ipn")
+
+    @Test
+    def importAngleEqual() = doImport("AngleEqualLeg","l_equal")
 	
 	def readCSV(file:String, fx:(String,String) => Unit) {
-		 val reader:CSVReader = new CSVReader(new FileReader(file))
+		val reader:CSVReader = new CSVReader(new FileReader(file))
         val rows:Seq[Array[String]] = reader.readAll()
+        val header = rows.head
         for(row <- rows.tail){
 			 val b = new StringBuilder
-			 b.append("\"")
-			 b.append(row.head)
-			 b.append("\"")
-			 for(cell <- row.tail) {
-				 b.append(",")
+			 b.append("name=")
+			 b.append(padLeft(20,"\""+row.head+"\""))
+			 for((cell,param) <- row.tail zip header.tail) {
+				 b.append(", p_")
+                 b.append(param)
+                 b.append("= ")
 				 if(cell.isEmpty) {
-					 b.append("0")
+					 b.append("     0")
 				 }else{
-					b.append(cell)
+					b.append(padRight(6,cell))
 				 }
 			 }
 			 fx(row.head,b.toString())
 		 }
 
 	}
+
+    def padLeft(len: Int, text: String):String = if(text.size >= len) text else text + (" " * (len - text.size))
+    def padRight(len: Int, text: String):String = if(text.size >= len) text else (" " * (len - text.size)) + text
 	
 	def doImport(clazz:String, file:String) {
 		val b1 = new StringBuilder
 		val b2 = new StringBuilder
-		b2.append("\r\n\tdef apply(s:String):"+clazz+" = map.get(s).map(x => x()).getOrElse(throw new IllegalStateException)")
-		b2.append("\r\n")
 		b2.append("\r\n\tval map = Map[String,()=>"+clazz+"](\r\n\t\t")
 		var counter:Int = 0
 		readCSV("src/main/resources/datasheet/"+file+".csv", (id,params) => {
 			val name = fieldName(id.trim)
 			//object
-			b1.append("\tlazy val ")
-			b1.append(name)
+			b1.append("\tdef ")
+			b1.append(padLeft(16,name))
 			b1.append(" = ")
 			b1.append(clazz)
 			b1.append("(")

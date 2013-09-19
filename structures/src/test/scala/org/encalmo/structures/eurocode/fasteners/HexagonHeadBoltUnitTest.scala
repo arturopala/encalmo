@@ -11,10 +11,10 @@ class HexagonHeadBoltUnitTest extends AssertionsForJUnit {
 
     @Test
     def testSteelColumn() = {
-        val bolt = HexagonHeadBolt.M30(BoltClass.C_6_8,40 unit SI.mm)
+        val bolt = HexagonHeadBolt.M27(BoltClass.C_6_8,40 unit SI.mm)
         def worksheet = new Worksheet("Hexagon Head Bolt Test") {
             this add bolt
-            bolt(bolt.t) = 6 unit SI.mm
+            bolt(bolt.t) = 10 unit SI.mm
             override val document = defaultDocument(bolt.info)
         }
         val path = "target/test-results/" + worksheet.name + ".html"
