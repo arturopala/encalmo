@@ -71,35 +71,35 @@ package object expression {
 	def ceil(e:Expression,accuracy:Double = 1) = round(e,RoundingMode.Step(true,accuracy))
 	
 	def rangeChoiceLE(e:Expression,first:Expression,bound:Expression,second:Expression):Expression = {
-		Selection(Seq(Case(CaseExpression(first),LowerOrEqualThan(e,bound)),Case(CaseExpression(second),GreaterThan(e,bound))))
+		Selection(Seq(Case(CaseExpression(first),IsLessThanOrEqualTo(e,bound)),Case(CaseExpression(second),IsGreaterThan(e,bound))))
 	}
 	
 	def rangeChoiceGE(e:Expression,first:Expression,bound:Expression,second:Expression):Expression = {
-		Selection(Seq(Case(CaseExpression(first),LowerThan(e,bound)),Case(CaseExpression(second),GreaterOrEqualThan(e,bound))))
+		Selection(Seq(Case(CaseExpression(first),IsLowerThan(e,bound)),Case(CaseExpression(second),IsGreaterThanOrEqualTo(e,bound))))
 	}
 	
 	def rangeChoiceLLE(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
-		Selection(Seq(Case(CaseExpression(first),LowerThan(e,lowerBound)),Case(CaseExpression(second),InRangeLEL(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterOrEqualThan(e,upperBound))))
+		Selection(Seq(Case(CaseExpression(first),IsLowerThan(e,lowerBound)),Case(CaseExpression(second),IsInRangeLessOrEqualAndLessThan(lowerBound,e,upperBound)),Case(CaseExpression(third),IsGreaterThanOrEqualTo(e,upperBound))))
 	}
 	
 	def rangeChoiceLEL(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
-		Selection(Seq(Case(CaseExpression(first),LowerOrEqualThan(e,lowerBound)),Case(CaseExpression(second),InRangeLLE(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterThan(e,upperBound))))
+		Selection(Seq(Case(CaseExpression(first),IsLessThanOrEqualTo(e,lowerBound)),Case(CaseExpression(second),IsInRangeLessAndLessOrEqual(lowerBound,e,upperBound)),Case(CaseExpression(third),IsGreaterThan(e,upperBound))))
 	}
 	
 	def rangeChoiceLL(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
-		Selection(Seq(Case(CaseExpression(first),LowerThan(e,lowerBound)),Case(CaseExpression(second),InRangeLELE(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterThan(e,upperBound))))
+		Selection(Seq(Case(CaseExpression(first),IsLowerThan(e,lowerBound)),Case(CaseExpression(second),IsInRangeLessOrEqualAndLessOrEqual(lowerBound,e,upperBound)),Case(CaseExpression(third),IsGreaterThan(e,upperBound))))
 	}
 	
 	def rangeChoiceLELE(e:Expression,first:Expression,lowerBound:Expression,second:Expression,upperBound:Expression,third:Expression):Expression = {
-		Selection(Seq(Case(CaseExpression(first),LowerOrEqualThan(e,lowerBound)),Case(CaseExpression(second),InRangeLL(lowerBound,e,upperBound)),Case(CaseExpression(third),GreaterOrEqualThan(e,upperBound))))
+		Selection(Seq(Case(CaseExpression(first),IsLessThanOrEqualTo(e,lowerBound)),Case(CaseExpression(second),IsInRangeLessAndLess(lowerBound,e,upperBound)),Case(CaseExpression(third),IsGreaterThanOrEqualTo(e,upperBound))))
 	}
 	
 	def rangeChoice4LE(e:Expression,first:Expression,bound1:Expression,second:Expression,bound2:Expression,third:Expression,bound3:Expression,fourth:Expression):Expression = {
-		Selection(Seq(Case(CaseExpression(first),LowerOrEqualThan(e,bound1)),Case(CaseExpression(second),InRangeLLE(bound1,e,bound2)),Case(CaseExpression(third),InRangeLLE(bound2,e,bound3)),Case(CaseExpression(fourth),GreaterThan(e,bound3))))
+		Selection(Seq(Case(CaseExpression(first),IsLessThanOrEqualTo(e,bound1)),Case(CaseExpression(second),IsInRangeLessAndLessOrEqual(bound1,e,bound2)),Case(CaseExpression(third),IsInRangeLessAndLessOrEqual(bound2,e,bound3)),Case(CaseExpression(fourth),IsGreaterThan(e,bound3))))
 	}
 	
 	def mapChoice(e:Expression,mapppings: (Expression,Expression)*):Expression = {
-		Selection(mapppings.map(x => Case(CaseExpression(x._2),Equals(e,x._1))))
+		Selection(mapppings.map(x => Case(CaseExpression(x._2),IsEqualTo(e,x._1))))
 	}
 	
 }

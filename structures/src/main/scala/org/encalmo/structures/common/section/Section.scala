@@ -22,6 +22,7 @@ trait SectionSymbols extends SymbolConfigurator {
     //Section properties
     val Iz = symbol(BasicSymbols.I|"z") unit "cm4" dict sectionDict
     val Iy = symbol(BasicSymbols.I|"y") unit "cm4" dict sectionDict
+    val Iyz = symbol(BasicSymbols.I|"yz") unit "cm4" dict sectionDict
     val iz = symbol(BasicSymbols.i|"z") unit "cm" dict sectionDict
     val iy = symbol(BasicSymbols.i|"y") unit "cm" dict sectionDict
     val Imin = symbol(BasicSymbols.I|"min") unit "cm4" dict sectionDict
@@ -36,13 +37,9 @@ trait SectionSymbols extends SymbolConfigurator {
     val Wypl = symbol(BasicSymbols.W|"y,pl") unit "cm3" dict sectionDict
     val Iomega = symbol(BasicSymbols.I|BasicSymbols.omega) unit "cm6" dict sectionDict
     val It = symbol(BasicSymbols.I|BasicSymbols.t) unit "cm4" dict sectionDict
+    val alpha = symbol(BasicSymbols.alpha) unit SI.deg dict sectionDict
     //Mass
     val m = symbol(BasicSymbols.m) unit "kg/m" dict sectionDict
-    //Fire resistance coefficients
-    val f1 = symbol(BasicSymbols.f|1) dict sectionDict
-    val f2 = symbol(BasicSymbols.f|2) dict sectionDict
-    val f3 = symbol(BasicSymbols.f|3) dict sectionDict
-    val f4 = symbol(BasicSymbols.f|4) dict sectionDict
     
 }
 

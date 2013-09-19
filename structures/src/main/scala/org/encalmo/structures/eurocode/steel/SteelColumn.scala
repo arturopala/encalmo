@@ -40,7 +40,7 @@ class SteelColumn(name:String, val steel:Steel, val section:SteelSection, val p_
 extends Calculation(name,"steelColumn") with SteelColumnSymbols {
 
     import steel.{epsi,fy,gammaM1}
-    import section.{A,iy,iz,ctf,ctw,Cf1,Cw2,C2,wy,wz,h,b}
+    import section.{A,iy,iz,C2,wy,wz,h,b}
 
     this add steel
     this add section
@@ -73,7 +73,7 @@ extends Calculation(name,"steelColumn") with SteelColumnSymbols {
             Evaluate(steel.label,section.label,Lcrz,Lcrz,Ned)
         ),
         NumSection(Text("Section data",dictionary),
-            Evaluate(h,b,epsi,ctf,Cf1,ctw,Cw2,C2,A,lambdal)
+            Evaluate(h,b,epsi,C2,A,lambdal)
         ),
         NumSection(Text("Reduction factor for the z-z",dictionary), "PN-EN 1993-1-1 6.3.1.2, 6.3.1.3",
             Evaluate(Lcrz,iz,wz,alphaz,lambdaz,Phiz,chiz)

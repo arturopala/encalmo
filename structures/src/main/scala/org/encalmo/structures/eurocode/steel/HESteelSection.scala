@@ -83,10 +83,6 @@ object HESteelSection extends Catalog[HESteelSection]("HE Section") {
 			Wzpl := Number(p_Wzpl)
 			It := Number(p_It)
 			Iomega := Number(p_Iw)
-			f1 := Number(p_f1)
-			f2 := Number(p_f2)
-			f3 := Number(p_f3)
-			f4 := Number(p_f4)
 		}
 	}
 
