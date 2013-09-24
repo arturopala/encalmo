@@ -9,9 +9,7 @@ import org.encalmo.printer.HtmlTags._
 import scala.collection.mutable.LinkedHashMap
 import scala.collection.mutable.Stack
 import scala.collection._
-import org.encalmo.style.Style
-import org.encalmo.style.DefaultStyle
-import org.encalmo.style.StylesConfig
+import org.encalmo.style.{StylesConfigSymbols, Style, DefaultStyle, StylesConfig}
 import org.encalmo.expression.MultipleInfixOperation
 import org.encalmo.expression.Diff
 import org.encalmo.expression.Transparent
@@ -90,9 +88,7 @@ div {padding:5pt 0 2pt 0}
 				return
 			}
 			case chapter:Chapter => {
-			    output.startb(DIV,"header")
-				chapter.header.visit(visitor=this)
-				output.end(DIV)
+			    output.tag(DIV,"chapter")
 			}
 			case toc:TableOfContents => {
                 if(toc.parent.isDefined){
@@ -157,6 +153,13 @@ div {padding:5pt 0 2pt 0}
                         output.end(SPAN)
                     }
                 })
+            }
+            case req:Require => {
+                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(req,results)
+                if(!ess.isEmpty){
+                    val style = req.parentStylesConfig.flatMap(_.apply(StylesConfigSymbols.REQUIREMENT_TRUE))
+                    blockExprPrintStrategy.print(node,req,ess,style)
+                }
             }
             case expr:BlockExpr => {
                 val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
@@ -234,22 +237,17 @@ div {padding:5pt 0 2pt 0}
 			case _ =>
 		}
 	}
-	
-	/** Expression print strategy */
-	trait ExpressionPrintStrategy {
-		def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]])
-    }
     
     /** Print expression as table */
     class ExpressionPrintAsTableStrategy (
 		traveler:HtmlTextDocumentPrinterTraveler
 	)extends ExpressionPrintStrategy {
     	
-    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
+    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]],rowStyle: Option[Style] = None) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
     		val stylesConfig = expr.parentStylesConfig.get
     		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
-			val tableRowStyle:Option[Style] = stylesConfig.block
+			val tableRowStyle:Option[Style] = rowStyle.orElse(stylesConfig.block)
     		output.start(TABLE,"et")
     		if(expr.isFirstBlockComponent){
 			    parentNumSection.map(x => output.attr("style","space-before:",x.style.paragraph.spaceBefore*0.8))
@@ -258,7 +256,7 @@ div {padding:5pt 0 2pt 0}
     		output.attr("cellspacing","0")
     		output.body()
 			for(es <- ess){
-				output.startb(TR)
+				output.startb(TR,tableRowStyle.map(_.classId))
 				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
 				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle, stylesConfig)
 				sc.foreach(_.next())
@@ -284,7 +282,7 @@ div {padding:5pt 0 2pt 0}
 	        		case Some(x) => x.paragraph.spaceAfter
 	        		case None => 3
 	        	}
-	        	val indent:Int = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
+	        	val indent:Double = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
 		    	val isCell1 = bullet!=null
 		        val isCell2 = isPrintDescription
                 val descStyle = etp1.stylesConfig match {

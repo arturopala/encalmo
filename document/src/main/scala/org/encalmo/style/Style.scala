@@ -58,27 +58,28 @@ case class Style(
 	def useLetterSpacing(d:String) = copy(text = text.useLetterSpacing(d))
 	def useWordSpacing(d:String) = copy(text = text.useWordSpacing(d))
 	
-	def paddingTop(d:Int) = copy(paragraph = paragraph.paddingTop(d))
-	def paddingBottom(d:Int) = copy(paragraph = paragraph.paddingBottom(d))
-	def paddingLeft(d:Int) = copy(paragraph = paragraph.paddingLeft(d))
-	def paddingRight(d:Int) = copy(paragraph = paragraph.paddingRight(d))
+	def paddingTop(d:Double) = copy(paragraph = paragraph.paddingTop(d))
+	def paddingBottom(d:Double) = copy(paragraph = paragraph.paddingBottom(d))
+	def paddingLeft(d:Double) = copy(paragraph = paragraph.paddingLeft(d))
+	def paddingRight(d:Double) = copy(paragraph = paragraph.paddingRight(d))
 	
-	def marginTop(d:Int) = copy(paragraph = paragraph.marginTop(d))
-	def marginBottom(d:Int) = copy(paragraph = paragraph.marginBottom(d))
-	def marginLeft(d:Int) = copy(paragraph = paragraph.marginLeft(d))
-	def marginRight(d:Int) = copy(paragraph = paragraph.marginRight(d))
+	def marginTop(d:Double) = copy(paragraph = paragraph.marginTop(d))
+	def marginBottom(d:Double) = copy(paragraph = paragraph.marginBottom(d))
+	def marginLeft(d:Double) = copy(paragraph = paragraph.marginLeft(d))
+	def marginRight(d:Double) = copy(paragraph = paragraph.marginRight(d))
 	
-	def useSpaceBefore(d:Int) = copy(paragraph = paragraph.useSpaceBefore(d))
-	def useSpaceAfter(d:Int) = copy(paragraph = paragraph.useSpaceAfter(d))
+	def useSpaceBefore(d:Double) = copy(paragraph = paragraph.useSpaceBefore(d))
+	def useSpaceAfter(d:Double) = copy(paragraph = paragraph.useSpaceAfter(d))
 	
-	def indentStart(d:Int) = copy(paragraph = paragraph.indentStart(d))
-	def indentEnd(d:Int) = copy(paragraph = paragraph.indentEnd(d))
+	def indentStart(d:Double) = copy(paragraph = paragraph.indentStart(d))
+	def indentEnd(d:Double) = copy(paragraph = paragraph.indentEnd(d))
 	
 	def usePaddings(bd:BoxDim) = copy(paragraph = paragraph.usePaddings(bd))
 	def useMargins(bd:BoxDim) = copy(paragraph = paragraph.useMargins(bd))
 	
-	def paddings(d:Int) = copy(paragraph = paragraph.usePaddings(BoxDim(d,d,d,d)))
-	def margins(d:Int) = copy(paragraph = paragraph.useMargins(BoxDim(d,d,d,d)))
+	def paddings(d:Double) = copy(paragraph = paragraph.usePaddings(BoxDim(d,d,d,d)))
+	def margins(d:Double) = copy(paragraph = paragraph.useMargins(BoxDim(d,d,d,d)))
+    def borders(d:Double) = copy(paragraph = paragraph.useBorders(BoxDim(d,d,d,d)))
 	
 	def useUnit(u:String) = copy(paragraph = paragraph.useUnit(u),text = text.useUnit(u))
 

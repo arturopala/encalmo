@@ -118,7 +118,7 @@ case class Number(
     	        else if(u1.isSameExpandedUnit(this.unit)) r<r1.convert2(u1,unit) 
     	        else r<r1
     	    }
-	    case _ => Unknown
+	    case _ => super.<(e)
     }
 	override def > (e:Expression): Expression = e match {
 	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r>r1
@@ -127,7 +127,7 @@ case class Number(
                 else if(u1.isSameExpandedUnit(this.unit)) r>r1.convert2(u1,unit) 
                 else r>r1
             }
-	    case _ => Unknown
+	    case _ => super.>(e)
     }
 	override def >= (e:Expression): Expression = e match {
 	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r>=r1
@@ -136,7 +136,7 @@ case class Number(
                 else if(u1.isSameExpandedUnit(this.unit)) r>=r1.convert2(u1,unit) 
                 else r>=r1
             }
-	    case _ => Unknown
+	    case _ => super.>=(e)
     }
 	override def <= (e:Expression): Expression = e match {
 	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r<=r1
@@ -145,7 +145,7 @@ case class Number(
                 else if(u1.isSameExpandedUnit(this.unit)) r<=r1.convert2(u1,unit) 
                 else r<=r1
             }
-	    case _ => Unknown
+	    case _ => super.<=(e)
     }
 	override def <> (e:Expression): Expression = e match {
 	    case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r<>r1
@@ -154,9 +154,18 @@ case class Number(
                 else if(u1.isSameExpandedUnit(this.unit)) r<>r1.convert2(u1,unit) 
                 else r<>r1
             }
-	    case _ => Unknown
+	    case _ => super.<>(e)
     }
-	
+    override def === (e:Expression): Expression = e match {
+        case Number(r1,u1) => if(u1==unit || (u1 eq EmptyUnitOfValue) || (this.unit eq EmptyUnitOfValue)) this.r == r1
+        else {
+            if(u1.isSameBaseAndDimension(unit)) r == r1.convert1(u1,unit)
+            else if(u1.isSameExpandedUnit(this.unit)) r == r1.convert2(u1,unit)
+            else r == r1
+        }
+        case _ => super.===(e)
+    }
+
 	def isInt = r.isInt
 	def toInt:Int = r.toInt
 	def toLong:Long = r.toLong

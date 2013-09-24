@@ -115,13 +115,17 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		}
 	}
 	
-	def appendTableRowStyleAttributes(style:Style, currentStyle:Style):Unit = {
+	def appendTableRowStyleAttributes(currentStyle:Style):Unit = {
 		
 	}
 	
 	def appendTableCellStyleAttributes(style:Style, currentStyle:Style):Unit = {
 		
 	}
+
+    def appendBorderStyleAttributes(style:Style):Unit = {
+
+    }
 	
 	private def resolveFontStyle(fs:FontStyle):String = if(fs.italic){"italic"}else{"normal"}
 	private def resolveFontWeight(fs:FontStyle):String = if(fs.bold){"bold"}else{"normal"}

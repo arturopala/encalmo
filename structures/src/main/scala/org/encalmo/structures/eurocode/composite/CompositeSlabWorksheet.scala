@@ -30,7 +30,7 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
     val profil = IPESteelSection.IPE_450
     val sworzen = HeadedStud.NELSON_S3L_19_100
 
-    val plyta = new CompositeSlabWithProfiledSheeting(
+    val plyta = new CompositeConcreteSlabOnProfiledSteelSheeting(
         name = "Płyta stropowa zespolona beton + blacha trapezowa",
         height = height,
         length = this(L2),

@@ -63,50 +63,92 @@ trait BasicSymbols extends SymbolConfigurator {
 	val ls:Symbol = symbol("lscr")
 	
 	val alpha:Symbol = symbol("alpha")
+    val α = alpha
 	val beta:Symbol = symbol("beta")
+    val β = beta
 	val gamma:Symbol = symbol("gamma")
+    val γ = gamma
 	val delta:Symbol = symbol("delta")
+    val δ = delta
 	val epsi:Symbol = symbol("epsi")
+    val ϵ = epsi
 	val epsiv:Symbol = symbol("epsiv")
+    val ε = epsiv
 	val zeta:Symbol = symbol("zeta")
+    val ζ = zeta
 	val eta:Symbol = symbol("eta")
+    val η = eta
 	val theta:Symbol = symbol("theta")
+    val θ = theta
 	val thetav:Symbol = symbol("thetav")
+    val ϑ = thetav
 	val iota:Symbol = symbol("iota")
+    val ι = iota
 	val kappa:Symbol = symbol("kappa")
+    val κ = kappa
 	val lambda:Symbol = symbol("lambda")
+    val λ = lambda
 	val mu:Symbol = symbol("mu")
+    val μ = mu
 	val nu:Symbol = symbol("nu")
+    val ν = nu
 	val xi:Symbol = symbol("xi")
+    val ξ = xi
 	val pi:Symbol = symbol("pi")
+    val π = pi
 	val piv:Symbol = symbol("piv")
+    val ϖ = piv
 	val rho:Symbol = symbol("rho")
+    val ρ = rho
 	val rhov:Symbol = symbol("rhov")
+    val ϱ = rhov
 	val sigma:Symbol = symbol("sigma")
+    val σ = sigma
 	val sigmav:Symbol = symbol("sigmav")
+    val ς = sigmav
 	val isin:Symbol = symbol("isin")
 	val tau:Symbol = symbol("tau")
+    val τ = tau
 	val upsi:Symbol = symbol("upsi")
+    val υ = upsi
 	val phi:Symbol = symbol("phi")
+    val ϕ = phi
 	val phiv:Symbol = symbol("phiv")
+    val φ = phiv
 	val chi:Symbol = symbol("chi")
+    val χ = chi
 	val psi:Symbol = symbol("psi")
+    val ψ = psi
 	val omega:Symbol = symbol("omega")
+    val ω = omega
 	
 	val Gamma:Symbol = symbol("Gamma")
+    val Γ = Gamma
 	val Delta:Symbol = symbol("Delta")
+    val Δ = Delta
 	val Theta:Symbol = symbol("Theta")
+    val Θ = Theta
 	val Lambda:Symbol = symbol("Lambda")
+    val Λ = Lambda
 	val Xi:Symbol = symbol("Xi")
+    val Ξ = Xi
 	val Pi:Symbol = symbol("Pi")
+    val Π = Pi
 	val Sigma:Symbol = symbol("Sigma")
+    val Σ = Sigma
 	val Upsi:Symbol = symbol("Upsi")
+    val ϒ = Upsi
 	val Phi:Symbol = symbol("Phi")
+    val Φ = Phi
 	val Psi:Symbol = symbol("Psi")
+    val Ψ = Psi
 	val Omega:Symbol = symbol("Omega")
+    val Ω = Omega
 	val nabla:Symbol = symbol("nabla")
-	
+	val ∇ = nabla
+
 	val diam:Symbol = symbol("⌀")
+    val ⌀ = diam
 
     val mi = mu
 	val ni = nu
@@ -166,7 +208,7 @@ object BasicSymbols extends BasicSymbols {
         "Phi" -> "Φ",
         "Psi" -> "Ψ",
         "Omega" -> "Ω",
-        "nabla" -> "nabla",
+        "nabla" -> "∇",
         "eul" -> "e",
         "grav" -> "g",
         "ls" -> "l"

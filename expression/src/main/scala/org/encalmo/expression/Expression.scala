@@ -118,17 +118,17 @@ trait Expression extends TreeNode[Expression] {
         case _ => Neg(this)
     }
 
-    def <(e: Expression): Expression = Unknown
+    def <(e: Expression): Expression = Assert(this,Relation.LESS,e,this.unit)
 
-    def >(e: Expression): Expression = Unknown
+    def <=(e: Expression): Expression = Assert(this,Relation.LESS_OR_EQUAL,e,this.unit)
 
-    def >=(e: Expression): Expression = Unknown
+    def >(e: Expression): Expression = Assert(this,Relation.GREATER,e,this.unit)
 
-    def <=(e: Expression): Expression = Unknown
+    def >=(e: Expression): Expression = Assert(this,Relation.GREATER_OR_EQUAL,e,this.unit)
 
-    def <>(e: Expression): Expression = BooleanValue(this != e)
+    def <>(e: Expression): Expression = Assert(this,Relation.NOT_EQUAL,e,this.unit)
 
-    def ===(e: Expression): Expression = BooleanValue(this == e)
+    def ===(e: Expression): Expression = Assert(this,Relation.EQUAL,e,this.unit)
 
     def printable = true
 

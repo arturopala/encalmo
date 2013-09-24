@@ -7,8 +7,7 @@ import org.encalmo.expression.SymbolLike
 import org.encalmo.printer.XslFoTags._
 import org.encalmo.printer.expression._
 import org.encalmo.printer._
-import org.encalmo.style.Style
-import org.encalmo.style.DefaultStyle
+import org.encalmo.style.{StylesConfigSymbols, Style, DefaultStyle}
 import org.encalmo.expression.MultipleInfixOperation
 import org.encalmo.expression.Transparent
 import org.encalmo.expression.Expression
@@ -102,7 +101,7 @@ extends TreeVisitor[DocumentComponent] {
 					chapter.footer.visit(visitor=this)
 					isInFlow = false
 					output.startb(INLINE)
-					output.elem(PAGE_NUMBER)
+					output.tag(PAGE_NUMBER)
 					output.end(INLINE)
 					output.end(BLOCK)
 					output.end(STATIC_CONTENT)
@@ -229,6 +228,13 @@ extends TreeVisitor[DocumentComponent] {
 							}
 						})
 					}
+                    case req:Require => {
+                        val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(req,results)
+                        if(!ess.isEmpty){
+                            val style = req.parentStylesConfig.flatMap(_.apply(StylesConfigSymbols.REQUIREMENT_TRUE))
+                            blockExprPrintStrategy.print(node,req,ess,style)
+                        }
+                    }
 					case expr:BlockExpr => {
 						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
 						if(!ess.isEmpty){
@@ -307,25 +313,17 @@ extends TreeVisitor[DocumentComponent] {
 			case _ =>
 		}
 	}
-	
-	/** Expression print strategy */
-	trait ExpressionPrintStrategy {
-		def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]])
-    }
     
     /** Print expression as table */
     class ExpressionPrintAsTableStrategy (
 		traveler:XslFoTextDocumentPrinterTraveler
-	)extends ExpressionPrintStrategy {
+	) extends ExpressionPrintStrategy {
     	
-    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
+    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]],rowStyle: Option[Style] = None) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
     		val styleConfigOpt = expr.parentStylesConfig 
     		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
-			val tableRowStyle:Option[Style] = styleConfigOpt match {
-				case Some(styleConfig) => styleConfig.block 
-				case None => None
-			}
+			val tableRowStyle:Option[Style] = rowStyle.orElse(styleConfigOpt.flatMap(_.block))
     		
     		output.start(TABLE)
     		output.attr("table-layout","fixed")
@@ -369,7 +367,7 @@ extends TreeVisitor[DocumentComponent] {
 	        		case Some(x) => x.paragraph.spaceAfter
 	        		case None => 3
 	        	}
-	        	val indent:Int = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
+	        	val indent:Double = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
 		    	val isCell1 = true
 		        val isCell2 = isPrintDescription
                 val descStyle = etp1.stylesConfig match {
@@ -384,9 +382,9 @@ extends TreeVisitor[DocumentComponent] {
 	        	val twoTableRows = !secondTableRow && (isCell2 && twoRows && leafs<15)
 		    	if(isCell1){
 					output.start(TABLE_CELL)
-                    output.attr("border-bottom","0.13mm solid black")
-                    output.attr("border-top","0.13mm solid black")
-                    output.attr("border-left","0.13mm solid black")
+                    output.attr("border-bottom",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
+                    output.attr("border-top",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
+                    output.attr("border-left",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
 					output.body()
 			        output.start(BLOCK)
 			        output.attr("padding-top",paddingTop,"pt")
@@ -402,8 +400,8 @@ extends TreeVisitor[DocumentComponent] {
 		        if(isCell2 && !twoRows){
 			        output.start(TABLE_CELL)
 			        if(!twoTableRows) {
-			            output.attr("border-bottom","0.13mm solid black")
-			            output.attr("border-top","0.13mm solid black")
+			            output.attr("border-bottom",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
+			            output.attr("border-top",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
 			        }
 			        output.body()
 			        output.start(BLOCK)
@@ -426,9 +424,9 @@ extends TreeVisitor[DocumentComponent] {
 		        	output.attr("number-columns-spanned",ncs)
                 }
 				if(!twoTableRows){
-				    output.attr("border-bottom","0.13mm solid black")
-                    output.attr("border-top","0.13mm solid black")
-                    output.attr("border-right","0.13mm solid black")
+				    output.attr("border-bottom",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
+                    output.attr("border-top",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
+                    output.attr("border-right",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
 				}
 			    output.attr("vertical-align","middle")
 		        output.body()

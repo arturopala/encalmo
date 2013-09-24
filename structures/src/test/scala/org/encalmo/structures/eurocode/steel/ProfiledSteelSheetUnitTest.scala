@@ -5,7 +5,7 @@ import org.junit.Test
 import org.encalmo.structures.Worksheet
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.document.{NumSection, Evaluate, Section}
+import org.encalmo.document.{Require, NumSection, Evaluate, Section}
 
 class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
 
@@ -33,8 +33,6 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
         }
         val results = worksheet.results
         worksheet.printHtml(results)("target/test-results/" + worksheet.name + ".html")
-        worksheet.printXslFo(results)("target/test-results/" + worksheet.name + ".fo")
-        worksheet.printPdf(results)("target/test-results/" + worksheet.name + ".pdf")
     }
 
     @Test
@@ -59,7 +57,10 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
             ΓV := assertLessThenOrEqualTo(abs(M/MRd),1)
 
             override val document = defaultDocument(
-                Evaluate(l,q,M,MRd,ΓV)
+                Section(
+                    Evaluate(l,q,M,MRd),
+                    Require(ΓV)
+                )
             )
         }
         val results = worksheet.results

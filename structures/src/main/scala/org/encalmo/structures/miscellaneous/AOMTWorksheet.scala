@@ -11,7 +11,7 @@ import org.encalmo.structures.eurocode.steel._
 import org.encalmo.structures.Worksheet
 import org.encalmo.document.TableOfContents
 import org.encalmo.structures.eurocode.fasteners.HeadedStud
-import org.encalmo.structures.eurocode.composite.{BeamOfCompositeSlab, CompositeSlabWithProfiledSheeting}
+import org.encalmo.structures.eurocode.composite.{BeamOfCompositeSlab, CompositeConcreteSlabOnProfiledSteelSheeting}
 
 class AOMTWorksheet extends Worksheet("aomt") {
 
@@ -31,7 +31,7 @@ class AOMTWorksheet extends Worksheet("aomt") {
     val profil = IPESteelSection.IPE_450
     val sworzen = HeadedStud.NELSON_S3L_19_100
 
-    val plyta = new CompositeSlabWithProfiledSheeting(
+    val plyta = new CompositeConcreteSlabOnProfiledSteelSheeting(
         name = "Płyta stropowa zespolona beton + blacha trapezowa",
         height = height,
         length = this(L2),
