@@ -1,5 +1,9 @@
 package org.encalmo.expression
 
+/** Operation selecting one of many arguments */
+trait SelectOneOperation extends OperationN
+/** Operation aggregating all arguments */
+trait AggregateOperation extends OperationN
 
 /**
  * Operation with N-arguments

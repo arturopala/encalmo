@@ -36,7 +36,7 @@ object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
  * Travels and prints document as html5 text 
  * @author artur.opala
  */
-class HtmlTextDocumentPrinterTraveler(output:HtmlOutput, results: Results)
+class HtmlTextDocumentPrinterTraveler(output:HtmlOutput, results: Results, counter: Option[SectionCounter] = None)
 extends TreeVisitor[DocumentComponent] {
 
 	val locale = output.locale
@@ -61,18 +61,14 @@ div {padding:5pt 0 2pt 0}
 	
 	/** Section counters map */
 	private val counterMap:mutable.LinkedHashMap[Enumerator,SectionCounter] = mutable.LinkedHashMap[Enumerator,SectionCounter]()
+    counter.foreach(c => counterMap.put(c.enumerator,c))
 	
 	private val styleStack:mutable.Stack[Style] = mutable.Stack()
 	styleStack.push(DefaultStyle)
 	
 	/** Returns counter linked to the enumerator */
 	protected def counterFor(en:Enumerator):SectionCounter = {
-		var sco = counterMap.get(en)
-		if(!sco.isDefined){
-			sco = Some(SectionCounter(en))
-			counterMap.put(en,sco.get)
-		}
-		sco.get
+		counterMap.getOrElseUpdate(en,SectionCounter(en))
 	}
 	
 	override def onEnter(node:Node[DocumentComponent]):Unit = {
@@ -99,9 +95,10 @@ div {padding:5pt 0 2pt 0}
 				output.end(DIV)
 			}
 			case toc:TableOfContents => {
-                if(toc.parentDocument.isDefined){
+                if(toc.parent.isDefined){
+                    val counter = toc.parentOfType(classOf[NumSection]).map(ns => counterFor(ns.enumerator).copy())
                     output.startb(DIV,"toc")
-                    toc.parentDocument.get.visit(visitor = new HtmlTableOfContentsPrinterTraveler(output, results))
+                    toc.parent.get.visitChildren(visitor = new HtmlTableOfContentsPrinterTraveler(output, results, toc.levels, counter))
                     output.end(DIV)
                 }
             }
@@ -136,14 +133,6 @@ div {padding:5pt 0 2pt 0}
             case ch:Character => {
                 output.append(ch)
             }
-/*            case ttt:Text => {
-                val first = node.parent.element.isInstanceOf[NumSection] &&
-                    node.parent.element.asInstanceOf[NumSection].title==None &&
-                    node.element.isFirstInlineComponent
-                if(first)output.startb(SPAN,"caption")
-                output.append()
-                if(first)output.end(SPAN)
-            }*/
             case t:TextContent => {
                 if(t.customStyle!=null){
                     output.startb(SPAN,t.customStyleClassId)
@@ -191,6 +180,14 @@ div {padding:5pt 0 2pt 0}
                 if(symb.customStyle!=null){
                     output.end(SPAN)
                 }
+            }
+            case image:Image => {
+                output.start(DIV,image.customStyleClassId)
+                output.body()
+                output.start(IMG)
+                output.attr("src",image.source)
+                output.end()
+                output.end(DIV)
             }
             case _ => {}
 		}
@@ -370,11 +367,17 @@ div {padding:5pt 0 2pt 0}
 			    }
 			    case _ => {
 			        if(span) output.startb(SPAN, etp.styleClassId)
-                    mathOutput.open
-                    if(etp.prefix!=null && etp.prefix!="") mathOutput.mo(etp.prefix,MathMLTags.INFIX,null,MathMLTags.THICKMATHSPACE)
+                    mathOutput.open()
+                    if(etp.prefix!=null && etp.prefix!="") {
+                        mathOutput.mo(etp.prefix,MathMLTags.INFIX,null,MathMLTags.THICKMATHSPACE)
+                        if(etp.prefix=="⇒")mathOutput.append(MathMLTags.ENTITY_THIN_SPACE)
+                    }
                     etp.expression.visit(visitor = ept, parentNode = parentNode, position = position)
-                    if(etp.suffix!=null && etp.suffix!="") mathOutput.mo(etp.suffix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,null)
-                    mathOutput.close
+                    if(etp.suffix!=null && etp.suffix!="") {
+                        if(etp.suffix=="⇒")mathOutput.append(MathMLTags.ENTITY_THIN_SPACE)
+                        mathOutput.mo(etp.suffix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,null)
+                    }
+                    mathOutput.close()
                     if(span) output.end(SPAN)
 			    }
 			}
@@ -383,32 +386,37 @@ div {padding:5pt 0 2pt 0}
 	
 }
 
-class HtmlTableOfContentsPrinterTraveler(output:HtmlOutput, results: Results)
-extends HtmlTextDocumentPrinterTraveler(output, results) {
+class HtmlTableOfContentsPrinterTraveler(output:HtmlOutput, results: Results, levels: Int = 3, counter: Option[SectionCounter] = None)
+extends HtmlTextDocumentPrinterTraveler(output, results, counter) {
+
+    val maxLevel = levels + counter.map(_.currentLevel).getOrElse(0)
+    val expectedEnumerator = counter.map(_.enumerator).getOrElse(null)
     
     override def onEnter(node:Node[DocumentComponent]):Unit = {
         node.element match {
-            case ns:NumSection => {
+            case ns:NumSection if ns.enumerator eq expectedEnumerator => {
                 val en:Enumerator = ns.enumerator
                 val sc = counterFor(en)
-                val label = sc.current.mkString("",".",".")
-                output.startb(SPAN,"toc"+sc.currentLevel)
-                output.start(ANCHOR)
-                output.attr("href","#",label)
-                output.body()
-                output.append(label,output.SPACE)
-                if(ns.title.isDefined){
-                    output.append(ns.title.get)
-                }
-                ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
-                    case t:TextContent => {
-                        output.append(t.translate(locale))
-                        output.append(output.SPACE)
+                if(sc.currentLevel < maxLevel){
+                    val label = sc.current.mkString("",".",".")
+                    output.startb(SPAN,"toc"+sc.currentLevel)
+                    output.start(ANCHOR)
+                    output.attr("href","#",label)
+                    output.body()
+                    output.append(label,output.SPACE)
+                    if(ns.title.isDefined){
+                        output.append(ns.title.get)
                     }
-                    case _ =>
-                })
-                output.end(ANCHOR)
-                output.end(SPAN)
+                    ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
+                        case t:TextContent => {
+                            output.append(t.translate(locale))
+                            output.append(output.SPACE)
+                        }
+                        case _ =>
+                    })
+                    output.end(ANCHOR)
+                    output.end(SPAN)
+                }
                 sc.in() // counter level increment
             }
             case _ => Unit
@@ -419,9 +427,9 @@ extends HtmlTextDocumentPrinterTraveler(output, results) {
         node.element match {
             case ns:NumSection => {
                 val sc = counterFor(ns.enumerator)
-                sc.out() //counter level decrement
-                sc.next() // counter increment
-            }
+                    sc.out() //counter level decrement
+                    sc.next() // counter increment
+                }
             case _ =>
         }
     }

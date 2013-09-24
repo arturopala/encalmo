@@ -18,6 +18,7 @@ object XslFoTags {
 	val BLOCK 				= "block"
 	val INLINE 				= "inline"
 	val INSTREAM_FOREIGN_OBJECT = "instream-foreign-object"
+    val EXTERNAL_GRAPHIC = "external-graphic"
     val LEADER              = "leader"
     val LIST_BLOCK          = "list-block"
     val LIST_ITEM           = "list-item"

@@ -134,6 +134,18 @@ the location of this file.
 <font kerning="yes" embed-url="STIXGeneralItalic.ttf">
    <font-triplet name="Stix" style="italic" weight="normal"/>
 </font>
+<!-- font kerning="yes" embed-url="STIXGeneral-Regular.pfb">
+   <font-triplet name="Stix" style="normal" weight="normal"/>
+</font>
+<font kerning="yes" embed-url="STIXGeneral-Bold.pfb">
+   <font-triplet name="Stix" style="normal" weight="bold"/>
+</font>
+<font kerning="yes" embed-url="STIXGeneral-BoldItalic.pfb">
+   <font-triplet name="Stix" style="italic" weight="bold"/>
+</font>
+<font kerning="yes" embed-url="STIXGeneral-Italic.pfb">
+   <font-triplet name="Stix" style="italic" weight="normal"/>
+</font -->
 </fonts>
 
     </renderer>

@@ -132,11 +132,24 @@ trait Expression extends TreeNode[Expression] {
 
     def printable = true
 
-    def nounit: Expression = NoUnit(this)
+    def nounit: NoUnit = NoUnit(this)
 
-    def setunit(u: UnitOfValue): Expression = SetUnit(this, u)
+    def as(unit: UnitOfValue): SetUnit = SetUnit(this, unit)
 
-    def setunit(s: String): Expression = SetUnit(this, SI(s).getOrElse(EmptyUnitOfValue))
+    def as(unit: String): SetUnit = SetUnit(this, SI(unit).getOrElse(EmptyUnitOfValue))
+
+    def ##(description:String): Expression = Annotated(this,description)
+    def ##(description:Option[String]): Expression = Annotated(this,description)
+
+    protected def concatenate(args: Option[String]*): Option[String] = {
+        args.fold(None)((ac,v) => ac match {
+            case None => v
+            case some => v match {
+                case None => some
+                case Some(d) => some.map(_ +" "+d)
+            }
+        })
+    }
 
 }
 

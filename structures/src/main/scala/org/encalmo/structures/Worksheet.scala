@@ -36,38 +36,41 @@ abstract class Worksheet(name: String) extends Calculation(name) {
         )
     )
 
-    def printHtml(path: String): Results =  {
+    def printHtml(path: String): Results =  printHtml(results)(path)
+
+    def printHtml(results: Results)(path: String): Results =  {
         val layout = Predefined.layout
         val prefs: HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path.fromString("src/main/resources/style.css"))
         val output: HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"), prefs)
         output.open()
-        val res = results
-        HtmlTextDocumentPrinter.print(document)(output)(res)
+        HtmlTextDocumentPrinter.print(document)(output)(results)
         output.close()
         output.saveToFile(new java.io.File(path))
-        res
+        results
     }
 
-    def printXslFo(path: String): Results = {
+    def printXslFo(path: String): Results = printXslFo(results)(path)
+
+    def printXslFo(results: Results)(path: String): Results = {
         val layout = Predefined.layout
         val output: XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open()
-        val res = results
-        XslFoTextDocumentPrinter.print(document)(output)(res)
+        XslFoTextDocumentPrinter.print(document)(output)(results)
         output.close()
         output.saveToFile(new java.io.File(path))
-        res
+        results
     }
 
-    def printPdf(path: String): Results = {
+    def printPdf(path: String): Results = printPdf(results)(path)
+
+    def printPdf(results: Results)(path: String): Results = {
         val layout = Predefined.layout
         val output: XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open()
-        val res = results
-        XslFoTextDocumentPrinter.print(document)(output)(res)
+        XslFoTextDocumentPrinter.print(document)(output)(results)
         output.close()
         FOPHelper.buildPDF(output.getResult, path)
-        res
+        results
     }
 
     def printText(path: String): Results = {

@@ -43,8 +43,8 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
         p_Gsk = 1 unit "kN/m2",
         p_qk = this(pc),
         p_Fk =  10 unit SI.kN,
-        p_dmesh = 8,
-        p_sd = 0.15,
+        p_dmesh = 8 unit SI.mm,
+        p_sd = 150 unit SI.mm,
         p_ss = profil(profil.b)
     )
 

@@ -11,6 +11,7 @@ trait Visitable[A<:AnyRef] {
 	 * Visits internal structure of the object with visitor.
 	 */
 	def visit(visitor:TreeVisitor[A], parent:Node[A] = null, position:Int = 0):Unit
+    def visitChildren(visitor:TreeVisitor[A], parentNode:Node[A] = null, position:Int=0):Unit
 	
 	/**
 	 * Select element from tree 

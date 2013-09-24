@@ -7,6 +7,7 @@ import org.encalmo.calculation.{ResultsCache, Context}
 import org.encalmo.style.StylesConfig
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
+import org.encalmo.common.Translator
 
 /**
  * Assertion class
@@ -44,7 +45,7 @@ abstract class Assertion(
 		val results = expressions.map(context.evaluate(_)(cache))
 		val ob = assert(results)
 		if(text!=null){
-			seq += Text("requirement","document")
+			seq += Text("requirement",Translator.defaultDictionary)
 			seq += Character.SPACE
 			seq += Text(text)
 			seq += Character.SPACE
@@ -58,7 +59,7 @@ abstract class Assertion(
                 }
 			}
 			case None => "unknown"
-		},"document")
+		},Translator.defaultDictionary)
 		seq += Text(":")
 		seq += Character.LONGSPACE
 		seq += Symb(expressions.head)

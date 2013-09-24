@@ -29,14 +29,19 @@ trait BoltSymbols extends SymbolConfigurator {
     val t = symbol(BasicSymbols.t) unit "mm" dict boltDict  //Grubość cieńszej części łączonej
     val fu = symbol(BasicSymbols.f|"u") unit SI.MPa dict boltDict //Wytrzymałość na rozciąganie stali części łączonej
 
-    val e1 = symbol(BasicSymbols.e|1) unit "mm" dict boltDict  //Minimalna odległość czołowa od osi otworu
-    val e2 = symbol(BasicSymbols.e|2) unit "mm" dict boltDict  //Minimalna odległość boczna od osi otworu
-    val e3 = symbol(BasicSymbols.e|3) unit "mm" dict boltDict  //Minimalna odległość czołowa od osi otworu owalnego
-    val e4 = symbol(BasicSymbols.e|4) unit "mm" dict boltDict  //Minimalna odległość boczna od osi otworu owalnego
-    val e1max = symbol(BasicSymbols.e|"1,max") unit "mm" dict boltDict  //Maksymalna odległość czołowa od osi otworu
-    val e2max = symbol(BasicSymbols.e|"2,max") unit "mm" dict boltDict  //Maksymalna odległość boczna od osi otworu
-    val p1 = symbol(BasicSymbols.p|1) unit "mm" dict boltDict  //Minimalny rozstaw podłużny osi otworów w elementach ściskanych
-    val p2 = symbol(BasicSymbols.p|2) unit "mm" dict boltDict  //Minimalny rozstaw poprzeczny osi otworów
+    val e1 = symbol(BasicSymbols.e|1) unit "mm" dict boltDict  //Projektowana odległość czołowa osi otworu od krawędzi
+    val e2 = symbol(BasicSymbols.e|2) unit "mm" dict boltDict  //Projektowana odległość boczna osi otworu od krawędzi
+    val p1 = symbol(BasicSymbols.p|1) unit "mm" dict boltDict  //Projektowany rozstaw podłużny osi otworów
+    val p2 = symbol(BasicSymbols.p|2) unit "mm" dict boltDict  //Projektowany rozstaw poprzeczny osi otworów
+
+    val e1min = symbol(BasicSymbols.e|"1,min") unit "mm" dict boltDict  //Minimalna odległość czołowa osi otworu od krawędzi
+    val e2min = symbol(BasicSymbols.e|"2,min") unit "mm" dict boltDict  //Minimalna odległość boczna osi otworu od krawędzi
+    val e3min = symbol(BasicSymbols.e|"3,min") unit "mm" dict boltDict  //Minimalna odległość czołowa osi otworu owalnego od krawędzi
+    val e4min = symbol(BasicSymbols.e|"4,min") unit "mm" dict boltDict  //Minimalna odległość boczna osi otworu owalnego od krawędzi
+    val e1max = symbol(BasicSymbols.e|"1,max") unit "mm" dict boltDict  //Maksymalna odległość czołowa osi otworu od krawędzi
+    val e2max = symbol(BasicSymbols.e|"2,max") unit "mm" dict boltDict  //Maksymalna odległość boczna osi otworu od krawędzi
+    val p1min = symbol(BasicSymbols.p|"1,min") unit "mm" dict boltDict  //Minimalny rozstaw podłużny osi otworów w elementach ściskanych
+    val p2min = symbol(BasicSymbols.p|"2,min") unit "mm" dict boltDict  //Minimalny rozstaw poprzeczny osi otworów
     val p1max = symbol(BasicSymbols.p|"1,max") unit "mm" dict boltDict  //Maksymalny rozstaw podłużny osi otworów w elementach ściskanych
     val p2max = symbol(BasicSymbols.p|"2,max") unit "mm" dict boltDict  //Maksymalny rozstaw poprzeczny osi otworów
     val p10max = symbol(BasicSymbols.p|"1,0,max") unit "mm" dict boltDict  //Maksymalny rozstaw podłużny zewnętrznego szeregu osi otworów w elementach rozciąganych
@@ -103,12 +108,12 @@ class HexagonHeadBolt(name: String, val boltClass: BoltClass, p_d:Int, p_L:Expre
     t := Number(10,SI.mm)
     fu := 510 unit SI.MPa
 
-    e1 := 1.2*d0
-    e2 := 1.2*d0
-    e3 := 1.5*d0
-    e4 := 1.5*d0
-    p1 := 2.2*d0
-    p2 := 2.4*d0
+    e1min := 1.2*d0
+    e2min := 1.2*d0
+    e3min := 1.5*d0
+    e4min := 1.5*d0
+    p1min := 2.2*d0
+    p2min := 2.4*d0
 
     e1max := 4*t+Number(40,SI.mm)
     e2max := 4*t+Number(40,SI.mm)
@@ -116,6 +121,11 @@ class HexagonHeadBolt(name: String, val boltClass: BoltClass, p_d:Int, p_L:Expre
     p2max := min(14*t,Number(200,SI.mm))
     p10max := min(14*t,Number(200,SI.mm))
     p1imax := min(28*t,Number(200,SI.mm))
+
+    e1 := e1min
+    e2 := e2min
+    p1 := p1min
+    p2 := p2min
 
     gammaM2 := 1.25
     gammaM3 := 1.25
@@ -144,7 +154,7 @@ class HexagonHeadBolt(name: String, val boltClass: BoltClass, p_d:Int, p_L:Expre
 		Evaluate(d,d0,s,e,k,m,w,L,b,bv,t),
         AssertionRangeLELE("doboru średnicy śruby",1.5*t,d,2.5*t),
         "Odległości od krawędzi i rozstawy otworów",
-        Evaluate(e1,e2,e3,e4,p1,p2),
+        Evaluate(e1,e2,e3min,e4min,p1,p2),
         "Wytrzymałość i nośność",
         Evaluate(A,fyb,fub,gammaM2,FpCd,FvRd,FvsRd,fu,k10,k1i,k1,alphab0,alphabi,alphab,FbRd,FtRd,BpRd,FsRdC)
 	)
@@ -153,6 +163,9 @@ class HexagonHeadBolt(name: String, val boltClass: BoltClass, p_d:Int, p_L:Expre
 
 /** HexagonHeadBolt library */
 object HexagonHeadBolt {
+
+    def series: Seq[Double] = Seq(4,5,6,8,10,12,14,16,18,20,22,24,27,30,33,36,39,42,45,48,52,56,60,64)
+    def series2: Seq[Double] = Seq(5,6,8,10,12,16,20,24,30,36,42,48,56,64)
 	
 	def  M4(clazz:BoltClass, p_L: Expression) = new HexagonHeadBolt("M4", clazz,4, p_L, 14,  0,  0,  7.66, 2.8,   7, 3.2, 0.8, 9,0.5)
     def  M5(clazz:BoltClass, p_L: Expression) = new HexagonHeadBolt("M5", clazz,5, p_L, 16,  0,  0,  8.79, 3.5,   8,  4, 1.0, 10,0.5)

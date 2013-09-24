@@ -17,6 +17,7 @@ import scala.collection.mutable
 object Translator {
     
     val cache:mutable.Map[(Locale,String),Option[Properties]] = mutable.Map()
+    val defaultDictionary = "document"
     
     def init(locale:Locale, dictionary:String):Option[Properties] = {
             val file = find(locale,dictionary)
@@ -59,8 +60,16 @@ object Translator {
         case ':' => '_'
         case _ => x
     })
+
+    def translate(key:Option[String], locale:java.util.Locale, dictionary:Option[String]): Option[String] = {
+        key.flatMap(translate(_,locale,dictionary))
+    }
+
+    def translate(key:String, locale:java.util.Locale, dictionary:Option[String]): Option[String] = {
+        dictionary.flatMap(translate(key,locale,_))
+    }
     
-    def translate(key:String, locale:java.util.Locale, dictionary:String):Option[String] = {
+    def translate(key:String, locale:java.util.Locale, dictionary:String): Option[String] = {
         bundle(locale, dictionary) match {
             case Some(rb) => {
                 get(rb,key) match {
@@ -71,8 +80,16 @@ object Translator {
             case None => None
         }
     }
+
+    def hasTranslation(key:Option[String], locale:java.util.Locale, dictionary:Option[String]): Boolean = {
+        key.exists(hasTranslation(_, locale, dictionary))
+    }
+
+    def hasTranslation(key:String, locale:java.util.Locale, dictionary:Option[String]): Boolean = {
+        dictionary.exists(hasTranslation(key, locale, _))
+    }
     
-    def hasTranslation(key:String, locale:java.util.Locale, dictionary:String):Boolean = {
+    def hasTranslation(key:String, locale:java.util.Locale, dictionary:String): Boolean = {
         bundle(locale, dictionary) match {
             case Some(rb) => {
                 rb.containsKey(key) || rb.containsKey(normalizedKey(key))
@@ -81,7 +98,7 @@ object Translator {
         }
     }
     
-    def get(rb:Properties,key:String):Option[String] = {
+    def get(rb:Properties,key:String): Option[String] = {
         Option(rb.getProperty(key))
     }
 

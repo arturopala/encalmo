@@ -38,6 +38,10 @@ trait SectionSymbols extends SymbolConfigurator {
     val Iomega = symbol(BasicSymbols.I|BasicSymbols.omega) unit "cm6" dict sectionDict
     val It = symbol(BasicSymbols.I|BasicSymbols.t) unit "cm4" dict sectionDict
     val alpha = symbol(BasicSymbols.alpha) unit SI.deg dict sectionDict
+    val Iu = symbol(BasicSymbols.I|"u") unit "cm4" dict sectionDict
+    val Iv = symbol(BasicSymbols.I|"v") unit "cm4" dict sectionDict
+    val iu = symbol(BasicSymbols.i|"u") unit "cm" dict sectionDict
+    val iv = symbol(BasicSymbols.i|"v") unit "cm" dict sectionDict
     //Mass
     val m = symbol(BasicSymbols.m) unit "kg/m" dict sectionDict
     
@@ -53,6 +57,12 @@ abstract class Section(val name:String) extends MapContext with SectionSymbols {
 
     Imin := min(Iz,Iy)
     imin := min(iy,iz)
+
+    Iu := Iy
+    Iv := Iz
+    iu := iy
+    iv := iz
+    alpha := ZERO
 
     def label = this(ID)
 
