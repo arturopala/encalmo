@@ -28,18 +28,6 @@ abstract class Assertion(
 	def operator:Seq[Character]
 	def assert(results:Seq[Expression]):Option[Boolean]
 	
-	/*override def myStyle:Style = {
-		val results = expressions.map(calc.evaluate)
-		val ob = assert(results)
-		ob match {
-			case Some(b) => b match {
-				case true => trueStyle
-				case false => falseStyle
-			}
-			case None => unknownStyle
-		}
-	}*/
-	
 	def evaluate(cache: ResultsCache):(Option[Boolean],Seq[DocumentComponent]) = {
 		val seq:ListBuffer[DocumentComponent] = ListBuffer()
 		val results = expressions.map(context.evaluate(_)(cache))

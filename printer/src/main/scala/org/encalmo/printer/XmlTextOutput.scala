@@ -145,10 +145,15 @@ extends TextOutput(locale,buffer) {
 	/**
 	 * Appends short element's tag to the buffer
 	 */
-	def elem(name:String):Unit = {
+	def tag(name:String):Unit = {
 		start(name)
 		end()
 	}
+
+    def tag(name:String, classId:String):Unit = {
+        start(name, classId)
+        end()
+    }
 	
 	/**
 	 * Appends attribute's start to the buffer

@@ -108,7 +108,7 @@ class BeamOfCompositeSlab(
 	val length:Expression,
 	val section:IBeamSteelSection,
 	val steel:Steel,
-	val slab:CompositeSlabWithProfiledSheeting,
+	val slab:CompositeConcreteSlabOnProfiledSteelSheeting,
 	val stud:HeadedStud,
     p_gammaG: Expression,
     p_gammaQ: Expression

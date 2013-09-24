@@ -16,7 +16,7 @@ class Evaluate(
         expressions:Expression*)(implicit context: Context)
 extends BlockExpr(customStyle,expressions:_*){
 	
-	override def toString = "Evaluate("+customStyle+","+styleOfResolved+","+styleOfEvaluated+","+context+","+expressions.mkString(",")+")"
+	override def toString = "Evaluate("+customStyle+","+styleOfResolved+","+styleOfEvaluated+","+isPrintDescription+","+expressions.mkString(",")+")("+context+")"
 	
 }
 

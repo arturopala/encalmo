@@ -35,6 +35,9 @@ case class StylesConfig(
 	var assert_true:Option[Style] = None
 	var assert_false:Option[Style] = None
 	var assert_unknown:Option[Style] = None
+    var requirement_true:Option[Style] = None
+    var requirement_false:Option[Style] = None
+    var requirement_unknown:Option[Style] = None
 	
 	def update(sym:StylesConfigSymbols.Value,style:Style) = {
 		sym match {
@@ -62,6 +65,9 @@ case class StylesConfig(
 			case StylesConfigSymbols.ASSERTION_FALSE => assert_false = Option(style)
 			case StylesConfigSymbols.ASSERTION_TRUE => assert_true = Option(style)
 			case StylesConfigSymbols.ASSERTION_UNKNOWN => assert_unknown = Option(style)
+            case StylesConfigSymbols.REQUIREMENT_FALSE => requirement_false = Option(style)
+            case StylesConfigSymbols.REQUIREMENT_TRUE => requirement_true = Option(style)
+            case StylesConfigSymbols.REQUIREMENT_UNKNOWN => requirement_unknown = Option(style)
 			case _ => Unit
 		}
 	}
@@ -92,6 +98,9 @@ case class StylesConfig(
             case StylesConfigSymbols.ASSERTION_FALSE => assert_false
 			case StylesConfigSymbols.ASSERTION_TRUE => assert_true
 			case StylesConfigSymbols.ASSERTION_UNKNOWN => assert_unknown
+            case StylesConfigSymbols.REQUIREMENT_FALSE => requirement_false
+            case StylesConfigSymbols.REQUIREMENT_TRUE => requirement_true
+            case StylesConfigSymbols.REQUIREMENT_UNKNOWN => requirement_unknown
             case _ => None
         }
     }
@@ -120,7 +129,10 @@ case class StylesConfig(
         level9,
         assert_false,
         assert_true,
-        assert_unknown
+        assert_unknown,
+        requirement_false,
+        requirement_true,
+        requirement_unknown
     )
 
 	lazy val part:mutable.Map[StylesConfigSymbols.Value,Option[Style]] = mutable.Map(
@@ -184,6 +196,9 @@ case class StylesConfig(
             case StylesConfigSymbols.ASSERTION_FALSE => "assertfalse"
 			case StylesConfigSymbols.ASSERTION_TRUE => "asserttrue"
 			case StylesConfigSymbols.ASSERTION_UNKNOWN => "assertunknown"
+            case StylesConfigSymbols.REQUIREMENT_FALSE => "reqfalse"
+            case StylesConfigSymbols.REQUIREMENT_TRUE => "reqtrue"
+            case StylesConfigSymbols.REQUIREMENT_UNKNOWN => "requnknown"
             case _ => ""
         }
     }
@@ -197,5 +212,5 @@ object StylesConfigSymbols extends Enumeration {
 	type StylesConfigSymbols = Value
 	val DEFAULT,EXPRESSION,EXPR_ROW,EXPR_SYMBOL,EXPR_UNRESOLVED,EXPR_SUBSTITUTED,EXPR_PARTIALLY_EVALUATED,EXPR_EVALUATED,EXPR_NUMBERS,EXPR_SYMB_DESCRIPTION = Value
 	val NUMSECTION,NUMSECT_LEVEL0,NUMSECT_LEVEL1,NUMSECT_LEVEL2,NUMSECT_LEVEL3,NUMSECT_LEVEL4,NUMSECT_LEVEL5,NUMSECT_LEVEL6,NUMSECT_LEVEL7,NUMSECT_LEVEL8,NUMSECT_LEVEL9 = Value
-	val ASSERTION_TRUE,ASSERTION_FALSE,ASSERTION_UNKNOWN = Value
+	val ASSERTION_TRUE,ASSERTION_FALSE,ASSERTION_UNKNOWN,REQUIREMENT_TRUE,REQUIREMENT_FALSE,REQUIREMENT_UNKNOWN = Value
 }

@@ -54,7 +54,7 @@ math {white-space: nowrap; padding: 0; margin: 1px 0;}
 .comment {font-size:0.94em;}
 .comment1 {font-size:0.83em; padding-left:1em}
 .description {font-size:0.83em;}
-.title {font-size:1.5em; font-weigh:bold; padding:1em 0; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); color: black}
+.title {font-size:1.5em; font-weight:bold; padding:1em 0; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); color: black}
 .toc {padding-top:5pt;padding-bottom:5pt}
 .toctitle {font-size:1em;}
 .toc0 {font-size:0.9em; padding-left:0.5em}
@@ -66,3 +66,6 @@ math {white-space: nowrap; padding: 0; margin: 1px 0;}
 .textvalue {color: black}
 .booleanfalse {color: red; font-weight: bold}
 .booleantrue {color: green; font-weight: bold}
+.reqtrue {border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px}
+.reqfalse {border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px}
+.requnknown {border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px}

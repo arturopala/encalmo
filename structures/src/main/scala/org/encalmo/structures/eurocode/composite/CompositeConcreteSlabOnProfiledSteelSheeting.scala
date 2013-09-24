@@ -15,7 +15,7 @@ import org.encalmo.expression.sqrt
 import org.encalmo.expression.max
 
 /** Composite slab with profiled steel sheeting symbols */
-trait CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
+trait CompositeConcreteSlabOnProfiledSteelSheetingSymbols extends SymbolConfigurator {
 
 	import BasicSymbols._
 	
@@ -96,9 +96,12 @@ trait CompositeSlabWithProfiledSheetingSymbols extends SymbolConfigurator {
 	val sigmactplus = symbol(BasicSymbols.sigma|("ct","+")) unit "MPa"
 	val fyrd = symbol(BasicSymbols.f|"yr,d") unit "MPa"
     val la = symbol(BasicSymbols.l|"a") unit "m"
+
+    val ΓM1 = symbol(BasicSymbols.Γ|"M,1") //Warunek nośności na zginanie na podporze
+    val ΓM2 = symbol(BasicSymbols.Γ|"M,2") //Warunek nośności na zginanie w przęśle
 }
 
-class CompositeSlabWithProfiledSheeting(
+class CompositeConcreteSlabOnProfiledSteelSheeting(
     name: String,
 	height: Expression,
 	length: Expression,
@@ -115,7 +118,7 @@ class CompositeSlabWithProfiledSheeting(
     p_sd: Expression,
     p_ss: Expression //szerokość podparcia  //support width
 )
-extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSlabWithProfiledSheetingSymbols with ActionsSymbols {
+extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeConcreteSlabOnProfiledSteelSheetingSymbols with ActionsSymbols {
 
 	import sheet.{Gcck,hp,bs,bo,bb,Gccd,alpha,Iplus,Iminus,Ap,ec,eplus,t,br,MRdm,MRdp,VwRd,hw,r,Rw1Rd,Phi,RwRd,k,m}
     import sheet.steel.{E,fyd,gammaM0}
@@ -204,6 +207,8 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
     Np := Ap*fyd
     z := dp-0.5*xpl
     MplRd := Np*z
+    ΓM1 := (abs(MEdmm/MRdm) < 1) //Warunek nośności na zginanie na podporze
+    ΓM2 := (abs(MEdmp/MRdp) < 1) //Warunek nośności na zginanie w przęśle
     //rozwarstwienie
     VEde := 0.5*Qd2*ls*0.9
     Ls := ls/4
@@ -247,9 +252,9 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeSla
 	def ULS1 = NumSection(Text("ULS","eurocode"),
 		NumSection("Sprawdzenie nośności na zginanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.4.1",
 			Evaluate(MEdmm,MRdm),
-			AssertionLE("nośności na zginanie na podporze",abs(MEdmm/MRdm),1),
+			Require(ΓM1), //Warunek nośności na zginanie na podporze
 			Evaluate(MEdmp,MRdp),
-			AssertionLE("nośności na zginanie w przęśle",abs(MEdmp/MRdp),1)
+            Require(ΓM2) //Warunek nośności na zginanie w przęśle
 		),
         sheet.shear,
 		NumSection("Sprawdzenie nośności na ścinanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.5",

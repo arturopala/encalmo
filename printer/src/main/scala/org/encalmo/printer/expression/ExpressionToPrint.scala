@@ -48,12 +48,15 @@ object ExpressionToPrint {
     val ONLY_LEFT: FormulaPart => Boolean = {part => part.position == FormulaPosition.LEFT}
     val ONLY_RIGHT: FormulaPart => Boolean = {part => part.position == FormulaPosition.RIGHT}
     val ONLY_LEFT_AND_UNRESOLVED: FormulaPart => Boolean = {part => part.position == FormulaPosition.LEFT || part.position == FormulaPosition.EXPR_UNRESOLVED}
+    val NOT_RIGHT: FormulaPart => Boolean = {part => part.position != FormulaPosition.RIGHT}
 
     private def partFilterForElement(element: Expr): FormulaPart => Boolean = {
         element match {
             case _:Evaluate => ALL_PARTS
             case _:Result => ONLY_RIGHT
             case _:Expand => ONLY_LEFT_AND_UNRESOLVED
+            case _:Require => NOT_RIGHT
+            case _ => ALL_PARTS
         }
     }
 
@@ -79,6 +82,7 @@ object ExpressionToPrint {
             case FormulaPosition.EXPR_SUBSTITUTED => StylesConfigSymbols.EXPR_SUBSTITUTED
             case FormulaPosition.EXPR_PARTIALLY_EVALUATED => StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED
             case FormulaPosition.RIGHT => StylesConfigSymbols.EXPR_EVALUATED
+            case _ => StylesConfigSymbols.DEFAULT
         }
     }
 
