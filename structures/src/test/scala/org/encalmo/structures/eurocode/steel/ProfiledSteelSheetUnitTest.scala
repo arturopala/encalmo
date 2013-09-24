@@ -20,19 +20,15 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
 
             val Wplus = symbol(W!"+") unit SI.cm3
             val eplus = symbol(e!"+") unit SI.mm
-            val ΓV = symbol(Gamma|V)
-
-            M := 6.73 unit SI.kNm
+	        
             I := 57.2 unit SI.cm4
             eplus := 33.3
             Wplus := M / fyb
             I := Wplus*eplus
             z := (br*hp+2*sw*hp/2)/(br+bb+2*sw)
 
-            ΓV := assertLessThenOrEqualTo(abs(M/MRdp),1) unit SI.MPa
-
             override val document = defaultDocument(
-                Section(profiledSteelSheet.info,Section(Evaluate(MRdp,MRdm,M,Wplus,I,eplus,z,ΓV)),profiledSteelSheet.shear)
+                Section(profiledSteelSheet.info,Section(Evaluate(MRdp,MRdm,M,Wplus,I,eplus,z)),profiledSteelSheet.shear)
             )
         }
         val results = worksheet.results
