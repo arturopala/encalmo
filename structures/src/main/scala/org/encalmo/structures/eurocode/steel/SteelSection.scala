@@ -7,7 +7,7 @@ trait SteelSectionSymbols extends SymbolConfigurator {
 
     val steelSectionDict = "steelSection"
 
-    val phi = symbol(BasicSymbols.phi) unit "mm" dict steelSectionDict //Minimalna średnica śruby
+    val phi = symbol(BasicSymbols.phiv) unit "mm" dict steelSectionDict //Minimalna średnica śruby
 
     val epsi = symbol(BasicSymbols.epsi) dict steelSectionDict //Współczynnik korekcyjny klasy stali
     val alphaw = symbol(BasicSymbols.alpha|BasicSymbols.w) dict steelSectionDict //Współczynnik proporcji naprężeń plastycznych w środniku

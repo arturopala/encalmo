@@ -3,6 +3,7 @@ package org.encalmo.structures.eurocode.steel
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document.{Evaluate, Text, NumSection}
+import org.encalmo.structures.eurocode.fasteners.HexagonHeadBolt
 
 trait AngleSteelSectionSymbols extends SymbolConfigurator {
 
@@ -37,11 +38,13 @@ class AngleSteelSection(name:String, val sectionType: String) extends SteelSecti
 
     C1 := Number(4) unless (IsLessThanOrEqualTo(h/t,15*epsi) and IsLessThanOrEqualTo((b+h)/(2*t),11.5*epsi) thenUse Number(3))
 
+    phi := round(2.2*t, RoundingMode.Sequence(false,HexagonHeadBolt.series2))
+
     wy := text("b")
     wz := text("b")
 
 	def info = NumSection(Text(sectionType,angleDict),name,
-		Evaluate(h,b,t,r1,r2,ys)
+		Evaluate(h,b,t,r1,r2,phi,emin,emax,ys,Iy,iy,Wy)
 	)
 	
 }
@@ -109,11 +112,10 @@ object AngleEqualLegSection extends Catalog[AngleEqualLegSection]("Angle Equal L
         Anet := p_Anet
         emin := p_emin
         emax := p_emax
-        phi := p_phi
-        /*p_Iu
-        p_iu
-        p_Iv
-        p_iv*/
+        Iu := p_Iu
+        iu := p_iu
+        Iv := p_Iv
+        iv := p_iv
     }
 
     val map = Map[String,()=>AngleEqualLegSection](

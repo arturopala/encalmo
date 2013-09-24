@@ -56,14 +56,14 @@ object Reckoner {
                         val items: List[Expression] = list.foldRight(List(expression))((e, l) => if (e != l.head) e :: l else l)
                         val formula = items match {
                             case Nil => throw new IllegalStateException()
-                            case List(e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE, 0)))
-                            case List(e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE, 0), FormulaPart(e2, RIGHT, 1)))
-                            case List(e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE,0), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL,1), FormulaPart(e3, RIGHT,2)))
-                            case List(e4, e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE,0), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL,1), FormulaPart(e3, EXPR_SUBSTITUTED, EQUAL,2), FormulaPart(e4, RIGHT,3)))
-                            case List(e5, e4, e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, NONE,0), FormulaPart(e2, EXPR_UNRESOLVED, EQUAL,1), FormulaPart(e3, EXPR_SUBSTITUTED, EQUAL,2), FormulaPart(e4, EXPR_PARTIALLY_EVALUATED, EQUAL,3), FormulaPart(e5, RIGHT,4)))
+                            case List(e1) => Formula(Seq(FormulaPart(e1, LEFT, 0)))
+                            case List(e2, e1) => Formula(Seq(FormulaPart(e1, LEFT, 0), FormulaPart(e2, RIGHT, 1)))
+                            case List(e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT,0), FormulaPart(e2, EXPR_UNRESOLVED,1), FormulaPart(e3, RIGHT,2)))
+                            case List(e4, e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT,0), FormulaPart(e2, EXPR_UNRESOLVED,1), FormulaPart(e3, EXPR_SUBSTITUTED,2), FormulaPart(e4, RIGHT,3)))
+                            case List(e5, e4, e3, e2, e1) => Formula(Seq(FormulaPart(e1, LEFT,0), FormulaPart(e2, EXPR_UNRESOLVED,1), FormulaPart(e3, EXPR_SUBSTITUTED,2), FormulaPart(e4, EXPR_PARTIALLY_EVALUATED,3), FormulaPart(e5, RIGHT,4)))
                             case _ => {
                                 val ritems = items.reverse
-                                Formula(Seq(FormulaPart(ritems.head, LEFT, NONE,0), FormulaPart(ritems.tail.head, EXPR_UNRESOLVED, EQUAL,1), FormulaPart(ritems.tail.tail.head, EXPR_SUBSTITUTED, EQUAL, 2)) ++ (for (i <- 3 until (items.size - 1)) yield FormulaPart(ritems(i), EXPR_PARTIALLY_EVALUATED, i)) :+ FormulaPart(items.head, RIGHT,items.size-1))
+                                Formula(Seq(FormulaPart(ritems.head, LEFT,0), FormulaPart(ritems.tail.head, EXPR_UNRESOLVED,1), FormulaPart(ritems.tail.tail.head, EXPR_SUBSTITUTED, 2)) ++ (for (i <- 3 until (items.size - 1)) yield FormulaPart(ritems(i), EXPR_PARTIALLY_EVALUATED, i)) :+ FormulaPart(items.head, RIGHT,items.size-1))
                             }
                         }
                         printDebug(formula)
@@ -111,10 +111,10 @@ object Reckoner {
     }
 
     private def preparePartiallyEvaluated(list: List[Expression], expression: Expression, unit: UnitOfValue, accuracy: Option[Double], context: Context, cache: ResultsCache): List[Expression] = {
-        if (expression.countTreeLeafs > 3 || expression.isInstanceOf[Selection]) {
+        if (expression.countTreeLeafs > 3 || expression.isInstanceOf[Selection] || expression.isInstanceOf[Assert]) {
             adjustUnits(context.partiallyEvaluate(expression)(cache), unit, None) :: list
         } else {
-            expression :: list
+            adjustUnits(expression, unit, None) :: list
         }
     }
 
@@ -129,6 +129,7 @@ object Reckoner {
 
     private def adjustUnits(expression: Expression, unit: UnitOfValue, accuracy: Option[Double]): Expression = expression match {
         case v: Value => v.convertTo(unit, accuracy)
+        case a: Assert if a.unit ne EmptyUnitOfValue => adjustUnits(a,a.unit,accuracy)
         case other => other.map(unitAdjustor(unit, accuracy))
     }
 

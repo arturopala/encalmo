@@ -71,29 +71,17 @@ class Symbol(
     def hasUnit:Boolean = unit.isDefined
     def hasDictionary:Boolean = dictionary.isDefined
     
-    /** Returns translated description 
-     * (if non strict than can return raw description)*/
-    def localizedDescription(locale:java.util.Locale, strict:Boolean = false):Option[String] = {
-    	dictionary match {
-			case Some(dict) => description match {
-	    		case Some(desc) => Translator.translate(desc,locale,dict).orElse(
-    				if(strict) None else description
-				)
-	    		case None => Translator.translate(face,locale,dict)
-			}
-			case None => if(strict) None else description
-    	}
+    /** Returns translated description */
+    def localizedDescription(locale:java.util.Locale):Option[String] = {
+        concatenate(
+            Translator.translate(face,locale,dictionary),
+            Translator.translate(description,locale,dictionary).orElse(description)
+        )
     }
-    /** Returns true if exists translated description of this Symbol 
-     * (if non strict than returns true for existing raw description) */
-    def hasLocalizedDescription(locale:java.util.Locale, strict:Boolean = false):Boolean = {
-    	dictionary match {
-			case Some(dict) => description match {
-	    		case Some(desc) => !strict || Translator.hasTranslation(desc,locale,dict)
-	    		case None => Translator.hasTranslation(face,locale,dictionary.get)
-			}
-			case None => !strict || hasDescription
-    	}
+
+    /** Returns true if exists translated description of this Symbol */
+    def hasLocalizedDescription(locale:java.util.Locale):Boolean = {
+        Translator.hasTranslation(face,locale,dictionary) || Translator.hasTranslation(description,locale,dictionary)
     }
     
     /** Unique symbol face */
@@ -144,7 +132,8 @@ class Symbol(
     /** Sets description */
     def is(description:String):Symbol = copy(description = Option(description))
     /** Appends comment to the description */
-    def &(comment:String):Symbol = copy(description = Option(if(description.isDefined) description.get+" "+comment else comment))
+    override def ##(comment:String):Symbol = copy(description = concatenate(description,Option(comment)))
+    override def ##(comment:Option[String]):Symbol = copy(description = concatenate(description,comment))
     /** Sets unit */
     def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
     def unit(unit:UnitOfValue):Symbol = copy(unit = unit)

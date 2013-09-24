@@ -40,6 +40,9 @@ trait Value extends Expression {
             case u:UnitOfValue if this.unit.isSameExpandedUnit(u) => {
                 convertTo(newunit, accuracy)
             }
+            case u:UnitOfValue if this.unit.isSameBase(u) => {
+                convertTo(newunit.dim(this.unit.dimension), accuracy)
+            }
             case _ => this
         }
     }

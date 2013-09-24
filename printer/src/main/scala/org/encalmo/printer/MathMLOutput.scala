@@ -61,13 +61,13 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	def thickspace() = {
 		start(MSPACE)
 		attr("width",THICKMATHSPACE)
-		body()
+		end()
 	}
 
 	def thinspace() = {
 		start(MSPACE)
 		attr("width",THINMATHSPACE)
-		body()
+        end()
 	}
 
 	def leftBracket() = {
@@ -101,25 +101,9 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			attr("rspace",rspace)
 		}
 		body()
-		buffer append convertOperator(s)
+		buffer append convert(s)
 		end(MO)
 	}
-	
-	def convertOperator(s:String):String = s match {
-        case "-" => "&minus;"
-        case "+" => "+"
-        case "*" => ENTITY_CENTER_DOT
-        case ">" => "&gt;"
-        case "<" => "&lt;"
-        case "<=" => "&le;"
-        case ">=" => "&geq;"
-        case "!=" => "&ne;"
-        case "=" => "="
-        case "≈" => "&asymp;"
-        case "≃" => "&sime;"
-        case "~" => "&sim;"
-        case _ => s
-    }
 
 	def mn(n: Number):Unit = {
 		val nf:NumberFormatted = n.formattedToPrint
@@ -356,31 +340,34 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	private def resolveFontVariant(fs:FontStyle):String = {
 		fs match {
-			case fs if fs.italic && fs.bold => "bold-italic"
-			case fs if fs.italic => "italic"
-			case fs if fs.bold => "bold"
+			case `fs` if fs.italic && fs.bold => "bold-italic"
+			case `fs` if fs.italic => "italic"
+			case `fs` if fs.bold => "bold"
 			case _ => "normal"
 		}
 	}
-	
-	def convert(s:String): Unit = {
-	    val cs = s match {
-	        case ">" => "&gt;"
-	        case "<" => "&lt;"
-	        case "<=" => "&le;"
-	        case ">=" => "&geq;"
-	        case "!=" => "&ne;"
-	        case "!= 0" => "&ne; 0"
-	        case "= 0" => "&equiv; 0"
-	        case "=" => "="
-	        case "≈" => "&sime;"
-	        case _ => s
-	    }
-	    mo(cs)
-	}
 
-    def translate(s:String): Unit = {
-        mo(Translator.translate(s,locale,"document").getOrElse(s))
+    def convert(s:String):String = s match {
+        case "-" => "&minus;"
+        case "+" => "+"
+        case "*" => ENTITY_CENTER_DOT
+        case ">" => "&gt;"
+        case "<" => "&lt;"
+        case "<=" => "&le;"
+        case ">=" => "&geq;"
+        case "!=" => "&ne;"
+        case "!= 0" => "&ne; 0"
+        case "= 0" => "&equiv; 0"
+        case "=" => "="
+        case "≈" => "&asymp;"
+        case "≃" => "&sime;"
+        case "~" => "&sim;"
+        case "⇒" => "&rArr;"
+        case _ => s
+    }
+
+    def translate(s:String): String = {
+        Translator.translate(s,locale,Translator.defaultDictionary).getOrElse(s)
     }
 	
 }

@@ -6,11 +6,19 @@ import org.encalmo.document._
  * Section counter stategy
  * @author artur.opala
  */
-class SectionCounter(val enumerator:Enumerator) {
+class SectionCounter(val enumerator:Enumerator, offset: Int = 1) {
 	
-	var counters:Seq[Counter] = Seq(Counter())
+	var counters:Seq[Counter] = Seq(Counter(offset))
 	var currentLevel:Int = 0
 	var currentCounter:Counter = counters(0)
+
+    def copy(): SectionCounter = {
+        val sc =new SectionCounter(enumerator, offset)
+        sc.counters = for(c <- counters) yield c.copy()
+        sc.currentLevel = currentLevel
+        sc.currentCounter = sc.counters(sc.currentLevel)
+        sc
+    }
 
 	/**
 	 * Returns current counter's state
@@ -67,7 +75,7 @@ object SectionCounter {
 	
 	def apply():SectionCounter = new SectionCounter(Enumerator())
 	
-	def apply(e:Enumerator):SectionCounter = new SectionCounter(e)
+	def apply(e:Enumerator, offset: Int = 1):SectionCounter = new SectionCounter(e,offset)
 	
 }
 
@@ -84,5 +92,7 @@ case class Counter(var item:Int = 1){
 	def reset() = {
 		item = 1
 	}
+
+    def copy(): Counter = new Counter(item)
 	
 }

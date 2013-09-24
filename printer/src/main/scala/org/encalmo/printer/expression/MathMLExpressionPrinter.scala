@@ -67,7 +67,7 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    if(node.parent!=null){
             node.parent.element match {
                 case ct:CaseTest => {
-                    output.convert(ct.operator(node.position))
+                    output.mo(output.convert(ct.operator(node.position)),INFIX,THINMATHSPACE,THINMATHSPACE)
                 }
                 case _ =>
             }
@@ -107,21 +107,21 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    		        }
 	    		    }
 	    		}
-	    		case tv: TextValue => output.mtext(tv.text)
+	    		case tv: TextValue => output.mtextClass("textvalue",tv.text)
+                case bv: BooleanValue => {
+                    output.mtextClass("boolean"+bv.face,Translator.translate(bv.face,locale,Translator.defaultDictionary).getOrElse(bv.face))
+                }
 	    		case o: Operation => {
 	    			writeOpeningBracketIfNeeded(node, o)
 	    			o match {
 	    				case o: PrefixOperation => {
 	    					output.mo(o.operator.name,PREFIX)
 	    				}
-	    				case o:Quot => { o match {
-	    				        case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.startb(MROW)
-	    				        case _ => {
-                                    output.start(MFRAC)
-                                    output.attr("linethickness","0.6")
-                                    output.body()
-	    				        }
-	    				    }
+                        case Quot(u1:SimpleUnitOfValue,u2:SimpleUnitOfValue) => output.startb(MROW)
+	    				case o:Quot => {
+                            output.start(MFRAC)
+                            output.attr("linethickness","0.6")
+                            output.body()
 	    				}
 	    				case o:Power => {
 	    					output.startb(MSUP)
@@ -141,20 +141,18 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 	    				case o:abs => {
 	    					output.mo("|",INFIX,THINMATHSPACE,THINMATHSPACE)
 	    				}
-	    				case o:round => {
-	    				    
-	    				}
+                        case o:TrigonometricOperation => {
+                            output.mtext(o.operator.name)
+                        }
+                        case o:InverseTrigonometricOperation => {
+                            output.mo(o.operator.name,PREFIX)
+                        }
+                        case o:Operation1 => {
+                            output.mo(o.operator.name,PREFIX)
+                        }
 	    				case o: NamedOperation => {
-	    					o match {
-	    						case _ => {
-	    							output.mo(o.operator.name,PREFIX)
-	    							if (!o.isInstanceOf[Operation1]) {
-	    								output.leftBracket()
-	    							}else{
-	    							    output.append(MathMLTags.ENTITY_THIN_SPACE)
-	    							}
-	    						}
-	    					}
+                            output.mo(o.operator.name,PREFIX)
+                            output.leftBracket()
 	    				}
 	    				case _ => Unit
 	    			}
@@ -274,7 +272,10 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
                     case _ => output.mo(o.operator.name,INFIX,THINMATHSPACE,THINMATHSPACE)
                 }
 			}
-			case o:MultipleInfixOperation => {
+            case op: SelectOneOperation => {
+                output.mo(output.translate("or"),INFIX,THICKMATHSPACE,THICKMATHSPACE)
+            }
+			case o:AggregateOperation => {
 			    output.mo(o.operator.name,INFIX,THICKMATHSPACE,THICKMATHSPACE)
 			}
 			case o: InfixOperation => {
@@ -287,7 +288,12 @@ class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[
 				output.mo(";",INFIX,THICKMATHSPACE,THICKMATHSPACE)
 			}
             case ct:Case => {
-                output.translate("if")
+                output.mo(output.translate("if"))
+            }
+            case as:Assert => {
+                output.append(MathMLTags.ENTITY_THIN_SPACE)
+                output.mo(output.convert(Relation.faceOf(as.relation)))
+                output.append(MathMLTags.ENTITY_THIN_SPACE)
             }
 			case _ => Unit
 		}

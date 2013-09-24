@@ -13,6 +13,7 @@ object HtmlTags {
     val META 				= "meta"
     val BODY 				= "body"
     val DIV 				= "div"
+    val IMG 				= "img"
     val P 					= "p"
     val SPAN 			    = "span"
     val TABLE 			    = "table"

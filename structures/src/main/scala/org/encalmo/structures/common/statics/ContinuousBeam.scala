@@ -68,7 +68,7 @@ class ContinuousBeam(name:String, length:Expression, load:Expression, force:Expr
 }
 
 /** Continuous beam static analysis */
-class ContinuousBeam_5_LinearLoad(id:String, length:Expression, load:Expression) extends ContinuousBeam(id,length,load,0) {
+class ContinuousBeam_5_LinearLoad(id:String, length:Expression, load:Expression) extends ContinuousBeam(id,length,load,0) with ContinuousBeamSymbols {
 	
 	lBA := 0.2113*l
 	lBC := 0.2*l
@@ -119,7 +119,7 @@ class ContinuousBeam_5_LinearLoad(id:String, length:Expression, load:Expression)
 	TRmax1 := -0.620*p*l
 	TRmax2 := 0.598*p*l
 	Rmin := RCmin
-	Tmax := abs(TRmax1)
+	Tmax := TRmax1
 	Tmin := T2Cmin
 
 }

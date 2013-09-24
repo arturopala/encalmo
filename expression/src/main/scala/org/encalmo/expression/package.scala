@@ -62,13 +62,17 @@ package object expression {
 	def text(s:String):TextValue = TextValue(s)
 	// Power with exponent 2
 	def square(e:Expression):Power = Power(e,Number(2))
+    def sq(e:Expression):Power = Power(e,Number(2))
 	// Power with exponent 3
 	def cube(e:Expression):Power = Power(e,Number(3))
+    def cb(e:Expression):Power = Power(e,Number(3))
 	// Rounding down with accuracy
 	def floor(e:Expression,accuracy:Double = 1) = round(e,RoundingMode.Step(false,accuracy))
 	// Rounding up with accuracy
 	def ceil(e:Expression) = round(e,RoundingMode.CEILING)
 	def ceil(e:Expression,accuracy:Double = 1) = round(e,RoundingMode.Step(true,accuracy))
+    // average
+    def avg(e1:Expression,e2:Expression):Quot = Quot(Sum(e1,e2),Number(2))
 	
 	def rangeChoiceLE(e:Expression,first:Expression,bound:Expression,second:Expression):Expression = {
 		Selection(Seq(Case(CaseExpression(first),IsLessThanOrEqualTo(e,bound)),Case(CaseExpression(second),IsGreaterThan(e,bound))))
@@ -101,5 +105,11 @@ package object expression {
 	def mapChoice(e:Expression,mapppings: (Expression,Expression)*):Expression = {
 		Selection(mapppings.map(x => Case(CaseExpression(x._2),IsEqualTo(e,x._1))))
 	}
+
+    def assertEqualTo(left:Expression,right:Expression): Assert = Assert(left,Relation.EQUAL,right)
+    def assertLessThen(left:Expression,right:Expression): Assert = Assert(left,Relation.LESS,right)
+    def assertLessThenOrEqualTo(left:Expression,right:Expression): Assert = Assert(left,Relation.LESS_OR_EQUAL,right)
+    def assertGreaterThen(left:Expression,right:Expression): Assert = Assert(left,Relation.GREATER,right)
+    def assertGreaterThenOrEqualTo(left:Expression,right:Expression): Assert = Assert(left,Relation.GREATER_OR_EQUAL,right)
 	
 }

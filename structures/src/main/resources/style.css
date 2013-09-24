@@ -63,3 +63,6 @@ math {white-space: nowrap; padding: 0; margin: 1px 0;}
 .toc3 {font-size:0.6em; padding-left:0.5em}
 .toc4 {font-size:0.6em; padding-left:0.5em}
 .toc5 {font-size:0.6em; padding-left:0.5em}
+.textvalue {color: black}
+.booleanfalse {color: red; font-weight: bold}
+.booleantrue {color: green; font-weight: bold}

@@ -3,6 +3,7 @@ package org.encalmo.expression
 import org.scalatest.junit.AssertionsForJUnit
 import org.junit.Assert._
 import org.junit.Test
+import junit.framework
 
 class ExpressionUnitTest extends AssertionsForJUnit {
 	
@@ -148,5 +149,11 @@ class ExpressionUnitTest extends AssertionsForJUnit {
 		val s7 = Symbol("a")!c over "e"
 		assertEquals("a{}{c}{}{e}",s7.face)
 	}
+
+    @Test def testSymbolEquality() {
+        val s = Symbol("x","y","z")
+        assertEquals(s,s ## "foo")
+        framework.Assert.assertNotSame(s,s ## "bar")
+    }
 	
 }

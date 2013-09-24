@@ -36,13 +36,6 @@ trait BeamOfCompositeSlabSymbols extends SymbolConfigurator {
     val Qd2 = symbol(Q|"d|e") unit "kN/m"
     val Gk = symbol(G|"k") unit "kN/m"
     val eta = symbol(BasicSymbols.eta)
-    val Cf1 = symbol("C"|"f,1")
-    val Cw1 = symbol("C"|"w,1")
-    val Cf2 = symbol("C"|"f,2")
-    val Cw2 = symbol("C"|"w,2")
-    val Cf3 = symbol("C"|"f,3")
-    val Cw3 = symbol("C"|"w,3")
-    val C = symbol(BasicSymbols.C)
     val MelRd = symbol(M|"el,Rd") unit "kNm"
     val VplRd = symbol(V|"pl,Rd") unit "kN"
     val NcRd = symbol(N|"c,Rd") unit "kN"
@@ -128,7 +121,7 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 	import steel.{E,epsi,fy,fu,gammaM0,gammaV}
 	import slab.{Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Eceff,nE,hc,dmesh,sd,fyrd}
 	import slab.sheet.{Gcck,Gccd,hp,bo,bs,t,fypd}
-    import section.{m,Wy,A,Iy,b,h,Wypl,AVz,hw,tw,ctf,ctw,tf}
+    import section.{m,Wy,A,Iy,b,h,Wypl,AVz,hw,tw,ctf,ctw,tf,Cf1,Cw1,C1}
 
 	this add section
 	this add steel
@@ -147,11 +140,7 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
     Qk1 := (Qcfk*slab.ls)+(Gcck*slab.ls)+gk+(Qmk*slab.ls)
     Qd1 := (Qcfk*gammaG*slab.ls)+(Gccd*slab.ls)+gd+(Qmd*slab.ls)
     //sprawdzenie statecznosci srodnika
-    eta := rangeChoiceLE(fy,1.2,460E6,1.0)
-    //klasa przekroju
-    Cf1 := rangeChoice4LE(ctf,1,9*eta,2,10*eta,3,14*eta,4)
-    Cw1 := rangeChoice4LE(ctw,1,72*eta,2,83*eta,3,124*eta,4)
-    C := max(Cf1,Cw1)
+    eta := rangeChoiceLE(fy,1.2,Number(460,SI.MPa),1.0)
     //nosnosci
     MelRd := (Wy*fy)/gammaM0
     VplRd := (AVz*(fy/sqrt(3)))/gammaM0
@@ -244,13 +233,13 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 	def LOAD1 = Evaluate(gammaG,gammaQ,gk,gd,Gcck,Gccd,Qcfk1,Qcfk,Qcfd,Qmk,Qmd,Qk1,Qd1)
 	
 	def ULS1 = NumSection(Text("ULS","eurocode"),
-		NumSection("Sprawdzenie stateczności środnika wg PN-EN 1993-1-5 pkt. 5.1(2)",
+		NumSection("Sprawdzenie stateczności środnika wg PN-EN 1993-1-5 pkt 5.1(2)",
 			Evaluate(hw,epsi,eta),
 			AssertionL("stateczności środnika",hw/tw,(72*epsi)/eta)
 		),
-		NumSection("Określenie klasy przekroju",
-			Evaluate(ctf,ctw,Cf1,Cw1,C),
-			AssertionE("dopuszczalności określania nośności wg nośności plastycznej",C,1)
+		NumSection("Określenie klasy przekroju wg PN-EN 1993-1-1 pkt 5.5",
+			Evaluate(ctf,ctw,Cf1,Cw1,C1),
+			AssertionE("dopuszczalności określania nośności wg nośności plastycznej",C1,1)
 		),
 		NumSection("Sprawdzenie nośności belki na zginanie w fazie montażu",
 			Evaluate(MelRd,MEdm),

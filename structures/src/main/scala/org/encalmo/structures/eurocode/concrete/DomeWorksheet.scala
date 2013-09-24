@@ -131,29 +131,29 @@ class DomeWorksheet extends Worksheet("dome") {
     NφΘw := w*R*(-frac(2,3)+cos(φ)-frac(1,3)*(cos(φ)^3))*(1/(sin(φ)^3))*sin(Θ) // sila scinajaca od obciazenia wiatrem
     NΘw := w*R*(frac(2,3)*cos(φ)-(sin(φ)^2)-frac(2,3)*(cos(φ)^4))*(1/(sin(φ)^3))*cos(Θ) // sila rownoleznikowa od obciazenia sniegiem
     
-    val Nφ1 = Nφ(1) & "od ciężaru własnego na krawędzi dolnej"
-    val NΘ1 = NΘ(1) & "od ciężaru własnego na krawędzi dolnej"
+    val Nφ1 = Nφ(1) ## "od ciężaru własnego na krawędzi dolnej"
+    val NΘ1 = NΘ(1) ## "od ciężaru własnego na krawędzi dolnej"
     
-    val Nφ2 = Nφ(2) & "od oddziaływania wiatru na krawędzi dolnej"
-    val NΘ2 = NΘ(2) & "od oddziaływania wiatru na krawędzi dolnej"
+    val Nφ2 = Nφ(2) ## "od oddziaływania wiatru na krawędzi dolnej"
+    val NΘ2 = NΘ(2) ## "od oddziaływania wiatru na krawędzi dolnej"
     
-    val Nφ3 = Nφ(3) & "od ciężaru własnego na poziomie linii przejściowej"
-    val NΘ3 = NΘ(3) & "od ciężaru własnego na poziomie linii przejściowej"
+    val Nφ3 = Nφ(3) ## "od ciężaru własnego na poziomie linii przejściowej"
+    val NΘ3 = NΘ(3) ## "od ciężaru własnego na poziomie linii przejściowej"
     
-    val Nφ4 = Nφ(4) & "od oddziaływania wiatru na poziomie linii przejściowej"
-    val NΘ4 = NΘ(4) & "od oddziaływania wiatru na poziomie linii przejściowej"
+    val Nφ4 = Nφ(4) ## "od oddziaływania wiatru na poziomie linii przejściowej"
+    val NΘ4 = NΘ(4) ## "od oddziaływania wiatru na poziomie linii przejściowej"
     
-    val Nφ5 = Nφ(5) & "od obciążenia śniegiem na poziomie linii przejściowej"
-    val NΘ5 = NΘ(5) & "od obciążenia śniegiem na poziomie linii przejściowej"
+    val Nφ5 = Nφ(5) ## "od obciążenia śniegiem na poziomie linii przejściowej"
+    val NΘ5 = NΘ(5) ## "od obciążenia śniegiem na poziomie linii przejściowej"
     
-    val Nφ6 = Nφ(6) & "od ciężaru własnego na krawędzi górnej"
-    val NΘ6 = NΘ(6) & "od ciężaru własnego na krawędzi górnej"
+    val Nφ6 = Nφ(6) ## "od ciężaru własnego na krawędzi górnej"
+    val NΘ6 = NΘ(6) ## "od ciężaru własnego na krawędzi górnej"
     
-    val Nφ7 = Nφ(7) & "od oddziaływania wiatru na krawędzi górnej"
-    val NΘ7 = NΘ(7) & "od oddziaływania wiatru na krawędzi górnej"
+    val Nφ7 = Nφ(7) ## "od oddziaływania wiatru na krawędzi górnej"
+    val NΘ7 = NΘ(7) ## "od oddziaływania wiatru na krawędzi górnej"
     
-    val Nφ8 = Nφ(8) & "od obciążenia śniegiem na krawędzi górnej"
-    val NΘ8 = NΘ(8) & "od obciążenia śniegiem na krawędzi górnej"
+    val Nφ8 = Nφ(8) ## "od obciążenia śniegiem na krawędzi górnej"
+    val NΘ8 = NΘ(8) ## "od obciążenia śniegiem na krawędzi górnej"
     
     Nφ1 := (Nφg at (φ -> φ1))
     NΘ1 := (NΘg at (φ -> φ1))
@@ -200,8 +200,8 @@ class DomeWorksheet extends Worksheet("dome") {
     Δrs := (s*((R^2)*sin(φ))/2*((1-(sin(φ0)^2)/(sin(φ)^2))*(1+nu)-2*(cos(φ)^2)))/(Ecm*h)
     Δχs := (-s*R*(3+nu)*sin(φ)*cos(φ))/(Ecm*h)
     
-    val Δrg1 = Δrg(1) & "od ciężaru własnego na krawędzi dolnej"
-    val Δχg1 = Δχg(1) & "od ciężaru własnego na krawędzi dolnej"
+    val Δrg1 = Δrg(1) ## "od ciężaru własnego na krawędzi dolnej"
+    val Δχg1 = Δχg(1) ## "od ciężaru własnego na krawędzi dolnej"
     
     nu := 0.2
     Δrg1 := (Δrg at (φ -> φ1))

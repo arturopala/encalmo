@@ -21,10 +21,12 @@ class MapContext(val dictionary: Option[String] = None) extends MutableContext {
      */
     override def update(symb: Symbol, expression: Expression): Unit = {
         if (opened) {
-            map.put(symb, expression match {
-                case v: Value => v.convertTo(symb.unit)
-                case other => other
-            })
+            expression match {
+                case v: Value => map.put(symb,v.convertTo(symb.unit))
+                case Annotated(e,description) => map.put(symb ## description,e)
+                case other => map.put(symb,other)
+            }
+
         } else throwContextAlreadyLockedException
     }
 

@@ -8,12 +8,8 @@ import org.encalmo.calculation.{Context, ContextFactory}
  * Document component representing symbol or expression
  * @author artur.opala
  */
-class Symb(customStyle: Option[Style], val expression:Expression)
-extends DocumentComponent(customStyle) {
-    
-	override def toString = "Symb("+customStyle+",,"+expression+")"
-    
-}
+case class Symb(override val customStyleOfComponent: Option[Style], expression:Expression)
+extends DocumentComponent(customStyleOfComponent)
 
 object Symb {
 	

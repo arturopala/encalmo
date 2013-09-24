@@ -64,6 +64,18 @@ trait TreeNode[A<:TreeNode[A]] extends Visitable[A] {
 		}
 		visitor.onExit(node)
   	}
+
+    final override def visitChildren(visitor:TreeVisitor[A], parentNode:Node[A] = null, position:Int=0):Unit = {
+        val element = this
+        val node = Node(parentNode,element,position)
+        var p = position
+        for(child <- element.children) {
+            child.visit(visitor,node,p)
+            p = p+1
+        }
+
+
+    }
   	
   	private def visitChild(node:Node[A],child:A,visitor:TreeVisitor[A],position:Int = 0):Unit = {
 		visitor.onBeforeChildEnter(node,position,child)

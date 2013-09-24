@@ -30,7 +30,7 @@ case class root(l:Expression,r:Expression) extends Operation2 with NamedOperatio
 /**
  * Minimum function
  */
-case class min(args:Expression*) extends OperationN with NamedOperation {
+case class min(args:Expression*) extends SelectOneOperation with NamedOperation {
 
   override def copy(x:Expression*):min = min(x:_*)
   override val operator = 'min
@@ -39,7 +39,7 @@ case class min(args:Expression*) extends OperationN with NamedOperation {
 /**
  * Maximum function
  */
-case class max(args:Expression*) extends OperationN with NamedOperation {
+case class max(args:Expression*) extends SelectOneOperation with NamedOperation {
 
   override def copy(x:Expression*) = max(x:_*)
   override val operator = 'max

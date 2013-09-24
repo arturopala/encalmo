@@ -1,7 +1,5 @@
 package org.encalmo.printer.document
 
-import scala.collection.mutable.LinkedHashMap
-import scala.collection.mutable.Stack
 import scala.collection._
 import org.encalmo.common._
 import org.encalmo.document._
@@ -12,7 +10,6 @@ import org.encalmo.printer._
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
 import org.encalmo.expression.MultipleInfixOperation
-import org.encalmo.expression.Diff
 import org.encalmo.expression.Transparent
 import org.encalmo.expression.Expression
 import org.encalmo.calculation.Results
@@ -35,7 +32,7 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
  * Travels and prints document as xsl-fo text 
  * @author artur.opala
  */
-class XslFoTextDocumentPrinterTraveler(output:XslFoOutput, results: Results)
+class XslFoTextDocumentPrinterTraveler(output:XslFoOutput, results: Results, counter: Option[SectionCounter] = None)
 extends TreeVisitor[DocumentComponent] {
 	
 	val locale = output.locale
@@ -49,6 +46,7 @@ extends TreeVisitor[DocumentComponent] {
 	
 	/** Section counters map */
 	private val counterMap:mutable.LinkedHashMap[Enumerator,SectionCounter] = mutable.LinkedHashMap[Enumerator,SectionCounter]()
+    counter.foreach(c => counterMap.put(c.enumerator,c))
 	
 	private val styleStack:mutable.Stack[Style] = mutable.Stack()
 	styleStack.push(DefaultStyle)
@@ -145,14 +143,16 @@ extends TreeVisitor[DocumentComponent] {
                 output.attr("margin-top","1em")
                 output.attr("margin-bottom","1em")
                 output.body()
-                if(toc.parentDocument.isDefined){
+                if(toc.parent.isDefined){
                     output.start(BLOCK)
                     output.attr("margin-bottom","0.3em")
-                    output.attr("font-size", "12pt")
+                    output.attr("font-size",""+toc.style.font.size+"pt")
+                    output.attr("font-weight","normal")
                     output.body()
                     output.append(toc.title)
                     output.end(BLOCK)
-                    toc.parentDocument.get.visit(visitor = new XslFoTableOfContentsPrinterTraveler(output, results))
+                    val counter = toc.parentOfType(classOf[NumSection]).map(ns => counterFor(ns.enumerator).copy())
+                    toc.parent.get.visitChildren(visitor = new XslFoTableOfContentsPrinterTraveler(output, results, toc.levels, counter))
                 }
                 output.end(BLOCK)
             }
@@ -237,7 +237,7 @@ extends TreeVisitor[DocumentComponent] {
 					}
 					case a:Assertion => {
 						val result = a.evaluate(results.cache)
-						val s = Section(a.style,result._2:_*)
+						val s = Section(DefaultStyle.marginTop(5).fontSmaller,result._2:_*)
 						s.visit(visitor = this)
                     }
                     case symb:Symb => {
@@ -251,6 +251,14 @@ extends TreeVisitor[DocumentComponent] {
                         if(symb.customStyle!=null){
                             output.end(INLINE)
                         }
+                    }
+                    case image:Image => {
+                        output.startb(BLOCK)
+                        output.start(EXTERNAL_GRAPHIC)
+                        output.attr("src",image.source)
+                        output.attr("text-align","center")
+                        output.end()
+                        output.end(BLOCK)
                     }
 					case _ => {}
 				}
@@ -362,7 +370,7 @@ extends TreeVisitor[DocumentComponent] {
 	        		case None => 3
 	        	}
 	        	val indent:Int = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
-		    	val isCell1 = bullet!=null
+		    	val isCell1 = true
 		        val isCell2 = isPrintDescription
                 val descStyle = etp1.stylesConfig match {
 		            case Some(x) => x.symbolDescription.getOrElse(styleStack.top)
@@ -387,7 +395,7 @@ extends TreeVisitor[DocumentComponent] {
 			        output.attr("text-align","right")
 			        output.appendInlineStyleAttributes(descStyle,styleStack.top)
 			        output.body()
-			        output.append(bullet)
+			        if(bullet!=null) output.append(bullet)
 			        output.end(BLOCK)
 			        output.end(TABLE_CELL)
 		    	}
@@ -502,11 +510,17 @@ extends TreeVisitor[DocumentComponent] {
                     }
                     output.attr("padding","1.5pt 0")
                     output.body()
-                    mathOutput.open
-                    if(etp.prefix!=null && etp.prefix!="") mathOutput.mo(etp.prefix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
+                    mathOutput.open()
+                    if(etp.prefix!=null && etp.prefix!="") {
+                        mathOutput.mo(etp.prefix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
+                        if(etp.prefix=="⇒")mathOutput.thickspace()
+                    }
                     etp.expression.visit(visitor = ept, parentNode = parentNode, position = position)
-                    if(etp.suffix!=null && etp.suffix!="") mathOutput.mo(etp.suffix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
-                    mathOutput.close
+                    if(etp.suffix!=null && etp.suffix!="") {
+                        if(etp.suffix=="⇒")mathOutput.thickspace()
+                        mathOutput.mo(etp.suffix,MathMLTags.INFIX,MathMLTags.THICKMATHSPACE,MathMLTags.THICKMATHSPACE)
+                    }
+                    mathOutput.close()
                     mathOutput.mathStyle = mc
                     output.endNoIndent(INSTREAM_FOREIGN_OBJECT)
                 }
@@ -516,30 +530,36 @@ extends TreeVisitor[DocumentComponent] {
 	
 }
 
-class XslFoTableOfContentsPrinterTraveler(output:XslFoOutput, results: Results)
-extends XslFoTextDocumentPrinterTraveler(output, results) {
+class XslFoTableOfContentsPrinterTraveler(output:XslFoOutput, results: Results, levels: Int = 3, counter: Option[SectionCounter] = None)
+extends XslFoTextDocumentPrinterTraveler(output, results, counter) {
+
+    val maxLevel = levels + counter.map(_.currentLevel).getOrElse(0)
+    val expectedEnumerator = counter.map(_.enumerator).getOrElse(null)
     
     override def onEnter(node:Node[DocumentComponent]):Unit = {
         node.element match {
-            case ns:NumSection => {
+            case ns:NumSection if ns.enumerator eq expectedEnumerator => {
                 val en:Enumerator = ns.enumerator
                 val sc = counterFor(en)
-                output.start(BLOCK)
-                output.attr("font-size", Math.max(11-sc.currentLevel,7)+"pt")
-                output.attr("margin-left",(2*sc.currentLevel)+"em")
-                output.body()
-                output.append(sc.current.mkString("",".","."+output.SPACE))
-                if(ns.title.isDefined){
-                    output.append(ns.title.get)
-                }
-                ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
-                    case t:TextContent => {
-                        output.append(t.translate(locale))
-                        output.append(output.SPACE)
+                if(sc.currentLevel < maxLevel){
+                    output.start(BLOCK)
+                    output.attr("font-size", Math.max(11-sc.currentLevel,7)+"pt")
+                    output.attr("font-weight","normal")
+                    output.attr("margin-left",(2*sc.currentLevel)+"em")
+                    output.body()
+                    output.append(sc.current.mkString("",".","."+output.SPACE))
+                    if(ns.title.isDefined){
+                        output.append(ns.title.get)
                     }
-                    case _ =>
-                })
-                output.end(BLOCK)
+                    ns.childrenOfType[Text](classOf[Text]).foreach(t => t match {
+                        case t:TextContent => {
+                            output.append(t.translate(locale))
+                            output.append(output.SPACE)
+                        }
+                        case _ =>
+                    })
+                    output.end(BLOCK)
+                }
                 sc.in() // counter level increment
             }
             case _ => Unit
