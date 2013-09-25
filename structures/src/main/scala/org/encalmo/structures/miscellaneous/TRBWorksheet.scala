@@ -43,7 +43,7 @@ class TRBWorksheet extends Worksheet("trb") {
     val Ss = S|s is "Współczynnik spoistości gruntu"; Ss := 1/Ssp
     val Sw = S|w is "Współczynnik wykorzystania czasu pracy koparki"; Sw := 0.7
     
-    val We = W|e is "Wydajność godzinowa pracy pojedyńczej koparki"; We := (60*nk*Qk*Sn*Ss*Sw).as(SI.m3/SI.h)
+    val We = W|e is "Wydajność godzinowa pracy pojedyńczej koparki"; We := (60*nk*Qk*Sn*Ss*Sw).set(SI.m3/SI.h)
     val Nk = N|k is "Liczba potrzebnych koparek" acc 1; Nk := Vh/We
     
     val Rk = R|k is "Promień kopania"; Rk := 9.15 unit SI.m
@@ -93,7 +93,7 @@ class TRBWorksheet extends Worksheet("trb") {
     val tz1 = t|"z1" is "Czas zagęszczania mieszanki na pojedyńczym stanowisku"; tz1 := 15 unit SI.s
     val tz2 = t|"z2" is "Czas przełożenia wibratora na nowe stanowisko"; tz2 := 5 unit SI.s
     val Sww = S|"ww" is "Współczynnik wykorzystania czasu pracy wibratora"; Sww := 0.85
-    val Qw = Q|w is "Obliczona intensywność godzinowa zagęszczania mieszanki betonowej" unit SI.m3/SI.h; Qw := (Lwibr*BS*db*((3600 unit SI.s)/(tz1+tz2))*Sww).as(SI.m3/SI.h)
+    val Qw = Q|w is "Obliczona intensywność godzinowa zagęszczania mieszanki betonowej" unit SI.m3/SI.h; Qw := (Lwibr*BS*db*((3600 unit SI.s)/(tz1+tz2))*Sww).set(SI.m3/SI.h)
     val Nw = N|w is "Liczba potrzebnych wibratorów (na pojedyńczą pracującą pompę do betonu)" acc 1; Nw := ceil(Qbet/min(Qw,Qwibr))
     
     val Fd = F|"d" is "Powierzchnia deskowania" acc 1; Fd := LS*HS*2

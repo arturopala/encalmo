@@ -220,7 +220,7 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
     cp := 2*(ap+bp)+4*(dp-hc)+2*PI*hc
     dv := dp
     kv := min(sqrt(1+(Number(200,SI.mm)/dv)),2.0)
-    vmin := 0.035*sqrt(kv^3)*sqrt(fck).as(SI.MPa)
+    vmin := 0.035*sqrt(kv^3)*sqrt(fck).set(SI.MPa)
     VpRd := vmin*cp*dp
     VRdc := (vmin*dv*bo)/bs
     Qvd := Fd
@@ -298,7 +298,7 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
 		NumSection("Sprawdzenie nośności na ścinanie poprzeczne w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.5(1) i PN-EN 1992-1-1 pkt. 6.2.2",
 			Evaluate(dv,kv,vmin,VRdc),
 			AssertionLE("nośności na ścinanie",abs(VEde/VRdc),1),
-			AssertionLE("EN 1992-1-1 (6.5)",VEde,(0.5*dv*fcd*(0.6*(1-(fck/Number(250,SI.MPa))))).as("kN/m"))
+			AssertionLE("EN 1992-1-1 (6.5)",VEde,(0.5*dv*fcd*(0.6*(1-(fck/Number(250,SI.MPa))))).set("kN/m"))
 		),
 		NumSection("Sprawdzenie nośności na przebicie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.6(1) i PN-EN 1992-1-1 pkt.6.4.4",
 			Evaluate(ap,bp,cp,VpRd,Qvd),

@@ -45,21 +45,28 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
             val ipe = IPESteelSection.IPE_450
             this add ipe
 
+            val ΓM = Gamma|M
             val ΓV = Gamma|V
             val MRd = M|"Rd" unit SI.kNm
+            val VRd = V|"Rd" unit SI.kN
+            val qb = q|b unit "kN/m"
 
             l := 15 unit SI.m
             q := 2.5 unit "kN/m2"
             s := 3 unit SI.m
-            M := q*s*sq(l)/8
+            g := (ipe.m*GRAV) unit "kN/m"
+            qb := 1.5*q*s + 1.35*g
+            M := qb*sq(l)/8
+            V := qb*l/2
             MRd := steel.fyd*ipe.Wy
-
-            ΓV := assertLessThenOrEqualTo(abs(M/MRd),1)
+            VRd := ipe.AVz*(steel.fyd/sqrt(3))
+            ΓM := (abs(M / MRd) < 1)
+            ΓV := (abs(V / VRd) < 0.05)
 
             override val document = defaultDocument(
                 Section(
-                    Evaluate(l,q,M,MRd),
-                    Require(ΓV)
+                    Evaluate(l,q,g,qb,M,MRd,V,VRd),
+                    Require(ΓM,ΓV)
                 )
             )
         }

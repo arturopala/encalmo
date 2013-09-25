@@ -3,15 +3,16 @@ package org.encalmo.printer.document
 import scala.collection._
 import org.encalmo.common._
 import org.encalmo.document._
-import org.encalmo.expression.SymbolLike
+import org.encalmo.expression._
 import org.encalmo.printer.XslFoTags._
 import org.encalmo.printer.expression._
 import org.encalmo.printer._
-import org.encalmo.style.{StylesConfigSymbols, Style, DefaultStyle}
-import org.encalmo.expression.MultipleInfixOperation
-import org.encalmo.expression.Transparent
-import org.encalmo.expression.Expression
+import org.encalmo.style._
 import org.encalmo.calculation.Results
+import scala.Some
+import org.encalmo.common.Node
+import org.encalmo.document.TableOfContents
+import org.encalmo.style.Style
 
 /**
  * Prints document as xsl-fo text 
@@ -231,8 +232,7 @@ extends TreeVisitor[DocumentComponent] {
                     case req:Require => {
                         val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(req,results)
                         if(!ess.isEmpty){
-                            val style = req.parentStylesConfig.flatMap(_.apply(StylesConfigSymbols.REQUIREMENT_TRUE))
-                            blockExprPrintStrategy.print(node,req,ess,style)
+                            blockExprPrintStrategy.print(node,req,ess)
                         }
                     }
 					case expr:BlockExpr => {
@@ -319,16 +319,14 @@ extends TreeVisitor[DocumentComponent] {
 		traveler:XslFoTextDocumentPrinterTraveler
 	) extends ExpressionPrintStrategy {
     	
-    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]],rowStyle: Option[Style] = None) = {
+    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
-    		val styleConfigOpt = expr.parentStylesConfig 
-    		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
-			val tableRowStyle:Option[Style] = rowStyle.orElse(styleConfigOpt.flatMap(_.block))
-    		
+            val stylesConfig = expr.parentStylesConfig.get
+            val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
+            val rowStyle:Style = stylesConfig.block.getOrElse(DefaultStyle)
     		output.start(TABLE)
     		output.attr("table-layout","fixed")
     		output.attr("width","100%")
-            //output.attr("border-collapse","collapse")
     		if(expr.isFirstBlockComponent){
     			output.attr("keep-with-previous","always")
 			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
@@ -342,7 +340,7 @@ extends TreeVisitor[DocumentComponent] {
 			for(es <- ess){
 				output.startb(TABLE_ROW)
 				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
-				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle, false)
+				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, rowStyle, false, stylesConfig)
 				sc.foreach(_.next())
 				output.end(TABLE_ROW)
 			}
@@ -350,23 +348,22 @@ extends TreeVisitor[DocumentComponent] {
             output.end(TABLE)
     	}
     	
-    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle:Option[Style], secondTableRow:Boolean){
+    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle: Style, secondTableRow:Boolean, stylesConfig:StylesConfig){
 		    if(!se.isEmpty){
 	        	val etp1 = se.head
 	        	val description:Option[String] = etp1.expression match {
 	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
 	        		case _ => None
 	        	}
+                val rowStyle: Style = se.last.expression match {
+                    case TRUE =>  stylesConfig.requirement_true.getOrElse(tableRowStyle)
+                    case FALSE =>  stylesConfig.requirement_false.getOrElse(tableRowStyle)
+                    case _ => tableRowStyle
+                }
 	        	val printable:Boolean = etp1.expression.printable
 	        	val isPrintDescription = printDescription && description.isDefined && description.get!=""
-	        	val paddingTop = tableRowStyle match {
-	        		case Some(x) => x.paragraph.spaceBefore 
-	        		case None => 3
-	        	}
-	        	val paddingBottom = tableRowStyle match {
-	        		case Some(x) => x.paragraph.spaceAfter
-	        		case None => 3
-	        	}
+	        	val paddingTop = rowStyle.paragraph.spaceBefore
+	        	val paddingBottom = rowStyle.paragraph.spaceAfter
 	        	val indent:Double = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
 		    	val isCell1 = true
 		        val isCell2 = isPrintDescription
@@ -382,9 +379,9 @@ extends TreeVisitor[DocumentComponent] {
 	        	val twoTableRows = !secondTableRow && (isCell2 && twoRows && leafs<15)
 		    	if(isCell1){
 					output.start(TABLE_CELL)
-                    output.attr("border-bottom",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
-                    output.attr("border-top",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
-                    output.attr("border-left",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
+                    output.attr("border-bottom",toCSS(rowStyle.paragraph.border.bottom))
+                    output.attr("border-top",toCSS(rowStyle.paragraph.border.top))
+                    output.attr("border-left",toCSS(rowStyle.paragraph.border.left))
 					output.body()
 			        output.start(BLOCK)
 			        output.attr("padding-top",paddingTop,"pt")
@@ -400,8 +397,8 @@ extends TreeVisitor[DocumentComponent] {
 		        if(isCell2 && !twoRows){
 			        output.start(TABLE_CELL)
 			        if(!twoTableRows) {
-			            output.attr("border-bottom",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
-			            output.attr("border-top",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
+			            output.attr("border-bottom",toCSS(rowStyle.paragraph.border.bottom))
+			            output.attr("border-top",toCSS(rowStyle.paragraph.border.top))
 			        }
 			        output.body()
 			        output.start(BLOCK)
@@ -424,9 +421,9 @@ extends TreeVisitor[DocumentComponent] {
 		        	output.attr("number-columns-spanned",ncs)
                 }
 				if(!twoTableRows){
-				    output.attr("border-bottom",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
-                    output.attr("border-top",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
-                    output.attr("border-right",tableRowStyle.map(_.paragraph.border.bottom).getOrElse("pt")+"pt solid black")
+				    output.attr("border-bottom",toCSS(rowStyle.paragraph.border.bottom))
+                    output.attr("border-top",toCSS(rowStyle.paragraph.border.top))
+                    output.attr("border-right",toCSS(rowStyle.paragraph.border.right))
 				}
 			    output.attr("vertical-align","middle")
 		        output.body()
@@ -445,7 +442,7 @@ extends TreeVisitor[DocumentComponent] {
 					output.start(TABLE_ROW)
 					output.attr("keep-with-previous","always")
 					output.body()
-					writeExpressionSeq(se, style, printDescription, "", tableRowStyle, true)
+					writeExpressionSeq(se, style, printDescription, "", rowStyle, true, stylesConfig)
 				}else{
 			        output.start(BLOCK)
 			        output.appendInlineStyleAttributes(style,styleStack.top)
@@ -525,6 +522,8 @@ extends TreeVisitor[DocumentComponent] {
             }
         }
     }
+
+    def toCSS(b:Border):String = s"${b.width}pt ${b.style} ${Style.toHex(b.color)}"
 	
 }
 

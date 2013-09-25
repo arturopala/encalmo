@@ -16,9 +16,8 @@ object FormulaPart {
             case e if index == 0 => NONE
             case n: Number if n.isRounded => APPROXIMATELY_EQUAL
             case tv: TextValue if index == 1 => NONE
-            case a: Assert => {
-                IMPLICATION
-            }
+            case a: Assert =>  IMPLICATION
+            case bv: BooleanValue =>  IMPLICATION
             case _ => EQUAL
         }
     }

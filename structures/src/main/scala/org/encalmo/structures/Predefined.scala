@@ -5,6 +5,7 @@ import org.encalmo.printer.Layout
 import org.encalmo.style.Style
 import org.encalmo.style.DefaultStyle
 import org.encalmo.style.StylesConfig
+import java.awt.Color
 
 object Predefined {
 	
@@ -18,7 +19,7 @@ object Predefined {
 	val YELLOW = new java.awt.Color(255,255,175)
     
     val stylesConfig = StylesConfig()
-    val rowStyle = style1.useSpaceBefore(2).useSpaceAfter(1).borders(0.2)
+    val rowStyle = style1.useSpaceBefore(2).useSpaceAfter(1).borders(0.2,"solid",Color.BLACK)
     stylesConfig(EXPRESSION) = style1
     stylesConfig(EXPR_ROW) = rowStyle
     stylesConfig(EXPR_SYMBOL) = style1.fontItalic.width(35).useColor(BLUE)
@@ -34,9 +35,9 @@ object Predefined {
     stylesConfig(NUMSECT_LEVEL3) = style1.fontSmaller.useSpaceBefore(12)
     stylesConfig(NUMSECT_LEVEL4) = style1.fontSmaller.fontItalic.useSpaceBefore(8)
 
-    stylesConfig(REQUIREMENT_TRUE) = rowStyle.borders(0.85).setClassId("reqtrue")
-    stylesConfig(REQUIREMENT_FALSE) = rowStyle.borders(1.5).setClassId("reqfalse")
-    stylesConfig(REQUIREMENT_UNKNOWN) = rowStyle.borders(1.5).setClassId("requnknown")
+    stylesConfig(REQUIREMENT_TRUE) = rowStyle.borders(0.85,"solid",Color.BLACK).setClassId("reqtrue")
+    stylesConfig(REQUIREMENT_FALSE) = rowStyle.borders(1.5,"solid",Color.RED).setClassId("reqfalse")
+    stylesConfig(REQUIREMENT_UNKNOWN) = rowStyle.borders(1.5,"solid",Color.ORANGE).setClassId("requnknown")
     
     val styleWarunek:Style = style1.fontSmaller.fontSmaller.marginTop(4).marginBottom(4).useBackground(YELLOW).paddings(4).marginLeft(1).paddingLeft(24).paddingRight(0)
     stylesConfig(ASSERTION_TRUE) = styleWarunek

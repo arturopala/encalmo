@@ -9,10 +9,10 @@ case class Assert(left:Expression, relation:Relation.Value, right:Expression, ov
     final override def map(f:Transformation):Expression = {
         val vl = left.map(f)
         val vr = right.map(f)
-        if((vl eq left) && (vr eq right)) f(this) else f(copy(vl,vr))
+        if((vl eq left) && (vr eq right)) f(this) else f(copyAssert(vl,vr))
     }
 
-    def copy(l:Expression,r:Expression): Assert = Assert(l,relation,r,unit,description)
+    def copyAssert(l:Expression,r:Expression): Assert = Assert(l,relation,r,unit,description)
 
     final override def eval():Expression = {
         relation match {
@@ -26,6 +26,10 @@ case class Assert(left:Expression, relation:Relation.Value, right:Expression, ov
         }
     }
 
-    def unit(u: UnitOfValue): Assert = Assert(left,relation,right,u,description)
+    override def unit(unit:String):Assert = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
+    override def unit(unit:UnitOfValue):Assert = copy(unit = unit)
+    override def set(unit: UnitOfValue): Assert = copy(unit = unit)
+    override def set(unit: String): Assert = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
+
     override def ##(d: String): Assert = Assert(left,relation,right,unit,concatenate(description,Option(d)))
 }

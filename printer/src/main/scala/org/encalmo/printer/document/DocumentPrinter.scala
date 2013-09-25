@@ -5,7 +5,6 @@ import org.encalmo.document.{BlockExpr, DocumentComponent, Document}
 import org.encalmo.calculation.Results
 import org.encalmo.common.Node
 import org.encalmo.printer.expression.ExpressionToPrint
-import org.encalmo.style.Style
 
 /**
  * Document printer trait
@@ -18,5 +17,5 @@ trait DocumentPrinter[A<:Output[B],B] extends Printer[Document,A,B,Results]
 
 /** Expression print strategy */
 trait ExpressionPrintStrategy {
-    def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]],rowStyle: Option[Style] = None)
+    def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]])
 }

@@ -135,8 +135,10 @@ class Symbol(
     override def ##(comment:String):Symbol = copy(description = concatenate(description,Option(comment)))
     override def ##(comment:Option[String]):Symbol = copy(description = concatenate(description,comment))
     /** Sets unit */
-    def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
-    def unit(unit:UnitOfValue):Symbol = copy(unit = unit)
+    override def unit(unit:String):Symbol = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
+    override def unit(unit:UnitOfValue):Symbol = copy(unit = unit)
+    override def set(unit: UnitOfValue): Symbol = copy(unit = unit)
+    override def set(unit: String): Symbol = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
     /** Set accuracy of evaluations */
     def accuracy(d:Double) = copy(accuracy = Option(d))
     def acc(d:Double) = copy(accuracy = Option(d)) // short name
