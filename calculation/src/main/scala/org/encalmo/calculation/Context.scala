@@ -239,7 +239,7 @@ trait Context extends SymbolConfigurator {
             caseTest.map(evaluator(cache))
         }
         case o:Assert => {
-            o.copy(evaluate(o.left)(cache),evaluate(o.right)(cache))
+            o.copyAssert(evaluate(o.left)(cache),evaluate(o.right)(cache))
         }
         case other => other
     }

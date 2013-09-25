@@ -15,24 +15,13 @@ case class Style(
 	color:Color = Color.BLACK,
 	background:Color = null
 ){
+
     /** Unique style id */
     var classId:String = StyleClassIdGenerator()
 	
-	val hexColor:String = color match {
-        case null => ""
-		case _ => "#"+Seq[Int](color.getRed,color.getGreen,color.getBlue).map(x => {
-			val h:String = x.toHexString
-			if(h.size>1) h else "0" + h
-		}).mkString
-	}
+	val hexColor:String = Style.toHex(color)
 	
-	val hexBackground:String = background match {
-	    case null => ""
-	    case _ => "#"+Seq[Int](background.getRed,background.getGreen,background.getBlue).map(x => {
-			val h:String = x.toHexString
-			if(h.size>1) h else "0" + h
-		}).mkString
-	}
+	val hexBackground:String = Style.toHex(background)
 	
 	def use(f:FontStyle):Style = copy(font=f)
 	def use(p:ParagraphStyle):Style = copy(paragraph=p)
@@ -74,12 +63,16 @@ case class Style(
 	def indentStart(d:Double) = copy(paragraph = paragraph.indentStart(d))
 	def indentEnd(d:Double) = copy(paragraph = paragraph.indentEnd(d))
 	
-	def usePaddings(bd:BoxDim) = copy(paragraph = paragraph.usePaddings(bd))
-	def useMargins(bd:BoxDim) = copy(paragraph = paragraph.useMargins(bd))
+	def usePaddings(bd:Box[Double]) = copy(paragraph = paragraph.usePaddings(bd))
+	def useMargins(bd:Box[Double]) = copy(paragraph = paragraph.useMargins(bd))
 	
-	def paddings(d:Double) = copy(paragraph = paragraph.usePaddings(BoxDim(d,d,d,d)))
-	def margins(d:Double) = copy(paragraph = paragraph.useMargins(BoxDim(d,d,d,d)))
-    def borders(d:Double) = copy(paragraph = paragraph.useBorders(BoxDim(d,d,d,d)))
+	def paddings(d:Double) = copy(paragraph = paragraph.usePaddings(Box(d,d,d,d)))
+	def margins(d:Double) = copy(paragraph = paragraph.useMargins(Box(d,d,d,d)))
+    def borders(d:Border) = copy(paragraph = paragraph.useBorders(Box(d,d,d,d)))
+    def borders(w:Double,s:String,c:Color) = {
+        val b: Border = Border(w,s,c)
+        copy(paragraph = paragraph.useBorders(Box(b,b,b,b)))
+    }
 	
 	def useUnit(u:String) = copy(paragraph = paragraph.useUnit(u),text = text.useUnit(u))
 
@@ -97,6 +90,20 @@ case class Style(
 	
 	def withoutParagraphStyle:Style = copy(paragraph = DefaultParagraphStyle)
 	
+}
+
+object Style {
+
+    def toHex(c:Color):String = {
+        c match {
+            case null => ""
+            case _ => "#"+Seq[Int](c.getRed,c.getGreen,c.getBlue).map(x => {
+                val h:String = x.toHexString
+                if(h.size>1) h else "0" + h
+            }).mkString
+        }
+    }
+
 }
 
 /**

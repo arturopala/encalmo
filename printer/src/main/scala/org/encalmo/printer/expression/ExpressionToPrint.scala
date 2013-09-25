@@ -55,7 +55,7 @@ object ExpressionToPrint {
             case _:Evaluate => ALL_PARTS
             case _:Result => ONLY_RIGHT
             case _:Expand => ONLY_LEFT_AND_UNRESOLVED
-            case _:Require => NOT_RIGHT
+            case _:Require => ALL_PARTS
             case _ => ALL_PARTS
         }
     }

@@ -119,24 +119,19 @@ trait Expression extends TreeNode[Expression] {
     }
 
     def <(e: Expression): Expression = Assert(this,Relation.LESS,e,this.unit)
-
     def <=(e: Expression): Expression = Assert(this,Relation.LESS_OR_EQUAL,e,this.unit)
-
     def >(e: Expression): Expression = Assert(this,Relation.GREATER,e,this.unit)
-
     def >=(e: Expression): Expression = Assert(this,Relation.GREATER_OR_EQUAL,e,this.unit)
-
     def <>(e: Expression): Expression = Assert(this,Relation.NOT_EQUAL,e,this.unit)
-
     def ===(e: Expression): Expression = Assert(this,Relation.EQUAL,e,this.unit)
 
     def printable = true
 
-    def nounit: NoUnit = NoUnit(this)
-
-    def as(unit: UnitOfValue): SetUnit = SetUnit(this, unit)
-
-    def as(unit: String): SetUnit = SetUnit(this, SI(unit).getOrElse(EmptyUnitOfValue))
+    final def nounit: Expression = NoUnit(this)
+    def unit(unit: UnitOfValue): Expression = WithUnit(this, unit)
+    def unit(unit: String): Expression = WithUnit(this, SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
+    def set(unit: UnitOfValue): Expression = SetUnit(this, unit)
+    def set(unit: String): Expression = SetUnit(this, SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
 
     def ##(description:String): Expression = Annotated(this,description)
     def ##(description:Option[String]): Expression = Annotated(this,description)

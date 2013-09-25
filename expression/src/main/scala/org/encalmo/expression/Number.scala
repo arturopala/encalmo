@@ -178,10 +178,12 @@ case class Number(
 	def asString:String = r.toString()
 	
 	/** Sets unit */
-    def unit(name:String):Number = copy(unit = SI(name).getOrElse(SimpleUnitOfValue(UnitOfValueName(name),0,1,SI)))
-    def unit(unit:UnitOfValue):Number = copy(unit = unit)
+    override def unit(name:String):Number = copy(unit = SI(name).getOrElse(SimpleUnitOfValue(UnitOfValueName(name),0,1,SI)))
+    override def unit(unit:UnitOfValue):Number = copy(unit = unit)
+    override def set(unit: UnitOfValue): Number = copy(unit = unit)
+    override def set(unit: String): Number = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
 
-	def mapIfNotZero(doIfTrue: =>Expression):Expression = {
+    def mapIfNotZero(doIfTrue: =>Expression):Expression = {
 	    if(r.isZero) Void else doIfTrue
 	}
 

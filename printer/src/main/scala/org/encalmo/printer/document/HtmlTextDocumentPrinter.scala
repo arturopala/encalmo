@@ -1,7 +1,7 @@
 package org.encalmo.printer.document
 
 import org.encalmo.common._
-import org.encalmo.expression.SymbolLike
+import org.encalmo.expression._
 import org.encalmo.printer._
 import org.encalmo.printer.expression._
 import org.encalmo.document._
@@ -10,11 +10,18 @@ import scala.collection.mutable.LinkedHashMap
 import scala.collection.mutable.Stack
 import scala.collection._
 import org.encalmo.style.{StylesConfigSymbols, Style, DefaultStyle, StylesConfig}
-import org.encalmo.expression.MultipleInfixOperation
-import org.encalmo.expression.Diff
-import org.encalmo.expression.Transparent
-import org.encalmo.expression.Expression
 import org.encalmo.calculation.Results
+import org.w3c.dom.mathml.MathMLPredefinedSymbol
+import scala.Some
+import org.encalmo.common.Node
+import org.encalmo.document.TableOfContents
+import org.encalmo.style.Style
+import org.encalmo.style.StylesConfig
+import scala.Some
+import org.encalmo.common.Node
+import org.encalmo.document.TableOfContents
+import org.encalmo.style.Style
+import org.encalmo.style.StylesConfig
 
 /**
  * Prints document as html5 text 
@@ -157,8 +164,7 @@ div {padding:5pt 0 2pt 0}
             case req:Require => {
                 val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(req,results)
                 if(!ess.isEmpty){
-                    val style = req.parentStylesConfig.flatMap(_.apply(StylesConfigSymbols.REQUIREMENT_TRUE))
-                    blockExprPrintStrategy.print(node,req,ess,style)
+                    blockExprPrintStrategy.print(node,req,ess)
                 }
             }
             case expr:BlockExpr => {
@@ -243,11 +249,11 @@ div {padding:5pt 0 2pt 0}
 		traveler:HtmlTextDocumentPrinterTraveler
 	)extends ExpressionPrintStrategy {
     	
-    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]],rowStyle: Option[Style] = None) = {
+    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
     		val stylesConfig = expr.parentStylesConfig.get
     		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
-			val tableRowStyle:Option[Style] = rowStyle.orElse(stylesConfig.block)
+
     		output.start(TABLE,"et")
     		if(expr.isFirstBlockComponent){
 			    parentNumSection.map(x => output.attr("style","space-before:",x.style.paragraph.spaceBefore*0.8))
@@ -256,33 +262,28 @@ div {padding:5pt 0 2pt 0}
     		output.attr("cellspacing","0")
     		output.body()
 			for(es <- ess){
-				output.startb(TR,tableRowStyle.map(_.classId))
+				output.startb(TR)
 				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
-				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, tableRowStyle, stylesConfig)
+				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, stylesConfig)
 				sc.foreach(_.next())
 				output.end(TR)
 			}
             output.end(TABLE)
     	}
     	
-    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle:Option[Style], stylesConfig:StylesConfig){
+    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, stylesConfig:StylesConfig){
 		    if(!se.isEmpty){
 	        	val etp1 = se.head
 	        	val description:Option[String] = etp1.expression match {
 	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
 	        		case _ => None
 	        	}
-	        	val printable:Boolean = etp1.expression.printable
+                val classIdSuffix: String = se.last.expression match {
+                    case TRUE =>  "rt"
+                    case FALSE =>  "rf"
+                    case _ => ""
+                }
 	        	val isPrintDescription = printDescription && description.isDefined
-	        	val paddingTop = tableRowStyle match {
-	        		case Some(x) => x.paragraph.spaceBefore 
-	        		case None => 3
-	        	}
-	        	val paddingBottom = tableRowStyle match {
-	        		case Some(x) => x.paragraph.spaceAfter
-	        		case None => 3
-	        	}
-	        	val indent:Double = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
 		    	val isCell1 = bullet!=null
 		        val isCell2 = isPrintDescription
                 val descStyle = etp1.stylesConfig match {
@@ -290,7 +291,7 @@ div {padding:5pt 0 2pt 0}
 		            case None => styleStack.top
 		        }
 		    	if(isCell1 || isCell2){
-					output.startb(TD,"ec1")
+					output.startb(TD,"ec1"+classIdSuffix)
 					output.startb(SPAN,stylesConfig.matchStyleClassId(descStyle))
 			        output.append(bullet)
 			        output.append("&nbsp;")
@@ -300,10 +301,10 @@ div {padding:5pt 0 2pt 0}
 		    	}
 		        etp1.expression match {
 	        		case s:SymbolLike => {
-	        		    output.startb(TD,"ec2")
+	        		    output.startb(TD,"ec2"+classIdSuffix)
 	        		    writeExpression(etp1, style)
 	        		    output.end(TD)
-	        		    output.start(TD,"ec3")
+	        		    output.start(TD,"ec3"+classIdSuffix)
 				        if(!isCell2){
 				        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
 				        	output.attr("colspan",ncs)
@@ -315,7 +316,7 @@ div {padding:5pt 0 2pt 0}
 				        output.end(TD)
 	        		}
 	        		case _ => {
-	        		    output.start(TD,"ec3")
+	        		    output.start(TD,"ec3"+classIdSuffix)
 				        if(!isCell2){
 				        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
 				        	output.attr("colspan",ncs)

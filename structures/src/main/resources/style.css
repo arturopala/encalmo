@@ -2,24 +2,22 @@
   body {font-family:sans-serif;font-size:12pt;background-color:#F2F6F7; margin:20mm; color: #26404F}
   table {border-collapse:collapse;margin:5pt;background-color: white;border: 1px solid #AFC4D1;} 
   .et {width:100%; box-shadow: 2px 3px 4px 3px rgba(92, 114, 127, 0.12);}
-  .et td {border-top: 1px solid #AFC4D1;border-bottom: 1px solid #AFC4D1;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
   .default {font-size:0.94em;font-style:normal;font-weight:normal;color:#26404F;}
 }
 @media print {
   body {font-family:serif;font-size:10pt;background-color: white; margin:3mm}
   table {border-collapse:collapse;margin:5pt;background-color: white;border: 1px solid black;} 
   .et {width:100%;}
-  .et td {border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px dotted gray;border-left: 1px dotted gray;padding:2pt 5pt;}
   .default {font-size:0.94em;font-style:normal;font-weight:normal;color:black;}
 }
 div {padding:5pt 0 2pt 0}
-a {color: #3E5460; text-decoration: none}
+a {color: #5B727F; text-decoration: none}
 a:hover {color: blue; text-decoration: underline}
 math {white-space: nowrap; padding: 0; margin: 1px 0;}
 .header {font-size: 75%}
-.ec1 {width:30%; margin-left:2em; text-align:left; vertical-align:top}
-.ec2 {width:5%; font-size:1em; font-weight: bold; text-align:center;}
-.ec3 {width:65%; font-size:1em; color:#26404F}
+.ec1 {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 1px solid #AFC4D1;border-bottom: 1px solid #AFC4D1;border-right: 1px solid #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec2 {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 1px solid #AFC4D1;border-bottom: 1px solid #AFC4D1;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec3 {width:65%; font-size:1em; color:#26404F;border-top: 1px solid #AFC4D1;border-bottom: 1px solid #AFC4D1;border-right: 1px dotted #BBC7CE;border-left: 1px solid #BBC7CE;padding:2pt 5pt;}
 .exp {font-size:0.94em;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
 .expunres {font-size:1em}
 .exprow {font-size:0.94em;font-style:normal;font-weight:normal;color:#000000;space-before:2pt;space-after:1pt;}
@@ -29,7 +27,7 @@ math {white-space: nowrap; padding: 0; margin: 1px 0;}
 .expeval {font-size:1.1em;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
 .expeval mn.num {font-weight:normal; color: blue}
 .ns0 {space-before:1.3em;space-after:1pt;}
-.ns0 .caption {font-size:1em;font-style:normal;font-weight:bold;color:#3E5460;letter-spacing:150%;  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
+.ns0 .caption {font-size:1em;font-style:normal;font-weight:bold;color:#5B727F;letter-spacing:150%;  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
 .ns1 {space-before:1em;space-after:1pt;}
 .ns1 .caption {font-size:1em;font-style:normal;font-weight:bold;color:#5B727F;}
 .ns2 {space-before:1em;space-after:1pt;}
@@ -66,6 +64,11 @@ math {white-space: nowrap; padding: 0; margin: 1px 0;}
 .textvalue {color: black}
 .booleanfalse {color: red; font-weight: bold}
 .booleantrue {color: green; font-weight: bold}
-.reqtrue {border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px}
-.reqfalse {border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px}
-.requnknown {border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px}
+
+.ec1rt {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px dotted #BBC7CE;border-left: 1px solid #5B727F;padding:2pt 5pt;}
+.ec2rt {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec3rt {width:65%; font-size:1em; color:#26404F;border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px solid #5B727F;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+
+.ec1rf {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 2px solid red;border-bottom: 2px solid red;border-right: 1px dotted #BBC7CE;border-left: 2px solid red;padding:2pt 5pt;}
+.ec2rf {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 2px solid red;border-bottom: 2px solid red;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec3rf {width:65%; font-size:1em; color:#26404F;border-top: 2px solid red;border-bottom: 2px solid red;border-right: 2px solid red;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
