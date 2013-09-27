@@ -146,7 +146,7 @@ div {padding:5pt 0 2pt 0}
                 }
             }
             case expr:InlineExpr => {
-                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
+                val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(expr,results)
                 ess.foreach(es => {
                     if(expr.customStyle!=null){
                         output.start(SPAN,expr.customStyleClassId)
@@ -162,13 +162,13 @@ div {padding:5pt 0 2pt 0}
                 })
             }
             case req:Require => {
-                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(req,results)
+                val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(req,results)
                 if(!ess.isEmpty){
                     blockExprPrintStrategy.print(node,req,ess)
                 }
             }
             case expr:BlockExpr => {
-                val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
+                val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(expr,results)
                 if(!ess.isEmpty){
                     blockExprPrintStrategy.print(node,expr,ess)
                 }
@@ -249,7 +249,7 @@ div {padding:5pt 0 2pt 0}
 		traveler:HtmlTextDocumentPrinterTraveler
 	)extends ExpressionPrintStrategy {
     	
-    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
+    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[FormulaToPrint]) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
     		val stylesConfig = expr.parentStylesConfig.get
     		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
@@ -271,16 +271,16 @@ div {padding:5pt 0 2pt 0}
             output.end(TABLE)
     	}
     	
-    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, stylesConfig:StylesConfig){
+    	def writeExpressionSeq(se:FormulaToPrint, style:Style, printDescription:Boolean, bullet:String, stylesConfig:StylesConfig){
 		    if(!se.isEmpty){
 	        	val etp1 = se.head
 	        	val description:Option[String] = etp1.expression match {
 	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
 	        		case _ => None
 	        	}
-                val classIdSuffix: String = se.last.expression match {
-                    case TRUE =>  "rt"
-                    case FALSE =>  "rf"
+                val classIdSuffix: String = se.printStyle match {
+                    case FormulaPrintStyle.BOLD =>  "bd"
+                    case FormulaPrintStyle.ERROR =>  "er"
                     case _ => ""
                 }
 	        	val isPrintDescription = printDescription && description.isDefined

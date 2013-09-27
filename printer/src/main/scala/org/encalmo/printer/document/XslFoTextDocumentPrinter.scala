@@ -213,7 +213,7 @@ extends TreeVisitor[DocumentComponent] {
 						}
 					}
 					case expr:InlineExpr => {
-						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
+						val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(expr,results)
 						ess.foreach(es => {
 							if(expr.customStyle!=null){
 								output.start(INLINE)
@@ -230,13 +230,13 @@ extends TreeVisitor[DocumentComponent] {
 						})
 					}
                     case req:Require => {
-                        val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(req,results)
+                        val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(req,results)
                         if(!ess.isEmpty){
                             blockExprPrintStrategy.print(node,req,ess)
                         }
                     }
 					case expr:BlockExpr => {
-						val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
+						val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(expr,results)
 						if(!ess.isEmpty){
 							blockExprPrintStrategy.print(node,expr,ess)
 						}
@@ -319,7 +319,7 @@ extends TreeVisitor[DocumentComponent] {
 		traveler:XslFoTextDocumentPrinterTraveler
 	) extends ExpressionPrintStrategy {
     	
-    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[Seq[ExpressionToPrint]]) = {
+    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[FormulaToPrint]) = {
     		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
             val stylesConfig = expr.parentStylesConfig.get
             val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
@@ -348,16 +348,16 @@ extends TreeVisitor[DocumentComponent] {
             output.end(TABLE)
     	}
     	
-    	def writeExpressionSeq(se:Seq[ExpressionToPrint], style:Style, printDescription:Boolean, bullet:String, tableRowStyle: Style, secondTableRow:Boolean, stylesConfig:StylesConfig){
+    	def writeExpressionSeq(se:FormulaToPrint, style:Style, printDescription:Boolean, bullet:String, tableRowStyle: Style, secondTableRow:Boolean, stylesConfig:StylesConfig){
 		    if(!se.isEmpty){
 	        	val etp1 = se.head
 	        	val description:Option[String] = etp1.expression match {
 	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
 	        		case _ => None
 	        	}
-                val rowStyle: Style = se.last.expression match {
-                    case TRUE =>  stylesConfig.requirement_true.getOrElse(tableRowStyle)
-                    case FALSE =>  stylesConfig.requirement_false.getOrElse(tableRowStyle)
+                val rowStyle: Style = se.printStyle match {
+                    case FormulaPrintStyle.BOLD =>  stylesConfig.requirement_true.getOrElse(tableRowStyle)
+                    case FormulaPrintStyle.ERROR =>  stylesConfig.requirement_false.getOrElse(tableRowStyle)
                     case _ => tableRowStyle
                 }
 	        	val printable:Boolean = etp1.expression.printable

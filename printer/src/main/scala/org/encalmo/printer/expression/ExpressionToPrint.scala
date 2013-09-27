@@ -10,6 +10,19 @@ import org.encalmo.calculation.Formula
 import org.encalmo.calculation.FormulaPart
 import org.encalmo.style.StylesConfig
 
+case class FormulaToPrint(
+   expressions: Seq[ExpressionToPrint],
+   printStyle: FormulaPrintStyle.Value = FormulaPrintStyle.NORMAL
+) extends Traversable[ExpressionToPrint] {
+	def foreach[U](f: (ExpressionToPrint) => U): Unit = expressions.foreach(f)
+	def apply(i: Int): ExpressionToPrint = expressions(i)
+}
+
+object FormulaPrintStyle extends Enumeration {
+	type FormulaPrintStyle = Value
+	val NORMAL,BOLD,ERROR = Value
+}
+
 /**
  * Wrapped expression prepared to print
  * @author artur.opala
@@ -28,11 +41,11 @@ case class ExpressionToPrint(
 
 object ExpressionToPrint {
 
-    def prepare(element: Expr, results: Results):Seq[Seq[ExpressionToPrint]] = {
-        for(expression <- element.expressions) yield prepare(expression, element, results)
+    def prepare(element: Expr, results: Results, printStyle: FormulaPrintStyle.Value = FormulaPrintStyle.NORMAL):Seq[FormulaToPrint] = {
+        for(expression <- element.expressions) yield prepare(expression, element, results, printStyle)
     }
 
-    def prepare(expression:Expression, element: Expr, results: Results):Seq[ExpressionToPrint] = {
+    def prepare(expression:Expression, element: Expr, results: Results, printStyle: FormulaPrintStyle.Value):FormulaToPrint = {
         val formula = expression match {
             case pinnedExpression:PinnedExpression => {
                 results.formulaSet.getOrReckon(pinnedExpression.symbol,pinnedExpression.context, results)
@@ -41,7 +54,8 @@ object ExpressionToPrint {
                 results.formulaSet.getOrReckon(expression,element.context, results)
             }
         }
-        prepare(formula, partFilterForElement(element),  element.customStyle, element)
+        val expressions = prepare(formula, partFilterForElement(element),  element.customStyle, element)
+	    FormulaToPrint(expressions,printStyle)
     }
 
     val ALL_PARTS: FormulaPart => Boolean = {part => true}
