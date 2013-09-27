@@ -65,10 +65,10 @@ math {white-space: nowrap; padding: 0; margin: 1px 0;}
 .booleanfalse {color: red; font-weight: bold}
 .booleantrue {color: green; font-weight: bold}
 
-.ec1rt {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px dotted #BBC7CE;border-left: 1px solid #5B727F;padding:2pt 5pt;}
-.ec2rt {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
-.ec3rt {width:65%; font-size:1em; color:#26404F;border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px solid #5B727F;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec1bd {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px dotted #BBC7CE;border-left: 1px solid #5B727F;padding:2pt 5pt;}
+.ec2bd {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec3bd {width:65%; font-size:1em; color:#26404F;border-top: 1px solid #5B727F;border-bottom: 1px solid #5B727F;border-right: 1px solid #5B727F;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
 
-.ec1rf {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 2px solid red;border-bottom: 2px solid red;border-right: 1px dotted #BBC7CE;border-left: 2px solid red;padding:2pt 5pt;}
-.ec2rf {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 2px solid red;border-bottom: 2px solid red;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
-.ec3rf {width:65%; font-size:1em; color:#26404F;border-top: 2px solid red;border-bottom: 2px solid red;border-right: 2px solid red;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec1er {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 2px solid red;border-bottom: 2px solid red;border-right: 1px dotted #BBC7CE;border-left: 2px solid red;padding:2pt 5pt;}
+.ec2er {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 2px solid red;border-bottom: 2px solid red;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec3er {width:65%; font-size:1em; color:#26404F;border-top: 2px solid red;border-bottom: 2px solid red;border-right: 2px solid red;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}

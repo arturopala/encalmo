@@ -94,11 +94,11 @@ extends TreeVisitor[DocumentComponent] {
 		}
 	}
 	
-	def writeExpression(se:Seq[ExpressionToPrint]){
+	def writeExpression(se:FormulaToPrint): Unit = {
 		se.foreach(writeExpressionPart)
 	}
 	
-	def writeExpressionPart(etp:ExpressionToPrint){
+	def writeExpressionPart(etp:ExpressionToPrint): Unit = {
 		if(etp.expression.printable){
 		    if(etp.prefix!=null){
 		        w.write(SPACE)
@@ -167,11 +167,11 @@ extends TreeVisitor[DocumentComponent] {
 				plus()
 			}
 			case expr:InlineExpr => {
-				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
+				val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(expr,results)
 				ess.foreach(e => {write(" ");writeExpression(e);write(" ")})
 			}
 			case expr:BlockExpr => {
-				val ess:Seq[Seq[ExpressionToPrint]] = ExpressionToPrint.prepare(expr,results)
+				val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(expr,results)
 				//plus
 			    ess.foreach(es => {
 			        canNewLine = true
