@@ -21,7 +21,7 @@ import org.encalmo.style.Style
 object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
 	
 	override def print(input:Document)(output:XslFoOutput = new XslFoOutput)(results: Results):XslFoOutput = {
-		val t = new XslFoTextDocumentPrinterTraveler(output, results)
+		val t = new XslFoTextDocumentPrinterVisitor(output, results)
 		input.visit(visitor = t)
 		output
 	}
@@ -29,36 +29,15 @@ object XslFoTextDocumentPrinter extends DocumentPrinter[XslFoOutput,String] {
 }
 
 /** 
- * Travels and prints document as xsl-fo text 
+ * Travels and prints document as xsl-fo text
  * @author artur.opala
  */
-class XslFoTextDocumentPrinterTraveler(output:XslFoOutput, results: Results, counter: Option[SectionCounter] = None)
-extends TreeVisitor[DocumentComponent] {
-	
-	val locale = output.locale
-	val mathOutput = output.toMathMLOutput
-	val ept = new MathMLExpressionPrinterTraveler(mathOutput)
-	
+class XslFoTextDocumentPrinterVisitor(val output:XslFoOutput, results: Results, val counter: Option[MultiCounter] = None)
+extends TreeVisitor[DocumentComponent]  with DocumentPrinterVisitor{
+
 	val blockExprPrintStrategy:ExpressionPrintStrategy = output.preferences.expressionPrintStrategy match {
 		case "table" => new ExpressionPrintAsTableStrategy(this)
 		case _ => new ExpressionPrintAsTableStrategy(this)
-	}
-	
-	/** Section counters map */
-	private val counterMap:mutable.LinkedHashMap[Enumerator,SectionCounter] = mutable.LinkedHashMap[Enumerator,SectionCounter]()
-    counter.foreach(c => counterMap.put(c.enumerator,c))
-	
-	private val styleStack:mutable.Stack[Style] = mutable.Stack()
-	styleStack.push(DefaultStyle)
-	
-	/** Returns counter linked to the enumerator */
-	protected def counterFor(en:Enumerator):SectionCounter = {
-		var sco = counterMap.get(en)
-		if(!sco.isDefined){
-			sco = Some(SectionCounter(en))
-			counterMap.put(en,sco.get)
-		}
-		sco.get
 	}
 	
 	var isInFlow:Boolean = false
@@ -129,10 +108,7 @@ extends TreeVisitor[DocumentComponent] {
 		node.element match {
 			case nvc:NonVisualComponent => return
 			case d:Document => {
-			    d.stylesConfig.numbers match {
-					case Some(s) => {mathOutput.numberStyle = s}
-					case None => Unit
-				}
+                mathOutput.numberStyle = d.stylesConfig.numbers
 				return
 			}
 			case chapter:Chapter => {
@@ -152,7 +128,7 @@ extends TreeVisitor[DocumentComponent] {
                     output.append(toc.title)
                     output.end(BLOCK)
                     val counter = toc.parentOfType(classOf[NumSection]).map(ns => counterFor(ns.enumerator).copy())
-                    toc.parent.get.visitChildren(visitor = new XslFoTableOfContentsPrinterTraveler(output, results, toc.levels, counter))
+                    toc.parent.get.visitChildren(visitor = new XslFoTableOfContentsPrinterVisitor(output, results, toc.levels, counter))
                 }
                 output.end(BLOCK)
             }
@@ -192,6 +168,7 @@ extends TreeVisitor[DocumentComponent] {
 							output.append(ns.title.get)
                             output.end(INLINE)
 						}
+                        closestNumSection = Some(ns)
 					}
 					case s:Section => {
 						output.start(BLOCK)
@@ -222,7 +199,7 @@ extends TreeVisitor[DocumentComponent] {
 								output.body()
 							}
 							es.foreach(etp => {
-			                    writeExpression(etp, expr.style)
+			                    printExpression(etp, expr.style)
 			                })
 							if(expr.customStyle!=null){
 								output.end(INLINE)
@@ -230,15 +207,17 @@ extends TreeVisitor[DocumentComponent] {
 						})
 					}
                     case req:Require => {
-                        val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(req,results)
+                        val ess:Seq[FormulaToPrint] = for(expression <- req.expressions) yield {
+                            ExpressionToPrint.prepare(expression, req, results, printStyleOfRequire(expression,results))
+                        }
                         if(!ess.isEmpty){
-                            blockExprPrintStrategy.print(node,req,ess)
+                            blockExprPrintStrategy.print(node,ess,req.isPrintDescription)
                         }
                     }
 					case expr:BlockExpr => {
 						val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(expr,results)
 						if(!ess.isEmpty){
-							blockExprPrintStrategy.print(node,expr,ess)
+							blockExprPrintStrategy.print(node,ess,expr.isPrintDescription)
 						}
 					}
 					case a:Assertion => {
@@ -253,7 +232,7 @@ extends TreeVisitor[DocumentComponent] {
                             output.attr("padding-end","1em")
                             output.body()
                         }
-                        writeExpression(ExpressionToPrint(symb.expression,symb.customStyle,"",""), symb.style)
+                        printExpression(ExpressionToPrint(symb.expression,symb.customStyle,"","",symb.stylesConfig), symb.style)
                         if(symb.customStyle!=null){
                             output.end(INLINE)
                         }
@@ -265,6 +244,30 @@ extends TreeVisitor[DocumentComponent] {
                         output.attr("text-align","center")
                         output.end()
                         output.end(BLOCK)
+                    } case chl: Checklist => {
+                        val (succeses,failures) = chl.findAndPartitionRequirementsFormulas(results)
+                        val errorsToPrint:Seq[FormulaToPrint] = for(f <- failures.take(chl.limit)) yield {
+                            val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
+                            FormulaToPrint(f.expression, expressions, FormulaPrintStyle.ERROR)
+                        }
+                        if(!errorsToPrint.isEmpty){
+                            output.startb(BLOCK)
+                            this.onEnter(Node(node,Text(chl.style,"requirements_not_fulfilled",Translator.defaultDictionary),0))
+                            output.end(BLOCK)
+                            blockExprPrintStrategy.print(node,errorsToPrint,true)
+                        } else {
+                            val limitStatesToPrint:Seq[FormulaToPrint] = for(f <- succeses.take(chl.limit)) yield {
+                                val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
+                                FormulaToPrint(f.expression, expressions, FormulaPrintStyle.NORMAL)
+                            }
+                            if(!limitStatesToPrint.isEmpty){
+                                output.startb(BLOCK)
+                                this.onEnter(Node(node,Text(chl.style,"top_decisive_limit_states",Translator.defaultDictionary),1))
+                                this.onEnter(Node(node,Text(" ("+Math.min(limitStatesToPrint.size,chl.limit)+")")))
+                                output.end(BLOCK)
+                                blockExprPrintStrategy.print(node,limitStatesToPrint,true)
+                            }
+                        }
                     }
 					case _ => {}
 				}
@@ -316,18 +319,18 @@ extends TreeVisitor[DocumentComponent] {
     
     /** Print expression as table */
     class ExpressionPrintAsTableStrategy (
-		traveler:XslFoTextDocumentPrinterTraveler
+		traveler:XslFoTextDocumentPrinterVisitor
 	) extends ExpressionPrintStrategy {
     	
-    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[FormulaToPrint]) = {
-    		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
-            val stylesConfig = expr.parentStylesConfig.get
-            val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
-            val rowStyle:Style = stylesConfig.block.getOrElse(DefaultStyle)
+    	override def print(node:Node[DocumentComponent], ess:Seq[FormulaToPrint], isPrintDescription: Boolean) = {
+    		val parentNumSection = node.element.parentOfType[NumSection](classOf[NumSection])
+            val stylesConfig = node.element.stylesConfig
+            val counter: Option[Counter] = closestNumSection.map(_.expressionCounter)
+            val rowStyle:Style = stylesConfig.block
     		output.start(TABLE)
     		output.attr("table-layout","fixed")
     		output.attr("width","100%")
-    		if(expr.isFirstBlockComponent){
+    		if(node.element.isFirstBlockComponent){
     			output.attr("keep-with-previous","always")
 			    parentNumSection.map(x => output.attr("space-before",x.style.paragraph.spaceBefore*0.8))
 			}
@@ -339,39 +342,35 @@ extends TreeVisitor[DocumentComponent] {
 			output.body()
 			for(es <- ess){
 				output.startb(TABLE_ROW)
-				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
-				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, rowStyle, false, stylesConfig)
-				sc.foreach(_.next())
+				val bullet = counter.map(_.item+")").getOrElse(null)
+				printFormula(es, node.element.style, isPrintDescription, bullet, rowStyle, false, stylesConfig)
+                counter.foreach(_.increment())
 				output.end(TABLE_ROW)
 			}
             output.end(TABLE_BODY)
             output.end(TABLE)
     	}
     	
-    	def writeExpressionSeq(se:FormulaToPrint, style:Style, printDescription:Boolean, bullet:String, tableRowStyle: Style, secondTableRow:Boolean, stylesConfig:StylesConfig){
-		    if(!se.isEmpty){
-	        	val etp1 = se.head
-	        	val description:Option[String] = etp1.expression match {
+    	def printFormula(ftp:FormulaToPrint, style:Style, printDescription:Boolean, bullet:String, tableRowStyle: Style, secondTableRow:Boolean, stylesConfig:StylesConfig){
+		    if(!ftp.isEmpty){
+	        	val description:Option[String] = ftp.expression match {
 	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
 	        		case _ => None
 	        	}
-                val rowStyle: Style = se.printStyle match {
-                    case FormulaPrintStyle.BOLD =>  stylesConfig.requirement_true.getOrElse(tableRowStyle)
-                    case FormulaPrintStyle.ERROR =>  stylesConfig.requirement_false.getOrElse(tableRowStyle)
+                val rowStyle: Style = ftp.printStyle match {
+                    case FormulaPrintStyle.BOLD =>  stylesConfig.requirement_true
+                    case FormulaPrintStyle.ERROR =>  stylesConfig.requirement_false
                     case _ => tableRowStyle
                 }
-	        	val printable:Boolean = etp1.expression.printable
+	        	val printable:Boolean = ftp.expression.printable
 	        	val isPrintDescription = printDescription && description.isDefined && description.get!=""
 	        	val paddingTop = rowStyle.paragraph.spaceBefore
 	        	val paddingBottom = rowStyle.paragraph.spaceAfter
-	        	val indent:Double = if(etp1.style!=null && etp1.style.paragraph.width>0) etp1.style.paragraph.width else 30
+	        	val indent:Double = if(style!=null && style.paragraph.width>0) style.paragraph.width else 30
 		    	val isCell1 = true
 		        val isCell2 = isPrintDescription
-                val descStyle = etp1.stylesConfig match {
-		            case Some(x) => x.symbolDescription.getOrElse(styleStack.top)
-		            case None => styleStack.top
-		        }
-	        	val leafs:Int = se.map(x => x.expression.countTreeLeafs).sum
+                val descStyle = stylesConfig.symbolDescription
+	        	val leafs:Int = ftp.map(x => x.expression.countTreeLeafs).sum
 	        	val twoRows:Boolean = !secondTableRow && (leafs>15 || (description match {
 	        		case Some(d) => d.size>150
 	        		case None => false
@@ -442,7 +441,7 @@ extends TreeVisitor[DocumentComponent] {
 					output.start(TABLE_ROW)
 					output.attr("keep-with-previous","always")
 					output.body()
-					writeExpressionSeq(se, style, printDescription, "", rowStyle, true, stylesConfig)
+					printFormula(ftp, style, printDescription, "", rowStyle, true, stylesConfig)
 				}else{
 			        output.start(BLOCK)
 			        output.appendInlineStyleAttributes(style,styleStack.top)
@@ -454,8 +453,8 @@ extends TreeVisitor[DocumentComponent] {
 			        output.attr("margin-left",indent+5,"pt")
 			        output.attr("keep-together.within-page","always")
 			        output.body()
-			        se.foreach(etp => {
-	    				writeExpression(etp, style)
+			        ftp.foreach(etp => {
+	    				printExpression(etp, style)
 	    			})
 			        output.end(BLOCK)
 			        output.end(TABLE_CELL)
@@ -465,7 +464,7 @@ extends TreeVisitor[DocumentComponent] {
     	
 	}
         
-    def writeExpression(etp:ExpressionToPrint, style:Style, parentNode:Node[Expression] = null, position:Int=0, span:Boolean = true):Unit = {
+    def printExpression(etp:ExpressionToPrint, style:Style, parentNode:Node[Expression] = null, position:Int=0, span:Boolean = true):Unit = {
         if(etp.expression.printable){
             val numberOfLeafs:Int = etp.expression.countTreeLeafs
             etp.expression match {
@@ -473,11 +472,11 @@ extends TreeVisitor[DocumentComponent] {
                     val node = Node[Expression](parentNode,tr,position)
                     tr.children.size match {
                         case 0 => Unit
-                        case 1 => writeExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,etp.suffix,etp.stylesConfig),style,node,0,span)
+                        case 1 => printExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,etp.suffix,etp.stylesConfig),style,node,0,span)
                         case _ => {
-                            writeExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
+                            printExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
                             tr.children.tail.foreach(e => {
-                                writeExpression(ExpressionToPrint(e,etp.style,null,null,etp.stylesConfig),style,node,1,false)
+                                printExpression(ExpressionToPrint(e,etp.style,null,null,etp.stylesConfig),style,node,1,false)
                             })
                             if(etp.suffix!=null)output.append(etp.suffix)
                         }
@@ -485,9 +484,9 @@ extends TreeVisitor[DocumentComponent] {
                 }
                 case mio:MultipleInfixOperation if mio.args.size > 1 && numberOfLeafs>=10 => {
                     val node = Node[Expression](parentNode,mio,position)
-                    writeExpression(ExpressionToPrint(mio.args.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
+                    printExpression(ExpressionToPrint(mio.args.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
                     mio.args.tail.foreach(e => {
-                        writeExpression(ExpressionToPrint(e,etp.style,output.convertOperator(mio.operator),null,etp.stylesConfig),style,node,1,false)
+                        printExpression(ExpressionToPrint(e,etp.style,output.convertOperator(mio.operator),null,etp.stylesConfig),style,node,1,false)
                     })
                     if(etp.suffix!=null)output.append(etp.suffix)
                 }
@@ -527,8 +526,8 @@ extends TreeVisitor[DocumentComponent] {
 	
 }
 
-class XslFoTableOfContentsPrinterTraveler(output:XslFoOutput, results: Results, levels: Int = 3, counter: Option[SectionCounter] = None)
-extends XslFoTextDocumentPrinterTraveler(output, results, counter) {
+class XslFoTableOfContentsPrinterVisitor(output:XslFoOutput, results: Results, levels: Int = 3, counter: Option[MultiCounter] = None)
+extends XslFoTextDocumentPrinterVisitor(output, results, counter) {
 
     val maxLevel = levels + counter.map(_.currentLevel).getOrElse(0)
     val expectedEnumerator = counter.map(_.enumerator).getOrElse(null)

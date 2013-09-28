@@ -9,9 +9,9 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 	
     val asWriter:java.io.PrintWriter = new java.io.PrintWriter(new TextOutputWriter(buffer))
     
-    val DecimalFormatSymbols = java.text.DecimalFormatSymbols.getInstance(locale)
+    val decimalFormatSymbols = java.text.DecimalFormatSymbols.getInstance(locale)
 	val CRLF = "\r\n"
-	val COMMA = DecimalFormatSymbols.getPatternSeparator
+	val COMMA = decimalFormatSymbols.getPatternSeparator
 	val SPACE = " "
 	
 	def getResult:String = buffer.toString()
@@ -99,6 +99,10 @@ class TextOutput(val locale:java.util.Locale = java.util.Locale.getDefault, val 
 			}
 		}
 	}
+
+    def toMathMLOutput:MathMLOutput = {
+        new MathMLOutput(locale = locale, buffer = buffer, indent = new Indent(2))
+    }
 
 }
 

@@ -10,7 +10,9 @@ import org.encalmo.style.StylesConfig
  */
 class NumSection(val title:Option[String], customStyleOfNumSection: Option[Style], val myEnumerator:Enumerator, flow:DocumentComponent*)
 extends Section(customStyleOfNumSection,flow:_*) {
-    
+
+    val expressionCounter: Counter = Counter(1)
+
     lazy val parentNumSection = parentOfType[NumSection](classOf[NumSection])
     lazy val parentEnumeratorProvider = parentOrSiblingOfType[EnumeratorProvider](classOf[EnumeratorProvider])
 	
@@ -57,12 +59,9 @@ extends Section(customStyleOfNumSection,flow:_*) {
 			resolveStyle(sc,10)
 		}else{
 			if(level<0){
-				sc.level(0).getOrElse(sc.numsection.getOrElse(null))
+				sc.level(0)
 			}else{
-				sc.level(level) match {
-					case Some(style) => style
-					case None => resolveStyle(sc,level-1)
-				}
+				sc.level(level)
 			}
 		}
 	}

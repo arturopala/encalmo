@@ -232,6 +232,8 @@ object Symbol {
 	def apply(name:String,subscript:Symbol,superscript:Symbol):Symbol = new Symbol(name,Option(subscript),Option(superscript))
 	def apply(name:String,subscript:Symbol,superscript:Symbol,underscript:Symbol):Symbol = new Symbol(name,Option(subscript),Option(superscript),Option(underscript))
 	def apply(name:String,subscript:Symbol,superscript:Symbol,underscript:Symbol,overscript:Symbol):Symbol = new Symbol(name,Option(subscript),Option(superscript),Option(underscript),Option(overscript))
+
+    def apply(name:String,contextId:String,description: String):Symbol = new Symbol(name = name,contextId = Option(contextId), description = Option(description))
   
 	def apply(
 		name:String,

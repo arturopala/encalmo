@@ -12,7 +12,8 @@ import org.encalmo.printer.XslFoOutput
 import org.junit.Test
 
 import scalax.file.Path
-import org.encalmo.structures.Predefined._
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.printer.HtmlOutputPreferences
 
 /**
@@ -27,7 +28,7 @@ abstract class Worksheet(name: String) extends Calculation(name) {
     def results: Results = Reckoner.reckon
 
     def defaultDocument(component: DocumentComponent = Section(Evaluate(this.topologicallySortedConnectedSymbols:_*)(this))): Document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
             Section(""),
             Section(""),
@@ -39,7 +40,7 @@ abstract class Worksheet(name: String) extends Calculation(name) {
     def printHtml(path: String): Results =  printHtml(results)(path)
 
     def printHtml(results: Results)(path: String): Results =  {
-        val layout = Predefined.layout
+        val layout = PredefinedStyles.layout
         val prefs: HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path.fromString("src/main/resources/style.css"))
         val output: HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"), prefs)
         output.open()
@@ -52,7 +53,7 @@ abstract class Worksheet(name: String) extends Calculation(name) {
     def printXslFo(path: String): Results = printXslFo(results)(path)
 
     def printXslFo(results: Results)(path: String): Results = {
-        val layout = Predefined.layout
+        val layout = PredefinedStyles.layout
         val output: XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open()
         XslFoTextDocumentPrinter.print(document)(output)(results)
@@ -64,7 +65,7 @@ abstract class Worksheet(name: String) extends Calculation(name) {
     def printPdf(path: String): Results = printPdf(results)(path)
 
     def printPdf(results: Results)(path: String): Results = {
-        val layout = Predefined.layout
+        val layout = PredefinedStyles.layout
         val output: XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open()
         XslFoTextDocumentPrinter.print(document)(output)(results)

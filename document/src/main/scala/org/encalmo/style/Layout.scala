@@ -1,7 +1,7 @@
-package org.encalmo.printer
+package org.encalmo.style
 
 /**
- * PrintLayout class, , all dimensions in [mm]
+ * Document layout, all dimensions in [mm]
  * @author artur.opala
  */
 case class Layout(

@@ -3,14 +3,15 @@ package org.encalmo.structures.eurocode.composite
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.structures.Predefined
-import org.encalmo.structures.Predefined._
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.eurocode.concrete.ReinforcingSteel
 import org.encalmo.structures.eurocode.concrete.Concrete
 import org.encalmo.structures.eurocode.steel._
 import org.encalmo.structures.Worksheet
 import org.encalmo.document.TableOfContents
 import org.encalmo.structures.eurocode.fasteners.HeadedStud
+import org.encalmo.style.PredefinedStyles
 
 class CompositeSlabWorksheet extends Worksheet("kz-strop") {
 
@@ -63,7 +64,7 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
     this add belka
     
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
         	Section(
             	Section("Praca magisterska \"Konstrukcja stropu zespolonego garażu wielopoziomowego\". Autor: Artur Opala, album 61315."),

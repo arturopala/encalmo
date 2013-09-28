@@ -1,6 +1,7 @@
 package org.encalmo.calculation
 
 import org.encalmo.expression._
+import scala.collection.Set
 
 /** 
  * Sequence of Contexts
@@ -27,12 +28,16 @@ trait ContextSeq extends Context {
     protected final def hasNestedExpression(s:Symbol):Boolean = contexts.exists(_.hasExpression(s))
 
     override def listMappings: Seq[(Symbol,Expression)] = listNestedMappings
+    override def listMappings(filter: ((Symbol,Expression))=>Boolean):Seq[(Symbol,Expression)] = listNestedMappings(filter)
 
     protected final def listNestedMappings: Seq[(Symbol,Expression)] = contexts.flatMap(_.listMappings)
+    protected final def listNestedMappings(filter: ((Symbol,Expression))=>Boolean): Seq[(Symbol,Expression)] = contexts.flatMap(_.listMappings(filter))
 
-    override def listSymbols: Seq[Symbol] = listNestedSymbols
+    override def listSymbols: Set[Symbol] = listNestedSymbols
+    override def listSymbols(filter: Symbol=>Boolean): Set[Symbol] = listNestedSymbols(filter)
 
-    protected final def listNestedSymbols: Seq[Symbol] = contexts.flatMap(_.listSymbols)
+    protected final def listNestedSymbols: Set[Symbol] = contexts.flatMap(_.listSymbols).toSet
+    protected final def listNestedSymbols(filter: Symbol=>Boolean): Set[Symbol] = contexts.flatMap(_.listSymbols(filter)).toSet
 
     override def listNestedResolvers:Seq[Context] = contexts.flatMap(_.listNestedResolvers) ++ contexts
 }

@@ -13,7 +13,7 @@ import org.encalmo.calculation.{ResultsCache, EvalAt}
 object MathMLExpressionPrinter extends ExpressionPrinter[MathMLOutput, String] {
 
 	override def print(e: Expression)(output: MathMLOutput = new MathMLOutput)(any: AnyRef = new Object()): MathMLOutput = {
-		val t = new MathMLExpressionPrinterTraveler(output)
+		val t = new MathMLExpressionPrinterVisitor(output)
 		e.visit(visitor = t)
 		output
 	}
@@ -24,7 +24,7 @@ object MathMLExpressionPrinter extends ExpressionPrinter[MathMLOutput, String] {
  * Simple Traveler printing expression as MathML xml text
  * @author artur.opala
  */
-class MathMLExpressionPrinterTraveler(output: MathMLOutput) extends TreeVisitor[Expression] {
+class MathMLExpressionPrinterVisitor(output: MathMLOutput) extends TreeVisitor[Expression] {
 	
 	val locale = output.locale
 

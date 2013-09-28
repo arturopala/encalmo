@@ -4,6 +4,7 @@ import org.encalmo.expression._
 import java.util.UUID
 import scala.annotation.tailrec
 import org.encalmo.graph.Graph
+import scala.collection.Set
 
 /** 
  * Expression's calculation context trait
@@ -32,14 +33,20 @@ trait Context extends SymbolConfigurator {
 	def hasExpression(s:Symbol):Boolean
 	
 	/**
-	 * Should return sequence of used mappings
+	 * Should return sequence of defined mappings
 	 */
 	def listMappings:Seq[(Symbol,Expression)]
+
+    /**
+     * Should return sequence of used mappings
+     */
+    def listMappings(filter: ((Symbol,Expression))=>Boolean):Seq[(Symbol,Expression)]
 	
 	/**
      * Should return sequence of mapped symbols
      */
-    def listSymbols:Seq[Symbol]
+    def listSymbols: Set[Symbol]
+    def listSymbols(filter: Symbol=>Boolean): Set[Symbol]
 
     /**
      * Should return sequence of nested expression contexts
@@ -63,6 +70,8 @@ trait Context extends SymbolConfigurator {
         case value: Value => Some(value)
         case _ => None
     }
+
+    def listRequirements: Set[Symbol] = listSymbols(s => s.name.startsWith(Context.REQUIREMENT_SYMBOL_PREFIX))
 	
 	/**
 	 * Expands symbols to their mapped expressions.
@@ -251,4 +260,8 @@ trait Context extends SymbolConfigurator {
 	def evaluateAndMap(symbols:Symbol*)(cache: ResultsCache):Map[Symbol,Expression] = {
 	    symbols.zip(symbols.map(s => evaluate(s)(cache))).toMap
 	}
+}
+
+object Context {
+    val REQUIREMENT_SYMBOL_PREFIX: String = "requirement:"
 }

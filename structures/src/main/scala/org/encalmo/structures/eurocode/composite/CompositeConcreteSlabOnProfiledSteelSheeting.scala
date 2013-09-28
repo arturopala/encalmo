@@ -96,9 +96,6 @@ trait CompositeConcreteSlabOnProfiledSteelSheetingSymbols extends SymbolConfigur
 	val sigmactplus = symbol(BasicSymbols.sigma|("ct","+")) unit "MPa"
 	val fyrd = symbol(BasicSymbols.f|"yr,d") unit "MPa"
     val la = symbol(BasicSymbols.l|"a") unit "m"
-
-    val ΓM1 = symbol(BasicSymbols.Γ|"M,1") //Warunek nośności na zginanie na podporze
-    val ΓM2 = symbol(BasicSymbols.Γ|"M,2") //Warunek nośności na zginanie w przęśle
 }
 
 class CompositeConcreteSlabOnProfiledSteelSheeting(
@@ -174,6 +171,9 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
     Qk1 := Gcck + Qcfk + Qmk
     Qd1 := Gccd + Qcfd + Qmd
 
+    val ULS1M = require(abs(MEdmm/MRdm) < 1,"Warunek nośności na zginanie na podporze w fazie montażu")
+    val ULS2M = require(abs(MEdmp/MRdp) < 1,"Warunek nośności na zginanie w przęśle w fazie montażu")
+
     FEdm := abs(VEdm1)+abs(VEdm2)
     alpha := 0.15
     betav := (abs(abs(VEdm1)-abs(VEdm2))/(abs(VEdm1)+abs(VEdm2))) ## "6.1.7.3(3)"
@@ -207,8 +207,6 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
     Np := Ap*fyd
     z := dp-0.5*xpl
     MplRd := Np*z
-    ΓM1 := (abs(MEdmm/MRdm) < 1) //Warunek nośności na zginanie na podporze
-    ΓM2 := (abs(MEdmp/MRdp) < 1) //Warunek nośności na zginanie w przęśle
     //rozwarstwienie
     VEde := 0.5*Qd2*ls*0.9
     Ls := ls/4
@@ -252,9 +250,9 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
 	def ULS1 = NumSection(Text("ULS","eurocode"),
 		NumSection("Sprawdzenie nośności na zginanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.4.1",
 			Evaluate(MEdmm,MRdm),
-			Require(ΓM1), //Warunek nośności na zginanie na podporze
+			Require(ULS1M), //Warunek nośności na zginanie na podporze
 			Evaluate(MEdmp,MRdp),
-            Require(ΓM2) //Warunek nośności na zginanie w przęśle
+            Require(ULS2M) //Warunek nośności na zginanie w przęśle
 		),
         sheet.shear,
 		NumSection("Sprawdzenie nośności na ścinanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.5",

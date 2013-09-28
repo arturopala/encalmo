@@ -1,6 +1,6 @@
 package org.encalmo.expression
 
-case class Assert(left:Expression, relation:Relation.Value, right:Expression, override val unit:UnitOfValue = EmptyUnitOfValue, description:Option[String] = None) extends Expression {
+case class Assert(left:Expression, relation:Relation.Value, right:Expression, override val unit:UnitOfValue = EmptyUnitOfValue, description:Option[String] = None, optional: Boolean = true) extends Expression {
 
     override val children = Seq(left,right)
 
@@ -32,4 +32,15 @@ case class Assert(left:Expression, relation:Relation.Value, right:Expression, ov
     override def set(unit: String): Assert = copy(unit = SI(unit).getOrElse(SimpleUnitOfValue(UnitOfValueName(unit),0,1,SI)))
 
     override def ##(d: String): Assert = Assert(left,relation,right,unit,concatenate(description,Option(d)))
+
+    def ratio:Expression = (left,right) match {
+        case (v1:Number,v2:Number) => relation match {
+            case Relation.GREATER => (v2/v1).eval().unit(SI.percent)
+            case Relation.GREATER_OR_EQUAL => (v2/v1).eval().unit(SI.percent)
+            case _ => (v1/v2).eval().unit(SI.percent)
+        }
+        case _ => this
+    }
+
+    def required = copy(optional = false)
 }

@@ -2,7 +2,10 @@ package org.encalmo.calculation
 
 import org.encalmo.expression._
 
-case class FormulaPart(expression: Expression, position: FormulaPosition.Value, relation: Relation.Value, index: Int = 0)
+case class FormulaPart(expression: Expression, position: FormulaPosition.Value, relation: Relation.Value, index: Int = 0){
+
+    lazy val face: String = Relation.faceOf(relation) + " " + expression.face
+}
 
 object FormulaPart {
 

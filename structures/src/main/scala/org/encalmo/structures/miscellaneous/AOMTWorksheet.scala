@@ -3,8 +3,8 @@ package org.encalmo.structures.miscellaneous
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.structures.Predefined
-import org.encalmo.structures.Predefined._
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.eurocode.concrete.ReinforcingSteel
 import org.encalmo.structures.eurocode.concrete.Concrete
 import org.encalmo.structures.eurocode.steel._
@@ -64,7 +64,7 @@ class AOMTWorksheet extends Worksheet("aomt") {
     this add belka
     
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
         	Section(
             	Section("Praca magisterska \"Konstrukcja stropu zespolonego garażu wielopoziomowego\". Autor: Artur Opala, album 61315."),
@@ -77,6 +77,7 @@ class AOMTWorksheet extends Worksheet("aomt") {
                NumSection("Przyjęto do obliczeń",Evaluate(plyta(plyta.h),stal.label,beton.label,blacha.label,profil.label,sworzen.label)(plyta))
            ),
            NumSection("Podsumowanie wyników",
+               Checklist(),
                Evaluate(belka.mS)(belka)
            ),
            NumSection("Obliczenia szczegółowe",

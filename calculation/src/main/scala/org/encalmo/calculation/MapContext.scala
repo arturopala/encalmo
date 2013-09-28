@@ -1,6 +1,7 @@
 package org.encalmo.calculation
 
 import scala.collection.mutable
+import scala.collection.Set
 import org.encalmo.expression._
 
 /** 
@@ -52,12 +53,16 @@ class MapContext(val dictionary: Option[String] = None) extends MutableContext {
     protected final def hasMappedExpression(s:Symbol):Boolean = map.contains(s)
 
     override def listMappings: Seq[(Symbol,Expression)] = listMappedHere
+    override def listMappings(filter: ((Symbol,Expression))=>Boolean):Seq[(Symbol,Expression)] = listMappedHere(filter)
 
     protected final def listMappedHere: Seq[(Symbol,Expression)] = map.toSeq
+    protected final def listMappedHere(filter: ((Symbol,Expression))=>Boolean): Seq[(Symbol,Expression)] = map.filter(filter).toSeq
 
-    override def listSymbols: Seq[Symbol] = listMappedSymbols
+    override def listSymbols: Set[Symbol] = listMappedSymbols
+    override def listSymbols(filter: Symbol=>Boolean): Set[Symbol] = listMappedSymbols(filter)
 
-    private[calculation] final def listMappedSymbols: Seq[Symbol] = map.keySet.toSeq
+    private[calculation] final def listMappedSymbols: Set[Symbol] = map.keySet
+    private[calculation] final def listMappedSymbols(filter: Symbol=>Boolean): Set[Symbol] = map.keySet.filter(filter)
 
     override def listNestedResolvers:Seq[Context] = Seq.empty[Context]
 	

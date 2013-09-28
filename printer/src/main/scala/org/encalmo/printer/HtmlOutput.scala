@@ -2,9 +2,7 @@ package org.encalmo.printer
 
 import org.encalmo.document._
 import HtmlTags._
-import org.encalmo.style.FontStyle
-import org.encalmo.style.StylesConfig
-import org.encalmo.style.Style
+import org.encalmo.style.{Layout, FontStyle, StylesConfig, Style}
 
 /**
  * Html text output
@@ -45,7 +43,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 		super.close()
 	}
 	
-	def toMathMLOutput:MathMLOutput = {
+	override def toMathMLOutput:MathMLOutput = {
 		new MathMLOutput(
 		        locale = locale, buffer = buffer, indent = indent, namespace = null, 
 		        declare = false, displayType = Some("inline"), printStyles = false

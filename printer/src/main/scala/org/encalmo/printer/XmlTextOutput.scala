@@ -275,6 +275,10 @@ extends TextOutput(locale,buffer) {
 	    })
 		endAttr()
 	}
+
+    override def toMathMLOutput:MathMLOutput = {
+        new MathMLOutput(locale = locale, buffer = buffer, indent = indent)
+    }
 	
 }
 

@@ -49,7 +49,7 @@ class SymbolGraphUnitTest extends AssertionsForJUnit {
     }
     assertFalse(Graph.hasCycles(graph))
     val list = Graph.sortTopologically(graph)
-    assertTrue(list.sameElements(List(z, h, f, e, d, c, b, a)))
+    assertTrue(list.sameElements(List(h, f, z, e, d, c, b, a)))
   }
 
   @Test def shouldBuildGraphAndFindCycle() = {

@@ -7,9 +7,7 @@ import org.encalmo.calculation._
 import org.encalmo.document._
 import org.encalmo.printer._
 import org.encalmo.fop.FOPHelper
-import org.encalmo.style.DefaultFontStyle
-import org.encalmo.style.DefaultStyle
-import org.encalmo.style.StylesConfig
+import org.encalmo.style.{Layout, DefaultFontStyle, DefaultStyle, StylesConfig}
 
 class HtmlTextDocumentPrinterTest extends AssertionsForJUnit  {
 	

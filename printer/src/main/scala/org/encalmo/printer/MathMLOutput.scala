@@ -1,6 +1,5 @@
 package org.encalmo.printer
 
-import java.io.Writer
 import org.encalmo.expression._
 import org.encalmo.style.Style
 import org.encalmo.style.FontStyle
@@ -25,15 +24,15 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 	
 	var mathStyle:Style = DefaultStyle
 	var numberStyle:Style = null
+
+	val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("#",decimalFormatSymbols)
+	val dimensionFormat:java.text.NumberFormat = new java.text.DecimalFormat("0.#",decimalFormatSymbols)
+	val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",decimalFormatSymbols)
+	val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",decimalFormatSymbols)
+	val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",decimalFormatSymbols)
+	val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",decimalFormatSymbols)
 	
-	lazy val integerFormat1:java.text.NumberFormat = new java.text.DecimalFormat("###,###,###,###",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val dimensionFormat:java.text.NumberFormat = new java.text.DecimalFormat("0.#",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val fractionFormat1:java.text.NumberFormat = new java.text.DecimalFormat(".#",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val fractionFormat2:java.text.NumberFormat = new java.text.DecimalFormat(".##",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val fractionFormat3:java.text.NumberFormat = new java.text.DecimalFormat(".###",java.text.DecimalFormatSymbols.getInstance(locale))
-	lazy val fractionFormat4:java.text.NumberFormat = new java.text.DecimalFormat(".####",java.text.DecimalFormatSymbols.getInstance(locale))
-	
-	override def open = {
+	override def open() = {
 		startNoIndent(MATH)
 		if(declare){
 		    declareNamespace("http://www.w3.org/1998/Math/MathML")
@@ -127,7 +126,7 @@ extends XmlTextOutput(locale, namespace, buffer, indent) {
 			}
 			attr("class",NUM_CLASS_ID)
 			body()
-			integerFormat1.format(nf.integer).toCharArray.map{case ' ' => append("&thinsp;"/*MathMLTags.ENTITY_THIN_SPACE*/); case a => append(a)}
+            append(nf.integer.toString)
 			if(nf.fraction>0){
 				nf.decimals match {
 					case 1 => append(fractionFormat1.format(nf.fraction))

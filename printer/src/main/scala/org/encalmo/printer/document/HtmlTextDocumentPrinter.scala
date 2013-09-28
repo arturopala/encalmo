@@ -30,7 +30,7 @@ import org.encalmo.style.StylesConfig
 object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
 	
 	override def print(input:Document)(output:HtmlOutput = new HtmlOutput)(results:Results):HtmlOutput = {
-		val t = new HtmlTextDocumentPrinterTraveler(output, results)
+		val t = new HtmlTextDocumentPrinterVisitor(output, results)
 		input.visit(visitor = t)
 		output
 	}
@@ -38,15 +38,11 @@ object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
 }
 
 /** 
- * Travels and prints document as html5 text 
+ * Visits and prints document as html document
  * @author artur.opala
  */
-class HtmlTextDocumentPrinterTraveler(output:HtmlOutput, results: Results, counter: Option[SectionCounter] = None)
-extends TreeVisitor[DocumentComponent] {
-
-	val locale = output.locale
-	val mathOutput = output.toMathMLOutput
-	val ept = new MathMLExpressionPrinterTraveler(mathOutput)
+class HtmlTextDocumentPrinterVisitor(val output:HtmlOutput, results: Results, val counter: Option[MultiCounter] = None)
+extends TreeVisitor[DocumentComponent] with DocumentPrinterVisitor {
 	
 	val customStyles = """ 
 body {font-family:sans-serif;font-size:12pt;background-color: #FFFAD8;}
@@ -63,20 +59,8 @@ div {padding:5pt 0 2pt 0}
 		case "table" => new ExpressionPrintAsTableStrategy(this)
 		case _ => new ExpressionPrintAsTableStrategy(this)
 	}
-	
-	/** Section counters map */
-	private val counterMap:mutable.LinkedHashMap[Enumerator,SectionCounter] = mutable.LinkedHashMap[Enumerator,SectionCounter]()
-    counter.foreach(c => counterMap.put(c.enumerator,c))
-	
-	private val styleStack:mutable.Stack[Style] = mutable.Stack()
-	styleStack.push(DefaultStyle)
-	
-	/** Returns counter linked to the enumerator */
-	protected def counterFor(en:Enumerator):SectionCounter = {
-		counterMap.getOrElseUpdate(en,SectionCounter(en))
-	}
-	
-	override def onEnter(node:Node[DocumentComponent]):Unit = {
+
+    override def onEnter(node:Node[DocumentComponent]):Unit = {
 		node.element match {
 			case nvc:NonVisualComponent => return
 			case d:Document => {
@@ -86,7 +70,7 @@ div {padding:5pt 0 2pt 0}
 				    output.append(customStyles)
 				}
 				if(!output.preferences.skipDocumentStyles){
-				    d.stylesConfig.all.foreach(_.map(allStyles.add))
+				    d.stylesConfig.all.foreach(allStyles.add)
                     allStyles.foreach(output.styledef(_, d.stylesConfig))
                 }else if(output.preferences.isCustomStyleSheet){
 				    output.append(output.preferences.customStyleSheet)
@@ -101,7 +85,7 @@ div {padding:5pt 0 2pt 0}
                 if(toc.parent.isDefined){
                     val counter = toc.parentOfType(classOf[NumSection]).map(ns => counterFor(ns.enumerator).copy())
                     output.startb(DIV,"toc")
-                    toc.parent.get.visitChildren(visitor = new HtmlTableOfContentsPrinterTraveler(output, results, toc.levels, counter))
+                    toc.parent.get.visitChildren(visitor = new HtmlTableOfContentsPrinterVisitor(output, results, toc.levels, counter))
                     output.end(DIV)
                 }
             }
@@ -129,6 +113,7 @@ div {padding:5pt 0 2pt 0}
                     output.append(ns.title.get)
                 }
                 output.end(SPAN)
+                closestNumSection = Some(ns)
             }
             case s:Section => {
                 output.startb(DIV, s.styleClassId)
@@ -154,7 +139,7 @@ div {padding:5pt 0 2pt 0}
                         output.body()
                     }
                     es.foreach(etp => {
-                        writeExpression(etp, expr.style)
+                        printExpression(etp, expr.style)
                     })
                     if(expr.customStyle!=null){
                         output.end(SPAN)
@@ -162,15 +147,17 @@ div {padding:5pt 0 2pt 0}
                 })
             }
             case req:Require => {
-                val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(req,results)
+                val ess:Seq[FormulaToPrint] = for(expression <- req.expressions) yield {
+                    ExpressionToPrint.prepare(expression, req, results, printStyleOfRequire(expression,results))
+                }
                 if(!ess.isEmpty){
-                    blockExprPrintStrategy.print(node,req,ess)
+                    blockExprPrintStrategy.print(node,ess,req.isPrintDescription)
                 }
             }
             case expr:BlockExpr => {
                 val ess:Seq[FormulaToPrint] = ExpressionToPrint.prepare(expr,results)
                 if(!ess.isEmpty){
-                    blockExprPrintStrategy.print(node,expr,ess)
+                    blockExprPrintStrategy.print(node,ess,expr.isPrintDescription)
                 }
             }
             case a:Assertion => {
@@ -185,7 +172,7 @@ div {padding:5pt 0 2pt 0}
                     output.attr("style","padding-end:1em")
                     output.body()
                 }
-                writeExpression(ExpressionToPrint(symb.expression,symb.customStyle,"",""), symb.style)
+                printExpression(ExpressionToPrint(symb.expression,symb.customStyle,"","",symb.stylesConfig), symb.style)
                 if(symb.customStyle!=null){
                     output.end(SPAN)
                 }
@@ -196,6 +183,32 @@ div {padding:5pt 0 2pt 0}
                 output.start(IMG)
                 output.attr("src",image.source)
                 output.end()
+                output.end(DIV)
+            }
+            case chl: Checklist => {
+                val (succeses,failures) = chl.findAndPartitionRequirementsFormulas(results)
+                val errorsToPrint:Seq[FormulaToPrint] = for(f <- failures.take(chl.limit)) yield {
+                    val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
+                    val ftp = FormulaToPrint(f.expression, expressions, FormulaPrintStyle.ERROR)
+                    Console.err.println("Failure: "+f.face)
+                    ftp
+                }
+                if(!errorsToPrint.isEmpty){
+                    output.startb(DIV,"errorslist")
+                    this.onEnter(Node(node,Text(chl.style,"requirements_not_fulfilled",Translator.defaultDictionary),0))
+                    blockExprPrintStrategy.print(node,errorsToPrint,true)
+                } else {
+                    output.startb(DIV,"checklist")
+                    val limitStatesToPrint:Seq[FormulaToPrint] = for(f <- succeses.take(chl.limit)) yield {
+                        val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
+                        FormulaToPrint(f.expression, expressions, FormulaPrintStyle.NORMAL)
+                    }
+                    if(!limitStatesToPrint.isEmpty){
+                        this.onEnter(Node(node,Text("top_decisive_limit_states",Translator.defaultDictionary),1))
+                        this.onEnter(Node(node,Text(" ("+Math.min(limitStatesToPrint.size,chl.limit)+" / "+limitStatesToPrint.size+"):")))
+                        blockExprPrintStrategy.print(node,limitStatesToPrint,true)
+                    }
+                }
                 output.end(DIV)
             }
             case _ => {}
@@ -246,16 +259,16 @@ div {padding:5pt 0 2pt 0}
     
     /** Print expression as table */
     class ExpressionPrintAsTableStrategy (
-		traveler:HtmlTextDocumentPrinterTraveler
-	)extends ExpressionPrintStrategy {
+		traveler:HtmlTextDocumentPrinterVisitor
+	) extends ExpressionPrintStrategy {
     	
-    	override def print(node:Node[DocumentComponent],expr:BlockExpr,ess:Seq[FormulaToPrint]) = {
-    		val parentNumSection = expr.parentOfType[NumSection](classOf[NumSection])
-    		val stylesConfig = expr.parentStylesConfig.get
-    		val sc:Option[SectionCounter] = parentNumSection.map(_.enumerator).map(counterFor)
+    	override def print(node:Node[DocumentComponent], ess:Seq[FormulaToPrint], isPrintDescription: Boolean) = {
+    		val parentNumSection = node.element.parentOfType[NumSection](classOf[NumSection])
+    		val stylesConfig = node.element.stylesConfig
+            val counter: Option[Counter] = closestNumSection.map(_.expressionCounter)
 
     		output.start(TABLE,"et")
-    		if(expr.isFirstBlockComponent){
+    		if(node.element.isFirstBlockComponent){
 			    parentNumSection.map(x => output.attr("style","space-before:",x.style.paragraph.spaceBefore*0.8))
 			}
     		output.attr("cellpadding","2")
@@ -263,22 +276,21 @@ div {padding:5pt 0 2pt 0}
     		output.body()
 			for(es <- ess){
 				output.startb(TR)
-				val bullet = sc.map(_.currentCounter.item+")").getOrElse(null)
-				writeExpressionSeq(es, expr.style, expr.isPrintDescription, bullet, stylesConfig)
-				sc.foreach(_.next())
+				val bullet = counter.map(_.item+")").getOrElse(null)
+				printFormula(es, node.element.style, isPrintDescription, bullet, stylesConfig)
+                counter.foreach(_.increment())
 				output.end(TR)
 			}
             output.end(TABLE)
     	}
     	
-    	def writeExpressionSeq(se:FormulaToPrint, style:Style, printDescription:Boolean, bullet:String, stylesConfig:StylesConfig){
-		    if(!se.isEmpty){
-	        	val etp1 = se.head
-	        	val description:Option[String] = etp1.expression match {
+    	def printFormula(ftp:FormulaToPrint, style:Style, printDescription:Boolean, bullet:String, stylesConfig:StylesConfig){
+            if(!ftp.isEmpty){
+	        	val description:Option[String] = ftp.expression match {
 	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
 	        		case _ => None
 	        	}
-                val classIdSuffix: String = se.printStyle match {
+                val classIdSuffix: String = ftp.printStyle match {
                     case FormulaPrintStyle.BOLD =>  "bd"
                     case FormulaPrintStyle.ERROR =>  "er"
                     case _ => ""
@@ -286,55 +298,61 @@ div {padding:5pt 0 2pt 0}
 	        	val isPrintDescription = printDescription && description.isDefined
 		    	val isCell1 = bullet!=null
 		        val isCell2 = isPrintDescription
-                val descStyle = etp1.stylesConfig match {
-		            case Some(x) => x.symbolDescription.getOrElse(styleStack.top)
-		            case None => styleStack.top
-		        }
+                val descStyle = stylesConfig.symbolDescription
 		    	if(isCell1 || isCell2){
-					output.startb(TD,"ec1"+classIdSuffix)
+					output.startb(TD,"ec1"+{if(isPrintDescription)"w" else "n"}+classIdSuffix)
 					output.startb(SPAN,stylesConfig.matchStyleClassId(descStyle))
 			        output.append(bullet)
-			        output.append("&nbsp;")
-			        output.append(description)
+			        if(isPrintDescription) {
+                        output.append("&nbsp;")
+                        output.append(description)
+                    }
 			        output.end(SPAN)
 			        output.end(TD)
 		    	}
-		        etp1.expression match {
+		        ftp.head.expression match {
 	        		case s:SymbolLike => {
-	        		    output.startb(TD,"ec2"+classIdSuffix)
-	        		    writeExpression(etp1, style)
-	        		    output.end(TD)
-	        		    output.start(TD,"ec3"+classIdSuffix)
-				        if(!isCell2){
-				        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
-				        	output.attr("colspan",ncs)
-                        }
-				        output.body()
-				        se.tail.foreach(etp => {
-		    				writeExpression(etp, style)
-		    			})
-				        output.end(TD)
+	        		    printTwoColumns(classIdSuffix, isCell2, isCell1)
 	        		}
+                    case a:Assert => {
+                        printTwoColumns(classIdSuffix, isCell2, isCell1)
+                    }
 	        		case _ => {
 	        		    output.start(TD,"ec3"+classIdSuffix)
-				        if(!isCell2){
-				        	val ncs:Int = 2 + {if(isCell1) 0 else 1}
-				        	output.attr("colspan",ncs)
-                        }
+                        val ncs:Int = 2 + (if(!isCell2 && !isCell1) 1 else 0)
+                        output.attr("colspan",ncs)
 				        output.body()
-				        se.foreach(etp => {
-		    				writeExpression(etp, style)
+				        ftp.foreach(etp => {
+		    				printExpression(etp, style)
 		    			})
 				        output.end(TD)
 	        		}
 	        	}
 		        
 		    }
+
+            def printTwoColumns(classIdSuffix: String, isCell2: Boolean, isCell1: Boolean) {
+                output.startb(TD, "ec2" + classIdSuffix)
+                printExpression(ftp.head, style)
+                output.end(TD)
+                output.start(TD, "ec3" + classIdSuffix)
+                if (!isCell2) {
+                    val ncs: Int = 2 + {
+                        if (isCell1) 0 else 1
+                    }
+                    output.attr("colspan", ncs)
+                }
+                output.body()
+                ftp.tail.foreach(etp => {
+                    printExpression(etp, style)
+                })
+                output.end(TD)
+            }
 		}
     	
 	}
    
-	def writeExpression(etp:ExpressionToPrint, style:Style, parentNode:Node[Expression] = null, position:Int=0, span:Boolean = true):Unit = {
+	def printExpression(etp:ExpressionToPrint, style:Style, parentNode:Node[Expression] = null, position:Int=0, span:Boolean = true):Unit = {
 		if(etp.expression.printable){
             val numberOfLeafs:Int = etp.expression.countTreeLeafs
 			etp.expression match {
@@ -342,12 +360,12 @@ div {padding:5pt 0 2pt 0}
 			        val node = Node[Expression](parentNode,tr,position)
 			        tr.children.size match {
 			            case 0 => Unit
-			            case 1 => writeExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,etp.suffix,etp.stylesConfig),style,node,0,span)
+			            case 1 => printExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,etp.suffix,etp.stylesConfig),style,node,0,span)
 			            case _ => {
 			                if(span) output.startb(SPAN, etp.styleClassId)
-			                writeExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
+			                printExpression(ExpressionToPrint(tr.children.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
 			                tr.children.tail.foreach(e => {
-                                writeExpression(ExpressionToPrint(e,etp.style,null,null,etp.stylesConfig),style,node,1,false)
+                                printExpression(ExpressionToPrint(e,etp.style,null,null,etp.stylesConfig),style,node,1,false)
                             })
                             if(etp.suffix!=null)output.append(etp.suffix)
                             if(span) output.end(SPAN)
@@ -357,9 +375,9 @@ div {padding:5pt 0 2pt 0}
 			    case mio:MultipleInfixOperation if mio.args.size > 1 && numberOfLeafs>=10 => {
 			        if(span) output.startb(SPAN, etp.styleClassId)
 			        val node = Node[Expression](parentNode,mio,position)
-			        writeExpression(ExpressionToPrint(mio.args.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
+			        printExpression(ExpressionToPrint(mio.args.head,etp.style,etp.prefix,null,etp.stylesConfig),style,node,0,false)
 			        mio.args.tail.foreach(e => {
-			            writeExpression(ExpressionToPrint(e,etp.style,output.convertOperator(mio.operator),null,etp.stylesConfig),style,node,1,false)
+			            printExpression(ExpressionToPrint(e,etp.style,output.convertOperator(mio.operator),null,etp.stylesConfig),style,node,1,false)
 			        })
 			        if(etp.suffix!=null)output.append(etp.suffix)
 			        if(span) output.end(SPAN)
@@ -385,8 +403,8 @@ div {padding:5pt 0 2pt 0}
 	
 }
 
-class HtmlTableOfContentsPrinterTraveler(output:HtmlOutput, results: Results, levels: Int = 3, counter: Option[SectionCounter] = None)
-extends HtmlTextDocumentPrinterTraveler(output, results, counter) {
+class HtmlTableOfContentsPrinterVisitor(val output:HtmlOutput, results: Results, levels: Int = 3, val counter: Option[MultiCounter] = None)
+extends TreeVisitor[DocumentComponent] with DocumentPrinterVisitor {
 
     val maxLevel = levels + counter.map(_.currentLevel).getOrElse(0)
     val expectedEnumerator = counter.map(_.enumerator).getOrElse(null)

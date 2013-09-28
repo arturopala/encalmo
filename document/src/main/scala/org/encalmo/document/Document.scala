@@ -7,10 +7,10 @@ import org.encalmo.style.DefaultStyle
  * @author artur
  */
 class Document(
-        val title:String, 
-        val stylesConfig:StylesConfig,
-        flow:DocumentComponent*) 
-extends DocumentComponentSeq(stylesConfig.default, flow:_*) with BlockComponent {
+        val title: String,
+        val styles: StylesConfig,
+        flow: DocumentComponent*)
+extends DocumentComponentSeq(Option(styles.default), flow:_*) with BlockComponent {
 	
 	override def toString = "Document("+customStyle+","+title+","+flow.mkString(",")+")"
 	
