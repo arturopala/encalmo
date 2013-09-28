@@ -5,7 +5,9 @@ import org.junit.Test
 import org.encalmo.structures.Worksheet
 import org.encalmo.expression._
 import org.encalmo.calculation._
-import org.encalmo.document.{Require, NumSection, Evaluate, Section}
+import org.encalmo.document._
+import org.encalmo.expression.sqrt
+import org.encalmo.expression.abs
 
 class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
 
@@ -45,11 +47,9 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
             val ipe = IPESteelSection.IPE_450
             this add ipe
 
-            val ΓM = Gamma|M
-            val ΓV = Gamma|V
-            val MRd = M|"Rd" unit SI.kNm
-            val VRd = V|"Rd" unit SI.kN
-            val qb = q|b unit "kN/m"
+            val MRd = M|"Rd" unit SI.kNm is "Nośność obliczeniowa na zginanie"
+            val VRd = V|"Rd" unit SI.kN is "Nośność obliczeniowa na ścinanie"
+            val qb = q|b unit "kN/m" is "Obciążenie obliczeniowe"
 
             l := 15 unit SI.m
             q := 2.5 unit "kN/m2"
@@ -60,13 +60,18 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
             V := qb*l/2
             MRd := steel.fyd*ipe.Wy
             VRd := ipe.AVz*(steel.fyd/sqrt(3))
-            ΓM := (abs(M / MRd) < 1)
-            ΓV := (abs(V / VRd) < 0.05)
+            val r1 = require(abs(V / VRd) < 1,"Nośność na ścinanie przy podporze")
+            val r2 = require(abs(M / MRd) < 0.1,"Nośność na zginanie w przęśle")
 
             override val document = defaultDocument(
-                Section(
-                    Evaluate(l,q,g,qb,M,MRd,V,VRd),
-                    Require(ΓM,ΓV)
+                NumSection("Obliczenia",
+                    TableOfContents("Spis treści"),
+                    Checklist(),
+                    NumSection("Belka stropowa swobodnie podparta",
+                        Evaluate(l,q,g,qb,M,MRd,V,VRd),
+                        Require(r1,r2)
+                    ),
+                    Evaluate(ipe.Iy)
                 )
             )
         }

@@ -3,9 +3,10 @@ package org.encalmo.structures.eurocode.concrete
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.structures.Predefined
-import org.encalmo.structures.Predefined._
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.Worksheet
+import org.encalmo.style.PredefinedStyles
 
 class BetonSprezonyDzwigarTypuI extends Worksheet("bks") {
         
@@ -213,7 +214,7 @@ class BetonSprezonyDzwigarTypuI extends Worksheet("bks") {
 
 
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
         	Section(
             	Section("Ćwiczenie projektowe z przedmiotu \"Betonowe Konstrukcje Sprężone\". Semestr zimowy 2011/2012."),

@@ -66,7 +66,7 @@ object Reckoner {
                                 Formula(Seq(FormulaPart(ritems.head, LEFT,0), FormulaPart(ritems.tail.head, EXPR_UNRESOLVED,1), FormulaPart(ritems.tail.tail.head, EXPR_SUBSTITUTED, 2)) ++ (for (i <- 3 until (items.size - 1)) yield FormulaPart(ritems(i), EXPR_PARTIALLY_EVALUATED, i)) :+ FormulaPart(items.head, RIGHT,items.size-1))
                             }
                         }
-                        printDebug(formula)
+                        Console.println(formula.face)
                         formula
                     }
                     catch {
@@ -131,18 +131,6 @@ object Reckoner {
         case v: Value => v.convertTo(unit, accuracy)
         case a: Assert if a.unit ne EmptyUnitOfValue => adjustUnits(a,a.unit,accuracy)
         case other => other.map(unitAdjustor(unit, accuracy))
-    }
-
-    def printDebug(formula: Formula): Unit = {
-         formula.parts.foreach(
-            part => {
-                Console.print(" ")
-                Console.print(Relation.faceOf(part.relation))
-                Console.print(" ")
-                Console.print(part.expression.face)
-            }
-         )
-         Console.println()
     }
 
 }

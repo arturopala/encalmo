@@ -2,8 +2,8 @@ package org.encalmo.structures.eurocode.steel
 
 import org.encalmo.expression._
 import org.encalmo.document._
-import org.encalmo.structures.Predefined
-import org.encalmo.structures.Predefined._
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.eurocode.actions.silos.ParticulateSolid
 import org.encalmo.structures.eurocode.actions.silos.ThinWalledCircularSlenderSiloWithSteepHopper
 import org.encalmo.structures.Worksheet
@@ -34,7 +34,7 @@ class CircularSteelSiloCalculation extends Worksheet("km-silos") {
     this add silos
 
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
         	Section(
             	Section("Ćwiczenie projektowe z \"Konstrukcji Metalowych\". Semestr zimowy 2011/2012."),

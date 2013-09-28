@@ -3,9 +3,10 @@ package org.encalmo.structures.eurocode.timber
 import org.encalmo.expression._
 import org.encalmo.document._
 import org.encalmo.calculation._
-import org.encalmo.structures.Predefined
-import org.encalmo.structures.Predefined._
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.Worksheet
+import org.encalmo.style.PredefinedStyles
 
 class DzwigarDrewnianyKlejonyTrapezowy extends Worksheet("kd2-dzwigar") {
     
@@ -270,7 +271,7 @@ Z tablicy 3.1 w PN-EN 1995-1-2:2008 dla klejonego warstwowo drewna iglastego."""
     sigmam0fi2 := Myfi2/Wyfi2
 
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
             Section("Ćwiczenie projektowe nr 2 z \"Konstrukcji Drewnianych\". Autor: Artur Opala"),
             Section(""),

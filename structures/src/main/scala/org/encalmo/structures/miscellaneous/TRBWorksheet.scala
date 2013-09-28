@@ -3,9 +3,10 @@ package org.encalmo.structures.miscellaneous
 import org.encalmo.expression._
 import org.encalmo.document._
 import org.encalmo.calculation._
-import org.encalmo.structures.Predefined
-import org.encalmo.structures.Predefined._
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.Worksheet
+import org.encalmo.style.PredefinedStyles
 
 class TRBWorksheet extends Worksheet("trb") {
 
@@ -109,7 +110,7 @@ class TRBWorksheet extends Worksheet("trb") {
     val Tb = T|"b" is "Rzeczywisty czas róbót betonowych (w dniach)"; Tb := Tdm+Tbet+Tprzer+Tdd
 
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
             Section(
                 Section("Ćwiczenie projektowe z przedmiotu \"Technologia Robót Budowlanych\". Autor: Artur Opala, album 61315."),

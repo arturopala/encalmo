@@ -6,7 +6,7 @@ import scala.Some
 import org.encalmo.style.Style
 
 /**
- * Evaluate: symbol = unresolved = substituted = partially evaluated = evaluated
+ * Evaluate given expressions
  */
 class Evaluate(
         customStyle: Option[Style],
@@ -21,7 +21,7 @@ extends BlockExpr(customStyle,expressions:_*){
 }
 
 /**
- * Evaluate: symbol = resolved = evaluated
+ * Evaluate given expressions
  * @author artur.opala
  */
 object Evaluate {

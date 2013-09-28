@@ -2,6 +2,7 @@ package org.encalmo.printer
 
 import java.io.OutputStream
 import java.io.ByteArrayOutputStream
+import org.encalmo.style.Layout
 
 /**
  * PDF output class

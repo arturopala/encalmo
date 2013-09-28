@@ -11,11 +11,12 @@ import org.encalmo.calculation.FormulaPart
 import org.encalmo.style.StylesConfig
 
 case class FormulaToPrint(
-   expressions: Seq[ExpressionToPrint],
+   expression: Expression,
+   expressionsToPrint: Seq[ExpressionToPrint],
    printStyle: FormulaPrintStyle.Value = FormulaPrintStyle.NORMAL
 ) extends Traversable[ExpressionToPrint] {
-	def foreach[U](f: (ExpressionToPrint) => U): Unit = expressions.foreach(f)
-	def apply(i: Int): ExpressionToPrint = expressions(i)
+	def foreach[U](f: (ExpressionToPrint) => U): Unit = expressionsToPrint.foreach(f)
+	def apply(i: Int): ExpressionToPrint = expressionsToPrint(i)
 }
 
 object FormulaPrintStyle extends Enumeration {
@@ -32,11 +33,11 @@ case class ExpressionToPrint(
 	style:Style,
 	prefix:String,
 	suffix:String,
-	stylesConfig:Option[StylesConfig] = None
+	stylesConfig:StylesConfig
 ){
     /** style's classId or standard id from styles config */
-    def styleClassId:Option[String] = if(style!=null) stylesConfig.map(_.matchStyleClassId(style).getOrElse({style.classId})) else None
-    
+    def styleClassId:Option[String] = if(style!=null) Option(stylesConfig.matchStyleClassId(style).getOrElse(style.classId)) else None
+
 }
 
 object ExpressionToPrint {
@@ -54,8 +55,8 @@ object ExpressionToPrint {
                 results.formulaSet.getOrReckon(expression,element.context, results)
             }
         }
-        val expressions = prepare(formula, partFilterForElement(element),  element.customStyle, element)
-	    FormulaToPrint(expressions,printStyle)
+        val expressions = prepare(formula, filterForElement(element, formula),  element.customStyle, element)
+	    FormulaToPrint(expression,expressions,printStyle)
     }
 
     val ALL_PARTS: FormulaPart => Boolean = {part => true}
@@ -63,13 +64,18 @@ object ExpressionToPrint {
     val ONLY_RIGHT: FormulaPart => Boolean = {part => part.position == FormulaPosition.RIGHT}
     val ONLY_LEFT_AND_UNRESOLVED: FormulaPart => Boolean = {part => part.position == FormulaPosition.LEFT || part.position == FormulaPosition.EXPR_UNRESOLVED}
     val NOT_RIGHT: FormulaPart => Boolean = {part => part.position != FormulaPosition.RIGHT}
+    val NOT_LEFT: FormulaPart => Boolean = {part => part.position != FormulaPosition.LEFT}
+    val NOT_RIGHT_NOR_LEFT: FormulaPart => Boolean = {part => part.position != FormulaPosition.RIGHT && part.position != FormulaPosition.LEFT}
 
-    private def partFilterForElement(element: Expr): FormulaPart => Boolean = {
+    def filterForElement(element: Expr, formula: Formula): FormulaPart => Boolean = {
         element match {
             case _:Evaluate => ALL_PARTS
             case _:Result => ONLY_RIGHT
             case _:Expand => ONLY_LEFT_AND_UNRESOLVED
-            case _:Require => ALL_PARTS
+            case _:Require => formula.result match {
+                case FALSE => NOT_LEFT
+                case _ => NOT_RIGHT_NOR_LEFT
+            }
             case _ => ALL_PARTS
         }
     }
@@ -77,12 +83,12 @@ object ExpressionToPrint {
     def prepare(formula: Formula, positionFilter: FormulaPart => Boolean, customStyle: Style, stylesResolver: StylesResolver):Seq[ExpressionToPrint] = {
         formula.parts filter positionFilter match {
             case parts if parts.isEmpty => Seq.empty[ExpressionToPrint]
-            case parts if parts.size==1 => Seq(ExpressionToPrint(parts.head.expression, stylesResolver.resolveExpressionStyle(customStyle, styleSymbolForPartPosition(parts.head.position)),null,null,stylesResolver.parentStylesConfig))
+            case parts if parts.size==1 => Seq(ExpressionToPrint(parts.head.expression, stylesResolver.resolveExpressionStyle(customStyle, styleSymbolForPartPosition(parts.head.position)),null,null,stylesResolver.stylesConfig))
             case parts => {
                 val toPrint = ArrayBuffer[ExpressionToPrint]()
-                toPrint += ExpressionToPrint(parts.head.expression, stylesResolver.resolveExpressionStyle(customStyle, styleSymbolForPartPosition(parts.head.position)),null,null,stylesResolver.parentStylesConfig)
+                toPrint += ExpressionToPrint(parts.head.expression, stylesResolver.resolveExpressionStyle(customStyle, styleSymbolForPartPosition(parts.head.position)),null,null,stylesResolver.stylesConfig)
                 for(part <- parts.tail){
-                    toPrint += ExpressionToPrint(part.expression, stylesResolver.resolveExpressionStyle(customStyle, styleSymbolForPartPosition(part.position)),prefixForPartRelation(part.relation),null,stylesResolver.parentStylesConfig)
+                    toPrint += ExpressionToPrint(part.expression, stylesResolver.resolveExpressionStyle(customStyle, styleSymbolForPartPosition(part.position)),prefixForPartRelation(part.relation),null,stylesResolver.stylesConfig)
                 }
                 toPrint
             }

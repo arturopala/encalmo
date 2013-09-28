@@ -1,6 +1,5 @@
 package org.encalmo.style
 
-import scala.collection.mutable.Map
 import scala.collection.mutable
 
 /**
@@ -11,68 +10,68 @@ case class StylesConfig(
     defstyle:Style = DefaultStyle
 ) {
     
-    var default:Option[Style] = Option(defstyle)
-	var expression:Option[Style] = None
-	var symbol:Option[Style] = None
-	var unresolved:Option[Style] = None
-	var substituted:Option[Style] = None
-	var partiallyEvaluated:Option[Style] = None
-	var evaluated:Option[Style] = None
-	var numbers:Option[Style] = None
-	var symbolDescription:Option[Style] = None
-	var block:Option[Style] = None
-	var numsection:Option[Style] = None
-	var level0:Option[Style] = None
-	var level1:Option[Style] = None
-	var level2:Option[Style] = None
-	var level3:Option[Style] = None
-	var level4:Option[Style] = None
-	var level5:Option[Style] = None
-	var level6:Option[Style] = None
-	var level7:Option[Style] = None
-	var level8:Option[Style] = None
-	var level9:Option[Style] = None
-	var assert_true:Option[Style] = None
-	var assert_false:Option[Style] = None
-	var assert_unknown:Option[Style] = None
-    var requirement_true:Option[Style] = None
-    var requirement_false:Option[Style] = None
-    var requirement_unknown:Option[Style] = None
+    var default:Style = defstyle
+	var expression:Style = default
+	var symbol:Style = default
+	var unresolved:Style = default
+	var substituted:Style = default
+	var partiallyEvaluated:Style = default
+	var evaluated:Style = default
+	var numbers:Style = default
+	var symbolDescription:Style = default
+	var block:Style = default
+	var numsection:Style = default
+	var level0:Style = default
+	var level1:Style = default
+	var level2:Style = default
+	var level3:Style = default
+	var level4:Style = default
+	var level5:Style = default
+	var level6:Style = default
+	var level7:Style = default
+	var level8:Style = default
+	var level9:Style = default
+	var assert_true:Style = default
+	var assert_false:Style = default
+	var assert_unknown:Style = default
+    var requirement_true:Style = default
+    var requirement_false:Style = default
+    var requirement_unknown:Style = default
 	
 	def update(sym:StylesConfigSymbols.Value,style:Style) = {
 		sym match {
-		    case StylesConfigSymbols.DEFAULT => default = Option(style)
-			case StylesConfigSymbols.EXPRESSION => expression = Option(style)
-			case StylesConfigSymbols.EXPR_ROW => block = Option(style)
-			case StylesConfigSymbols.EXPR_SYMBOL => symbol = Option(style)
-			case StylesConfigSymbols.EXPR_SYMB_DESCRIPTION => symbolDescription = Option(style)
-			case StylesConfigSymbols.EXPR_UNRESOLVED => unresolved = Option(style)
-			case StylesConfigSymbols.EXPR_SUBSTITUTED => substituted = Option(style)
-			case StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED => partiallyEvaluated = Option(style)
-			case StylesConfigSymbols.EXPR_EVALUATED => evaluated = Option(style)
-			case StylesConfigSymbols.EXPR_NUMBERS => numbers = Option(style)
-			case StylesConfigSymbols.NUMSECTION => numsection = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL0 => level0 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL1 => level1 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL2 => level2 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL3 => level3 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL4 => level4 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL5 => level5 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL6 => level6 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL7 => level7 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL8 => level8 = Option(style)
-			case StylesConfigSymbols.NUMSECT_LEVEL9 => level9 = Option(style)
-			case StylesConfigSymbols.ASSERTION_FALSE => assert_false = Option(style)
-			case StylesConfigSymbols.ASSERTION_TRUE => assert_true = Option(style)
-			case StylesConfigSymbols.ASSERTION_UNKNOWN => assert_unknown = Option(style)
-            case StylesConfigSymbols.REQUIREMENT_FALSE => requirement_false = Option(style)
-            case StylesConfigSymbols.REQUIREMENT_TRUE => requirement_true = Option(style)
-            case StylesConfigSymbols.REQUIREMENT_UNKNOWN => requirement_unknown = Option(style)
+		    case StylesConfigSymbols.DEFAULT => default = style
+			case StylesConfigSymbols.EXPRESSION => expression = style
+			case StylesConfigSymbols.EXPR_ROW => block = style
+			case StylesConfigSymbols.EXPR_SYMBOL => symbol = style
+			case StylesConfigSymbols.EXPR_SYMB_DESCRIPTION => symbolDescription = style
+			case StylesConfigSymbols.EXPR_UNRESOLVED => unresolved = style
+			case StylesConfigSymbols.EXPR_SUBSTITUTED => substituted = style
+			case StylesConfigSymbols.EXPR_PARTIALLY_EVALUATED => partiallyEvaluated = style
+			case StylesConfigSymbols.EXPR_EVALUATED => evaluated = style
+			case StylesConfigSymbols.EXPR_NUMBERS => numbers = style
+			case StylesConfigSymbols.NUMSECTION => numsection = style
+			case StylesConfigSymbols.NUMSECT_LEVEL0 => level0 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL1 => level1 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL2 => level2 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL3 => level3 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL4 => level4 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL5 => level5 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL6 => level6 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL7 => level7 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL8 => level8 = style
+			case StylesConfigSymbols.NUMSECT_LEVEL9 => level9 = style
+			case StylesConfigSymbols.ASSERTION_FALSE => assert_false = style
+			case StylesConfigSymbols.ASSERTION_TRUE => assert_true = style
+			case StylesConfigSymbols.ASSERTION_UNKNOWN => assert_unknown = style
+            case StylesConfigSymbols.REQUIREMENT_FALSE => requirement_false = style
+            case StylesConfigSymbols.REQUIREMENT_TRUE => requirement_true = style
+            case StylesConfigSymbols.REQUIREMENT_UNKNOWN => requirement_unknown = style
 			case _ => Unit
 		}
 	}
 	
-	def apply(sym:StylesConfigSymbols.Value):Option[Style] = {
+	def apply(sym:StylesConfigSymbols.Value):Style = {
         sym match {
             case StylesConfigSymbols.DEFAULT => default
             case StylesConfigSymbols.EXPRESSION => expression
@@ -101,11 +100,11 @@ case class StylesConfig(
             case StylesConfigSymbols.REQUIREMENT_FALSE => requirement_false
             case StylesConfigSymbols.REQUIREMENT_TRUE => requirement_true
             case StylesConfigSymbols.REQUIREMENT_UNKNOWN => requirement_unknown
-            case _ => None
+            case _ => default
         }
     }
 	
-	def all:Seq[Option[Style]] = Seq(
+	def all:Seq[Style] = Seq(
 	    default,
         expression,
         block,
@@ -135,7 +134,7 @@ case class StylesConfig(
         requirement_unknown
     )
 
-	lazy val part:mutable.Map[StylesConfigSymbols.Value,Option[Style]] = mutable.Map(
+	lazy val part:mutable.Map[StylesConfigSymbols.Value,Style] = mutable.Map(
 		StylesConfigSymbols.EXPR_SYMBOL -> symbol,
 		StylesConfigSymbols.EXPR_UNRESOLVED -> unresolved,
 		StylesConfigSymbols.EXPR_SUBSTITUTED -> substituted,
@@ -143,7 +142,7 @@ case class StylesConfig(
 		StylesConfigSymbols.EXPR_EVALUATED -> evaluated
 	)
 	
-	lazy val level:mutable.Map[Int,Option[Style]] = mutable.Map(
+	lazy val level:mutable.Map[Int,Style] = mutable.Map(
 		0 -> level0,
 		1 -> level1,
 		2 -> level2,
@@ -157,13 +156,7 @@ case class StylesConfig(
 	)
 	
 	def matchStyleClassId(style:Style):Option[String] = {
-	    val a = StylesConfigSymbols.values.find(v => {
-	            val so = apply(v)
-    	        val r = so.exists(s =>
-                    s.classId == style.classId)
-    	        r
-	        }
-	    )
+	    val a = StylesConfigSymbols.values.find(apply(_).classId == style.classId)
 	    a.map(v => classId(v)) match {
 	        case None => if(style!=null) Some(style.classId) else None
 	        case some => some

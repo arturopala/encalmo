@@ -2,8 +2,9 @@ package org.encalmo.structures.eurocode.concrete
 
 import org.encalmo.expression._
 import org.encalmo.document._
-import org.encalmo.structures.{Worksheet, Predefined}
-import org.encalmo.structures.Predefined._
+import org.encalmo.structures.{Worksheet}
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.eurocode.actions.silos.ParticulateSolid
 import org.encalmo.structures.eurocode.actions.silos.RectangularSlenderSiloWithFlatBottom
 
@@ -17,7 +18,7 @@ class RectangularConreteSiloCalculation extends Worksheet("kb-silos") {
     this add silos
 
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
             Section(
                 Section("Ćwiczenie projektowe z \"Konstrukcji Betonowych\". Semestr letni 2010/2011."),

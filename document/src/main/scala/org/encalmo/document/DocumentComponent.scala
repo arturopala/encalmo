@@ -3,15 +3,14 @@ package org.encalmo.document
 import org.encalmo.common._
 import org.encalmo.common.AdHocVisitor
 import org.encalmo.common.Node
-import org.encalmo.style.Style
-import org.encalmo.style.DefaultStyle
+import org.encalmo.style.{PredefinedStyles, StylesConfig, Style, DefaultStyle}
 import scala.collection.mutable
 
 /**
  * DocumentComponent trait
  * @author artur.opala
  */
-abstract class DocumentComponent(protected val customStyleOfComponent: Option[Style] = None) extends TreeNodeWithParentRef[DocumentComponent] {
+abstract class DocumentComponent(protected val customStyleOfComponent: Option[Style] = None) extends TreeNodeWithParentRef[DocumentComponent] with StylesResolver {
 
     assert(customStyleOfComponent!=null,"Document component style option MUST not be null: "+this)
 
@@ -31,6 +30,8 @@ abstract class DocumentComponent(protected val customStyleOfComponent: Option[St
     		}
     	}
     }
+    /** Styles configuration */
+    lazy val stylesConfig:StylesConfig = document.map(_.styles).getOrElse(PredefinedStyles.stylesConfig)
     
     lazy val isFirstBlockComponent = isFirstChildrenOfType[BlockComponent](classOf[BlockComponent])
     lazy val isFirstInlineComponent = isFirstChildrenOfType[InlineComponent](classOf[InlineComponent])

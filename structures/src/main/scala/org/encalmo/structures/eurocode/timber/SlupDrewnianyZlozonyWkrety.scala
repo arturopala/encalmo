@@ -3,8 +3,9 @@ package org.encalmo.structures.eurocode.timber
 import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.document._
-import org.encalmo.structures.{Worksheet, Predefined}
-import org.encalmo.structures.Predefined._
+import org.encalmo.structures.{Worksheet}
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.common.section.Square
 import org.encalmo.structures.common.section.SectionSymbols
 
@@ -276,7 +277,7 @@ class SlupDrewnianyZlozonyWkrety extends Worksheet("kd1-slup") {
     val przekrojKwadratowy = Seq(arec,Sec2.A,Sec2.Imin,Sec2.imin,lambdac,lambdarel2,kmin2,kc2,NRc2,Fmax2,xi2,delta2)
 
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
         	Section(
             	Section("Ćwiczenie projektowe nr 1 z \"Konstrukcji Drewnianych\". Semestr zimowy 2010/2011."),

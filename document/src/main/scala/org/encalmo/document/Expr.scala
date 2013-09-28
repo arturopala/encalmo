@@ -12,22 +12,11 @@ import org.encalmo.style.StylesConfig
 abstract class Expr (
         customStyle: Option[Style],
         val expressions:Expression*)(implicit val context: Context)
-extends DocumentComponent(customStyle) with StylesResolver {
+extends DocumentComponent(customStyle) {
 
     assert(context!=null, "Context reference MUST not be null")
 
 	override def toString = "Expr("+customStyle+","+context+","+expressions.mkString(",")+")"
-	
-	lazy val parentStylesConfig:Option[StylesConfig] = document.map(_.stylesConfig)
-	
-	/*override lazy val myStyle:Style = {
-        Option(customStyle).getOrElse(
-            parentStylesConfig match {
-                case Some(psc) => psc.expression.getOrElse(null)
-                case None => null
-            }
-        )
-    }*/
 }
 
 /**

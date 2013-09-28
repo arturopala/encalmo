@@ -1,13 +1,9 @@
-package org.encalmo.structures
+package org.encalmo.style
 
 import org.encalmo.style.StylesConfigSymbols._
-import org.encalmo.printer.Layout
-import org.encalmo.style.Style
-import org.encalmo.style.DefaultStyle
-import org.encalmo.style.StylesConfig
 import java.awt.Color
 
-object Predefined {
+object PredefinedStyles {
 	
 	val layout = Layout().useLeftMargin(35).useRightMargin(15).useBottomMargin(10)
     
@@ -34,8 +30,13 @@ object Predefined {
     stylesConfig(NUMSECT_LEVEL2) = style1.fontSmaller.useSpaceBefore(12)
     stylesConfig(NUMSECT_LEVEL3) = style1.fontSmaller.useSpaceBefore(12)
     stylesConfig(NUMSECT_LEVEL4) = style1.fontSmaller.fontItalic.useSpaceBefore(8)
+    stylesConfig.level5 = stylesConfig.level4
+    stylesConfig.level6 = stylesConfig.level4
+    stylesConfig.level7 = stylesConfig.level4
+    stylesConfig.level8 = stylesConfig.level4
+    stylesConfig.level9 = stylesConfig.level4
 
-    stylesConfig(REQUIREMENT_TRUE) = rowStyle.borders(0.85,"solid",Color.BLACK).setClassId("reqtrue")
+    stylesConfig(REQUIREMENT_TRUE) = rowStyle.borders(1.0,"solid",Color.GREEN).setClassId("reqtrue")
     stylesConfig(REQUIREMENT_FALSE) = rowStyle.borders(1.5,"solid",Color.RED).setClassId("reqfalse")
     stylesConfig(REQUIREMENT_UNKNOWN) = rowStyle.borders(1.5,"solid",Color.ORANGE).setClassId("requnknown")
     

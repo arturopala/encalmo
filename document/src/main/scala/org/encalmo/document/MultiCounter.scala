@@ -1,19 +1,17 @@
-package org.encalmo.printer
-
-import org.encalmo.document._
+package org.encalmo.document
 
 /**
- * Section counter stategy
+ * Multiple levels counter
  * @author artur.opala
  */
-class SectionCounter(val enumerator:Enumerator, offset: Int = 1) {
+class MultiCounter(val enumerator:Enumerator, offset: Int = 1) {
 	
 	var counters:Seq[Counter] = Seq(Counter(offset))
 	var currentLevel:Int = 0
 	var currentCounter:Counter = counters(0)
 
-    def copy(): SectionCounter = {
-        val sc =new SectionCounter(enumerator, offset)
+    def copy(): MultiCounter = {
+        val sc =new MultiCounter(enumerator, offset)
         sc.counters = for(c <- counters) yield c.copy()
         sc.currentLevel = currentLevel
         sc.currentCounter = sc.counters(sc.currentLevel)
@@ -71,11 +69,11 @@ class SectionCounter(val enumerator:Enumerator, offset: Int = 1) {
  * SectionCounter class companion object
  * @author artur.opala
  */
-object SectionCounter {
+object MultiCounter {
 	
-	def apply():SectionCounter = new SectionCounter(Enumerator())
+	def apply():MultiCounter = new MultiCounter(Enumerator())
 	
-	def apply(e:Enumerator, offset: Int = 1):SectionCounter = new SectionCounter(e,offset)
+	def apply(e:Enumerator, offset: Int = 1):MultiCounter = new MultiCounter(e,offset)
 	
 }
 

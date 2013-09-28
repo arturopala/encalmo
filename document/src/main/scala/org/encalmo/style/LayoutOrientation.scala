@@ -1,4 +1,4 @@
-package org.encalmo.printer
+package org.encalmo.style
 
 /**
  * LayoutOrientation class

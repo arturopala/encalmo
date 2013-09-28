@@ -44,13 +44,13 @@ extends TreeVisitor[DocumentComponent] {
 	val ept = new PlainTextExpressionPrinterTraveler(output)
 	val dfs = java.text.DecimalFormatSymbols.getInstance(locale)
 	/** Section counters map */
-	private val counterMap:mutable.LinkedHashMap[Enumerator,SectionCounter] = mutable.LinkedHashMap[Enumerator,SectionCounter]()
+	private val counterMap:mutable.LinkedHashMap[Enumerator,MultiCounter] = mutable.LinkedHashMap[Enumerator,MultiCounter]()
 	
 	/** Returns counter linked to the enumerator */
-	private def counterFor(en:Enumerator):SectionCounter = {
+	private def counterFor(en:Enumerator):MultiCounter = {
 		var sco = counterMap.get(en)
 		if(!sco.isDefined){
-			sco = Some(SectionCounter(en))
+			sco = Some(MultiCounter(en))
 			counterMap.put(en,sco.get)
 		}
 		sco.get
@@ -209,7 +209,7 @@ extends TreeVisitor[DocumentComponent] {
             }
             case symb: Symb => {
                 write(" ")
-                writeExpressionPart(ExpressionToPrint(symb.expression,symb.customStyle,"",""))
+                writeExpressionPart(ExpressionToPrint(symb.expression,symb.customStyle,"","",symb.stylesConfig))
                 write(" ")
             }
 			case _ =>

@@ -7,10 +7,11 @@ import org.encalmo.document._
 import org.encalmo.printer._
 import org.encalmo.printer.document._
 import org.encalmo.fop.FOPHelper
-import org.encalmo.structures.Predefined
-import org.encalmo.structures.Predefined._
+import org.encalmo.style.PredefinedStyles
+import PredefinedStyles._
 import org.encalmo.structures.eurocode.actions.ActionsSymbols
 import org.encalmo.structures.Worksheet
+import org.encalmo.style.PredefinedStyles
 
 class DomeWorksheet extends Worksheet("dome") {
         
@@ -225,7 +226,7 @@ class DomeWorksheet extends Worksheet("dome") {
     val sigcr = BasicSymbols.sigma|"cr" unit SI.MPa is "Krytyczne naprężenie ściskające" := -(Ecm*h)/(R*sqrt(3*(1-(nu^2))))
 
     override val document = Document("",
-        Predefined.stylesConfig,
+        PredefinedStyles.stylesConfig,
         Chapter("",
         	Section(
             	Section("Ćwiczenie projektowe z przedmiotu \"Konstrukcje Betonowe\". Semestr letni 2011/2012."),

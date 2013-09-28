@@ -2,10 +2,8 @@ package org.encalmo.printer
 
 import org.encalmo.document._
 import XslFoTags._
-import org.encalmo.style.Style
+import org.encalmo.style._
 import org.encalmo.style.FontStyle
-import org.encalmo.style.DefaultFontStyle
-import org.encalmo.style.DefaultStyle
 
 /**
  * XslFo text output
@@ -21,8 +19,8 @@ class XslFoOutput(
 ) 
 extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput {
 	
-	override def open = {
-		super.open
+	override def open() = {
+		super.open()
 		append("\r\n<!DOCTYPE ml:math PUBLIC \"-//W3C//DTD MathML 2.0//EN\" \"\">\r\n")
 		start(ROOT)
 		declareNamespace("http://www.w3.org/1999/XSL/Format")
@@ -56,10 +54,6 @@ extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput 
 	override def close() = {
 		end(ROOT)
 		super.close()
-	}
-	
-	def toMathMLOutput:MathMLOutput = {
-		new MathMLOutput(locale = locale, buffer = buffer, indent = indent)
 	}
 	
 	def appendBlockStyleAttributes(style:Style, currentStyle:Style):Unit = {

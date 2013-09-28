@@ -1,11 +1,9 @@
 package org.encalmo.calculation
 
-import scala.collection.mutable.{Map,LinkedHashSet,LinkedHashMap}
 import org.encalmo.expression._
-import scala.annotation.tailrec
-import java.util.UUID
+import scala.collection.Set
 
-/** 
+/**
  * Calculation is a hierarchical, mutable context for expressions.
  */
 class Calculation(val name: String, dictionary: Option[String] = None) extends MapContext(dictionary) with MutableContextSeq {
@@ -40,11 +38,19 @@ class Calculation(val name: String, dictionary: Option[String] = None) extends M
         listMappedHere ++ listNestedMappings
     }
 
+    override def listMappings(filter: ((Symbol,Expression))=>Boolean):Seq[(Symbol,Expression)] = {
+        listMappedHere(filter) ++ listNestedMappings(filter)
+    }
+
     /**
      * Should return sequence of mapped symbols
      */
-    override def listSymbols:Seq[Symbol] = {
+    override def listSymbols:Set[Symbol] = {
         listMappedSymbols ++ listNestedSymbols
+    }
+
+    override def listSymbols(filter: Symbol=>Boolean): Set[Symbol] = {
+        listMappedSymbols(filter) ++ listNestedSymbols(filter)
     }
 
     override def toString = s"Calculation($name)"
