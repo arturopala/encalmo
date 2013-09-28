@@ -4,7 +4,6 @@ import org.encalmo.expression._
 import org.encalmo.calculation._
 import org.encalmo.calculation.Calculation
 import org.encalmo.document._
-import org.encalmo.structures.common.section.Section
 
 trait SteelColumnSymbols extends SymbolConfigurator {
     import BasicSymbols._
@@ -14,8 +13,8 @@ trait SteelColumnSymbols extends SymbolConfigurator {
     val NbRd = symbol(N|"b,Rd") unit SI.kN
     val Lcry = symbol(L|"cr,y") unit SI.m
     val Lcrz = symbol(L|"cr,z") unit SI.m
-    val lambday = symbol(lambda|y over ("_"))
-    val lambdaz = symbol(lambda|z over ("_"))
+    val lambday = symbol(lambda|y over "_")
+    val lambdaz = symbol(lambda|z over "_")
     val lambdal = symbol(lambda|l)
     val chi = symbol(BasicSymbols.chi)
     val chiy = symbol(BasicSymbols.chi|y)
@@ -66,6 +65,8 @@ extends Calculation(name,"steelColumn") with SteelColumnSymbols {
     chi := min(chiy,chiz)
     NbRd := (chi*A*fy)/gammaM1
 
+    val R_ULS1 = require(abs(Ned/NbRd)<1,"Nośność na ściskanie z uwzględnieniem wyboczenia wg PN-EN 1993-1-1 (6.16)")
+
     override def label = this(ID)
 
     def info = NumSection(Text("Steel column",dictionary),name,section.name,
@@ -84,7 +85,7 @@ extends Calculation(name,"steelColumn") with SteelColumnSymbols {
         NumSection(Text("Design buckling resistance of a compression member",dictionary), " PN-EN 1993-1-1 6.3.1.1",
             Evaluate(chi,NbRd)
         ),
-        AssertionLE("nośności ze względu na wyboczenie słupa "+name+" wg PN-EN 1993-1-1 (6.16)",abs(Ned/NbRd),1)
+        Require(R_ULS1)
     )
 
 }
