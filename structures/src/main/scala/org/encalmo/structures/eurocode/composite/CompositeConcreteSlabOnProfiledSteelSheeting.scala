@@ -180,6 +180,9 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
     la := rangeChoiceLELE(betav,ss,0.2,((betav-0.2)/0.1)*((10E-3-ss)/0.1),0.3,10E-3)
     sheet(sheet.la) = this(la)
 
+    val ULS3M = require(abs(VEdm/VwRd)<1,"Warunek nośności na ścinanie przy podporze w fazie montażu")
+    val ULS4M = require(abs(VEdm)<abs(0.5*VwRd),"Warunek braku interakcji ścinania i zginania na podporze w fazie montażu")
+
     //faza montazu - SLS
     deltasm := 0.08*(MEkm1*(ls^2))/(E*avg(Iplus,Iminus))
     deltam := 0.08*(MEkm2*(ls^2))/(E*avg(Iplus,Iminus))
@@ -257,8 +260,7 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
         sheet.shear,
 		NumSection("Sprawdzenie nośności na ścinanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.5",
 			Evaluate(VEdm),
-			AssertionLE("nośności na ścinanie",abs(VEdm/VwRd),1),
-			AssertionLE("braku interakcji ścinania i zginania",abs(VEdm),0.5*VwRd)
+            Require(ULS3M,ULS4M)
 		),
 		NumSection("Sprawdzenie obciążenia miejscowego siłą poprzeczną nad podporą pośrednią wg PN-EN 1993-1-3 pkt. 6.1.7.3(1)",
 			AssertionL("6.17a",r/t,10),
