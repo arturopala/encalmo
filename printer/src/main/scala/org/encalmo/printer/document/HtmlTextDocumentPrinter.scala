@@ -146,7 +146,7 @@ div {padding:5pt 0 2pt 0}
                     }
                 })
             }
-            case req:Require => {
+            case req:Check => {
                 val ess:Seq[FormulaToPrint] = for(expression <- req.expressions) yield {
                     ExpressionToPrint.prepare(expression, req, results, printStyleOfRequire(expression,results))
                 }

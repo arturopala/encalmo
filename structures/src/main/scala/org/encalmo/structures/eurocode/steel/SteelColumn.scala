@@ -85,7 +85,7 @@ extends Calculation(name,"steelColumn") with SteelColumnSymbols {
         NumSection(Text("Design buckling resistance of a compression member",dictionary), " PN-EN 1993-1-1 6.3.1.1",
             Evaluate(chi,NbRd)
         ),
-        Require(R_ULS1)
+        Check(R_ULS1)
     )
 
 }

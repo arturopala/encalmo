@@ -72,7 +72,7 @@ object ExpressionToPrint {
             case _:Evaluate => ALL_PARTS
             case _:Result => ONLY_RIGHT
             case _:Expand => ONLY_LEFT_AND_UNRESOLVED
-            case _:Require => formula.result match {
+            case _:Check => formula.result match {
                 case FALSE => NOT_LEFT
                 case _ => NOT_RIGHT_NOR_LEFT
             }

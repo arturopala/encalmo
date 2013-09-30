@@ -171,8 +171,8 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
     Qk1 := Gcck + Qcfk + Qmk
     Qd1 := Gccd + Qcfd + Qmd
 
-    val ULS1M = require(abs(MEdmm/MRdm) < 1,"Warunek nośności na zginanie na podporze w fazie montażu")
-    val ULS2M = require(abs(MEdmp/MRdp) < 1,"Warunek nośności na zginanie w przęśle w fazie montażu")
+    val ULS1M = require(abs(MEdmm/MRdm) <= 1,"Warunek nośności na zginanie na podporze w fazie montażu")
+    val ULS2M = require(abs(MEdmp/MRdp) <= 1,"Warunek nośności na zginanie w przęśle w fazie montażu")
 
     FEdm := abs(VEdm1)+abs(VEdm2)
     alpha := 0.15
@@ -180,12 +180,21 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
     la := rangeChoiceLELE(betav,ss,0.2,((betav-0.2)/0.1)*((10E-3-ss)/0.1),0.3,10E-3)
     sheet(sheet.la) = this(la)
 
-    val ULS3M = require(abs(VEdm/VwRd)<1,"Warunek nośności na ścinanie przy podporze w fazie montażu")
-    val ULS4M = require(abs(VEdm)<abs(0.5*VwRd),"Warunek braku interakcji ścinania i zginania na podporze w fazie montażu")
-
+    val ULS3M = require(abs(VEdm/VwRd)<=1,"Warunek nośności na ścinanie przy podporze w fazie montażu")
+    val ULS4M = require(abs(VEdm)<=abs(0.5*VwRd),"Warunek braku interakcji ścinania i zginania nad podporą w fazie montażu")
+	val ULS5M = check((r/t)<10,"6.17a")
+	val ULS6M = check((hw/t)<(200*sin(Phi)),"6.17b")
+	val ULS7M = check(45 < Phi < 90,"6.17c")
+	val ULS8M = require(abs(FEdm/RwRd)<=1,"Warunek nośności na miejscową siłą poprzeczną (6.28b)")
+	val ULS9M = require(abs(MEdmm/MRdm)+abs(FEdm/RwRd)<=1.25,"Sprawdzenie interakcji momentu zginającego i obciążenia lokalnego nad podporą 6.28c")
+	
     //faza montazu - SLS
     deltasm := 0.08*(MEkm1*(ls^2))/(E*avg(Iplus,Iminus))
     deltam := 0.08*(MEkm2*(ls^2))/(E*avg(Iplus,Iminus))
+	
+	val SLS1M = require(deltasm<=(h/10),SI.mm,"EN 1994-1-1 9.3.2(2)")
+	val SLS2M = require(deltasm<=(ls/180),SI.mm,"EN 1994-1-1 9.6(2)")
+	val SLS3M = require(deltam<=(ls/150),SI.mm,"EN 1993-1-1 NA.22 7.2.1(1)B")
 
     //faza eksploatacji - LOAD
     Gck := Qcfk*(gammac/gammacf)
@@ -253,33 +262,28 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
 	def ULS1 = NumSection(Text("ULS","eurocode"),
 		NumSection("Sprawdzenie nośności na zginanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.4.1",
 			Evaluate(MEdmm,MRdm),
-			Require(ULS1M), //Warunek nośności na zginanie na podporze
+			Check(ULS1M), //Warunek nośności na zginanie na podporze
 			Evaluate(MEdmp,MRdp),
-            Require(ULS2M) //Warunek nośności na zginanie w przęśle
+            Check(ULS2M) //Warunek nośności na zginanie w przęśle
 		),
         sheet.shear,
 		NumSection("Sprawdzenie nośności na ścinanie w fazie montażu wg PN-EN 1993-1-3 pkt. 6.1.5",
 			Evaluate(VEdm),
-            Require(ULS3M,ULS4M)
+            Check(ULS3M,ULS4M)//Warunek nośności na ścinanie przy podporze w fazie montażu
 		),
 		NumSection("Sprawdzenie obciążenia miejscowego siłą poprzeczną nad podporą pośrednią wg PN-EN 1993-1-3 pkt. 6.1.7.3(1)",
-			AssertionL("6.17a",r/t,10),
-			AssertionL("6.17b",hw/t,200*sin(Phi)),
-			AssertionRangeLL("6.17c",45,Phi,90),
+			Check(ULS5M,ULS6M,ULS7M),
 			Evaluate(VEdm1,VEdm2,alpha,betav,ss,la,Rw1Rd,RwRd,FEdm),
-			AssertionLE("nośności na miejscową siłą poprzeczną (6.28b)",abs(FEdm/RwRd),1)
+			Check(ULS8M)//Warunek nośności na miejscową siłą poprzeczną (6.28b)
 		),
 		NumSection("Sprawdzenie interakcji momentu zginającego i obciążenia lokalnego nad podporą wg PN-EN 1993-1-3 pkt. 6.1.11(1)",
-            AssertionL("6.28a",abs(MEdmm/MRdm),1),
-			AssertionL("6.28c",abs(MEdmm/MRdm)+abs(FEdm/RwRd),1.25)
+			Check(ULS9M)
 		)
 	)
 	
 	def SLS1 = NumSection(Text("SLS","eurocode"),
 		Evaluate(MEkm1,deltasm,MEkm2,deltam),
-		AssertionLE("EN 1994-1-1 9.3.2(2)",deltasm,h/10),
-		AssertionLE("EN 1994-1-1 9.6(2)",deltasm,ls/180),
-		AssertionLE("EN 1993-1-1 NA.22 7.2.1(1)B",deltam,ls/150)
+		Check(SLS1M,SLS2M,SLS3M)
 	)
 	
 	def LOAD2 = Evaluate(gammaG,gammaQ,Gck,Gcd,Gsk,Gsd,qk,qd,SigmaQk,SigmaQd,SigmaGk,SigmaGd,Qk2,Qd2,DeltaQk,DeltaQd,Fk,Fd)

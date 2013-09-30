@@ -264,4 +264,5 @@ trait Context extends SymbolConfigurator {
 
 object Context {
     val REQUIREMENT_SYMBOL_PREFIX: String = "requirement:"
+	val CHECK_SYMBOL_PREFIX: String = "check:"
 }

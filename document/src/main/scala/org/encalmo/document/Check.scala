@@ -5,9 +5,9 @@ import org.encalmo.calculation._
 import org.encalmo.style.Style
 
 /**
- * Requirement
+ * Requirement check
  */
-class Require(
+class Check(
         customStyle: Option[Style],
         val isPrintDescription:Boolean,
         expressions:Expression*)(implicit context: Context)
@@ -17,21 +17,21 @@ extends BlockExpr(customStyle,expressions:_*){
 	
 }
 
-object Require {
+object Check {
 
     def apply(customStyle:Style,  expressions:Expression*)(implicit context: Context) = {
-        new Require(Option(customStyle),true,expressions:_*)(context)
+        new Check(Option(customStyle),true,expressions:_*)(context)
     }
 
     def apply(expressions:Expression*)(implicit context: Context) = {
-        new Require(None,true,expressions:_*)(context)
+        new Check(None,true,expressions:_*)(context)
     }
 
     def apply(isPrintDescription:Boolean, expressions:Expression*)(implicit context: Context) = {
-        new Require(None,isPrintDescription,expressions:_*)(context)
+        new Check(None,isPrintDescription,expressions:_*)(context)
     }
 
-    def unapply(e:Require) = Some(e.customStyle,e.isPrintDescription,e.expressions,e.context)
+    def unapply(e:Check) = Some(e.customStyle,e.isPrintDescription,e.expressions,e.context)
 
 }
 
