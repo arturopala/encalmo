@@ -69,7 +69,7 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
                     Checklist(),
                     NumSection("Belka stropowa swobodnie podparta",
                         Evaluate(l,q,g,qb,M,MRd,V,VRd),
-                        Require(r1,r2)
+                        Check(r1,r2)
                     ),
                     Evaluate(ipe.Iy)
                 )

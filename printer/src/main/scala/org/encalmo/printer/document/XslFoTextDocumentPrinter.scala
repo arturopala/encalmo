@@ -206,7 +206,7 @@ extends TreeVisitor[DocumentComponent]  with DocumentPrinterVisitor{
 							}
 						})
 					}
-                    case req:Require => {
+                    case req:Check => {
                         val ess:Seq[FormulaToPrint] = for(expression <- req.expressions) yield {
                             ExpressionToPrint.prepare(expression, req, results, printStyleOfRequire(expression,results))
                         }

@@ -129,7 +129,7 @@ object Reckoner {
 
     private def adjustUnits(expression: Expression, unit: UnitOfValue, accuracy: Option[Double]): Expression = expression match {
         case v: Value => v.convertTo(unit, accuracy)
-        case a: Assert if a.unit ne EmptyUnitOfValue => adjustUnits(a,a.unit,accuracy)
+        case a: Assert if a.unit ne EmptyUnitOfValue => a.map(unitAdjustor(unit, accuracy))
         case other => other.map(unitAdjustor(unit, accuracy))
     }
 
