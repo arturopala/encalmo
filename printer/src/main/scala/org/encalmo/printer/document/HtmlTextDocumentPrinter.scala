@@ -148,7 +148,7 @@ div {padding:5pt 0 2pt 0}
             }
             case req:Check => {
                 val ess:Seq[FormulaToPrint] = for(expression <- req.expressions) yield {
-                    ExpressionToPrint.prepare(expression, req, results, printStyleOfRequire(expression,results))
+                    ExpressionToPrint.prepare(expression, req, results, printStyleOfCheck(expression,results))
                 }
                 if(!ess.isEmpty){
                     blockExprPrintStrategy.print(node,ess,req.isPrintDescription)
@@ -186,7 +186,7 @@ div {padding:5pt 0 2pt 0}
                 output.end(DIV)
             }
             case chl: Checklist => {
-                val (succeses,failures) = chl.findAndPartitionRequirementsFormulas(results)
+                val (limitStates,failures) = chl.findAndPartitionRequirementsFormulas(results)
                 val errorsToPrint:Seq[FormulaToPrint] = for(f <- failures.take(chl.limit)) yield {
                     val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
                     val ftp = FormulaToPrint(f.expression, expressions, FormulaPrintStyle.ERROR)
@@ -196,16 +196,17 @@ div {padding:5pt 0 2pt 0}
                 if(!errorsToPrint.isEmpty){
                     output.startb(DIV,"errorslist")
                     this.onEnter(Node(node,Text(chl.style,"requirements_not_fulfilled",Translator.defaultDictionary),0))
+	                this.onEnter(Node(node,Text(" ("+errorsToPrint.size+" / "+failures.size+"):")))
                     blockExprPrintStrategy.print(node,errorsToPrint,true)
                 } else {
                     output.startb(DIV,"checklist")
-                    val limitStatesToPrint:Seq[FormulaToPrint] = for(f <- succeses.take(chl.limit)) yield {
+                    val limitStatesToPrint:Seq[FormulaToPrint] = for(f <- limitStates.take(chl.limit)) yield {
                         val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
                         FormulaToPrint(f.expression, expressions, FormulaPrintStyle.NORMAL)
                     }
                     if(!limitStatesToPrint.isEmpty){
                         this.onEnter(Node(node,Text("top_decisive_limit_states",Translator.defaultDictionary),1))
-                        this.onEnter(Node(node,Text(" ("+Math.min(limitStatesToPrint.size,chl.limit)+" / "+limitStatesToPrint.size+"):")))
+                        this.onEnter(Node(node,Text(" ("+limitStatesToPrint.size+" / "+limitStates.size+"):")))
                         blockExprPrintStrategy.print(node,limitStatesToPrint,true)
                     }
                 }

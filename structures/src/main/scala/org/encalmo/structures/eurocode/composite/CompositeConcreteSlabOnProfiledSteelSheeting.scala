@@ -182,16 +182,15 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
 
     val ULS3M = require(abs(VEdm/VwRd)<=1,"Warunek nośności na ścinanie przy podporze w fazie montażu")
     val ULS4M = require(abs(VEdm)<=abs(0.5*VwRd),"Warunek braku interakcji ścinania i zginania nad podporą w fazie montażu")
-	val ULS5M = check((r/t)<10,"6.17a")
-	val ULS6M = check((hw/t)<(200*sin(Phi)),"6.17b")
-	val ULS7M = check(45 < Phi < 90,"6.17c")
+	val ULS5M = check((r/t)<10,"Warunek 6.17a")
+	val ULS6M = check((hw/t)<(200*sin(Phi)),"Warunek 6.17b")
+	val ULS7M = check(Number(45,SI.deg) < Phi < Number(90,SI.deg),"Warunek 6.17c")
 	val ULS8M = require(abs(FEdm/RwRd)<=1,"Warunek nośności na miejscową siłą poprzeczną (6.28b)")
-	val ULS9M = require(abs(MEdmm/MRdm)+abs(FEdm/RwRd)<=1.25,"Sprawdzenie interakcji momentu zginającego i obciążenia lokalnego nad podporą 6.28c")
+	val ULS9M = require(abs(MEdmm/MRdm)+abs(FEdm/RwRd)<=1.25,"Sprawdzenie interakcji momentu zginającego i obciążenia lokalnego nad podporą w fazie montażu (6.28c)")
 	
     //faza montazu - SLS
     deltasm := 0.08*(MEkm1*(ls^2))/(E*avg(Iplus,Iminus))
     deltam := 0.08*(MEkm2*(ls^2))/(E*avg(Iplus,Iminus))
-	
 	val SLS1M = require(deltasm<=(h/10),SI.mm,"EN 1994-1-1 9.3.2(2)")
 	val SLS2M = require(deltasm<=(ls/180),SI.mm,"EN 1994-1-1 9.6(2)")
 	val SLS3M = require(deltam<=(ls/150),SI.mm,"EN 1993-1-1 NA.22 7.2.1(1)B")
@@ -219,11 +218,16 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
     Np := Ap*fyd
     z := dp-0.5*xpl
     MplRd := Np*z
+	val ULS1E = check(xpl<=hc,SI.mm,"Sprawdzenie usytuowania osi obojętnej w przekroju blachy")
+	val ULS2E = require(abs(MEdep/MplRd)<=1,"Warunek nośności na zginanie w fazie eksploatacji (PN-EN 1994-1-1 9.7.2)")
+	
     //rozwarstwienie
     VEde := 0.5*Qd2*ls*0.9
     Ls := ls/4
     gammaVs := 1.25
     V1Rd := (dp*((m*Ap)/Ls+k))/gammaVs
+	val ULS3E = require(abs(VEde/V1Rd)<=1,"Warunek nośności na rozwarstwienie w fazie eksploatacji (PN-EN 1994-1-1 9.7.3)")
+	
     //przebicie
     ap := 0.1
     bp := 0.1
@@ -234,6 +238,8 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
     VpRd := vmin*cp*dp
     VRdc := (vmin*dv*bo)/bs
     Qvd := Fd
+	val ULS4E = require(abs(VEde/VRdc)<=1,"Warunek nośności na ścinanie poprzeczne w fazie eksploatacji (PN-EN 1994-1-1 9.7.5(1) i PN-EN 1992-1-1 6.2.2)")
+	
     //zarysowanie betonu nad podpora
     Asmin := 0.002*hc
     sdmax := (PI*(dmesh^2))/(4*Asmin)
@@ -291,17 +297,17 @@ extends Calculation(name, "compositeSlabWithProfiledSheeting") with CompositeCon
 	def ULS2 = NumSection(Text("ULS","eurocode"),
 		NumSection("Sprawdzenie nośności na zginanie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.2",
 			Evaluate(MEdep,xpl),
-			AssertionLE("usytuowania osi obojętnej",xpl,hc),
+			Check(ULS1E),
 			Evaluate(dp,Np,z,MplRd),
-			AssertionLE("nośności na zginanie w fazie eksploatacji",abs(MEdep/MplRd),1)
+			Check(ULS2E)
 		),
 		NumSection("Sprawdzenie nośności na rozwarstwienie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.3",
 			Evaluate(VEde,m,k,gammaVs,Ls,V1Rd),
-			AssertionLE("nośności na rozwarstwienie",abs(VEde/V1Rd),1)
+			Check(ULS3E)
 		),
 		NumSection("Sprawdzenie nośności na ścinanie poprzeczne w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.5(1) i PN-EN 1992-1-1 pkt. 6.2.2",
 			Evaluate(dv,kv,vmin,VRdc),
-			AssertionLE("nośności na ścinanie",abs(VEde/VRdc),1),
+			Check(ULS4E),
 			AssertionLE("EN 1992-1-1 (6.5)",VEde,(0.5*dv*fcd*(0.6*(1-(fck/Number(250,SI.MPa))))).set("kN/m"))
 		),
 		NumSection("Sprawdzenie nośności na przebicie w fazie eksploatacji wg PN-EN 1994-1-1 pkt. 9.7.6(1) i PN-EN 1992-1-1 pkt.6.4.4",
