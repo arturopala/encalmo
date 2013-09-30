@@ -245,25 +245,28 @@ extends TreeVisitor[DocumentComponent]  with DocumentPrinterVisitor{
                         output.end()
                         output.end(BLOCK)
                     } case chl: Checklist => {
-                        val (succeses,failures) = chl.findAndPartitionRequirementsFormulas(results)
+                        val (limitStates,failures) = chl.findAndPartitionRequirementsFormulas(results)
                         val errorsToPrint:Seq[FormulaToPrint] = for(f <- failures.take(chl.limit)) yield {
                             val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
-                            FormulaToPrint(f.expression, expressions, FormulaPrintStyle.ERROR)
+                            val ratio: String = ratioOfAssertFormula(expressions)
+                            FormulaToPrint(f.expression, expressions, FormulaPrintStyle.ERROR, Option(ratio))
                         }
                         if(!errorsToPrint.isEmpty){
                             output.startb(BLOCK)
                             this.onEnter(Node(node,Text(chl.style,"requirements_not_fulfilled",Translator.defaultDictionary),0))
+                            this.onEnter(Node(node,Text(" ("+errorsToPrint.size+" / "+failures.size+"):"),1))
                             output.end(BLOCK)
                             blockExprPrintStrategy.print(node,errorsToPrint,true)
                         } else {
-                            val limitStatesToPrint:Seq[FormulaToPrint] = for(f <- succeses.take(chl.limit)) yield {
+                            val limitStatesToPrint:Seq[FormulaToPrint] = for(f <- limitStates.take(chl.limit)) yield {
                                 val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
-                                FormulaToPrint(f.expression, expressions, FormulaPrintStyle.NORMAL)
+                                val ratio: String = ratioOfAssertFormula(expressions)
+                                FormulaToPrint(f.expression, expressions, FormulaPrintStyle.NORMAL, Option(ratio))
                             }
                             if(!limitStatesToPrint.isEmpty){
                                 output.startb(BLOCK)
-                                this.onEnter(Node(node,Text(chl.style,"top_decisive_limit_states",Translator.defaultDictionary),1))
-                                this.onEnter(Node(node,Text(" ("+Math.min(limitStatesToPrint.size,chl.limit)+")")))
+                                this.onEnter(Node(node,Text(chl.style,"top_decisive_limit_states",Translator.defaultDictionary),0))
+                                this.onEnter(Node(node,Text(" ("+limitStatesToPrint.size+" / "+limitStates.size+"):"),1))
                                 output.end(BLOCK)
                                 blockExprPrintStrategy.print(node,limitStatesToPrint,true)
                             }
@@ -353,10 +356,14 @@ extends TreeVisitor[DocumentComponent]  with DocumentPrinterVisitor{
     	
     	def printFormula(ftp:FormulaToPrint, style:Style, printDescription:Boolean, bullet:String, tableRowStyle: Style, secondTableRow:Boolean, stylesConfig:StylesConfig){
 		    if(!ftp.isEmpty){
-	        	val description:Option[String] = ftp.expression match {
-	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
-	        		case _ => None
-	        	}
+                val description:Option[String] = concatenate(
+                    ftp.prefix,
+                    ftp.expression match {
+                        case s:SymbolLike => s.symbol.localizedDescription(locale)
+                        case _ => None
+                    },
+                    ftp.suffix
+                )
                 val rowStyle: Style = ftp.printStyle match {
                     case FormulaPrintStyle.BOLD =>  stylesConfig.requirement_true
                     case FormulaPrintStyle.ERROR =>  stylesConfig.requirement_false

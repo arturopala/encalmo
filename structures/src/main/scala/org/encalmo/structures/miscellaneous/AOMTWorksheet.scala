@@ -77,7 +77,7 @@ class AOMTWorksheet extends Worksheet("aomt") {
                NumSection("Przyjęto do obliczeń",Evaluate(plyta(plyta.h),stal.label,beton.label,blacha.label,profil.label,sworzen.label)(plyta))
            ),
            NumSection("Podsumowanie wyników",
-               Checklist(),
+               Checklist(10),
                Evaluate(belka.mS)(belka)
            ),
            NumSection("Obliczenia szczegółowe",

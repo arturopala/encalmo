@@ -13,7 +13,9 @@ import org.encalmo.style.StylesConfig
 case class FormulaToPrint(
    expression: Expression,
    expressionsToPrint: Seq[ExpressionToPrint],
-   printStyle: FormulaPrintStyle.Value = FormulaPrintStyle.NORMAL
+   printStyle: FormulaPrintStyle.Value = FormulaPrintStyle.NORMAL,
+   prefix: Option[String] = None,
+   suffix: Option[String] = None
 ) extends Traversable[ExpressionToPrint] {
 	def foreach[U](f: (ExpressionToPrint) => U): Unit = expressionsToPrint.foreach(f)
 	def apply(i: Int): ExpressionToPrint = expressionsToPrint(i)

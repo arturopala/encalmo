@@ -33,11 +33,11 @@ case class Assert(left:Expression, relation:Relation.Value, right:Expression, ov
 
     override def ##(d: String): Assert = Assert(left,relation,right,unit,concatenate(description,Option(d)))
 
-    def ratio:Expression = (left,right) match {
+    def ratio:Expression = (left.eval(),right.eval()) match {
         case (v1:Number,v2:Number) => relation match {
             case Relation.GREATER => (v2/v1).eval().unit(SI.percent)
             case Relation.GREATER_OR_EQUAL => (v2/v1).eval().unit(SI.percent)
-            case _ => (v1/v2).eval().unit(SI.percent)
+            case _ => ((v1*100)/v2).eval().unit(SI.percent)
         }
         case _ => this
     }
