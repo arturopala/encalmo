@@ -3,13 +3,14 @@ package org.encalmo.printer.document
 import org.encalmo.printer._
 import org.encalmo.document._
 import org.encalmo.calculation.{Context, Results}
-import org.encalmo.common.Node
-import org.encalmo.printer.expression.{MathMLExpressionPrinterVisitor, FormulaPrintStyle, FormulaToPrint}
+import org.encalmo.printer.expression._
 import scala.collection.mutable
 import org.encalmo.style.{DefaultStyle, Style}
-import org.encalmo.common.Node
-import org.encalmo.expression.{FALSE, TRUE, Symbol, Expression}
+import org.encalmo.expression._
+import java.text.DecimalFormat
 import org.encalmo.printer.expression.FormulaToPrint
+import scala.Some
+import org.encalmo.expression.{Assert,Number}
 import org.encalmo.common.Node
 
 /**
@@ -31,6 +32,9 @@ trait DocumentPrinterVisitor {
     val locale = output.locale
     val mathOutput = output.toMathMLOutput
     val ept = new MathMLExpressionPrinterVisitor(mathOutput)
+    val shortDecimalFormat: DecimalFormat = new DecimalFormat("#.#",output.decimalFormatSymbols)
+
+    var closestNumSection: Option[NumSection] = None
 
     /** Section counters map */
     val counterMap:mutable.LinkedHashMap[Enumerator,MultiCounter] = mutable.LinkedHashMap[Enumerator,MultiCounter]()
@@ -55,7 +59,25 @@ trait DocumentPrinterVisitor {
         }
     }
 
-    var closestNumSection: Option[NumSection] = None
+    def concatenate(args: Option[String]*): Option[String] = {
+        args.fold(None)((ac,v) => ac match {
+            case None => v
+            case some => v match {
+                case None => some
+                case Some(d) => some.map(_ +" "+d)
+            }
+        })
+    }
+
+    def ratioOfAssertFormula(expressions: Seq[ExpressionToPrint]): String = {
+        expressions(expressions.size-2).expression match {
+            case a:Assert => a.ratio.eval() match {
+                case n:Number => shortDecimalFormat.format(n.toDouble) + "% - "
+                case _ => ""
+            }
+            case _ => ""
+        }
+    }
 
 }
 

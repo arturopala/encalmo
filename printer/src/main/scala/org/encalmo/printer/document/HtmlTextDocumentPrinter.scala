@@ -22,6 +22,7 @@ import org.encalmo.common.Node
 import org.encalmo.document.TableOfContents
 import org.encalmo.style.Style
 import org.encalmo.style.StylesConfig
+import java.text.DecimalFormat
 
 /**
  * Prints document as html5 text 
@@ -189,7 +190,8 @@ div {padding:5pt 0 2pt 0}
                 val (limitStates,failures) = chl.findAndPartitionRequirementsFormulas(results)
                 val errorsToPrint:Seq[FormulaToPrint] = for(f <- failures.take(chl.limit)) yield {
                     val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
-                    val ftp = FormulaToPrint(f.expression, expressions, FormulaPrintStyle.ERROR)
+                    val ratio: String = ratioOfAssertFormula(expressions)
+                    val ftp = FormulaToPrint(f.expression, expressions, FormulaPrintStyle.ERROR, Option(ratio))
                     Console.err.println("Failure: "+f.face)
                     ftp
                 }
@@ -202,7 +204,8 @@ div {padding:5pt 0 2pt 0}
                     output.startb(DIV,"checklist")
                     val limitStatesToPrint:Seq[FormulaToPrint] = for(f <- limitStates.take(chl.limit)) yield {
                         val expressions = ExpressionToPrint.prepare(f,ExpressionToPrint.NOT_RIGHT_NOR_LEFT,chl.customStyle,chl)
-                        FormulaToPrint(f.expression, expressions, FormulaPrintStyle.NORMAL)
+                        val ratio: String = ratioOfAssertFormula(expressions)
+                        FormulaToPrint(f.expression, expressions, FormulaPrintStyle.NORMAL, Option(ratio))
                     }
                     if(!limitStatesToPrint.isEmpty){
                         this.onEnter(Node(node,Text("top_decisive_limit_states",Translator.defaultDictionary),1))
@@ -287,10 +290,14 @@ div {padding:5pt 0 2pt 0}
     	
     	def printFormula(ftp:FormulaToPrint, style:Style, printDescription:Boolean, bullet:String, stylesConfig:StylesConfig){
             if(!ftp.isEmpty){
-	        	val description:Option[String] = ftp.expression match {
-	        		case s:SymbolLike => s.symbol.localizedDescription(locale)
-	        		case _ => None
-	        	}
+	        	val description:Option[String] = concatenate(
+                    ftp.prefix,
+                    ftp.expression match {
+                        case s:SymbolLike => s.symbol.localizedDescription(locale)
+                        case _ => None
+                    },
+                    ftp.suffix
+                )
                 val classIdSuffix: String = ftp.printStyle match {
                     case FormulaPrintStyle.BOLD =>  "bd"
                     case FormulaPrintStyle.ERROR =>  "er"
