@@ -2,7 +2,7 @@ package org.encalmo.printer.document
 
 import org.encalmo.printer._
 import org.encalmo.document._
-import org.encalmo.calculation.Results
+import org.encalmo.calculation.{Context, Results}
 import org.encalmo.common.Node
 import org.encalmo.printer.expression.{MathMLExpressionPrinterVisitor, FormulaPrintStyle, FormulaToPrint}
 import scala.collection.mutable
@@ -44,9 +44,9 @@ trait DocumentPrinterVisitor {
         counterMap.getOrElseUpdate(en,MultiCounter(en))
     }
 
-    def printStyleOfRequire(expression: Expression, results: Results): FormulaPrintStyle.Value = {
+    def printStyleOfCheck(expression: Expression, results: Results): FormulaPrintStyle.Value = {
         expression match {
-            case s:Symbol => results.cache.get(s) map {
+            case s:Symbol if s.name.startsWith(Context.REQUIREMENT_SYMBOL_PREFIX) => results.cache.get(s) map {
                 case TRUE => FormulaPrintStyle.BOLD
                 case FALSE => FormulaPrintStyle.ERROR
                 case _ => FormulaPrintStyle.NORMAL
