@@ -13,22 +13,22 @@ import org.encalmo.document.TableOfContents
 import org.encalmo.structures.eurocode.fasteners.HeadedStud
 import org.encalmo.structures.eurocode.composite.{BeamOfCompositeSlab, CompositeConcreteSlabOnProfiledSteelSheeting}
 
-class AOMTWorksheet extends Worksheet("aomt") {
+class AOMT2Worksheet extends Worksheet("aomt2") {
 
     import BasicSymbols._
 
     //dane wejsciowe zadania
     val L1 = L|1 is "Rozpiętośc belki" unit SI.m := 15
-    val L2 = L|2 is "Rozstaw belek" unit SI.m := 2.5
+    val L2 = L|2 is "Rozstaw belek" unit SI.m := 5
     val pc = p!c is "Obciążenie charakterystyczne" unit "kN/m2" := 2.5 unit "kN/m2"
     
     //przyjete materialy i wymiary
-    val height:Expression = 10.5 unit SI.cm
-    val blacha = ProfiledSteelSheet.COFRAPLUS_60_75
-    val beton = Concrete.C_20_25
+    val height:Expression = 17 unit SI.cm
+    val blacha = ProfiledSteelSheet.COFRAPLUS_60_125
+    val beton = Concrete.C_30_37
     val stalZbrojeniowa = ReinforcingSteel.B500SP
     val stal = Steel.S355
-    val profil = IPESteelSection.IPE_450
+    val profil = IPESteelSection.IPE_550
     val sworzen = HeadedStud.NELSON_S3L_19_100
 
     val plyta = new CompositeConcreteSlabOnProfiledSteelSheeting(
@@ -46,7 +46,8 @@ class AOMTWorksheet extends Worksheet("aomt") {
         p_Fk =  10 unit SI.kN,
         p_dmesh = 8 unit SI.mm,
         p_sd = 150 unit SI.mm,
-        p_ss = profil(profil.b)
+        p_ss = profil(profil.b),
+        p_nsup = 3
     )
 
     val belka = new BeamOfCompositeSlab(
@@ -71,7 +72,7 @@ class AOMTWorksheet extends Worksheet("aomt") {
         		Section("Prowadzący: dr hab. inż. Wojciech Lorenc, Instytut Budownictwa Politechniki Wrocławskiej. Semestr letni 2012/2013.")
         	),
             Section(""),
-            Section(styleTitle,"Strop zespolony w parkingu wielopoziomowym - wariant 1."),
+            Section(styleTitle,"Strop zespolony w parkingu wielopoziomowym - wariant 2."),
            NumSection("Parametry zadania",
                NumSection("Dane wejściowe",Evaluate(L1,L2,pc)),
                NumSection("Przyjęto do obliczeń",Evaluate(plyta(plyta.h),stal.label,beton.label,blacha.label,profil.label,sworzen.label)(plyta))

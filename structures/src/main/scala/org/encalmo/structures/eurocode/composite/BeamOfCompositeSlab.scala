@@ -5,14 +5,7 @@ import org.encalmo.calculation._
 import org.encalmo.calculation.Calculation
 import org.encalmo.structures.eurocode.actions.ActionsSymbols
 import org.encalmo.structures.eurocode.steel.{IBeamSteelSection, Steel}
-import org.encalmo.document.NumSection
-import org.encalmo.document.Evaluate
-import org.encalmo.document.Text
-import org.encalmo.document.AssertionL
-import org.encalmo.document.AssertionE
-import org.encalmo.document.AssertionLE
-import org.encalmo.document.AssertionG
-import org.encalmo.document.Text
+import org.encalmo.document._
 import org.encalmo.expression.min
 import org.encalmo.expression.sin
 import org.encalmo.expression.cos
@@ -21,6 +14,13 @@ import org.encalmo.expression.max
 import org.encalmo.expression.round
 import org.encalmo.expression.cot
 import org.encalmo.structures.eurocode.fasteners.HeadedStud
+import org.encalmo.expression.min
+import org.encalmo.expression.sin
+import org.encalmo.expression.cos
+import org.encalmo.expression.sqrt
+import org.encalmo.expression.max
+import org.encalmo.expression.round
+import org.encalmo.expression.cot
 
 /** Composite slab with profiled steel sheeting symbols */
 trait BeamOfCompositeSlabSymbols extends SymbolConfigurator {
@@ -133,18 +133,25 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 
     gammaG := p_gammaG
     gammaQ := p_gammaQ
-
+	
     //obciazenia i schemat statyczny w fazie montazu
     gk := m*GRAV
     gd := gk*gammaG
     Qk1 := (Qcfk*slab.ls)+(Gcck*slab.ls)+gk+(Qmk*slab.ls)
     Qd1 := (Qcfk*gammaG*slab.ls)+(Gccd*slab.ls)+gd+(Qmd*slab.ls)
+	
     //sprawdzenie statecznosci srodnika
     eta := rangeChoiceLE(fy,1.2,Number(460,SI.MPa),1.0)
+	val ULS1M = check((hw/tw)<((72*epsi)/eta),"Sprawdzenie stateczności środnika wg PN-EN 1993-1-5 pkt 5.1(2)")
+	val ULS2M = check(C1===1,"Sprawdzenie dopuszczalności określania nośności wg nośności plastycznej")
+	
     //nosnosci
     MelRd := (Wy*fy)/gammaM0
     VplRd := (AVz*(fy/sqrt(3)))/gammaM0
     NcRd := (A*fy)/gammaM0
+	val ULS3M = require(abs(MEdm/MelRd)<=1,"Warunek nośności belki na zginanie w fazie montażu")
+	val ULS5M = require(abs(VEdm/VplRd)<=1,"Warunek nośności belki na ścinanie w fazie montażu")
+	
     //sily wewnetrzne w fazie montazu
     MEdm := (Qd1*(lb^2))/8
     VEdm := (Qd1*lb)/2
@@ -152,25 +159,33 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
     Mkm := (Qk1*(lb^2))/8
     Mkm1 := ((Qk1-(Qmk*slab.ls))*(lb^2))/8
     ΔMk := (ΔQk*(lb^2))/8
+	
     //naprezenia
     sigmamplus := MEdm/Wy
     sigmadm1 := MEdm1/Wy
     sigmakm1 := Mkm1/Wy
+	val ULS4M = require(sigmamplus<=fy,"Warunek braku uplastycznienia belki w fazie montażu")
+	
     //ugiecia
     deltam := (5*Qk1*(lb^4))/(384*Iy*E)
     deltam1 := (5*(Qk1-(Qmk*slab.ls))*(lb^4))/(384*Iy*E)
     deltam0 := round(deltam1,RoundingMode.Step(true,0.01))
+	val SLS1M = require((deltam-deltam0)<(lb/250),SI.mm,"Warunek dopuszczalnych ugięć belki w fazie montażu")
+	
     //obciazenia w fazie eksploatacji
     Qk2 := (slab.qk*slab.ls)+(slab.Gck*slab.ls)+(Gcck*slab.ls)+gk+(slab.Gsk*slab.ls)
     Qd2 := (slab.qd*slab.ls)+(slab.Gcd*slab.ls)+(Gccd*slab.ls)+gd+(slab.Gsd*slab.ls)
     ΔQk := (slab.qk*slab.ls)+(slab.Gsk*slab.ls)
     ΔQd := (slab.qd*slab.ls)+(slab.Gsd*slab.ls)
     Gk := (slab.Gck*slab.ls)+(Gcck*slab.ls)+gk+(slab.Gsk*slab.ls)
+	
     //sily wewnetrzne w fazie eksploatacji
     ΔMEd := (ΔQd*(lb^2))/8
     ΔVEd := (ΔQd*lb)/2
     MEde := (Qd2*(lb^2))/8
     VEde := (Qd2*lb)/2
+	val ULS1E = require(VEde<=(0.5*VplRd),"Warunek braku interakcji zginania i ścinania w belce w fazie eksploatacji")
+	
     //szerokosc wspolpracujaca
     b0 := 0
     bei := min(lb/8,slab.ls/2)
@@ -186,9 +201,13 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
     z0 := Sy/(A+bn*hc)
     I1 := Iy+A*(z0^2)+(bn*(hc^3))/12+bn*hc*((hc/2+hp+h/2-z0)^2)
     Wel := I1/(z0+h/2)
+	val ULS2E = require(abs(MEde/MplRd)<=1,"Warunek nośności belki na zginanie bez uwzględniania zwichrzenia w fazie eksploatacji")
+	
     //naprezenia
     sigmake := ΔMk/Wel
     sigmamax := sigmakm1+sigmake
+	val ULS3E = require(sigmamax<=(1.02*fy),"Sprawdzenie naprężeń dopuszczalnych we włóknach skrajnych belki w fazie eksploatacji")
+	
     //nosnosc sworznia
     s := bs
     alpha := rangeChoiceLELE(stud.hsc/stud.d,0,3,0.2*((stud.hsc/stud.d)+1),4,1)
@@ -202,6 +221,17 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
     smin := min(5*stud.d)
     smax := min(6*slab.h,800 unit SI.mm)
     MaRd := (Wypl*fy)/gammaM0
+
+	val CHS1 = check((MplRd/MaRd)<2.5,"Warunek PN-EN 1994-1-1 pkt. 6.6.1.3(3)")
+	val CHS2 = check((stud.hsc/stud.d)>3,"Warunek PN-EN 1994-1-1 pkt. 6.6.5.7(1)")
+	val CHS3 = check(stud.hsc>(hp+2*stud.d),"Warunek PN-EN 1994-1-1 pkt. 6.6.5.8(1)")
+	val CHS4 = check(bo>(50 unit SI.mm),"Warunek PN-EN 1994-1-1 pkt. 6.6.5.8(2)")
+	val CHS5 = check(bo>hp,"Warunek PN-EN 1994-1-1 pkt. 6.6.4.2(3)")
+	val CHS6 = check(hp<=(85 unit SI.mm),"Warunek PN-EN 1994-1-1 pkt. 6.6.4.2(3)")
+	val CHS7 = check(stud.d<(20 unit SI.mm),"Warunek PN-EN 1994-1-1 pkt. 6.6.4.2(3)")
+	val CHS8 = check(bs<smax,"Warunek maksymalnego rozstawu łączników")
+	val CHS9 = check(bs>smin,"Warunek minimanego rozstawu łączników")
+	
     //sciananie podluzne w plycie zespolonej
     VEdc := 0.5*(kt*PRd)/s
     kphi := min(1+max(b/2,1.5*1.1*stud.d)/(1.1*stud.d),6)
@@ -209,9 +239,14 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
     thetat := 45
     VRdsr := cot(45)*((((PI*square(dmesh))/4*fyrd)/sd)+min(sheet.Ap*fypd,PpbRd/s))
     VRdsc := vc*fcd*sin(thetat)*cos(thetat)*hc
+	val ULS4E = require(VEdc<=VRdsr,"Warunek nośności prętów zbrojeniowych na ścinanie podłużne")
+	val ULS5E = require(VEdc<=VRdsc,"Warunek nośności ściskanych krzyżulców betonowych")
+	
     //ugiecia w fazie eksploatacji
     deltae := (5*ΔQk*(lb^4))/(384*I1*E)
     deltamax := deltam1-deltam0+deltae
+	val SLS1E = require(deltamax<=(lb/250),SI.mm,"Warunek ugięcia maksymalnego belki w fazie eksploatacji")
+	
     //drgania
     bn2 := beff*Ecm/E
     Sy2 := bn2*hc*(h/2+hp+hc/2)
@@ -219,6 +254,8 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
     I2 := Iy+A*(z2^2)+(bn2*(hc^3))/12+bn2*hc*((hc/2+hp+h/2-z2)^2)
     yw := (5*Gk*(lb^4))/(384*I2*E)
     f := 18/sqrt(yw).nounit
+	val SLS2E = require(f>3,"Warunek minimalnej częstotliwości drgań własnych stropu")
+	
     //unit mass
     mS := ((slab.Gck*slab.ls)+(Gcck*slab.ls)+gk)/(GRAV*slab.ls)
 	
@@ -235,21 +272,21 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 	def ULS1 = NumSection(Text("ULS","eurocode"),
 		NumSection("Sprawdzenie stateczności środnika wg PN-EN 1993-1-5 pkt 5.1(2)",
 			Evaluate(hw,epsi,eta),
-			AssertionL("stateczności środnika",hw/tw,(72*epsi)/eta)
+			Check(ULS1M)
 		),
 		NumSection("Określenie klasy przekroju wg PN-EN 1993-1-1 pkt 5.5",
 			Evaluate(ctf,ctw,Cf1,Cw1,C1),
-			AssertionE("dopuszczalności określania nośności wg nośności plastycznej",C1,1)
+			Check(ULS2M)
 		),
 		NumSection("Sprawdzenie nośności belki na zginanie w fazie montażu",
 			Evaluate(MelRd,MEdm),
-			AssertionLE("nośności na zginanie",MEdm/MelRd,1),
+			Check(ULS3M),
 			Evaluate(sigmamplus),
-			AssertionLE("braku uplastycznienia",sigmamplus,fy)
+			Check(ULS4M)
 		),
 		NumSection("Sprawdzenie nośności belki na ścinanie w fazie montażu",
 			Evaluate(AVz,VplRd,VEdm),
-			AssertionLE("nośności na ścinanie",VEdm/VplRd,1)
+			Check(ULS5M)
 		),
 		NumSection("Naprężenia pozostające w belce po fazie montażu",
 			Evaluate(MEdm1,Mkm1,Mkm,sigmadm1,sigmakm1)
@@ -259,7 +296,7 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 	def SLS1 = NumSection(Text("SLS","eurocode"),
 		NumSection("Sprawdzenie ugięć w fazie montażu",
 			Evaluate(deltam1,deltam0,deltam),
-			AssertionLE("dopuszczalnych ugięć",deltam-deltam0,lb/250)
+			Check(SLS1M)
 		)
 	)
 	
@@ -268,48 +305,41 @@ extends Calculation(name, "beamOfCompositeSlab") with BeamOfCompositeSlabSymbols
 	def ULS2 = NumSection(Text("ULS","eurocode"),
 		NumSection("Siły wewnętrzne w belce w fazie eksploatacji",
 			Evaluate(ΔMEd,ΔVEd,MEde,VEde),
-			AssertionLE("braku interakcji zginania i ścinania",VEde,0.5*VplRd)
+			Check(ULS1E)
 		),
 		NumSection("Szerokość współpracująca i położenie osi obojętnej wg PN-EN 1994-1-1 pkt. 5.4.1.2(5)",
 			Evaluate(b0,bei,beff,Ncf,Npla,N1pla,x)
 		),
 		NumSection("Sprawdzenie nośności belki na zginanie bez uwzględniania zwichrzenia zgodnie z PN-EN 1994-1-1 pkt. 6.4.1(1)",
 			Evaluate(MplRd),
-			AssertionLE("nośności na zginanie",MEde/MplRd,1)
+			Check(ULS2E)
 		),
 		NumSection("Sprawdzenie naprężeń we włóknach skrajnych belki",
 			Evaluate(Eceff,nE,bn,Sy,z0,I1,Wel,ΔMk,sigmake,sigmamax),
-			AssertionLE("naprężeń dopuszczalnych we włóknach skrajnych",sigmamax,1.02*fy)
+			Check(ULS3E)
 		),
 		NumSection("Sprawdzenie łączników na ścinanie wg PN-EN 1994-1-1 pkt. 6.6",
 			Evaluate(MaRd),
-			AssertionL("PN-EN 1994-1-1 pkt. 6.6.1.3(3)",MplRd/MaRd,2.5),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.7(1)",stud.hsc/stud.d,3),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(1)",stud.hsc,hp+2*stud.d),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.5.8(2)",bo,50 unit SI.mm),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",bo,hp),
-			AssertionG("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",hp,85E-5),
-			AssertionL("PN-EN 1994-1-1 pkt. 6.6.4.2(3)",stud.d,20 unit SI.mm),
+			Check(CHS1,CHS2,CHS3,CHS4,CHS5,CHS6,CHS7),
 			Evaluate(s,alpha,PRd,ktmax,kt,VEdr,Ls,nf,nfprim,smin,smax),
-			AssertionL("maksymalnego rozstawu łączników",bs,smax),
-			AssertionG("minimanego rozstawu łączników",bs,smin)
+			Check(CHS8,CHS9)
 		),
 		NumSection("Sprawdzenie ścinania podłużnego w płycie zespolonej wg pkt. 6.6.6",
 			Evaluate(VEdc,kphi,PpbRd,thetat,VRdsr),
-			AssertionLE("nośności prętów zbrojeniowych na ścinanie podłużne",VEdc,VRdsr),
+			Check(ULS4E),
 			Evaluate(vc,VRdsc),
-			AssertionLE("nośności ściskanych krzyżulców betonowych",VEdc,VRdsc)
+			Check(ULS5E)
 		)
 	)
 	
 	def SLS2 = NumSection(Text("SLS","eurocode"),
 		NumSection("Sprawdzenie ugięcia maksymalnego",
 			Evaluate(deltae,deltamax),
-			AssertionLE("ugięcia maksymalnego",deltamax,lb/250)
+			Check(SLS1E)
 		),
 		NumSection("Sprawdzenie drgań",
 			Evaluate(bn2,Sy2,z2,I2,Gk,yw,f),
-			AssertionG("częstotliwości drgań własnych",f,3)
+			Check(SLS2E)
 		)
 	)
 	

@@ -152,9 +152,9 @@ extends Calculation(name,"profiledSteelSheet") with ProfiledSteelSheetSymbols wi
         Image(p_image),
         NumSection("Geometria",
 		    Evaluate(t,tcor,hp,hw,br,bs,bo,bb,r,Ap,Phi,sw,mass)),
-        "Efektywne charakterystyki przekroju blachy zostały wyznaczone dla stanu częściowego uplastycznienia podczas zginania środników w przęśle i na podporze oraz półki ściskanej w przęśle.",
+        Text("Efektywne charakterystyki przekroju blachy zostały wyznaczone dla stanu częściowego uplastycznienia podczas zginania środników w przęśle i na podporze oraz półki ściskanej w przęśle."),
         NumSection("Wyznaczenie położenia osi obojętnych",
-            Evaluate(et,ec,ewt,ewc,swt,swc,eplus,eminus)),
+            Evaluate(et,ec,ewt,ewc,swt,swc,zetaf,zetaw,eplus,eminus)),
         NumSection("Momenty bezwładności i wskaźniki zginania",
             Evaluate(Iy,Iplus,Wplus,Iminus,Wminus))
 	)
