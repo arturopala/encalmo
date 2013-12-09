@@ -100,12 +100,12 @@
         </profile>
     </profiles>
 
-    <!--repositories>
+    <repositories>
         <repository>
             <id>my-local-fop-repo</id>
             <url>file://${basedir}/src/main/repository</url>
         </repository>
-    </repositories-->
+    </repositories>
     
 </project>
 
