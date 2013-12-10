@@ -34,7 +34,7 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
             )
         }
         val results = worksheet.results
-        worksheet.printHtml(results)("target/test-results/" + worksheet.name + ".html")
+        worksheet.renderHtml(results,"target/test-results/" + worksheet.name + ".html")
     }
 
     @Test
@@ -76,9 +76,9 @@ class ProfiledSteelSheetUnitTest extends AssertionsForJUnit {
             )
         }
         val results = worksheet.results
-        worksheet.printHtml(results)("target/test-results/" + worksheet.name + ".html")
-        worksheet.printXslFo(results)("target/test-results/" + worksheet.name + ".fo")
-        worksheet.printPdf(results)("target/test-results/" + worksheet.name + ".pdf")
+        worksheet.renderHtml(results,"target/test-results/" + worksheet.name + ".html")
+        worksheet.renderXslFo(results)("target/test-results/" + worksheet.name + ".fo")
+        worksheet.renderPdf(results)("target/test-results/" + worksheet.name + ".pdf")
     }
 
 

@@ -11,43 +11,43 @@ import org.encalmo.structures.miscellaneous.TRBWorksheet
 class AllStructuresWorksheetsUnitTest extends AssertionsForJUnit {
 
     @Test
-    def testDzwigarDrewnianyKlejonyTrapezowy() = {
-          new DzwigarDrewnianyKlejonyTrapezowy().printHtml()
+    def testDzwigarDrewnianyKlejonyTrapezowy():Unit = {
+          new DzwigarDrewnianyKlejonyTrapezowy().testRenderHtml()
     }
 
     @Test
-    def testSlupDrewnianyZlozonyWkrety() = {
-        new SlupDrewnianyZlozonyWkrety().printHtml()
+    def testSlupDrewnianyZlozonyWkrety():Unit = {
+        new SlupDrewnianyZlozonyWkrety().testRenderHtml()
     }
 
     @Test
-    def testBetonSprezonyDzwigarTypuI() = {
-        new BetonSprezonyDzwigarTypuI().printHtml()
+    def testBetonSprezonyDzwigarTypuI():Unit = {
+        new BetonSprezonyDzwigarTypuI().testRenderHtml()
     }
 
     @Test
-    def testCircularSteelSiloCalculation() = {
-        new CircularSteelSiloCalculation().printHtml()
+    def testCircularSteelSiloCalculation():Unit = {
+        new CircularSteelSiloCalculation().testRenderHtml()
     }
 
     @Test
-    def testRectangularConreteSiloCalculation() = {
-        new RectangularConreteSiloCalculation().printHtml()
+    def testRectangularConreteSiloCalculation():Unit = {
+        new RectangularConreteSiloCalculation().testRenderHtml()
     }
 
     @Test
-    def testDomeCalculationDocument() = {
-        new DomeWorksheet().printHtml
+    def testDomeCalculationDocument():Unit = {
+        new DomeWorksheet().testRenderHtml()
     }
 
     @Test
-    def testCompositeSlabCalculationDocument() = {
-        new CompositeSlabWorksheet().printHtml()
+    def testCompositeSlabCalculationDocument():Unit = {
+        new CompositeSlabWorksheet().testRenderHtml()
     }
 
     @Test
-    def testTRBCalculationDocument() = {
-        new TRBWorksheet().printHtml()
+    def testTRBCalculationDocument():Unit = {
+        new TRBWorksheet().testRenderHtml()
     }
 
 }
