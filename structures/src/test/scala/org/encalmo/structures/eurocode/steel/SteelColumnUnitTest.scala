@@ -17,7 +17,7 @@ class SteelColumnUnitTest extends AssertionsForJUnit {
             override val document = defaultDocument(steelColumn.info)
         }
         val path = "target/test-results/" + worksheet.name + ".html"
-        val results = worksheet.printHtml(path)
+        val results = worksheet.renderHtml(path)
         assertTrue("Ned should be less then NbRd",results.cache(steelColumn.NbRd).toDouble > results.cache(steelColumn.Ned).toDouble)
     }
 

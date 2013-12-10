@@ -18,7 +18,7 @@ class HexagonHeadBoltUnitTest extends AssertionsForJUnit {
             override val document = defaultDocument(bolt.info)
         }
         val path = "target/test-results/" + worksheet.name + ".html"
-        val results = worksheet.printHtml(path)
+        val results = worksheet.renderHtml(path)
     }
 
 }

@@ -308,8 +308,5 @@ class DomeWorksheet extends Worksheet("dome") {
             )
         )
     )
-       
-    @Test
-    override def printHtml:Unit = super.printHtml
 
 }

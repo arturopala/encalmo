@@ -9,7 +9,7 @@ package object calculation {
     def dynamic(symbols: Symbol*)(f: (ResultsCache)=>Expression) = DynamicExpression(symbols,f)
     
     /** Symbol class functionality extension */
-    implicit class SymbolExt(symbol:Symbol) {
+    implicit class SymbolExt(val symbol:Symbol) extends AnyVal {
         
         def := (expression:Expression)(implicit context:MutableContext):Symbol = {
             context(symbol) = expression
@@ -19,7 +19,7 @@ package object calculation {
     }
     
     /** Expression trait functionality extension */
-    implicit class ExpressionExt(expression:Expression) {
+    implicit class ExpressionExt(val expression:Expression) extends AnyVal {
     
         def at(map:Map[Symbol,Expression]):EvalAt = new EvalAt(expression, MapContext(map))
         def at(er:Context):EvalAt = new EvalAt(expression, er)

@@ -11,6 +11,20 @@ target
 bin
 out
 SCC.txt
+.idea
+.idea_modules
+logs
+project/project
+project/target
+tmp
+.history
+dist
+.idea
+*.iml
+.idea_modules
+.classpath
+.project
+RUNNING_PID
 
 syntax: regexp
 ^bin$

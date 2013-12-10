@@ -18,7 +18,7 @@ import org.encalmo.printer.HtmlOutputPreferences
 
 /**
  * Base class for documented calculations
- * @author artur
+ * @author opala.artur
  */
 abstract class Worksheet(name: String) extends Calculation(name) {
     
@@ -37,22 +37,36 @@ abstract class Worksheet(name: String) extends Calculation(name) {
         )
     )
 
-    def printHtml(path: String): Results =  printHtml(results)(path)
+    def renderHtml(): HtmlOutput =  renderHtml(results)
 
-    def printHtml(results: Results)(path: String): Results =  {
-        val layout = PredefinedStyles.layout
-        val prefs: HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path.fromString("src/main/resources/style.css"))
-        val output: HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"), prefs)
-        output.open()
-        HtmlTextDocumentPrinter.print(document)(output)(results)
-        output.close()
+    def renderHtml(path: String): Results =  renderHtml(results, path)
+
+    def renderHtml(output: HtmlOutput): HtmlOutput =  renderHtml(results, output)
+
+    def renderHtml(results: Results, path: String): Results =  {
+        val output: HtmlOutput = renderHtml(results)
         output.saveToFile(new java.io.File(path))
         results
     }
 
-    def printXslFo(path: String): Results = printXslFo(results)(path)
+    def renderHtml(results: Results): HtmlOutput =  {
+        val layout = PredefinedStyles.layout
+        val prefs: HtmlOutputPreferences = HtmlOutputPreferences().withCustomStyleSheet(Path.fromString("src/main/resources/style.css"))
+        val output: HtmlOutput = new HtmlOutput(layout, new java.util.Locale("PL"), prefs)
+        output.open()
+        renderHtml(results, output)
+        output.close()
+        output
+    }
 
-    def printXslFo(results: Results)(path: String): Results = {
+    def renderHtml(results: Results, output: HtmlOutput): HtmlOutput =  {
+        HtmlTextDocumentPrinter.print(document)(output)(results)
+        output
+    }
+
+    def renderXslFo(path: String): Results = renderXslFo(results)(path)
+
+    def renderXslFo(results: Results)(path: String): Results = {
         val layout = PredefinedStyles.layout
         val output: XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open()
@@ -62,9 +76,9 @@ abstract class Worksheet(name: String) extends Calculation(name) {
         results
     }
 
-    def printPdf(path: String): Results = printPdf(results)(path)
+    def renderPdf(path: String): Results = renderPdf(results)(path)
 
-    def printPdf(results: Results)(path: String): Results = {
+    def renderPdf(results: Results)(path: String): Results = {
         val layout = PredefinedStyles.layout
         val output: XslFoOutput = new XslFoOutput(layout, new java.util.Locale("PL"))
         output.open()
@@ -74,7 +88,7 @@ abstract class Worksheet(name: String) extends Calculation(name) {
         results
     }
 
-    def printText(path: String): Results = {
+    def renderText(path: String): Results = {
         val output: TextOutput = new TextOutput(new java.util.Locale("PL"))
         output.open()
         val res = results
@@ -84,23 +98,23 @@ abstract class Worksheet(name: String) extends Calculation(name) {
         res
     }
 
-    @Test def printHtml():Unit = {
+    @Test def testRenderHtml():Unit = {
         val path = "target/test-results/" + name + ".html"
-        printHtml(path)
+        renderHtml(path)
     }
 
-    @Test def printXslFo():Unit = {
+    @Test def testRenderXslFo():Unit = {
         val path = "target/test-results/" + name + ".fo"
-        printXslFo(path)
+        renderXslFo(path)
     }
 
-    @Test def printPdf():Unit = {
+    @Test def testRenderPdf():Unit = {
         val path = "target/test-results/" + name + ".pdf"
-        printPdf(path)
+        renderPdf(path)
     }
 
-    @Test def printText():Unit = {
+    @Test def testRenderText():Unit = {
         val path = "target/test-results/" + name + ".txt"
-        printText(path)
+        renderText(path)
     }
 }
