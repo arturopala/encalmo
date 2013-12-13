@@ -45,7 +45,7 @@ object HtmlTextDocumentPrinter extends DocumentPrinter[HtmlOutput,String] {
 class HtmlTextDocumentPrinterVisitor(val output:HtmlOutput, results: Results, val counter: Option[MultiCounter] = None)
 extends TreeVisitor[DocumentComponent] with DocumentPrinterVisitor {
 	
-	val customStyles = """ 
+	val embededStyles = """ 
 body {font-family:sans-serif;font-size:12pt;background-color: #FFFAD8;}
 table {border-collapse:collapse;margin:5pt;background-color: #FFFDEF;border: 1px solid #FFBE32;} 
 div {padding:5pt 0 2pt 0}
@@ -56,7 +56,7 @@ div {padding:5pt 0 2pt 0}
 .ec3 {width:65%; font-size:10pt}
 	    """
 	    
-	val blockExprPrintStrategy:ExpressionPrintStrategy = output.preferences.expressionPrintStrategy match {
+	val blockExprPrintStrategy:ExpressionPrintStrategy = output.preferences.formulaLayoutStrategy match {
 		case "table" => new ExpressionPrintAsTableStrategy(this)
 		case _ => new ExpressionPrintAsTableStrategy(this)
 	}
@@ -67,15 +67,17 @@ div {padding:5pt 0 2pt 0}
 			case d:Document => {
 				output.startb(STYLE)
 				val allStyles = d.allStyles
-				if(!output.preferences.isCustomStyleSheet){
-				    output.append(customStyles)
+				if(output.preferences.hasNotCustomStyleSheet && output.preferences.isRenderHeaderAndBodyTags){
+				    output.append(embededStyles)
 				}
-				if(!output.preferences.skipDocumentStyles){
-				    d.stylesConfig.all.foreach(allStyles.add)
-                    allStyles.foreach(output.styledef(_, d.stylesConfig))
-                }else if(output.preferences.isCustomStyleSheet){
-				    output.append(output.preferences.customStyleSheet)
-				}
+				if (output.preferences.ignoreDocumentStyles) {
+          if (output.preferences.hasCustomStyleSheet) {
+            output.append(output.preferences.customStyleSheet)
+          }
+        } else {
+          d.stylesConfig.all.foreach(allStyles.add)
+          allStyles.foreach(output.styledef(_, d.stylesConfig))
+        }
 				output.end(STYLE)
 				return
 			}

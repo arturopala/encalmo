@@ -8,18 +8,22 @@ import scalax.file.Path
  * @author artur.opala
  */
 case class HtmlOutputPreferences(
-	expressionPrintStrategy:String = "table", //list|section|table
-	skipDocumentStyles:Boolean = false,
-	customStyleSheet:String = null 
+	formulaLayoutStrategy:String = "table", //list|section|table
+	ignoreDocumentStyles:Boolean = false,
+	customStyleSheet:Option[String] = None,
+  isRenderHeaderAndBodyTags:Boolean = true
 ){
 	
-	def withExpressionPrintStrategy(s:String):HtmlOutputPreferences = copy(expressionPrintStrategy=s)
+	def withFormulaLayoutStrategy(s:String):HtmlOutputPreferences = copy(formulaLayoutStrategy=s)
 	
-	def withSkipDocumentStyles(b:Boolean):HtmlOutputPreferences = copy(skipDocumentStyles=b)
+	def ignoreDocumentStyles(b:Boolean):HtmlOutputPreferences = copy(ignoreDocumentStyles=b)
 	
-	def withCustomStyleSheet(path:Path):HtmlOutputPreferences = copy(customStyleSheet = path.string,skipDocumentStyles=true)
+	def withCustomStyleSheet(path:Path):HtmlOutputPreferences = copy(customStyleSheet = Option(path.string), ignoreDocumentStyles=true)
+	def withCustomStyleSheet(stylesheet:String):HtmlOutputPreferences = copy(customStyleSheet = Option(stylesheet), ignoreDocumentStyles=true)
 	
-	def withCustomStyleSheet(stylesheet:String):HtmlOutputPreferences = copy(customStyleSheet = stylesheet,skipDocumentStyles=true)
-	
-	def isCustomStyleSheet = customStyleSheet!=null
+	def hasCustomStyleSheet = customStyleSheet.isDefined
+  def hasNotCustomStyleSheet = customStyleSheet.isEmpty
+
+  def asFragmentOfPage():HtmlOutputPreferences = copy(isRenderHeaderAndBodyTags = false)
+  def asCompletePage():HtmlOutputPreferences = copy(isRenderHeaderAndBodyTags = true)
 }
