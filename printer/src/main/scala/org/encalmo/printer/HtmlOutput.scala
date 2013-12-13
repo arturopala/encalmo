@@ -19,28 +19,27 @@ class HtmlOutput(
 extends XmlTextOutput(locale, namespace, buffer, indent) with LayoutBasedOutput {
 	
 	override def open = {
-		append("<!DOCTYPE html>\r\n")
-		start(HTML)
-		attr("lang",locale.toString)
-		body()
-		startb(HEAD)
-		start(META)
-		attr("http-equiv","Content-Type")
-		attr("content","text/html; charset=utf-8")
-		end()
-		/*start(SCRIPT) // Currently work too slow in Chrome
-        attr("type","text/javascript")
-        attr("src","https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
-        end(SCRIPT)*/
-		end(HEAD)
-		start(BODY)
-		end()
+    if(preferences.isRenderHeaderAndBodyTags){
+      append("<!DOCTYPE html>\r\n")
+      start(HTML)
+      attr("lang",locale.toString)
+      body()
+      startb(HEAD)
+      start(META)
+      attr("http-equiv","Content-Type")
+      attr("content","text/html; charset=utf-8")
+      end()
+      end(HEAD)
+      start(BODY)
+      end()
+    }
 	}
 	
 	override def close() = {
+    if(preferences.isRenderHeaderAndBodyTags){
 	    end(BODY)
-		end(HTML)
-		super.close()
+		  end(HTML)
+    }
 	}
 	
 	override def toMathMLOutput:MathMLOutput = {

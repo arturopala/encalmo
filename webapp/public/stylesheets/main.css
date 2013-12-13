@@ -1,0 +1,79 @@
+@media screen {
+  body {font-family:sans-serif;font-size:12pt;background-color:#F2F6F7; margin:20mm; color: #26404F}
+  table {border-collapse:collapse;margin:5pt;background-color: white;border: 1px solid #AFC4D1;} 
+  .et {width:100%; box-shadow: 2px 3px 4px 3px rgba(92, 114, 127, 0.12);}
+  .default {font-size:0.94em;font-style:normal;font-weight:normal;color:#26404F;}
+}
+@media print {
+  body {font-family:serif;font-size:10pt;background-color: white; margin:3mm}
+  table {border-collapse:collapse;margin:5pt;background-color: white;border: 1px solid black;} 
+  .et {width:100%;}
+  .default {font-size:0.94em;font-style:normal;font-weight:normal;color:black;}
+}
+div {padding:5pt 0 2pt 0}
+a {color: #5B727F; text-decoration: none}
+a:hover {color: blue; text-decoration: underline}
+math {white-space: nowrap; padding: 0; margin: 1px 0;}
+.header {font-size: 75%}
+.ec1w {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 1px solid #AFC4D1;border-bottom: 1px solid #AFC4D1;border-right: 1px dotted #BBC7CE;border-left: 1px solid #BBC7CE;padding:2pt 5pt;}
+.ec1n {width:2%; margin-left:2em; text-align:left; vertical-align:top; border-top: 1px solid #AFC4D1;border-bottom: 1px solid #AFC4D1;border-right: 1px dotted #BBC7CE;border-left: 1px solid #BBC7CE;padding:2pt 5pt;}
+.ec2 {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 1px solid #AFC4D1;border-bottom: 1px solid #AFC4D1;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec3 {width:65%; font-size:1em; color:#26404F;border-top: 1px solid #AFC4D1;border-bottom: 1px solid #AFC4D1;border-right: 1px solid #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.exp {font-size:0.94em;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
+.expunres {font-size:1em}
+.exprow {font-size:0.94em;font-style:normal;font-weight:normal;color:#000000;space-before:2pt;space-after:1pt;}
+.expsymb {font-size:1.1em;font-style:italic;font-weight:normal;color:#000000;min-width:35pt;space-before:1pt;space-after:1pt;}
+.expsymb .symb {color:blue;}
+.expdesc {font-size:0.83em;font-style:normal;font-weight:normal;color:#000000;space-before:1pt;space-after:1pt;}
+.expeval {font-size:1.1em;font-style:normal;font-weight:normal;space-before:1pt;space-after:1pt;}
+.expeval mn.num {font-weight:normal; color: blue}
+.ns0 {space-before:1.3em;space-after:1pt;}
+.ns0 .caption {font-size:1em;font-style:normal;font-weight:bold;color:#5B727F;letter-spacing:150%;  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
+.ns1 {space-before:1em;space-after:1pt;}
+.ns1 .caption {font-size:1em;font-style:normal;font-weight:bold;color:#5B727F;}
+.ns2 {space-before:1em;space-after:1pt;}
+.ns2 .caption {font-size:0.94em;font-style:normal;font-weight:bold;color:#5B727F;}
+.ns4 {space-before:0.7em;space-after:1pt;}
+.ns4 .caption {font-size:0.94em;font-style:italic;font-weight:normal;color:#5B727F;}
+.assertfalse {font-size:0.9em;font-style:normal;font-weight:bold;color:red;margin:1pt 5pt; padding-left:20pt}
+.assertfalse math {font-size:120%; font-weight:normal}
+.assertfalse mn.num {color: red}
+.assertfalse .symb {color: red}
+.asserttrue {font-size:0.9em;font-style:normal;font-weight:normal;color:#000000;margin:1pt 5pt; padding-left:20pt}
+.asserttrue math {font-size:120%}
+.assertunknown {font-size:0.9em;font-style:normal;font-weight:normal;color:#ff0000;margin:1pt 5pt; padding-left:20pt}
+.unit {font-size:0.94em;font-weight:normal;color:#5B727F}
+.illegalunit {font-size:0.6em;font-weight:bold;color:red}
+
+.num {color:black;}
+.numexp {color:#545454;font-size:0.9em;font-weight:normal;}
+.symb {color:black;}
+.ssup,.ssub {font-size:75%}
+.pwri {font-size:80%}
+.comment {font-size:0.94em;}
+.comment1 {font-size:0.83em; padding-left:1em}
+.description {font-size:0.83em;}
+.title {font-size:1.5em; font-weight:bold; padding:1em 0; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); color: black}
+.toc {padding-top:5pt;padding-bottom:5pt}
+.toctitle {font-size:1em;}
+.toc0 {font-size:0.9em; padding-left:0.5em}
+.toc1 {font-size:0.8em; padding-left:0.5em}
+.toc2 {font-size:0.7em; padding-left:0.5em}
+.toc3 {font-size:0.6em; padding-left:0.5em}
+.toc4 {font-size:0.6em; padding-left:0.5em}
+.toc5 {font-size:0.6em; padding-left:0.5em}
+.textvalue {color: black}
+.booleanfalse {color: red; font-weight: bold}
+.booleantrue {color: green; font-weight: bold}
+
+.ec1wbd {width:30%; margin-left:2em; text-align:left; vertical-align:top; border-top: 2px solid green;border-bottom: 2px solid green;border-right: 1px dotted #BBC7CE;border-left: 2px solid green;padding:2pt 5pt;}
+.ec1nbd {width:2%; margin-left:2em; text-align:left; vertical-align:top; border-top: 2px solid green;border-bottom: 2px solid green;border-right: 1px dotted #BBC7CE;border-left: 2px solid green;padding:2pt 5pt;}
+.ec2bd {width:5%; font-size:1em; font-weight: bold; text-align:center;border-top: 2px solid green;border-bottom: 2px solid green;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec3bd {width:65%; font-size:1em; color:#26404F;border-top: 2px solid green;border-bottom: 2px solid green;border-right: 2px solid green;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+
+.ec1wer {width:30%; margin-left:2em; color:red; text-align:left; vertical-align:top; border-top: 3px solid red;border-bottom: 3px solid red;border-right: 1px dotted #BBC7CE;border-left: 3px solid red;padding:2pt 5pt;}
+.ec1ner {width:2%; margin-left:2em; color:red; text-align:left; vertical-align:top; border-top: 3px solid red;border-bottom: 3px solid red;border-right: 1px dotted #BBC7CE;border-left: 3px solid red;padding:2pt 5pt;}
+.ec2er {width:5%; font-size:1em; color:red; font-weight: bold; text-align:center;border-top: 3px solid red;border-bottom: 3px solid red;border-right: 1px dotted #BBC7CE;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+.ec3er {width:65%; font-size:1em; color:red;border-top: 3px solid red;border-bottom: 3px solid red;border-right: 3px solid red;border-left: 1px dotted #BBC7CE;padding:2pt 5pt;}
+
+.errorslist {color: red; background-color:lightyellow;}
