@@ -1,7 +1,23 @@
-@(content: String)
+@(content: String, userForm: Form[forms.MultiStoreyCarParkInput])
+
+@import helper.twitterBootstrap._
+@import helper._
 
 @main("Garaż wielopoziomowy") {
 
+<div class="container">
+    <div id="form" class="form">
+        @form(action = routes.Application.multistoreycarpark()) {
+            @inputText(userForm("beamLength"))
+            @inputText(userForm("slabSpanWidth"))
+            @inputText(userForm("slabTotalHeight"))
+            @inputText(userForm("load"))
+            @inputText(userForm("mountingSupportsNumber"))
+            <input type="submit" value="Przelicz"/>
+        }
+    </div>
+
     @worksheet(content)
+</div>
 
 }
