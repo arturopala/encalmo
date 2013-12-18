@@ -1,23 +1,29 @@
 @(content: String, userForm: Form[forms.MultiStoreyCarParkInput])
 
-@import helper.twitterBootstrap._
-@import helper._
+
 
 @main("Garaż wielopoziomowy") {
 
 <div class="container">
-    <div id="form" class="form">
-        @form(action = routes.Application.multistoreycarpark()) {
-            @inputText(userForm("beamLength"))
-            @inputText(userForm("slabSpanWidth"))
-            @inputText(userForm("slabTotalHeight"))
-            @inputText(userForm("load"))
-            @inputText(userForm("mountingSupportsNumber"))
-            <input type="submit" value="Przelicz"/>
+    <div style="height:60px"></div>
+    @if(userForm.hasGlobalErrors) {
+    <div class="panel panel-danger">
+        <ul>
+        @userForm.globalErrors.foreach { error =>
+            <li>error.message</li>
         }
+        </ul>
     </div>
+    }
+
+    @horizontalform(
+        action = routes.Application.multistoreycarpark(),
+        id="multistoreycarpark",
+        submit="Przelicz",
+        fields = userForm("beamLength"), userForm("slabSpanWidth"), userForm("slabTotalHeight"), userForm("mountingSupportsNumber"), userForm("load"))
 
     @worksheet(content)
+
 </div>
 
 }
