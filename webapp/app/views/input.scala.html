@@ -1,0 +1,19 @@
+@(elements: helper.FieldElements)
+
+@translate(key:Any, suffix:String = null) = @{
+    val messageKey = ("form.input" + elements.args.get('formId).map("."+_.toString).getOrElse("") + "." + key.toString + (if(suffix!=null) {"."+suffix} else "")).replace(" ","_")
+    println(elements.args)
+    if(Messages.isDefinedAt(messageKey)) Messages(messageKey) else ""
+}
+
+<div class="form-group @if(elements.hasErrors) {has-error}">
+    <label for="@elements.id" class="col-sm-2 control-label">@translate(elements.label)</label>
+    <div class="col-sm-4">
+        <input class="form-control" type="text" name="@elements.id" id="@elements.id" placeholder="@translate(elements.label,"tip")" value="@elements.field.value"/>
+    </div>
+    <div class="col-sm-6">
+        @for(error <- elements.errors){
+            <span class="text-danger">@Messages("error."+error.replace(" ","_"))</span>
+        }
+    </div>
+</div>

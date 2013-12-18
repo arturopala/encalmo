@@ -1,0 +1,18 @@
+@(action: play.api.mvc.Call, id: String, submit: String, fields: play.api.data.Field*)
+
+@import _root_.helper.EncalmoFormHelpers._
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        @helper.form(action = action, args = 'role -> "form", 'class -> "form-horizontal") {
+            @for(field <- fields) {
+                @helper.inputText(field, args =  'formId -> id)
+            }
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary" data-loading-text="@Messages("form.submit.loading")..." >@submit</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
