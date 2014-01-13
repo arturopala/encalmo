@@ -14,8 +14,8 @@ trait Graph[@specialized(Int) N] {
 	def nodesCount:Int
 	def edgesCount:Long
 
-    def isAlone(node: N): Boolean = adjacent(node).isEmpty && reverse.adjacent(node).isEmpty
-    def isConnected(node: N): Boolean = !adjacent(node).isEmpty || !reverse.adjacent(node).isEmpty
+    def foreach[U](f: (N) => U):Unit
+    def map[U](f: (N) => U): Graph[U]
 }
 
 trait Unidirected[@specialized(Int) N] extends Graph[N] {
@@ -38,11 +38,20 @@ trait GenericGraph[@specialized(Int) N] extends Graph[N] {
     override def reverse:Graph[N] = new GenericReverseGraph[N](self)
     override def nodesCount: Int = nodes.size
     override def edgesCount: Long = nodes.foldLeft(0L){case (sum,node) => sum + adjacent(node).size}
+    override def foreach[U](f: (N) => U):Unit = nodes.foreach(f)
+    override def map[U](f: (N) => U): GenericGraph[U] = new GenericGraph[U] {
+        def nodes: Traversable[U] = self.nodes.map(f)
+        val adjacent: (U) => Traversable[U] = {
+            node => self.nodes.filter(f(_)==node).flatMap(self.adjacent).map(f)
+        }
+    }
 }
 
 trait MutableGraph[@specialized(Int) N] extends GenericGraph[N] with Growable[(N,N)] with Shrinkable[(N,N)] {
     def addNode(node: N): this.type
+    def removeNode(node:N): this.type
     def addNodes(nodes: Traversable[N]): this.type
+    def removeNodes(nodes: Traversable[N]): this.type
     def addEdge(edge: (N,N)): this.type
     def removeEdge(edge: (N,N)): this.type
     def addEdges(edges: Traversable[(N,N)]): this.type = this.++=(edges)
@@ -73,7 +82,19 @@ class MapGraph[@specialized(Int) N](val nodeMap: Map[N,Traversable[N]] = Map[N,T
 	override val nodes: Iterable[N] =  nodeMap.keys
 	override val adjacent: N => Traversable[N] = nodeMap
 	override lazy val reverse: Graph[N] = Graph.hardCopyReversed[N](this)
+    override def nodesCount: Int = nodeMap.size
 	override def contains(node: N): Boolean = nodeMap.contains(node)
+    override def map[U](f: (N) => U): MapGraph[U] = {
+        val newNodeMap = mutable.Map[U,mutable.ArrayBuffer[U]]()
+        nodeMap.foreach {
+            case (node,adjacent) => {
+                val newNode = f(node)
+                val newAdjacent = adjacent.map(f)
+                newNodeMap.getOrElseUpdate(newNode,{new mutable.ArrayBuffer[U]()}) ++= newAdjacent
+            }
+        }
+        new MapGraph[U](Map() ++ newNodeMap)
+    }
 }
 
 class MutableMapGraph[@specialized(Int) N](
@@ -84,14 +105,41 @@ class MutableMapGraph[@specialized(Int) N](
 	override def reverse: Graph[N] = Graph.hardCopyReversed[N](this)
 	override def nodesCount: Int = nodeMap.size
 	override def contains(node: N): Boolean = nodeMap.contains(node)
+    override def map[U](f: (N) => U): MutableMapGraph[U] = {
+        val newNodeMap = mutable.Map[U,mutable.ArrayBuffer[U]]()
+        nodeMap.foreach {
+            case (node,adjacent) => {
+                val newNode = f(node)
+                val newAdjacent = adjacent.map(f)
+                newNodeMap.getOrElseUpdate(newNode,{new mutable.ArrayBuffer[U]()}) ++= newAdjacent
+            }
+        }
+        new MutableMapGraph[U](newNodeMap)
+    }
 
     override def addNode(node: N): this.type = {
         nodeMap.getOrElseUpdate(node,{new mutable.ArrayBuffer[N]()})
         this
     }
 
+    override def removeNode(node:N): this.type = {
+        nodeMap.remove(node)
+        for(adjacent <- nodeMap.values){
+            adjacent -= node
+        }
+        this
+    }
+
     override def addNodes(nodes: Traversable[N]): this.type = {
         nodes.foreach(this.addNode)
+        this
+    }
+
+    override def removeNodes(nodes: Traversable[N]): this.type = {
+        nodes.foreach(nodeMap.remove)
+        for(adjacent <- nodeMap.values){
+            adjacent --= nodes
+        }
         this
     }
 
@@ -496,5 +544,14 @@ object Graph {
 		val (_, adjacent) = graph.nodeMap.head
 		adjacent.size
 	}
+
+    def leavesOf[N](graph: Graph[N]): Traversable[N] = {
+        for(node <- graph.nodes if graph.adjacent(node).isEmpty) yield node
+    }
+
+    def rootsOf[N](graph: Graph[N]): Traversable[N] = {
+        val reversed = graph.reverse
+        for(node <- graph.nodes if reversed.adjacent(node).isEmpty) yield node
+    }
 }
 

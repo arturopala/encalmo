@@ -60,7 +60,8 @@ trait Context extends SymbolConfigurator {
 
     def topologicallySortedConnectedSymbols: Seq[Symbol] = {
         val graph: Graph[Symbol] = SymbolGraph.build(this)
-        Graph.sortTopologically(graph).filter(graph.isConnected)
+        val reversed = graph.reverse
+        Graph.sortTopologically(graph).filter(node => !graph.adjacent(node).isEmpty || !reversed.adjacent(node).isEmpty)
     }
 
     /** Returns expression pinned to the context */
