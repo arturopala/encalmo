@@ -199,6 +199,71 @@ class GraphTest extends FunSpec {
 		    val ten: Seq[Int] = (result.take(10) map (_.size)).toSeq
 			assert(ten.sameElements(Seq(434821, 968, 459, 313, 211, 205, 197, 177, 162, 152)))
 		}
+        it("should remove single node from mutable graph") {
+            val graph = Graph.hardCopy(graph1)
+            assert(graph.contains(3))
+            graph.removeNode(3)
+            assert(!graph.contains(3))
+            val reverse = graph.reverse
+            assert(!reverse.contains(3))
+            assert(graph.contains(1))
+            assert(graph.contains(4))
+            assert(graph.contains(2))
+        }
+        it("should remove set of nodes from mutable graph") {
+            val graph = Graph.hardCopy(graph1)
+            assert(graph.contains(3))
+            assert(graph.contains(2))
+            graph.removeNodes(List(3,2))
+            assert(!graph.contains(3))
+            assert(!graph.contains(2))
+            val reverse = graph.reverse
+            assert(!reverse.contains(3))
+            assert(!reverse.contains(2))
+            assert(graph.contains(1))
+            assert(graph.contains(4))
+        }
+        it("should return leaves of graph") {
+            val leaves1 = Graph.leavesOf(graph1)
+            assert(leaves1.toList == List(4))
+            val leaves2 = Graph.leavesOf(graph2)
+            val list2: List[Int] = leaves2.toList
+            assert(list2 == Nil)
+            val leaves3 = Graph.leavesOf(graph3)
+            val list3: List[Int] = leaves3.toList
+            assert(list3 == List(5))
+            val leaves4 = Graph.leavesOf(graph4)
+            val list4: List[Int] = leaves4.toList
+            assert(list4 == List(6))
+        }
+        it("should return roots of graph") {
+            val roots1 = Graph.rootsOf(graph1)
+            assert(roots1.toList == List(1))
+            val roots2 = Graph.rootsOf(graph2)
+            val list2: List[Int] = roots2.toList
+            assert(list2 == Nil)
+            val roots3 = Graph.rootsOf(graph3)
+            val list3: List[Int] = roots3.toList
+            assert(list3 == List(1))
+            val roots4 = Graph.rootsOf(graph4)
+            val list4: List[Int] = roots4.toList
+            assert(list4 == List(5))
+        }
+        it("should map graph") {
+            val mapped1 = graph1.map(n => n + 10)
+            assert(mapped1.adjacent(11).toList == List(12,13))
+            assert(mapped1.nodesCount == 4)
+            assert(mapped1.edgesCount == graph1.edgesCount)
+            val mapped2 = graph1.map(n => (n+1)/2)
+            assert(mapped2.adjacent(1).toList == List(1,2,2))
+            assert(mapped2.nodesCount == 2)
+            assert(mapped2.edgesCount == graph1.edgesCount)
+            val chars = "ABCDEFGHIJKLMOPQRSTUVWXYZ"
+            val mapped3 = graph1.map(n => chars(n))
+            assert(mapped3.adjacent('B').toList == List('C','D'))
+            assert(mapped3.nodesCount == 4)
+            assert(mapped3.edgesCount == graph1.edgesCount)
+        }
     }
 
 }
