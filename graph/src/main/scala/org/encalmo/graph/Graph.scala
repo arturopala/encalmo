@@ -3,9 +3,9 @@ package org.encalmo.graph
 import scala.specialized
 import scalax.file.Path
 import scala.collection.mutable
-import collection.generic.{Growable, Shrinkable}
 
 trait Graph[@specialized(Int) N] {
+    
     def nodes: Traversable[N]
     def adjacent: N => Traversable[N]
     def edges: Traversable[(N,N)]
@@ -35,9 +35,10 @@ trait GenericGraph[@specialized(Int) N] extends Graph[N] {
 		case s:Set[N] => s.contains(node)
 		case _ => nodes exists (n => n==node)
 	}
-    override def reverse:Graph[N] = new GenericReverseGraph[N](self)
+    override def reverse:Graph[N] = new GenericReversedGraph[N](self)
     override def nodesCount: Int = nodes.size
     override def edgesCount: Long = nodes.foldLeft(0L){case (sum,node) => sum + adjacent(node).size}
+
     override def foreach[U](f: (N) => U):Unit = nodes.foreach(f)
     override def map[U](f: (N) => U): GenericGraph[U] = new GenericGraph[U] {
         def nodes: Traversable[U] = self.nodes.map(f)
@@ -47,20 +48,7 @@ trait GenericGraph[@specialized(Int) N] extends Graph[N] {
     }
 }
 
-trait MutableGraph[@specialized(Int) N] extends GenericGraph[N] with Growable[(N,N)] with Shrinkable[(N,N)] {
-    def addNode(node: N): this.type
-    def removeNode(node:N): this.type
-    def addNodes(nodes: Traversable[N]): this.type
-    def removeNodes(nodes: Traversable[N]): this.type
-    def addEdge(edge: (N,N)): this.type
-    def removeEdge(edge: (N,N)): this.type
-    def addEdges(edges: Traversable[(N,N)]): this.type = this.++=(edges)
-    def removeEdges(edges: Traversable[(N,N)]): this.type = this.--=(edges)
-    def addEdgeReversed(edge: (N,N)): this.type
-    def addEdgesReversed(edges: Traversable[(N,N)]): this.type
-}
-
-class GenericReverseGraph[@specialized(Int) N](origin: Graph[N]) extends GenericGraph[N] {
+class GenericReversedGraph[@specialized(Int) N](origin: Graph[N]) extends GenericGraph[N] {
     override def nodes: Traversable[N] = origin.nodes
     override val adjacent: N => Traversable[N] = node => new Traversable[N]{
         def foreach[U](f: (N) => U) {
@@ -81,15 +69,22 @@ class GenericReverseGraph[@specialized(Int) N](origin: Graph[N]) extends Generic
 class MapGraph[@specialized(Int) N](val nodeMap: Map[N,Traversable[N]] = Map[N,Traversable[N]]()) extends GenericGraph[N]{
 	override val nodes: Iterable[N] =  nodeMap.keys
 	override val adjacent: N => Traversable[N] = nodeMap
-	override lazy val reverse: Graph[N] = Graph.hardCopyReversed[N](this)
+
+	override lazy val reverse: Graph[N] = {
+        val self = this
+        new MutableMapGraph[N](){
+            override lazy val reverse: Graph[N] = self
+        }.add(this.nodes).addEdgesReversed(this.edges)
+    }
+
     override def nodesCount: Int = nodeMap.size
 	override def contains(node: N): Boolean = nodeMap.contains(node)
     override def map[U](f: (N) => U): MapGraph[U] = {
         val newNodeMap = mutable.Map[U,mutable.ArrayBuffer[U]]()
         nodeMap.foreach {
-            case (node,adjacent) => {
+            case (node,adj) => {
                 val newNode = f(node)
-                val newAdjacent = adjacent.map(f)
+                val newAdjacent = adj.map(f)
                 newNodeMap.getOrElseUpdate(newNode,{new mutable.ArrayBuffer[U]()}) ++= newAdjacent
             }
         }
@@ -97,32 +92,60 @@ class MapGraph[@specialized(Int) N](val nodeMap: Map[N,Traversable[N]] = Map[N,T
     }
 }
 
+trait MutableGraph[@specialized(Int) N] extends GenericGraph[N] {
+    
+    def add(node: N): this.type
+    def add(nodes: Traversable[N]): this.type
+
+    def remove(node:N): this.type
+    def remove(nodes: Traversable[N]): this.type
+    
+    def link(edge: (N,N)): this.type
+    def link(from: N, to: N): this.type
+    def link(edges: Traversable[(N,N)]): this.type
+
+    def unlink(edge: (N,N)): this.type
+    def unlink(from: N, to: N): this.type
+    def unlink(edges: Traversable[(N,N)]): this.type
+
+    def clear(): Unit
+}
+
 class MutableMapGraph[@specialized(Int) N](
     val nodeMap: mutable.Map[N,mutable.ArrayBuffer[N]] = new mutable.LinkedHashMap[N,mutable.ArrayBuffer[N]]()
 ) extends MutableGraph[N] {
+
     override def nodes:Iterable[N] =  nodeMap.keys
     override val adjacent: N => mutable.ArrayBuffer[N] = nodeMap
-	override def reverse: Graph[N] = Graph.hardCopyReversed[N](this)
+
+	override def reverse: Graph[N] = {
+        val self = this
+        new MutableMapGraph[N](){
+            override lazy val reverse: Graph[N] = self
+        }.add(this.nodes).addEdgesReversed(this.edges)
+    }
+
 	override def nodesCount: Int = nodeMap.size
 	override def contains(node: N): Boolean = nodeMap.contains(node)
+
     override def map[U](f: (N) => U): MutableMapGraph[U] = {
         val newNodeMap = mutable.Map[U,mutable.ArrayBuffer[U]]()
         nodeMap.foreach {
-            case (node,adjacent) => {
+            case (node, adj) => {
                 val newNode = f(node)
-                val newAdjacent = adjacent.map(f)
+                val newAdjacent = adj.map(f)
                 newNodeMap.getOrElseUpdate(newNode,{new mutable.ArrayBuffer[U]()}) ++= newAdjacent
             }
         }
         new MutableMapGraph[U](newNodeMap)
     }
 
-    override def addNode(node: N): this.type = {
+    override def add(node: N): this.type = {
         nodeMap.getOrElseUpdate(node,{new mutable.ArrayBuffer[N]()})
         this
     }
 
-    override def removeNode(node:N): this.type = {
+    override def remove(node:N): this.type = {
         nodeMap.remove(node)
         for(adjacent <- nodeMap.values){
             adjacent -= node
@@ -130,12 +153,12 @@ class MutableMapGraph[@specialized(Int) N](
         this
     }
 
-    override def addNodes(nodes: Traversable[N]): this.type = {
-        nodes.foreach(this.addNode)
+    override def add(nodes: Traversable[N]): this.type = {
+        nodes.foreach(this.add)
         this
     }
 
-    override def removeNodes(nodes: Traversable[N]): this.type = {
+    override def remove(nodes: Traversable[N]): this.type = {
         nodes.foreach(nodeMap.remove)
         for(adjacent <- nodeMap.values){
             adjacent --= nodes
@@ -143,27 +166,53 @@ class MutableMapGraph[@specialized(Int) N](
         this
     }
 
-    override def +=(edge: (N,N)): this.type = addEdge(edge)
+    override def link(edge: (N,N)): this.type = link(edge._1, edge._2)
 
-    override def addEdge(edge: (N,N)): this.type = {
-        nodeMap.getOrElseUpdate(edge._1,{new mutable.ArrayBuffer[N]()}) += edge._2
-	    nodeMap.getOrElseUpdate(edge._2,{new mutable.ArrayBuffer[N]()})
-	    this
+    override def link(from: N, to: N): this.type = {
+        nodeMap.getOrElseUpdate(from,{new mutable.ArrayBuffer[N]()}) += to
+        nodeMap.getOrElseUpdate(to,{new mutable.ArrayBuffer[N]()})
+        this
     }
 
-    override def -=(edge: (N,N)): this.type = removeEdge(edge)
+    override def link(edges: Traversable[(N,N)]): this.type = {
+        edges.foreach(edge => {
+            this.link(edge)
+        })
+        this
+    }
 
-	override def removeEdge(edge: (N,N)): this.type = {
+	override def unlink(edge: (N,N)): this.type = {
 		for(adjacent <- nodeMap.get(edge._1)){
 			adjacent -= edge._2
 		}
 		this
 	}
-    def addEdgeReversed(edge: (N,N)): this.type = this += edge.swap
-    def addEdgesReversed(edges:Traversable[(N,N)]): this.type = {
-        for (edge <- edges) +=(edge.swap); this
+
+    override def unlink(from: N, to: N): this.type = {
+        for(adjacent <- nodeMap.get(from)){
+            adjacent -= to
+        }
+        this
     }
-	override def clear() {nodeMap.clear()}
+
+
+    override def unlink(edges: Traversable[(N,N)]): this.type = {
+        edges.foreach(edge => {
+            this.unlink(edge)
+        })
+        this
+    }
+
+    def addEdgesReversed(edges:Traversable[(N,N)]): this.type = {
+        edges.foreach(edge => {
+            this.link(edge.swap)
+        })
+        this
+    }
+
+	override def clear(): Unit = {
+        nodeMap.clear()
+    }
 }
 
 object Graph {
@@ -175,18 +224,12 @@ object Graph {
 	def apply[@specialized(Int) N](map: Map[N,Traversable[N]]): Graph[N] = new MapGraph(map)
     def apply[@specialized(Int) N](mappings:(N,Traversable[N])*): Graph[N] = new MapGraph(mappings.toMap)
 	def apply[@specialized(Int) N](nodes:Iterable[N], adjacent: N => Traversable[N]): Graph[N] = new GenericGraphImpl[N](nodes,adjacent)
-    def apply[@specialized(Int) N](edges:Traversable[(N,N)]): MutableGraph[N] = new MutableMapGraph[N]() ++= edges
+    def apply[@specialized(Int) N](edges:Traversable[(N,N)]): MutableGraph[N] = new MutableMapGraph[N]() link edges
 	def apply[@specialized(Int) N, @specialized(Double,Int) V:Numeric](mappings:(N,Iterable[(N,V)])*): Graph[N] with Weighted[N,V] = {
 		val nodeWeightMap = mappings.toMap map {case (k,v) => (k,v.toMap)}
 		new WeightedGraphImpl[N,V](nodeWeightMap.keys, nodeWeightMap.mapValues{case m => m.keys}, (t:N,h:N) => nodeWeightMap(t)(h))
 	}
 	
-	def hardCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]().addNodes(graph.nodes).addEdges(graph.edges)
-	def hardCopyReversed[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  {
-		new MutableMapGraph[N](){
-			override lazy val reverse: Graph[N] = graph
-		}.addNodes(graph.nodes).addEdgesReversed(graph.edges)
-	}
 
 	def readFromEdgeListFile(path:Path, reversed:Boolean = false):Graph[Int] = {
         val edges = path.lines().view map (line => {
@@ -219,7 +262,7 @@ object Graph {
 			val tokens = line.split('\t')
 			if(tokens.length==0) return null
 			val label:Int = Integer.parseInt(tokens(0))
-			val adjacent:Map[Int,Int] = (tokens.drop(1) map parseNodeWeight _).toMap
+			val adjacent:Map[Int,Int] = (tokens.drop(1) map parseNodeWeight).toMap
 			(label,adjacent)
 		}
 		def parseNodeWeight(token:String): (Int,Int) = {
@@ -233,7 +276,9 @@ object Graph {
 		new WeightedGraphImpl[Int,Int](nodeWeightMap.keys, nodeWeightMap.mapValues{case m => m.keys}, (t:Int,h:Int) => nodeWeightMap(t)(h))
 	}
 
-    trait DfsVisitor[@specialized(Int) N] {
+	def hardCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]().add(graph.nodes).link(graph.edges)
+
+    trait GraphDfsVisitor[@specialized(Int) N] {
         def start(node:N) {}
         def before(node:N) {}
 	    def edge(edge:(N,N)) {}
@@ -241,9 +286,9 @@ object Graph {
     }
 
 	/** Depth-first search of the whole graph */
-	def dfs[@specialized(Int) N](graph:Graph[N], visitor: DfsVisitor[N]):Unit = dfs(graph, visitor, graph.nodes)
+	def dfs[@specialized(Int) N](graph:Graph[N], visitor: GraphDfsVisitor[N]):Unit = dfs(graph, visitor, graph.nodes)
 	/** Depth-first search of the whole graph in the given node's order*/
-	def dfs[@specialized(Int) N](graph:Graph[N], visitor: DfsVisitor[N], nodes:Traversable[N]):Unit = {
+	def dfs[@specialized(Int) N](graph:Graph[N], visitor: GraphDfsVisitor[N], nodes:Traversable[N]):Unit = {
 		val explored = new mutable.LinkedHashSet[N]()
 		for (node <- nodes){
 			if (!(explored contains node)){
@@ -253,11 +298,11 @@ object Graph {
 		}
 	}
 	/** Depth-first search (recursive) of the graph starting at given node */
-	def dfs[@specialized(Int) N](graph:Graph[N],node:N, visitor: DfsVisitor[N], explored:mutable.LinkedHashSet[N] = mutable.LinkedHashSet[N]()):Unit = {
+	def dfs[@specialized(Int) N](graph:Graph[N],node:N, visitor: GraphDfsVisitor[N], explored:mutable.LinkedHashSet[N] = mutable.LinkedHashSet[N]()):Unit = {
 		if (!(explored contains node)){
 			explored add node
 			visitor before node
-			for (next <- graph.adjacent(node) if (!explored.contains(next))) {
+			for (next <- graph.adjacent(node) if !explored.contains(next)) {
 				visitor edge ((node,next))
 				dfs(graph,next,visitor,explored)
 			}
@@ -266,7 +311,7 @@ object Graph {
 	}
 
     /** Depth-first search (iterative) of the graph starting at given node */
-    def dfsi[@specialized(Int) N](graph:Graph[N], source:N, visitor: DfsVisitor[N], explored:mutable.LinkedHashSet[N] = mutable.LinkedHashSet[N]()):Unit = {
+    def dfsi[@specialized(Int) N](graph:Graph[N], source:N, visitor: GraphDfsVisitor[N], explored:mutable.LinkedHashSet[N] = mutable.LinkedHashSet[N]()):Unit = {
         val stack = new mutable.Stack[N]()
 	    explored add source
         stack.push(source)
@@ -303,7 +348,7 @@ object Graph {
 		val queue = new mutable.Queue[N]()
 		queue.enqueue(node)
 		while (!queue.isEmpty){
-			val n = queue.dequeue
+			val n = queue.dequeue()
 			if (!(explored contains n)){
 				explored add n
 				visitor(n)
@@ -315,7 +360,7 @@ object Graph {
 	def findCycles[@specialized(Int) N](graph:Graph[N]): Vector[N] = {
 		var cycles: Vector[N] = Vector.empty[N]
 		val marks = new mutable.LinkedHashMap[N,Char]().withDefaultValue('0')
-		for (node <- graph.nodes if (marks(node) == '0')) {
+		for (node <- graph.nodes if marks(node) == '0') {
 			cycles = cycles ++ findCycles(graph,node,marks)
 		}
 		cycles
@@ -347,7 +392,7 @@ object Graph {
 			}
 		}
 		try {
-			for (node <- graph.nodes if (marks(node) == '0')) checkCycles(node)
+			for (node <- graph.nodes if marks(node) == '0') checkCycles(node)
 			false
 		}
 		catch {
@@ -358,7 +403,7 @@ object Graph {
 	def sortTopologically[@specialized(Int) N](graph: Graph[N]): List[N] = {
 		var counter = graph.nodesCount
 		var priorities: List[N] = Nil
-		val observer = new DfsVisitor[N] {
+		val observer = new GraphDfsVisitor[N] {
 			override def after(node: N) {
 				priorities = node :: priorities
 				counter = counter - 1
@@ -396,7 +441,7 @@ object Graph {
 			for ((t,h,w) <- outgoingEdges.extract){
 				explored add h
 				distance(h) = num.plus(distance(t),w)
-				backtrace += ((h,t))
+				backtrace link (h,t)
 				outgoingEdges remove (outgoingEdges filter {case (_,node,_) => node == h})
 				nextEdges = graph.adjacent(h) filterNot explored map (node => (h,node,weight(h,node)))
 				outgoingEdges insert nextEdges
@@ -459,7 +504,7 @@ object Graph {
 		val nodes = mutable.Seq[N]() ++ graph.nodes
 		// first dfs pass
 		val times = new mutable.LinkedHashMap[N,Int]()
-		dfs(reversed, new DfsVisitor[N] {
+		dfs(reversed, new GraphDfsVisitor[N] {
 			var time:Int = 0
 			override def after(node:N) {
 				time = time + 1
@@ -473,7 +518,7 @@ object Graph {
 		QuickSort.sort(nodes)
 		// second dfs pass
 		val leaders = new mutable.LinkedHashMap[N,N]()
-		dfs(graph, new DfsVisitor[N] {
+		dfs(graph, new GraphDfsVisitor[N] {
 			var leader: Option[N] = None
 			override def start(node:N) {
 				leader = Some(node)
@@ -533,7 +578,7 @@ object Graph {
 		}
 		val nodesQueue = mutable.Queue[N](randomize(graph.nodes.toSeq):_*)
 		while(graph.nodeMap.size>2){
-			val node1 = nodesQueue.dequeue
+			val node1 = nodesQueue.dequeue()
 			val adjacent = graph.nodeMap(node1)
 			if(adjacent.size>0){
 				val j = (Math.random()*adjacent.size).asInstanceOf[Int]
