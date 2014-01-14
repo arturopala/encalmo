@@ -72,7 +72,7 @@ class GraphTest extends FunSpec {
             assert(graph1.nodes.size==4, "graph nodes count should be 4")
             assert(graph1.edges.size==4, "graph edges count should be 4")
         }
-        it("should have hardCopyReversed graph") {
+        it("should have reversed graph") {
             val reverse = graph1.reverse
             val redges = reverse.edges.toSeq
             val reversed2 = reverse.reverse
@@ -87,7 +87,7 @@ class GraphTest extends FunSpec {
         it("should search graph with dfs") {
             val graph = graph2
             var counter = 0
-            Graph.dfs(graph,new Graph.DfsVisitor[Int] {
+            Graph.dfs(graph,new Graph.GraphDfsVisitor[Int] {
                 override def before(node:Int) {
                     counter = counter + 1
                 }
@@ -108,28 +108,28 @@ class GraphTest extends FunSpec {
 		    assert(weightedGraph.weight(200,108)==9976)
 		    assert(weightedGraph.adjacent(31).size==21)
 	    }
-	    it("should breath-first search the graph - sccGraph") {
+	    it("should breath-first search the graph") {
 		    var counter = 0
-		    Graph.bfs(veryLargeGraph,{n:Int => counter = counter + 1})
-		    assert(counter==veryLargeGraph.nodesCount,s"should be ${veryLargeGraph.nodesCount} but is ${counter}")
+		    Graph.bfs(weightedGraph,{n:Int => counter = counter + 1})
+		    assert(counter==weightedGraph.nodesCount,s"should be ${weightedGraph.nodesCount} but is ${counter}")
 	    }
         it("should depth-first search the graph - dijkstraGraph") {
             var counter = 0
-            Graph.dfs(weightedGraph,new Graph.DfsVisitor[Int] {
+            Graph.dfs(weightedGraph,new Graph.GraphDfsVisitor[Int] {
                 override def before(node:Int) {
                     counter = counter + 1
                 }
             })
             assert(counter==weightedGraph.nodesCount,s"should be ${weightedGraph.nodesCount} but is ${counter}")
         }
-	    it("should depth-first search the graph - sccGraph") {
+	    it("should depth-first search the graph") {
 		    var counter = 0
-		    Graph.dfs(veryLargeGraph,new Graph.DfsVisitor[Int] {
+		    Graph.dfs(weightedGraph,new Graph.GraphDfsVisitor[Int] {
 			    override def before(node:Int) {
 				    counter = counter + 1
 			    }
 		    })
-		    assert(counter==veryLargeGraph.nodesCount,s"should be ${veryLargeGraph.nodesCount} but is ${counter}")
+		    assert(counter==weightedGraph.nodesCount,s"should be ${weightedGraph.nodesCount} but is ${counter}")
 	    }
 	    it("should find cycles - graph2") {
 		    val cycles = Graph.findCycles(graph2)
@@ -202,7 +202,7 @@ class GraphTest extends FunSpec {
         it("should remove single node from mutable graph") {
             val graph = Graph.hardCopy(graph1)
             assert(graph.contains(3))
-            graph.removeNode(3)
+            graph.remove(3)
             assert(!graph.contains(3))
             val reverse = graph.reverse
             assert(!reverse.contains(3))
@@ -214,7 +214,7 @@ class GraphTest extends FunSpec {
             val graph = Graph.hardCopy(graph1)
             assert(graph.contains(3))
             assert(graph.contains(2))
-            graph.removeNodes(List(3,2))
+            graph.remove(List(3,2))
             assert(!graph.contains(3))
             assert(!graph.contains(2))
             val reverse = graph.reverse
