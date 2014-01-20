@@ -216,8 +216,8 @@ class MutableMapGraph[@specialized(Int) N](
 }
 
 object Graph {
-	
-	class GenericGraphImpl[@specialized(Int) N](val nodes:Iterable[N], val adjacent: N => Traversable[N]) extends GenericGraph[N]
+
+    class GenericGraphImpl[@specialized(Int) N](val nodes:Iterable[N], val adjacent: N => Traversable[N]) extends GenericGraph[N]
 	class WeightedGraphImpl[@specialized(Int) N, @specialized(Double,Int) V:Numeric](val nodes:Iterable[N], val adjacent: N => Traversable[N], val weight: (N,N) => V) extends GenericGraph[N] with Weighted[N,V]
 
 	def apply[@specialized(Int) N](): MutableGraph[N] = new MutableMapGraph[N]()
@@ -276,13 +276,16 @@ object Graph {
 		new WeightedGraphImpl[Int,Int](nodeWeightMap.keys, nodeWeightMap.mapValues{case m => m.keys}, (t:Int,h:Int) => nodeWeightMap(t)(h))
 	}
 
-	def hardCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]().add(graph.nodes).link(graph.edges)
+    /** Deep mutable copy of the graph */ 
+	def deepCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]().add(graph.nodes).link(graph.edges)
 
+
+    /** Graph depth-first visitor interface */
     trait GraphDfsVisitor[@specialized(Int) N] {
-        def start(node:N) {}
-        def before(node:N) {}
-	    def edge(edge:(N,N)) {}
-        def after(node:N) {}
+        def start(node:N):Unit = {}
+        def before(node:N):Unit = {}
+	    def edge(edge:(N,N)):Unit = {}
+        def after(node:N):Unit = {}
     }
 
 	/** Depth-first search of the whole graph */
@@ -357,6 +360,7 @@ object Graph {
 		}
 	}
 
+    /** Finds all cycles */
 	def findCycles[@specialized(Int) N](graph:Graph[N]): Vector[N] = {
 		var cycles: Vector[N] = Vector.empty[N]
 		val marks = new mutable.LinkedHashMap[N,Char]().withDefaultValue('0')
@@ -366,6 +370,7 @@ object Graph {
 		cycles
 	}
 
+    /** Finds cycles starting at the given node */
 	def findCycles[@specialized(Int) N](graph:Graph[N], node: N, marks: mutable.Map[N,Char] = new mutable.LinkedHashMap[N,Char]().withDefaultValue('0')): Vector[N] = {
 		var cycles: Vector[N] = Vector.empty[N]
 		if (marks(node) == 'x') cycles = cycles :+ node
@@ -380,7 +385,8 @@ object Graph {
 	}
 
 	private object CycleFoundException extends Exception
-	
+
+    /** Checks if graph contains cycles */
 	def hasCycles[@specialized(Int) N](graph:Graph[N]): Boolean = {
 		val marks = new mutable.LinkedHashMap[N,Char]().withDefaultValue('0')
 		def checkCycles(node: N): Unit = {
@@ -399,7 +405,8 @@ object Graph {
 			case CycleFoundException => true
 		}
 	}
-	
+
+    /** Sorts nodes topologically */
 	def sortTopologically[@specialized(Int) N](graph: Graph[N]): List[N] = {
 		var counter = graph.nodesCount
 		var priorities: List[N] = Nil
@@ -464,11 +471,11 @@ object Graph {
 
 	/** Dijkstra algorithm finds all shortest paths starting at given node in directed graph */
 	def findShortestPaths[@specialized(Int) N, @specialized(Double,Int) V:Numeric](graph: Graph[N] with Weighted[N,V],from: N): scala.collection.Map[N,V] = {
-		findShortestPaths(graph,from,graph.weight)
+		findShortestDistances(graph,from,graph.weight)
 	}
 
 	/** Dijkstra algorithm finds all shortest paths starting at given node in directed graph */
-	def findShortestPaths[@specialized(Int) N, @specialized(Double,Int) V:Numeric](graph: Graph[N],from: N, weight: (N,N) => V): scala.collection.Map[N,V] = {
+	def findShortestDistances[@specialized(Int) N, @specialized(Double,Int) V:Numeric](graph: Graph[N],from: N, weight: (N,N) => V): scala.collection.Map[N,V] = {
 		val num: Numeric[V] = implicitly[Numeric[V]]
 		if(graph.adjacent(from).isEmpty) return Map.empty
 		val nodesCount = graph.nodesCount
@@ -532,10 +539,11 @@ object Graph {
 		result
 	}
 
+    /** Merge two nodes into one (collapse) */
 	def mergeNodes[@specialized(Int) N](g: Graph[N], mergedNode: N, removedNode: N): MutableMapGraph[N] =  {
 		val graph:MutableMapGraph[N] = g match {
 			case x: MutableMapGraph[N] => x
-			case _ => Graph.hardCopy(g)
+			case _ => Graph.deepCopy(g)
 		}
 		//merge two adjacent lists, remove self-loops
 		val removedAdjacent = graph.nodeMap(removedNode)
@@ -574,7 +582,7 @@ object Graph {
 	def randomCutCount[@specialized(Int) N](g:Graph[N]):Int = {
 		val graph:MutableMapGraph[N] = g match {
 			case x: MutableMapGraph[N] => x
-			case _ => Graph.hardCopy(g)
+			case _ => Graph.deepCopy(g)
 		}
 		val nodesQueue = mutable.Queue[N](randomize(graph.nodes.toSeq):_*)
 		while(graph.nodeMap.size>2){
@@ -590,13 +598,28 @@ object Graph {
 		adjacent.size
 	}
 
-    def leavesOf[N](graph: Graph[N]): Traversable[N] = {
+    /** Set of leaf nodes (without edges beginning at)*/
+    def leavesOf[@specialized(Int) N](graph: Graph[N]): Traversable[N] = {
         for(node <- graph.nodes if graph.adjacent(node).isEmpty) yield node
     }
 
-    def rootsOf[N](graph: Graph[N]): Traversable[N] = {
+    /** Set of root nodes (without edges leading to) */
+    def rootsOf[@specialized(Int) N](graph: Graph[N]): Traversable[N] = {
         val reversed = graph.reverse
         for(node <- graph.nodes if reversed.adjacent(node).isEmpty) yield node
+    }
+
+    /** Filters out every one node that does not belong to one of the paths leading to one of the given target nodes **/
+    def filterOutPathsNotLeadingTo[@specialized(Int) N](graph: Graph[N], nodes: Traversable[N]): Graph[N] = {
+        val newGraph:MutableGraph[N] = Graph()
+        val reversed = graph.reverse
+        val visitor = new GraphDfsVisitor[N] {
+            override def edge(edge: (N,N)): Unit = newGraph.link(edge.swap)
+        }
+        for(node <- nodes) {
+            Graph.dfsi(reversed,node,visitor)
+        }
+        return newGraph
     }
 }
 
