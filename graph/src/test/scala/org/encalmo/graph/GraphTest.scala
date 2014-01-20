@@ -200,7 +200,7 @@ class GraphTest extends FunSpec {
 			assert(ten.sameElements(Seq(434821, 968, 459, 313, 211, 205, 197, 177, 162, 152)))
 		}
         it("should remove single node from mutable graph") {
-            val graph = Graph.hardCopy(graph1)
+            val graph = Graph.deepCopy(graph1)
             assert(graph.contains(3))
             graph.remove(3)
             assert(!graph.contains(3))
@@ -211,7 +211,7 @@ class GraphTest extends FunSpec {
             assert(graph.contains(2))
         }
         it("should remove set of nodes from mutable graph") {
-            val graph = Graph.hardCopy(graph1)
+            val graph = Graph.deepCopy(graph1)
             assert(graph.contains(3))
             assert(graph.contains(2))
             graph.remove(List(3,2))
@@ -263,6 +263,23 @@ class GraphTest extends FunSpec {
             assert(mapped3.adjacent('B').toList == List('C','D'))
             assert(mapped3.nodesCount == 4)
             assert(mapped3.edgesCount == graph1.edgesCount)
+        }
+        it("should filter out nodes not on paths leading to the given target nodes"){
+            val graph = Graph[Int](
+                1 -> Seq(2,5),
+                2 -> Seq(3),
+                3 -> Seq(4),
+                4 -> Seq(6,7),
+                5 -> Seq(8),
+                6 -> Seq(8,9),
+                7 -> Seq(10),
+                8 -> Seq(),
+                9 -> Seq(),
+               10 -> Seq()
+            )
+            val graph2:Graph[Int] = graph.filterOutPathsNotLeadingTo(List(10))
+            assert(graph2.adjacent(1).toSeq == Seq(2))
+            assert(graph2.adjacent(4).toSeq == Seq(7))
         }
     }
 
