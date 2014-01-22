@@ -60,6 +60,12 @@ package object graph {
         /** Filters out every one node that does not belong to one of the paths leading to one of the given target nodes **/
         def filterOutPathsNotLeadingTo(nodes: Traversable[N]): Graph[N] = Graph.filterOutPathsNotLeadingTo(graph,nodes)
 
+        /** Checks if graphs contains the same nodes and edges */
+        def isSameAs(other:Graph[N]):Boolean = Graph.isSame(graph,other)
+
+        /** Checks if 1st graph is subset of the 2nd  */
+        def isSubsetOf(other:Graph[N]):Boolean = Graph.isSubset(graph,other)
+
     }
 
 }
