@@ -72,7 +72,7 @@ class GraphTest extends FunSpec {
             assert(graph1.nodes.size==4, "graph nodes count should be 4")
             assert(graph1.edges.size==4, "graph edges count should be 4")
         }
-        it("should have reversed graph") {
+        it("should got reversed graph") {
             val reverse = graph1.reverse
             val redges = reverse.edges.toSeq
             val reversed2 = reverse.reverse
@@ -83,6 +83,17 @@ class GraphTest extends FunSpec {
             assert(reversed2 == graph1, "twice reversed graph should be the same")
             assert(radjacentOf1.isEmpty)
             assert(radjacentOf4 == Seq(3))
+        }
+        it("should check graphs are similar"){
+           val graph2 = weightedGraph.deepCopy()
+           assert(graph2.isSameAs(weightedGraph))
+           assert(weightedGraph.isSameAs(graph2))
+        }
+        it("should check if 1st graph is subset of the 2nd"){
+            val graph2 = weightedGraph.filterOutPathsNotLeadingTo(weightedGraph.nodes.drop(weightedGraph.nodesCount/2).take(5))
+            assert(!graph2.isSameAs(weightedGraph))
+            assert(graph2.isSubsetOf(weightedGraph))
+            assert(!weightedGraph.isSubsetOf(graph2))
         }
         it("should search graph with dfs") {
             val graph = graph2

@@ -276,9 +276,22 @@ object Graph {
 		new WeightedGraphImpl[Int,Int](nodeWeightMap.keys, nodeWeightMap.mapValues{case m => m.keys}, (t:Int,h:Int) => nodeWeightMap(t)(h))
 	}
 
+    /** Checks if graphs contains the same nodes and edges */
+    def isSame[@specialized(Int) N](g1:Graph[N],g2:Graph[N]):Boolean = {
+        g1.nodesCount==g2.nodesCount && g1.edgesCount==g2.edgesCount && g1.nodes.forall(n =>
+           g2.contains(n) && g1.adjacent(n).toSet.sameElements(g2.adjacent(n).toSet)
+        )
+    }
+
+    /** Checks if 1st graph is subset of the 2nd  */
+    def isSubset[@specialized(Int) N](g1:Graph[N],g2:Graph[N]):Boolean = {
+        g1.nodesCount <= g2.nodesCount && g1.edgesCount <= g2.edgesCount && g1.nodes.forall(n => {
+            g2.contains(n) && g1.adjacent(n).forall(g2.adjacent(n).toSet)
+        })
+    }
+
     /** Deep mutable copy of the graph */ 
 	def deepCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]().add(graph.nodes).link(graph.edges)
-
 
     /** Graph depth-first visitor interface */
     trait GraphDfsVisitor[@specialized(Int) N] {
