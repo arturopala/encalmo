@@ -14,10 +14,6 @@ import scala.annotation.tailrec
 object Reckoner {
 
     def reckon(implicit context: Context): Results = {
-        reckonContext(context)
-    }
-
-    def reckonContext(context: Context): Results = {
         val graph: Graph[Symbol] = SymbolGraph.build(context)
         val symbols: List[Symbol] = Graph.sortTopologically(graph)
         Console.println(s"Found ${symbols.size} symbols to reckon in $context:")

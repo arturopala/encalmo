@@ -7,13 +7,13 @@ import scala.collection.generic.Growable
 
 object SymbolGraph {
 
-    class ExpressionTreeVisitor(rootSymbol:Symbol, graph:MutableGraph[Symbol]) extends TreeVisitor[Expression] {
+    class GraphBuildingExpressionTreeVisitor(rootSymbol:Symbol, graph:MutableGraph[Symbol]) extends TreeVisitor[Expression] {
 
         override def onEnter(node:Node[Expression]):Unit = {
             node.element match {
-                case symbol: Symbol => graph link (symbol,rootSymbol)
-                case DynamicExpression(symbols, _) => for(symbol <- symbols) {graph link (symbol,rootSymbol)}
-                case PinnedExpression(context,symbol) => graph link (symbol,rootSymbol)
+                case symbol: Symbol => graph link (symbol,rootSymbol,false)
+                case DynamicExpression(symbols, _) => for(symbol <- symbols) {graph link (symbol,rootSymbol,false)}
+                case PinnedExpression(context,symbol) => graph link (symbol,rootSymbol,false)
                 case _ => Unit
             }
         }
@@ -27,7 +27,7 @@ object SymbolGraph {
             graph.add(symbol)
             context.getExpression(symbol).map(
                 expr => {
-                    val visitor = new ExpressionTreeVisitor(symbol, graph)
+                    val visitor = new GraphBuildingExpressionTreeVisitor(symbol, graph)
                     expr.visit(visitor)
                 }
             )

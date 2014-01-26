@@ -100,9 +100,9 @@ trait MutableGraph[@specialized(Int) N] extends GenericGraph[N] {
     def remove(node:N): this.type
     def remove(nodes: Traversable[N]): this.type
     
-    def link(edge: (N,N)): this.type
-    def link(from: N, to: N): this.type
-    def link(edges: Traversable[(N,N)]): this.type
+    def link(edge: (N,N), allowDuplicates: Boolean): this.type
+    def link(from: N, to: N, allowDuplicates: Boolean): this.type
+    def link(edges: Traversable[(N,N)], allowDuplicates: Boolean): this.type
 
     def unlink(edge: (N,N)): this.type
     def unlink(from: N, to: N): this.type
@@ -166,17 +166,18 @@ class MutableMapGraph[@specialized(Int) N](
         this
     }
 
-    override def link(edge: (N,N)): this.type = link(edge._1, edge._2)
+    override def link(edge: (N,N), allowDuplicates: Boolean): this.type = link(edge._1, edge._2, allowDuplicates)
 
-    override def link(from: N, to: N): this.type = {
-        nodeMap.getOrElseUpdate(from,{new mutable.ArrayBuffer[N]()}) += to
+    override def link(from: N, to: N, allowDuplicates: Boolean): this.type = {
+        val adj = nodeMap.getOrElseUpdate(from,{new mutable.ArrayBuffer[N]()})
+        if (allowDuplicates || !adj.contains(to)) adj += to
         nodeMap.getOrElseUpdate(to,{new mutable.ArrayBuffer[N]()})
         this
     }
 
-    override def link(edges: Traversable[(N,N)]): this.type = {
+    override def link(edges: Traversable[(N,N)], allowDuplicates: Boolean): this.type = {
         edges.foreach(edge => {
-            this.link(edge)
+            this.link(edge,allowDuplicates)
         })
         this
     }
@@ -205,7 +206,7 @@ class MutableMapGraph[@specialized(Int) N](
 
     def addEdgesReversed(edges:Traversable[(N,N)]): this.type = {
         edges.foreach(edge => {
-            this.link(edge.swap)
+            this.link(edge.swap,true)
         })
         this
     }
@@ -224,7 +225,7 @@ object Graph {
 	def apply[@specialized(Int) N](map: Map[N,Traversable[N]]): Graph[N] = new MapGraph(map)
     def apply[@specialized(Int) N](mappings:(N,Traversable[N])*): Graph[N] = new MapGraph(mappings.toMap)
 	def apply[@specialized(Int) N](nodes:Iterable[N], adjacent: N => Traversable[N]): Graph[N] = new GenericGraphImpl[N](nodes,adjacent)
-    def apply[@specialized(Int) N](edges:Traversable[(N,N)]): MutableGraph[N] = new MutableMapGraph[N]() link edges
+    def apply[@specialized(Int) N](edges:Traversable[(N,N)]): MutableGraph[N] = new MutableMapGraph[N]() link (edges,true)
 	def apply[@specialized(Int) N, @specialized(Double,Int) V:Numeric](mappings:(N,Iterable[(N,V)])*): Graph[N] with Weighted[N,V] = {
 		val nodeWeightMap = mappings.toMap map {case (k,v) => (k,v.toMap)}
 		new WeightedGraphImpl[N,V](nodeWeightMap.keys, nodeWeightMap.mapValues{case m => m.keys}, (t:N,h:N) => nodeWeightMap(t)(h))
@@ -291,7 +292,7 @@ object Graph {
     }
 
     /** Deep mutable copy of the graph */ 
-	def deepCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]().add(graph.nodes).link(graph.edges)
+	def deepCopy[@specialized(Int) N](graph:Graph[N]): MutableMapGraph[N] =  new MutableMapGraph[N]().add(graph.nodes).link(graph.edges,true)
 
     /** Graph depth-first visitor interface */
     trait GraphDfsVisitor[@specialized(Int) N] {
@@ -461,7 +462,7 @@ object Graph {
 			for ((t,h,w) <- outgoingEdges.extract){
 				explored add h
 				distance(h) = num.plus(distance(t),w)
-				backtrace link (h,t)
+				backtrace link (h,t,false)
 				outgoingEdges remove (outgoingEdges filter {case (_,node,_) => node == h})
 				nextEdges = graph.adjacent(h) filterNot explored map (node => (h,node,weight(h,node)))
 				outgoingEdges insert nextEdges
@@ -627,7 +628,7 @@ object Graph {
         val newGraph:MutableGraph[N] = Graph()
         val reversed = graph.reverse
         val visitor = new GraphDfsVisitor[N] {
-            override def edge(edge: (N,N)): Unit = newGraph.link(edge.swap)
+            override def edge(edge: (N,N)): Unit = newGraph.link(edge.swap,false)
         }
         for(node <- nodes) {
             Graph.dfsi(reversed,node,visitor)

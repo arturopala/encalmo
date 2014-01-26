@@ -12,7 +12,7 @@ import org.encalmo.style.StylesConfig
 abstract class Expr (
         customStyle: Option[Style],
         val expressions:Expression*)(implicit val context: Context)
-extends DocumentComponent(customStyle) {
+extends DocumentComponent(customStyle) with ExpressionHolderComponent {
 
     assert(context!=null, "Context reference MUST not be null")
 

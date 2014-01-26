@@ -7,7 +7,7 @@ import org.encalmo.style.{PredefinedStyles, StylesConfig, Style, DefaultStyle}
 import scala.collection.mutable
 
 /**
- * DocumentComponent trait
+ * DocumentComponent, tree node.
  * @author artur.opala
  */
 abstract class DocumentComponent(protected val customStyleOfComponent: Option[Style] = None) extends TreeNodeWithParentRef[DocumentComponent] with StylesResolver {

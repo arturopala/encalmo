@@ -22,10 +22,10 @@ import org.encalmo.printer.HtmlOutputPreferences
  */
 abstract class Worksheet(name: String) extends Calculation(name) {
     
-    /** Document to print */
+    /** Document to render */
     def document:Document = defaultDocument()
-    /** Calculation results */
-    def results: Results = Reckoner.reckon
+    /** Calculate results */
+    def results: Results = Reckoner.reckon(this)
 
     def defaultDocument(component: DocumentComponent = Section(Evaluate(this.topologicallySortedConnectedSymbols:_*)(this))): Document = Document("",
         PredefinedStyles.stylesConfig,
