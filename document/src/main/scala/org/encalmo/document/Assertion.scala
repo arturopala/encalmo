@@ -17,7 +17,7 @@ abstract class Assertion(
 		val text:String,
 		val expressions:Seq[Expression],
         val context: Context)
-    extends DocumentComponent {
+    extends DocumentComponent with ExpressionHolderComponent {
 	
 	def operator:Seq[Character]
 	def assert(results:Seq[Expression]):Option[Boolean]

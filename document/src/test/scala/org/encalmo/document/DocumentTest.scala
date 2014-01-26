@@ -331,7 +331,10 @@ class DocumentTest extends AssertionsForJUnit {
               )
           )
         )
-        
+
+        val symbols = doc.findAllExpressionSymbols()
+
+        Console.println(symbols)
     }
 	
 	
