@@ -7,10 +7,10 @@ package object graph {
     implicit class GraphOps[N](val graph:Graph[N]) extends AnyVal {
 
         /** Set of leaf nodes (without edges beginning at)*/
-        def leaves: Traversable[N] = Graph.leavesOf(graph)
+        def leaves: Set[N] = Graph.leavesOf(graph)
 
         /** Set of root nodes (without edges leading to) */
-        def roots: Traversable[N] = Graph.rootsOf(graph)
+        def roots: Set[N] = Graph.rootsOf(graph)
 
         /** Deep mutable copy of the graph */
         def deepCopy(): MutableMapGraph[N] = Graph.deepCopy(graph)
@@ -65,6 +65,9 @@ package object graph {
 
         /** Checks if 1st graph is subset of the 2nd  */
         def isSubsetOf(other:Graph[N]):Boolean = Graph.isSubset(graph,other)
+
+        /** Peels skin of the graph, returns inner graph and two collections: roots and leaves */
+        def peelSkin():(Graph[N],Traversable[N],Traversable[N]) = Graph.peelSkin(graph)
 
     }
 

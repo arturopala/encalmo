@@ -3,12 +3,12 @@ import org.encalmo.style.StylesConfig
 import org.encalmo.style.DefaultStyle
 import org.encalmo.common.{Node, TreeVisitor}
 import scala.collection.mutable.ArrayBuffer
-import org.encalmo.expression.Symbol
-import org.encalmo.document.Document.SymbolCollectingDocumentTreeVisitor
+import org.encalmo.expression.{Assert, Symbol}
+import org.encalmo.document.Document.{AssertionSymbolCollectingDocumentTreeVisitor, SymbolCollectingDocumentTreeVisitor}
 
 /**
  * Document, root {@link DocumentComponent}
- * @author artur
+ * @author artur.opala
  */
 class Document(
         val title: String,
@@ -18,8 +18,14 @@ extends DocumentComponentSeq(Option(styles.default), flow:_*) with BlockComponen
 	
 	override def toString = "Document("+customStyle+","+title+","+flow.mkString(",")+")"
 
-    def findAllExpressionSymbols():Set[Symbol] = {
+    def findAllSymbols():Set[Symbol] = {
         val collector = new SymbolCollectingDocumentTreeVisitor()
+        this.visit(collector)
+        collector.result
+    }
+
+    def findAllAssertionSymbols():Set[Symbol] = {
+        val collector = new AssertionSymbolCollectingDocumentTreeVisitor()
         this.visit(collector)
         collector.result
     }
@@ -48,15 +54,34 @@ object Document {
 
     class SymbolCollectingDocumentTreeVisitor extends TreeVisitor[DocumentComponent] {
 
-        private val buffer = ArrayBuffer[Symbol]()
+        protected val buffer = ArrayBuffer[Symbol]()
         def result:Set[Symbol] = buffer.toSet
 
         override def onEnter(node: Node[DocumentComponent]): Unit = node.element match {
             case ehc:ExpressionHolderComponent => {
                  ehc.expressions foreach {
                      case symbol: Symbol => buffer += symbol
-                     case _ =>
+                     case e =>  e.allNestedChildrenOfType[Symbol](classOf[Symbol]).foreach(buffer.+=)
                  }
+            }
+            case _ =>
+        }
+    }
+
+    class AssertionSymbolCollectingDocumentTreeVisitor extends SymbolCollectingDocumentTreeVisitor {
+
+        override def onEnter(node: Node[DocumentComponent]): Unit = node.element match {
+            case a: Assertion => {
+                a.expressions.foreach {
+                    case symbol: Symbol => buffer += symbol
+                    case e => e.allNestedChildrenOfType[Symbol](classOf[Symbol]).foreach(buffer.+=)
+                }
+            }
+            case ehc:ExpressionHolderComponent => {
+                ehc.expressions foreach {
+                    case asrt: Assert => asrt.allNestedChildrenOfType[Symbol](classOf[Symbol]).foreach(buffer.+=)
+                    case _ =>
+                }
             }
             case _ =>
         }

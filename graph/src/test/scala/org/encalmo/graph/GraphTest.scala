@@ -205,7 +205,7 @@ class GraphTest extends FunSpec {
 		    }
 		    assert(count==17)
 	    }
-	    it("should find strongly connected components - scc") {
+	    ignore("should find strongly connected components - scc") {
 			val result = Graph.findStronglyConnectedComponents(veryLargeGraph)
 		    val ten: Seq[Int] = (result.take(10) map (_.size)).toSeq
 			assert(ten.sameElements(Seq(434821, 968, 459, 313, 211, 205, 197, 177, 162, 152)))
