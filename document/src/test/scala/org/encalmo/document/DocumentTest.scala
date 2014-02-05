@@ -309,7 +309,7 @@ class DocumentTest extends AssertionsForJUnit {
                   NumSection("Współczynnik wyboczeniowy wg krzywej c (n=1,2):",
                     Section(Evaluate(fi)(c6))),
                   NumSection("Maksymalna osiowa siła ściskająca:",
-                    Section(Evaluate(Nmax)(c6)))
+                    Section(Evaluate(Nmax, Nmax > Number(100,SI.kN))(c6)))
                 ),
                 NumSection(BOLD,"Podsumowanie wymiarowania :",
                     Section("dla l = 3m : ",Evaluate(fi,Nmax)(c1)),
@@ -332,9 +332,10 @@ class DocumentTest extends AssertionsForJUnit {
           )
         )
 
-        val symbols = doc.findAllExpressionSymbols()
-
-        Console.println(symbols)
+        val symbols = doc.findAllAssertionSymbols()
+        val symbols2 = SymbolGraph.build(c1).filterOutPathsNotLeadingTo(symbols).sortTopologically()
+        assert(symbols.contains(Nmax))
+        Console.println(symbols2.map(_.simpleFace))
     }
 	
 	

@@ -14,6 +14,7 @@ trait Graph[@specialized(Int) N] {
 	def nodesCount:Int
 	def edgesCount:Long
 
+    def filter(f: N => Boolean): Graph[N]
     def foreach[U](f: (N) => U):Unit
     def map[U](f: (N) => U): Graph[U]
 }
@@ -39,8 +40,9 @@ trait GenericGraph[@specialized(Int) N] extends Graph[N] {
     override def nodesCount: Int = nodes.size
     override def edgesCount: Long = nodes.foldLeft(0L){case (sum,node) => sum + adjacent(node).size}
 
+    override def filter(f: N => Boolean): Graph[N] = new FilteredGraph[N](self,f)
     override def foreach[U](f: (N) => U):Unit = nodes.foreach(f)
-    override def map[U](f: (N) => U): GenericGraph[U] = new GenericGraph[U] {
+    override def map[U](f: (N) => U): Graph[U] = new GenericGraph[U] {
         def nodes: Traversable[U] = self.nodes.map(f)
         val adjacent: (U) => Traversable[U] = {
             node => self.nodes.filter(f(_)==node).flatMap(self.adjacent).map(f)
@@ -114,12 +116,11 @@ trait MutableGraph[@specialized(Int) N] extends GenericGraph[N] {
 class MutableMapGraph[@specialized(Int) N](
     val nodeMap: mutable.Map[N,mutable.ArrayBuffer[N]] = new mutable.LinkedHashMap[N,mutable.ArrayBuffer[N]]()
 ) extends MutableGraph[N] {
-
+    self =>
     override def nodes:Iterable[N] =  nodeMap.keys
     override val adjacent: N => mutable.ArrayBuffer[N] = nodeMap
 
 	override def reverse: Graph[N] = {
-        val self = this
         new MutableMapGraph[N](){
             override lazy val reverse: Graph[N] = self
         }.add(this.nodes).addEdgesReversed(this.edges)
@@ -213,6 +214,26 @@ class MutableMapGraph[@specialized(Int) N](
 
 	override def clear(): Unit = {
         nodeMap.clear()
+    }
+}
+
+class FilteredGraph[N](origin:Graph[N], funct: N => Boolean) extends GenericGraph[N] {
+    self =>
+    override val nodes: Traversable[N] = origin.nodes.filter(funct)
+    override val adjacent: (N) => Traversable[N] = origin.adjacent.andThen(_.filter(funct))
+    override def edges: Traversable[(N, N)] = new Traversable[(N, N)] {
+        override def foreach[U](f: ((N, N)) => U):Unit = for(from <- origin.nodes.withFilter(funct); to <- origin.adjacent(from).withFilter(funct)) f((from,to))
+    }
+    override def contains(node: N): Boolean = if(funct(node)) origin.contains(node) else false
+    override def reverse: Graph[N] = new FilteredGraph[N](origin.reverse,funct)
+
+    override def filter(f: N => Boolean): Graph[N] = new FilteredGraph[N](origin, {n:N => funct(n) && f(n)})
+    override def foreach[U](f: (N) => U):Unit = origin.nodes.withFilter(funct).foreach(f)
+    override def map[U](f: (N) => U): Graph[U] = new GenericGraph[U] {
+        def nodes: Traversable[U] = origin.nodes.withFilter(funct).map(f)
+        val adjacent: (U) => Traversable[U] = {
+            node => origin.nodes.filter(funct).filter(f(_)==node).flatMap(self.adjacent).map(f)
+        }
     }
 }
 
@@ -613,14 +634,14 @@ object Graph {
 	}
 
     /** Set of leaf nodes (without edges beginning at)*/
-    def leavesOf[@specialized(Int) N](graph: Graph[N]): Traversable[N] = {
-        for(node <- graph.nodes if graph.adjacent(node).isEmpty) yield node
+    def leavesOf[@specialized(Int) N](graph: Graph[N]): Set[N] = {
+        (for(node <- graph.nodes if graph.adjacent(node).isEmpty) yield node).toSet
     }
 
     /** Set of root nodes (without edges leading to) */
-    def rootsOf[@specialized(Int) N](graph: Graph[N]): Traversable[N] = {
+    def rootsOf[@specialized(Int) N](graph: Graph[N]): Set[N] = {
         val reversed = graph.reverse
-        for(node <- graph.nodes if reversed.adjacent(node).isEmpty) yield node
+        (for(node <- graph.nodes if reversed.adjacent(node).isEmpty) yield node).toSet
     }
 
     /** Filters out every one node that does not belong to one of the paths leading to one of the given target nodes **/
@@ -633,7 +654,15 @@ object Graph {
         for(node <- nodes) {
             Graph.dfsi(reversed,node,visitor)
         }
-        return newGraph
+        newGraph
+    }
+
+    /** Peels skin of the graph, returns inner graph and two collections: roots and leaves */
+    def peelSkin[@specialized(Int) N](graph: Graph[N]):(Graph[N],Traversable[N],Traversable[N]) = {
+       val roots = graph.roots
+       val leaves = graph.leaves
+       val newGraph = graph.filter(n => !roots.contains(n) && !leaves.contains(n))
+       (newGraph,roots,leaves)
     }
 }
 
