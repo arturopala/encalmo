@@ -108,7 +108,9 @@ class DocumentTest extends AssertionsForJUnit {
         import BasicSymbols._
         
         val c1 = Calculation("1") 
-        
+
+        val id = symbol("id")
+        c1(id) = text("id test")
         val fi = phiv
         val bf = b|f
         val tf = t|f
@@ -170,6 +172,9 @@ class DocumentTest extends AssertionsForJUnit {
         val c4 = c1
         val c5 = c1
         val c6 = c1
+
+        val assert01 = a|"ssert01"
+        c1(assert01) = NRc > Number(100,SI.kN)
         
         val doc = Document("",
               Chapter("",
@@ -181,7 +186,7 @@ class DocumentTest extends AssertionsForJUnit {
               NumSection(BOLD,"Parametry zadania",  
                   Section(ITALIC,"Wszystkie parametry i wyniki podano w odpowiednich jednostkach SI (metrach i Newtonach)"),
                   NumSection(BOLD,"Parametry geometryczne:",
-                    Section(Evaluate(h,bf,tf,tw,A)(c1))),
+                    Section(Evaluate(id,h,bf,tf,tw,A)(c1))),
                   NumSection(BOLD,"Parametry wytrzymałościowe:",
                     Section(Evaluate(Ix,Iy,Io,ix,io,Iomega,It)(c1))),
                   NumSection(BOLD,"Parametry materiałowe:",
@@ -189,7 +194,7 @@ class DocumentTest extends AssertionsForJUnit {
                   NumSection(BOLD,"Współczynniki długości wyboczeniowej:",
                     Section(Evaluate(mix,mif)(c1))),
                   NumSection(BOLD,"Nośność obliczeniowa przekroju przy osiowym ściskaniu:",
-                    Section(Evaluate(NRc)(c1)))
+                    Section(Evaluate(NRc,assert01)(c1)))
                   
               ),
               NumSection(BOLD,"Obliczenie sił krytycznych wyboczenia giętnego i skrętnego dla zadanych przypadków.",
@@ -244,7 +249,7 @@ class DocumentTest extends AssertionsForJUnit {
                     NumSection("Siła krytyczna wyboczenia giętnego przy ściskaniu osiowym:",
                       Section(Evaluate(Nxcr)(c6))),
                     NumSection("Siła krytyczna wyboczenia skrętnego przy ściskaniu osiowym:",
-                      Section(Evaluate(Nfcr)(c6)))
+                      Section(Spot(Nfcr)(c6)))
                   ),
                   
                   NumSection(BOLD,"Podsumowanie obliczeń :",
@@ -332,9 +337,12 @@ class DocumentTest extends AssertionsForJUnit {
           )
         )
 
-        val symbols = doc.findAllAssertionSymbols()
+        val symbols = doc.findAllTargetSymbols(c1)
         val symbols2 = SymbolGraph.build(c1).filterOutPathsNotLeadingTo(symbols).sortTopologically()
         assert(symbols.contains(Nmax))
+        assert(symbols.contains(assert01))
+        assert(symbols.contains(id))
+        assert(symbols.contains(Nfcr))
         Console.println(symbols2.map(_.simpleFace))
     }
 	

@@ -150,9 +150,9 @@ div {padding:5pt 0 2pt 0}
                 })
             }
             case req:Check => {
-                val ess:Seq[FormulaToPrint] = for(expression <- req.expressions) yield {
+                val ess:Seq[FormulaToPrint] = (for(expression <- req.expressions) yield {
                     ExpressionToPrint.prepare(expression, req, results, printStyleOfCheck(expression,results))
-                }
+                }).filter(_.isDefined).map(_.get)
                 if(!ess.isEmpty){
                     blockExprPrintStrategy.print(node,ess,req.isPrintDescription)
                 }

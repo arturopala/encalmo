@@ -45,20 +45,20 @@ case class ExpressionToPrint(
 object ExpressionToPrint {
 
     def prepare(element: Expr, results: Results, printStyle: FormulaPrintStyle.Value = FormulaPrintStyle.NORMAL):Seq[FormulaToPrint] = {
-        for(expression <- element.expressions) yield prepare(expression, element, results, printStyle)
+        val options = for(expression <- element.expressions) yield prepare(expression, element, results, printStyle)
+        options.filter(_.isDefined).map(_.get)
     }
 
-    def prepare(expression:Expression, element: Expr, results: Results, printStyle: FormulaPrintStyle.Value):FormulaToPrint = {
+    def prepare(expression:Expression, element: Expr, results: Results, printStyle: FormulaPrintStyle.Value):Option[FormulaToPrint] = {
         val formula = expression match {
             case pinnedExpression:PinnedExpression => {
-                results.formulaSet.getOrReckon(pinnedExpression.symbol,pinnedExpression.context, results)
+                results.formulaSet.get(pinnedExpression.symbol)
             }
             case _ => {
-                results.formulaSet.getOrReckon(expression,element.context, results)
+                results.formulaSet.get(expression)
             }
         }
-        val expressions = prepare(formula, filterForElement(element, formula),  element.customStyle, element)
-	    FormulaToPrint(expression,expressions,printStyle)
+        formula.map(f => prepare(f, filterForElement(element, f),  element.customStyle, element)).map(FormulaToPrint(expression,_,printStyle))
     }
 
     val ALL_PARTS: FormulaPart => Boolean = {part => true}
