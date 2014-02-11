@@ -83,8 +83,8 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
                 )
            ),
            NumSection("Parametry zadania",
-               NumSection("Dane wejściowe",Evaluate(L1,L2,pc),Evaluate(stal.label)(stal)),
-               NumSection("Przyjęto do obliczeń",Evaluate(plyta(plyta.h),beton.label,blacha.label,profil.label,sworzen.label)(plyta))
+               NumSection("Dane wejściowe",Evaluate(L1,L2,pc),Spot(stal.label)(stal)),
+               NumSection("Przyjęto do obliczeń",Spot(plyta(plyta.h),beton.label,blacha.label,profil.label,sworzen.label)(plyta))
            ),
            NumSection("Wymiarowanie płyty stropowej",
                NumSection("Przyjęte wymiary i właściwości materiałowe",
@@ -129,7 +129,7 @@ class CompositeSlabWorksheet extends Worksheet("kz-strop") {
 	           )
            ),
            NumSection("Podsumowanie",
-           		Evaluate(belka.mS)(belka)
+           		Spot(belka.mS)(belka)
            ),
 			Section(style1.marginTop(20),""),
 			Section("Koniec obliczeń."),

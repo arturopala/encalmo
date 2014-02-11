@@ -15,6 +15,7 @@ import scalax.file.Path
 import org.encalmo.style.PredefinedStyles
 import PredefinedStyles._
 import org.encalmo.printer.HtmlOutputPreferences
+import org.encalmo.expression.Symbol
 
 /**
  * Base class for documented calculations
@@ -25,7 +26,10 @@ abstract class Worksheet(name: String) extends Calculation(name) {
     /** Document to render */
     def document:Document = defaultDocument()
     /** Calculate results */
-    def results: Results = Reckoner.reckon(this)
+    def results: Results = {
+        val targetSymbols: Set[Symbol] = document.findAllTargetSymbols(this)
+        Reckoner.reckonFor(targetSymbols)(this)
+    }
 
     def defaultDocument(component: DocumentComponent = Section(Evaluate(this.topologicallySortedConnectedSymbols:_*)(this))): Document = Document("",
         PredefinedStyles.stylesConfig,

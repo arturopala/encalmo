@@ -3,8 +3,9 @@ import org.encalmo.style.StylesConfig
 import org.encalmo.style.DefaultStyle
 import org.encalmo.common.{Node, TreeVisitor}
 import scala.collection.mutable.ArrayBuffer
-import org.encalmo.expression.{Assert, Symbol}
+import org.encalmo.expression.{SymbolLike, TextValue, Assert, Symbol}
 import org.encalmo.document.Document.{AssertionSymbolCollectingDocumentTreeVisitor, SymbolCollectingDocumentTreeVisitor}
+import org.encalmo.calculation.{PinnedExpression, Context}
 
 /**
  * Document, root {@link DocumentComponent}
@@ -24,8 +25,8 @@ extends DocumentComponentSeq(Option(styles.default), flow:_*) with BlockComponen
         collector.result
     }
 
-    def findAllAssertionSymbols():Set[Symbol] = {
-        val collector = new AssertionSymbolCollectingDocumentTreeVisitor()
+    def findAllTargetSymbols(context:Context):Set[Symbol] = {
+        val collector = new AssertionSymbolCollectingDocumentTreeVisitor(context)
         this.visit(collector)
         collector.result
     }
@@ -68,18 +69,38 @@ object Document {
         }
     }
 
-    class AssertionSymbolCollectingDocumentTreeVisitor extends SymbolCollectingDocumentTreeVisitor {
+    class AssertionSymbolCollectingDocumentTreeVisitor(context:Context) extends SymbolCollectingDocumentTreeVisitor {
 
         override def onEnter(node: Node[DocumentComponent]): Unit = node.element match {
             case a: Assertion => {
                 a.expressions.foreach {
-                    case symbol: Symbol => buffer += symbol
-                    case e => e.allNestedChildrenOfType[Symbol](classOf[Symbol]).foreach(buffer.+=)
+                    case symbolLike: SymbolLike => buffer += symbolLike.symbol
+                    case e => e.allNestedChildrenOfType[Symbol](classOf[Symbol]) foreach (buffer.+=)
+                }
+            }
+            case spot:Spot => {
+                spot.expressions foreach {
+                    case symbolLike: SymbolLike => buffer += symbolLike.symbol
+                    case e => e.allNestedChildrenOfType[Symbol](classOf[Symbol]) foreach (buffer.+=)
                 }
             }
             case ehc:ExpressionHolderComponent => {
                 ehc.expressions foreach {
-                    case asrt: Assert => asrt.allNestedChildrenOfType[Symbol](classOf[Symbol]).foreach(buffer.+=)
+                    case asrt: Assert => {
+                        asrt.allNestedChildrenOfType[Symbol](classOf[Symbol]) foreach (buffer.+=)
+                    }
+                    case symbol:Symbol => context.getExpression(symbol) foreach {
+                        case asrt: Assert => buffer += symbol
+                        case text: TextValue => buffer += symbol
+                        case _ =>
+                    }
+                    case pinned: PinnedExpression => {
+                        pinned.context.getExpression(pinned.symbol) foreach {
+                            case asrt: Assert => buffer += pinned.symbol
+                            case text: TextValue => buffer += pinned.symbol
+                            case _ =>
+                        }
+                    }
                     case _ =>
                 }
             }

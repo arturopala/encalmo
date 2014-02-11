@@ -18,13 +18,13 @@ case class FormulaSet() {
 
     def get(expression: Expression): Option[Formula] = formulaMap.get(expression)
 
-    def getOrReckon(expression: Expression, context: Context, results: Results): Formula = {
+    /*def getOrReckon(expression: Expression, context: Context, results: Results): Formula = {
         get(expression) getOrElse {
             val formula = Reckoner.reckonExpression(expression,context,results)
             this put formula
             formula
         }
-    }
+    }*/
 
     def contains(expression: Expression) = formulaMap.get(expression).isDefined
 }

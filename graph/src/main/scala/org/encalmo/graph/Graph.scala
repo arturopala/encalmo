@@ -649,6 +649,7 @@ object Graph {
         val newGraph:MutableGraph[N] = Graph()
         val reversed = graph.reverse
         val visitor = new GraphDfsVisitor[N] {
+            override def before(node:N):Unit = newGraph.add(node)
             override def edge(edge: (N,N)): Unit = newGraph.link(edge.swap,false)
         }
         for(node <- nodes) {

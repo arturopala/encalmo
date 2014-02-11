@@ -15,12 +15,24 @@ object Reckoner {
 
     def reckon(implicit context: Context): Results = {
         val graph: Graph[Symbol] = SymbolGraph.build(context)
+        reckonGraph(graph,context)
+    }
+
+    def reckonFor(targetSymbols: Traversable[Symbol])(implicit context: Context): Results = {
+        val graph: Graph[Symbol] = SymbolGraph.build(context)
+        val filteredGraph: Graph[Symbol] = graph.filterOutPathsNotLeadingTo(targetSymbols)
+        Console.println(s"graph nodes: ${graph.nodesCount}, target symbols: ${targetSymbols.size}, nodes reduced to: ${filteredGraph.nodesCount}")
+        reckonGraph(filteredGraph,context)
+    }
+
+
+    private def reckonGraph(graph: Graph[Symbol],context: Context): Results = {
         val symbols: List[Symbol] = Graph.sortTopologically(graph)
         Console.println(s"Found ${symbols.size} symbols to reckon in $context:")
         val formulaSet = new FormulaSet()
         val cache = new ResultsCache()
-        val results = new Results(graph,formulaSet,cache)
-        symbols.foldLeft[FormulaSet](results.formulaSet)((set, symbol) => set put reckonExpression(symbol,context,results))
+        val results = new Results(graph, formulaSet, cache)
+        symbols.foldLeft[FormulaSet](results.formulaSet)((set, symbol) => set put reckonExpression(symbol, context, results))
         Console.println()
         results
     }
